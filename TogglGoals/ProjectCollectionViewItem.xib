@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2548a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner"/>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <collectionViewItem id="xT6-c0-85Y" customClass="ProjectCollectionViewItem" customModule="TogglGoals" customModuleProvider="target">
+            <connections>
+                <outlet property="projectNameLabel" destination="484-m5-m2m" id="Wnc-OK-DKc"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="dv5-AE-MPs"/>
+            </connections>
+        </collectionViewItem>
+        <customView wantsLayer="YES" id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="137" height="50"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="484-m5-m2m">
+                    <rect key="frame" x="18" y="17" width="101" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="project name" id="MGk-G1-zEk">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="484-m5-m2m" secondAttribute="trailing" constant="20" symbolic="YES" id="XeB-F8-cAv"/>
+                <constraint firstItem="484-m5-m2m" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="vhf-oB-iXd"/>
+                <constraint firstItem="484-m5-m2m" firstAttribute="centerY" secondItem="Hz6-mo-xeY" secondAttribute="centerY" id="xq2-dZ-cnG"/>
+            </constraints>
+            <point key="canvasLocation" x="-509.5" y="-719"/>
+        </customView>
+    </objects>
+</document>

@@ -705,11 +705,47 @@
                     <view key="view" id="0s5-6J-xQn">
                         <rect key="frame" x="0.0" y="0.0" width="161" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kat-8d-Ff9">
+                                <rect key="frame" x="0.0" y="20" width="161" height="280"/>
+                                <clipView key="contentView" drawsBackground="NO" id="V9W-AF-Ttj">
+                                    <rect key="frame" x="1" y="1" width="159" height="278"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <collectionView selectable="YES" id="UNJ-j2-pFb">
+                                            <rect key="frame" x="0.0" y="0.0" width="159" height="278"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <collectionViewGridLayout key="collectionViewLayout" maximumNumberOfColumns="1" id="zAH-3Z-8un"/>
+                                            <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
+                                        </collectionView>
+                                    </subviews>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="EPZ-py-eHf">
+                                    <rect key="frame" x="1" y="-15" width="0.0" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Q81-ig-h5S">
+                                    <rect key="frame" x="144" y="1" width="16" height="278"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="Kat-8d-Ff9" firstAttribute="leading" secondItem="0s5-6J-xQn" secondAttribute="leading" id="BvF-3z-5zZ"/>
+                            <constraint firstAttribute="bottom" secondItem="Kat-8d-Ff9" secondAttribute="bottom" constant="20" symbolic="YES" id="Qx3-YV-hSl"/>
+                            <constraint firstAttribute="trailing" secondItem="Kat-8d-Ff9" secondAttribute="trailing" id="fN0-n8-mrT"/>
+                            <constraint firstItem="Kat-8d-Ff9" firstAttribute="top" secondItem="0s5-6J-xQn" secondAttribute="top" id="qte-el-R2z"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="projectsCollectionView" destination="UNJ-j2-pFb" id="nZ3-Sq-hgm"/>
+                    </connections>
                 </viewController>
                 <customObject id="rJd-f4-lqu" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-76" y="1137"/>
+            <point key="canvasLocation" x="-77" y="1137"/>
         </scene>
         <!--Project Details View Controller-->
         <scene sceneID="huO-mY-84c">
