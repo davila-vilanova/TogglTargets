@@ -17,6 +17,7 @@
 		632957741DBA9D8500E11A10 /* ProjectsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957721DBA9D8500E11A10 /* ProjectsListViewController.swift */; };
 		632957771DBA9D9600E11A10 /* ProjectDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957751DBA9D9600E11A10 /* ProjectDetailsViewController.swift */; };
 		632957781DBA9D9600E11A10 /* ProjectDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957751DBA9D9600E11A10 /* ProjectDetailsViewController.swift */; };
+		636A784B1DBBECAA00751A51 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636A784A1DBBECAA00751A51 /* ColoredView.swift */; };
 		63FA1F981DBB796D00612A09 /* ProjectCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FA1F961DBB796D00612A09 /* ProjectCollectionViewItem.swift */; };
 		63FA1F991DBB796D00612A09 /* ProjectCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63FA1F971DBB796D00612A09 /* ProjectCollectionViewItem.xib */; };
 /* End PBXBuildFile section */
@@ -53,6 +54,7 @@
 		632957701DBA9C8800E11A10 /* ProjectsMasterDetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsMasterDetailController.swift; sourceTree = "<group>"; };
 		632957721DBA9D8500E11A10 /* ProjectsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsListViewController.swift; sourceTree = "<group>"; };
 		632957751DBA9D9600E11A10 /* ProjectDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectDetailsViewController.swift; sourceTree = "<group>"; };
+		636A784A1DBBECAA00751A51 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
 		63FA1F961DBB796D00612A09 /* ProjectCollectionViewItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectCollectionViewItem.swift; sourceTree = "<group>"; };
 		63FA1F971DBB796D00612A09 /* ProjectCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCollectionViewItem.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -114,6 +116,7 @@
 				632957751DBA9D9600E11A10 /* ProjectDetailsViewController.swift */,
 				63FA1F961DBB796D00612A09 /* ProjectCollectionViewItem.swift */,
 				63FA1F971DBB796D00612A09 /* ProjectCollectionViewItem.xib */,
+				636A784A1DBBECAA00751A51 /* ColoredView.swift */,
 			);
 			path = TogglGoals;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				632957771DBA9D9600E11A10 /* ProjectDetailsViewController.swift in Sources */,
 				632957731DBA9D8500E11A10 /* ProjectsListViewController.swift in Sources */,
 				632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */,
+				636A784B1DBBECAA00751A51 /* ColoredView.swift in Sources */,
 				63FA1F981DBB796D00612A09 /* ProjectCollectionViewItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
