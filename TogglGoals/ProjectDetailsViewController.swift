@@ -8,7 +8,9 @@
 
 import Cocoa
 
-class ProjectDetailsViewController: NSViewController {
+class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining {
+
+    var modelCoordinator: ModelCoordinator?
 
     override func viewDidLoad() {
         super.viewDidLoad()

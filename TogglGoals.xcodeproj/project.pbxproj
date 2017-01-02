@@ -22,8 +22,10 @@
 		636A784B1DBBECAA00751A51 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636A784A1DBBECAA00751A51 /* ColoredView.swift */; };
 		636ABD4D1DBE3162002C42BE /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636ABD4C1DBE3162002C42BE /* Model.swift */; };
 		636ABD4E1DBE3162002C42BE /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636ABD4C1DBE3162002C42BE /* Model.swift */; };
+		638179FD1DFD7492003F6295 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63EAD8DF1DC6A98F001E7889 /* Alamofire.framework */; };
+		638179FE1DFD7492003F6295 /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63EAD8DF1DC6A98F001E7889 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		63817A011DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63817A001DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift */; };
 		63EAD8D81DC52C13001E7889 /* TogglAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EB44A31DBFD5E600A5C8A6 /* TogglAPIClient.swift */; };
-		63EAD8E61DC6A9C8001E7889 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63EAD8E41DC6A9C8001E7889 /* Alamofire.framework */; };
 		63EAD8E71DC6A9C8001E7889 /* Alamofire.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51DC6A9C8001E7889 /* Alamofire.framework.dSYM */; };
 		63EB44A41DBFD5E600A5C8A6 /* TogglAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EB44A31DBFD5E600A5C8A6 /* TogglAPIClient.swift */; };
 		63EB44A61DBFD6B400A5C8A6 /* AsynchronousResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EB44A51DBFD6B400A5C8A6 /* AsynchronousResult.swift */; };
@@ -49,6 +51,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		638179FF1DFD7492003F6295 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				638179FE1DFD7492003F6295 /* Alamofire.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		632957421DBA99F000E11A10 /* TogglGoals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TogglGoals.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957451DBA99F000E11A10 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -67,6 +83,7 @@
 		6351B82D1DC0DCA500E0AB1E /* ModelCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCoordinator.swift; sourceTree = "<group>"; };
 		636A784A1DBBECAA00751A51 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
 		636ABD4C1DBE3162002C42BE /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		63817A001DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsMasterDetailWindowController.swift; sourceTree = "<group>"; };
 		63EAD8DF1DC6A98F001E7889 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/Mac/Alamofire.framework; sourceTree = "<group>"; };
 		63EAD8E01DC6A98F001E7889 /* Alamofire.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Alamofire.framework.dSYM; path = Carthage/Build/Mac/Alamofire.framework.dSYM; sourceTree = "<group>"; };
 		63EAD8E41DC6A9C8001E7889 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/Mac/Alamofire.framework; sourceTree = "<group>"; };
@@ -82,7 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63EAD8E61DC6A9C8001E7889 /* Alamofire.framework in Frameworks */,
+				638179FD1DFD7492003F6295 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +160,7 @@
 				63EB44A31DBFD5E600A5C8A6 /* TogglAPIClient.swift */,
 				63EB44A51DBFD6B400A5C8A6 /* AsynchronousResult.swift */,
 				6351B82D1DC0DCA500E0AB1E /* ModelCoordinator.swift */,
+				63817A001DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift */,
 			);
 			path = TogglGoals;
 			sourceTree = "<group>";
@@ -184,6 +202,7 @@
 				6329573E1DBA99F000E11A10 /* Sources */,
 				6329573F1DBA99F000E11A10 /* Frameworks */,
 				632957401DBA99F000E11A10 /* Resources */,
+				638179FF1DFD7492003F6295 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -320,6 +339,7 @@
 				636A784B1DBBECAA00751A51 /* ColoredView.swift in Sources */,
 				63EB44A41DBFD5E600A5C8A6 /* TogglAPIClient.swift in Sources */,
 				636ABD4D1DBE3162002C42BE /* Model.swift in Sources */,
+				63817A011DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift in Sources */,
 				63EB44A61DBFD6B400A5C8A6 /* AsynchronousResult.swift in Sources */,
 				63FA1F981DBB796D00612A09 /* ProjectCollectionViewItem.swift in Sources */,
 			);

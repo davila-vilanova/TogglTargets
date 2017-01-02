@@ -8,35 +8,80 @@
 
 import Cocoa
 
-class ModelCoordinator {
+// ModelCoordinator is not thread safe
+class ModelCoordinator: NSObject {
     let apiClient: TogglAPIClient
     let cache: ModelCache
+
+    var pendingBackendProfileRetrievalCompletionHandlers = [BackendProfileRetrievalCompletionHandler]()
+    var profileRetrievalOperationRunning = false
+
+    private lazy var mainQueue: DispatchQueue = {
+        return DispatchQueue.main
+    }()
 
     init(apiClient: TogglAPIClient, cache: ModelCache) {
         self.apiClient = apiClient
         self.cache = cache
     }
 
-    func fetchUserProfile() -> AsynchronousResult<Profile> {
+    func retrieveUserProfile(_ updateResultHandler: ((AsynchronousResult<Profile>) -> Void)?) {
         let asyncResult = AsynchronousResult<Profile>()
+        asyncResult.availabilityCallback = updateResultHandler
 
         let cached = cache.retrieveUserProfile()
-        let willRefresh = cached.shouldRefresh
 
-        if let profile = cached.profile {
-            asyncResult.setResult(data: profile, error: nil, isFurtherUpdateExpected: willRefresh)
+        asyncResult.data = cached.profile
+        asyncResult.isFinal = !cached.shouldRefresh
+
+        if cached.shouldRefresh {
+            retrieveUserProfileFromBackend() { (profile, error) in
+                asyncResult.data = profile
+                asyncResult.error = error
+                asyncResult.isFinal = true
+            }
+        }
+    }
+
+    func retrieveUserProjects(_ updateProjectsResultHandler: ((AsynchronousResult<[Project]>) -> Void)?) -> AsynchronousResult<[Project]> {
+        let projectsResult = AsynchronousResult<[Project]>()
+        projectsResult.availabilityCallback = updateProjectsResultHandler
+
+        func updatedProfileResultAvailable(_ updatedProfileResult: AsynchronousResult<Profile>) {
+            projectsResult.setResult(data: updatedProfileResult.data?.projects,
+                                     error: updatedProfileResult.finalError,
+                                     final: updatedProfileResult.isFinal)
         }
 
-        if willRefresh {
-            apiClient.fetchUserProfile(completion: { (profile, error) in
+        let profileResult = retrieveUserProfile { (updatedProfileResult) in
+            updatedProfileResultAvailable(updatedProfileResult)
+        }
+
+        if let projects = profileResult.data?.projects {
+            projectsResult.setResult(data: projects, error: nil, final: profileResult.isFinal)
+        }
+
+        return projectsResult
+    }
+
+    // MARK: Mediated toggl backend access
+
+    private func retrieveUserProfileFromBackend(_ completion: @escaping BackendProfileRetrievalCompletionHandler) {
+        pendingBackendProfileRetrievalCompletionHandlers.append(completion)
+
+        if !profileRetrievalOperationRunning {
+            profileRetrievalOperationRunning = true
+            apiClient.retrieveUserProfile(queue: mainQueue) { (profile, error) in
                 if let profileToCache = profile {
-                    self.cache.persistUserProfile(profileToCache)
+                    self.cache.storeUserProfile(profileToCache)
                 }
-                asyncResult.setResult(data: profile, error: error, isFurtherUpdateExpected: false)
-            })
+                for completionHandler in self.pendingBackendProfileRetrievalCompletionHandlers {
+                    completionHandler(profile, error)
+                }
+                self.pendingBackendProfileRetrievalCompletionHandlers.removeAll()
+                self.profileRetrievalOperationRunning = false
+            }
         }
-
-        return asyncResult
     }
 }
 
@@ -44,10 +89,14 @@ class ModelCache {
     private var userProfile: Profile?
 
     func retrieveUserProfile() -> (profile: Profile?, shouldRefresh: Bool) {
-        return (userProfile, userProfile != nil)
+        return (userProfile, userProfile == nil)
     }
 
-    func persistUserProfile(_ profile: Profile) {
+    func storeUserProfile(_ profile: Profile) {
         userProfile = profile
     }
+}
+
+protocol ModelCoordinatorContaining {
+    var modelCoordinator: ModelCoordinator? { get set }
 }

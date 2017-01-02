@@ -8,10 +8,22 @@
 
 import Cocoa
 
-class ProjectsListViewController: NSViewController, NSCollectionViewDataSource {
+class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, ModelCoordinatorContaining {
     let projectItemIdentifier = "ProjectItemIdentifier"
 
-    let projectNames: [String] = ["aaaaaaa", "bbbbbbbb", "cccccccc"]
+    var modelCoordinator: ModelCoordinator? {
+        didSet {
+            if (isViewLoaded) {
+                loadProjects()
+            }
+        }
+    }
+
+    var projects: [Project]? {
+        didSet {
+            refresh()
+        }
+    }
 
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
 
@@ -23,18 +35,37 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource {
 
         let collectionViewItemNib = NSNib(nibNamed: "ProjectCollectionViewItem", bundle: nil)!
         projectsCollectionView.register(collectionViewItemNib, forItemWithIdentifier: projectItemIdentifier)
+
+        loadProjects()
+    }
+
+    func loadProjects() {
+        if let coordinator = modelCoordinator {
+            _ = coordinator.retrieveUserProjects() { (result) in
+                self.projects = result.data
+                // TODO: check for resultFinalError
+            }
+        }
+    }
+
+    func refresh() {
+        projectsCollectionView.reloadData()
     }
 
     // MARK: - NSCollectionViewDataSource
 
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        return projectNames.count
+        if let projects = self.projects {
+            return projects.count
+        } else {
+            return 0
+        }
     }
 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
-        projectItem.projectName = projectNames[indexPath.item]
+        projectItem.projectName = projects![indexPath.item].name
         return projectItem
     }
 }

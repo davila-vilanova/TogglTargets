@@ -12,14 +12,26 @@ enum AsynchronousResultState {
     case waitingForFirstResult, waitingForUpdate, completed
 }
 
+/* Encapsulates a piece of data that may be immediately available, may be available in the future, or a combination (receives updates over time)
+ */
 class AsynchronousResult<ResultDataType> {
     // MARK: - Consumer
     var state: AsynchronousResultState = .waitingForFirstResult
 
-    private(set) var resultData: ResultDataType?
-    private(set) var resultError: Error?
+    var isFinal: Bool {
+        get {
+            return state == .completed
+        }
 
-    var resultAvailabilityCallback: ((AsynchronousResult<ResultDataType>) -> ())? {
+        internal set {
+            // TODO
+        }
+    }
+
+    private(set) var data: ResultDataType?
+    private(set) var finalError: Error?
+
+    var availabilityCallback: ((AsynchronousResult<ResultDataType>) -> ())? {
         didSet {
             if (state != .waitingForFirstResult) {
                 callResultAvailabilityCallback()
@@ -48,28 +60,21 @@ class AsynchronousResult<ResultDataType> {
     }
 
     // MARK: - Producer
-    internal func setResult(data: ResultDataType?, error: Error?, isFurtherUpdateExpected: Bool) {
-        guard state != .completed else {
-            return
-        }
 
-        if let d = data {
-            resultData = d
-            state = isFurtherUpdateExpected ? .waitingForUpdate : .completed
-            newResultDidBecomeAvailable()
-        } else if let e = error {
-            resultError = e
-            state = .completed
-            newResultDidBecomeAvailable()
-        }
+    internal func commitResultAsFinal(_ final: Bool) {
+        // TODO
     }
+
+//    internal func setResult(result: AsynchronousResult, dataUnwrapper: ((Any?) -> ResultDataType?)) {
+//        setResult(data: dataUnwrapper(result.data), error: result.finalError, final: result.isFinal);
+//    }
 
     // MARK: - Private
     let condition = NSCondition()
     var didSetNewResult = false
 
     private func callResultAvailabilityCallback() {
-        if let callback = resultAvailabilityCallback {
+        if let callback = availabilityCallback {
             callback(self)
         }
     }
