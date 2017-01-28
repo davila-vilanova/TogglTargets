@@ -8,92 +8,76 @@
 
 import Cocoa
 
+fileprivate func projectsDiffer(_ a: [Project]?, _ b: [Project]?) -> Bool {
+    return true
+}
+
 // ModelCoordinator is not thread safe
-class ModelCoordinator: NSObject {
-    let apiClient: TogglAPIClient
-    let cache: ModelCache
+internal class ModelCoordinator: NSObject {
+    private let cache: ModelCache
+    private let notificationCenter = NotificationCenter.default
 
-    var pendingBackendProfileRetrievalCompletionHandlers = [BackendProfileRetrievalCompletionHandler]()
-    var profileRetrievalOperationRunning = false
+    internal var profile: Profile? {
+        didSet {
+            let oldProjects: [Project]? = oldValue?.projects
+            let newProjects = profile?.projects
 
+            if projectsDiffer(newProjects, oldProjects) {
+                let projectsToBroadcast: [Project]
+                if let p = newProjects {
+                    projectsToBroadcast = p
+                } else {
+                    projectsToBroadcast = [Project]()
+                }
+
+                let userInfo = [ModelCoordinator.ProjectsUpdatedNotificationProjectsKey: projectsToBroadcast]
+
+                notificationCenter.post(name: ModelCoordinator.ProjectsUpdatedNotificationName, object: self, userInfo: userInfo)
+            }
+        }
+    }
+    internal var projects: [Project]? {
+        get {
+            return profile?.projects
+        }
+    }
+
+    internal static let ProjectsUpdatedNotificationName = NSNotification.Name(rawValue: "ModelCoordinator.ProjectsUpdatedNotification")
+    internal static let ProjectsUpdatedNotificationProjectsKey = "ModelCoordinator.ProjectsUpdatedNotification.ProjectsKey"
+
+    private let apiCredential = TogglAPICredential()
+
+    // TODO: inject these two?
     private lazy var mainQueue: DispatchQueue = {
         return DispatchQueue.main
     }()
 
-    init(apiClient: TogglAPIClient, cache: ModelCache) {
-        self.apiClient = apiClient
+    private lazy var networkQueue: OperationQueue = {
+        let q = OperationQueue()
+        q.name = "NetworkQueue"
+        return q
+    }()
+
+
+    internal init(cache: ModelCache) {
         self.cache = cache
+        super.init()
+        retrieveUserProfile()
     }
 
-    func retrieveUserProfile(_ updateResultHandler: ((AsynchronousResult<Profile>) -> Void)?) {
-        let asyncResult = AsynchronousResult<Profile>()
-        asyncResult.availabilityCallback = updateResultHandler
-
-        let cached = cache.retrieveUserProfile()
-
-        asyncResult.data = cached.profile
-        asyncResult.isFinal = !cached.shouldRefresh
-
-        if cached.shouldRefresh {
-            retrieveUserProfileFromBackend() { (profile, error) in
-                asyncResult.data = profile
-                asyncResult.error = error
-                asyncResult.isFinal = true
-            }
-        }
-    }
-
-    func retrieveUserProjects(_ updateProjectsResultHandler: ((AsynchronousResult<[Project]>) -> Void)?) -> AsynchronousResult<[Project]> {
-        let projectsResult = AsynchronousResult<[Project]>()
-        projectsResult.availabilityCallback = updateProjectsResultHandler
-
-        func updatedProfileResultAvailable(_ updatedProfileResult: AsynchronousResult<Profile>) {
-            projectsResult.setResult(data: updatedProfileResult.data?.projects,
-                                     error: updatedProfileResult.finalError,
-                                     final: updatedProfileResult.isFinal)
-        }
-
-        let profileResult = retrieveUserProfile { (updatedProfileResult) in
-            updatedProfileResultAvailable(updatedProfileResult)
-        }
-
-        if let projects = profileResult.data?.projects {
-            projectsResult.setResult(data: projects, error: nil, final: profileResult.isFinal)
-        }
-
-        return projectsResult
-    }
-
-    // MARK: Mediated toggl backend access
-
-    private func retrieveUserProfileFromBackend(_ completion: @escaping BackendProfileRetrievalCompletionHandler) {
-        pendingBackendProfileRetrievalCompletionHandlers.append(completion)
-
-        if !profileRetrievalOperationRunning {
-            profileRetrievalOperationRunning = true
-            apiClient.retrieveUserProfile(queue: mainQueue) { (profile, error) in
-                if let profileToCache = profile {
-                    self.cache.storeUserProfile(profileToCache)
+    private func retrieveUserProfile() {
+        let (profile, shouldRefresh) = self.cache.retrieveUserProfile()
+        self.profile = profile
+        if shouldRefresh {
+            let op = ProfileLoadingOperation(credential: apiCredential)
+            op.completionBlock = {
+                if let profile = op.model {
+                    self.cache.storeUserProfile(profile)
+                    self.profile = profile
                 }
-                for completionHandler in self.pendingBackendProfileRetrievalCompletionHandlers {
-                    completionHandler(profile, error)
-                }
-                self.pendingBackendProfileRetrievalCompletionHandlers.removeAll()
-                self.profileRetrievalOperationRunning = false
             }
+            networkQueue.addOperation(op)
         }
-    }
-}
-
-class ModelCache {
-    private var userProfile: Profile?
-
-    func retrieveUserProfile() -> (profile: Profile?, shouldRefresh: Bool) {
-        return (userProfile, userProfile == nil)
-    }
-
-    func storeUserProfile(_ profile: Profile) {
-        userProfile = profile
     }
 }
 

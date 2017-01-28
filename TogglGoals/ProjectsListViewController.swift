@@ -14,7 +14,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     var modelCoordinator: ModelCoordinator? {
         didSet {
             if (isViewLoaded) {
-                loadProjects()
+                setupProjectsUpdating()
             }
         }
     }
@@ -36,15 +36,20 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let collectionViewItemNib = NSNib(nibNamed: "ProjectCollectionViewItem", bundle: nil)!
         projectsCollectionView.register(collectionViewItemNib, forItemWithIdentifier: projectItemIdentifier)
 
-        loadProjects()
+        setupProjectsUpdating()
     }
 
-    func loadProjects() {
+    private var didSetupProjectsUpdating = false
+    func setupProjectsUpdating() {
+        guard !didSetupProjectsUpdating else {
+            return
+        }
         if let coordinator = modelCoordinator {
-            _ = coordinator.retrieveUserProjects() { (result) in
-                self.projects = result.data
-                // TODO: check for resultFinalError
+            self.projects = coordinator.projects
+            NotificationCenter.default.addObserver(forName: ModelCoordinator.ProjectsUpdatedNotificationName, object: coordinator, queue: OperationQueue.main) { (notification) in
+                self.projects = coordinator.projects
             }
+            didSetupProjectsUpdating = true
         }
     }
 
