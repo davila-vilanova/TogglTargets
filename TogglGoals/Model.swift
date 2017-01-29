@@ -14,8 +14,6 @@ struct Profile {
     var email: String?
     var imageUrl: URL?
     var timeZone:String?
-    var workspaces = [Workspace]()
-    var projects = [Project]()
 
     init(id: Int64) {
         self.id = id
@@ -38,23 +36,7 @@ extension Profile {
                 let imageUrl = URL(string: imageUrlString) {
                 profile.imageUrl = imageUrl
             }
-            if let workspacesDictionaries = dictionary["workspaces"] as? [StringKeyedDictionary] {
-                var workspaces = Array<Workspace>()
-                for workspaceDictionary in workspacesDictionaries {
-                    if let workspace = Workspace.fromTogglAPI(dictionary: workspaceDictionary) {
-                        workspaces.append(workspace)
-                    }
-                }
-            } // TODO: collapse these two into a generic function having Workpace and Project conform to a protocol that declares fromTogglAPI(dictionary:) -> (Protocol)
-            if let projectsDictionaries = dictionary["projects"] as? [StringKeyedDictionary] {
-                var projects = Array<Project>()
-                for projectDictionary in projectsDictionaries {
-                    if let project = Project.fromTogglAPI(dictionary: projectDictionary) {
-                        projects.append(project)
-                    }
-                }
-                profile.projects = projects
-            }
+
             return profile
         } else {
             return nil
@@ -82,6 +64,18 @@ extension Workspace {
         } else {
             return nil
         }
+    }
+
+    static func collectionFromTogglAPI(dictionary: StringKeyedDictionary) -> [Workspace] {
+        var workspaces = Array<Workspace>()
+        if let workspacesDictionaries = dictionary["workspaces"] as? [StringKeyedDictionary] {
+            for workspaceDictionary in workspacesDictionaries {
+                if let workspace = Workspace.fromTogglAPI(dictionary: workspaceDictionary) {
+                    workspaces.append(workspace)
+                }
+            }
+        }
+        return workspaces
     }
 }
 
@@ -112,6 +106,18 @@ extension Project {
             return project
         }
         return nil
+    }
+
+    static func collectionFromTogglAPI(dictionary: StringKeyedDictionary) -> [Project] {
+        var projects = Array<Project>()
+        if let projectsDictionaries = dictionary["projects"] as? [StringKeyedDictionary] {
+            for projectDictionary in projectsDictionaries {
+                if let project = Project.fromTogglAPI(dictionary: projectDictionary) {
+                    projects.append(project)
+                }
+            }
+        }
+        return projects
     }
 }
 

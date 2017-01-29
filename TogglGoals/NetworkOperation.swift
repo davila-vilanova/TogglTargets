@@ -149,18 +149,21 @@ class TogglAPIAccessingOperation<T>: Operation, URLSessionDataDelegate {
     }
 }
 
-class ProfileLoadingOperation: TogglAPIAccessingOperation<Profile> {
+class ProfileLoadingOperation: TogglAPIAccessingOperation<(Profile, [Workspace], [Project])> {
     override var endpointPath: String {
         get {
             return "/me?with_related_data=true"
         }
     }
 
-    override func unmarshallModel(from data: Data) -> Profile? {
+    override func unmarshallModel(from data: Data) -> (Profile, [Workspace], [Project])? {
         let json = try! JSONSerialization.jsonObject(with: data, options: [])
         if let dict = json as? Dictionary<String, Any>,
-            let dataDict = dict["data"] as? Dictionary<String, Any> {
-            return Profile.fromTogglAPI(dictionary: dataDict)
+            let dataDict = dict["data"] as? Dictionary<String, Any>,
+            let profile = Profile.fromTogglAPI(dictionary: dataDict) {
+                let workspaces = Workspace.collectionFromTogglAPI(dictionary: dataDict)
+                let projects = Project.collectionFromTogglAPI(dictionary: dataDict)
+            return (profile, workspaces, projects)
         }
         return nil
     }

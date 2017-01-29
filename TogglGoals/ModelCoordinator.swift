@@ -6,44 +6,16 @@
 //  Copyright © 2016 davi. All rights reserved.
 //
 
-import Cocoa
-
-fileprivate func projectsDiffer(_ a: [Project]?, _ b: [Project]?) -> Bool {
-    return true
-}
+import Foundation
 
 // ModelCoordinator is not thread safe
 internal class ModelCoordinator: NSObject {
     private let cache: ModelCache
     private let notificationCenter = NotificationCenter.default
 
-    internal var profile: Profile? {
-        didSet {
-            let oldProjects: [Project]? = oldValue?.projects
-            let newProjects = profile?.projects
-
-            if projectsDiffer(newProjects, oldProjects) {
-                let projectsToBroadcast: [Project]
-                if let p = newProjects {
-                    projectsToBroadcast = p
-                } else {
-                    projectsToBroadcast = [Project]()
-                }
-
-                let userInfo = [ModelCoordinator.ProjectsUpdatedNotificationProjectsKey: projectsToBroadcast]
-
-                notificationCenter.post(name: ModelCoordinator.ProjectsUpdatedNotificationName, object: self, userInfo: userInfo)
-            }
-        }
-    }
-    internal var projects: [Project]? {
-        get {
-            return profile?.projects
-        }
-    }
-
-    internal static let ProjectsUpdatedNotificationName = NSNotification.Name(rawValue: "ModelCoordinator.ProjectsUpdatedNotification")
-    internal static let ProjectsUpdatedNotificationProjectsKey = "ModelCoordinator.ProjectsUpdatedNotification.ProjectsKey"
+    internal var profile = Property<Profile>(value: nil)
+    internal var projects = Property<[Project]>(value: Array<Project>())
+    internal var workspaces = Property<[Workspace]>(value: Array<Workspace>())
 
     private let apiCredential = TogglAPICredential()
 
@@ -67,13 +39,21 @@ internal class ModelCoordinator: NSObject {
 
     private func retrieveUserProfile() {
         let (profile, shouldRefresh) = self.cache.retrieveUserProfile()
-        self.profile = profile
+        self.profile.value = profile
         if shouldRefresh {
             let op = ProfileLoadingOperation(credential: apiCredential)
             op.completionBlock = {
-                if let profile = op.model {
+                if let profile = op.model?.0 {
                     self.cache.storeUserProfile(profile)
-                    self.profile = profile
+                    self.profile.value = profile
+                }
+                if let workspaces = op.model?.1 {
+                    self.cache.storeWorkspaces(workspaces)
+                    self.workspaces.value = workspaces
+                }
+                if let projects = op.model?.2 {
+                    self.cache.storeProjects(projects)
+                    self.projects.value = projects
                 }
             }
             networkQueue.addOperation(op)

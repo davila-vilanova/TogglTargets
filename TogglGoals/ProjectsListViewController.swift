@@ -14,7 +14,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     var modelCoordinator: ModelCoordinator? {
         didSet {
             if (isViewLoaded) {
-                setupProjectsUpdating()
+                bindToProjects()
             }
         }
     }
@@ -36,21 +36,37 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let collectionViewItemNib = NSNib(nibNamed: "ProjectCollectionViewItem", bundle: nil)!
         projectsCollectionView.register(collectionViewItemNib, forItemWithIdentifier: projectItemIdentifier)
 
-        setupProjectsUpdating()
+        bindToProjects()
     }
 
-    private var didSetupProjectsUpdating = false
-    func setupProjectsUpdating() {
-        guard !didSetupProjectsUpdating else {
+    var projectsBindToken: Property<[Project]>.ObserverToken?
+
+    private func bindToProjects() {
+        guard projectsBindToken == nil else {
             return
         }
-        if let coordinator = modelCoordinator {
-            self.projects = coordinator.projects
-            NotificationCenter.default.addObserver(forName: ModelCoordinator.ProjectsUpdatedNotificationName, object: coordinator, queue: OperationQueue.main) { (notification) in
-                self.projects = coordinator.projects
-            }
-            didSetupProjectsUpdating = true
+
+
+        if let projectsProperty = modelCoordinator?.projects {
+            projectsBindToken = projectsProperty.observeUpdates({ (value, propertyState) in
+                if let projects = value {
+                    self.projects = projects
+                } else if propertyState == .invalid {
+                    self.unbindFromProjects()
+                }
+            })
         }
+    }
+
+    private func unbindFromProjects() {
+        if let token = projectsBindToken,
+            let projectsProperty = modelCoordinator?.projects {
+                projectsProperty.stopObserving(token)
+        }
+    }
+
+    deinit {
+        unbindFromProjects()
     }
 
     func refresh() {
