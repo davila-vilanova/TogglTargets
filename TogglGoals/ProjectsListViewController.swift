@@ -39,34 +39,25 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         bindToProjects()
     }
 
-    var projectsBindToken: Property<[Project]>.ObserverToken?
+    private var observedProjects: ObservedProperty<[Project]>?
 
     private func bindToProjects() {
-        guard projectsBindToken == nil else {
+        guard observedProjects == nil else {
             return
         }
 
-
         if let projectsProperty = modelCoordinator?.projects {
-            projectsBindToken = projectsProperty.observeUpdates({ (value, propertyState) in
-                if let projects = value {
-                    self.projects = projects
-                } else if propertyState == .invalid {
-                    self.unbindFromProjects()
-                }
-            })
+            observedProjects =
+                ObservedProperty<[Project]>(original: projectsProperty,
+                                            valueObserver: { [weak self] (projects) in
+                                                if let p = projects {
+                                                    self?.projects = p
+                                                }
+                                            },
+                                            invalidationObserver: { [weak self] in
+                                                self?.observedProjects = nil
+                                            })
         }
-    }
-
-    private func unbindFromProjects() {
-        if let token = projectsBindToken,
-            let projectsProperty = modelCoordinator?.projects {
-                projectsProperty.stopObserving(token)
-        }
-    }
-
-    deinit {
-        unbindFromProjects()
     }
 
     func refresh() {
