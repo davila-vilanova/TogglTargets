@@ -10,9 +10,13 @@ import Cocoa
 
 class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorContaining {
     private var cachedModelCoordinator: ModelCoordinator?
+    private var projectsListViewController: ProjectsListViewController?
+    private var projectDetailsViewController: ProjectDetailsViewController?
+
     var modelCoordinator: ModelCoordinator? {
         get {
-            // As the topmost controller, it will retrieve the ModelCoordinator from the app delegate and propagate it to the contained controllers
+            // As the topmost controller, it will retrieve the ModelCoordinator from the app delegate
+            // and propagate it to the contained controllers
 
             if let coordinator = cachedModelCoordinator {
                 return coordinator
@@ -30,6 +34,8 @@ class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorCon
     override func viewDidLoad() {
         super.viewDidLoad()
         setupModelCoordinatorInChildControllers()
+        findViewControllers()
+        setupProjectSelectionClosure()
     }
 
     private func setupModelCoordinatorInChildControllers() {
@@ -38,6 +44,21 @@ class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorCon
                 modelCoordinatorContainer.modelCoordinator = self.modelCoordinator
             }
         }
+    }
 
+    private func findViewControllers() {
+        for item in splitViewItems {
+            if let listVC = item.viewController as? ProjectsListViewController {
+                projectsListViewController = listVC
+            } else if let detailsVC = item.viewController as? ProjectDetailsViewController {
+                projectDetailsViewController = detailsVC
+            }
+        }
+    }
+
+    private func setupProjectSelectionClosure() {
+        projectsListViewController?.didSelectProject = { [weak self] projectId in
+            self?.projectDetailsViewController?.onProjectSelected(projectId: projectId)
+        }
     }
 }

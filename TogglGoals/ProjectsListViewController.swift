@@ -8,8 +8,10 @@
 
 import Cocoa
 
-class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, ModelCoordinatorContaining {
+class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, ModelCoordinatorContaining {
     let projectItemIdentifier = "ProjectItemIdentifier"
+
+    internal var didSelectProject: ( (Int64) -> () )?
 
     var modelCoordinator: ModelCoordinator? {
         didSet {
@@ -31,6 +33,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         super.viewDidLoad()
 
         projectsCollectionView.dataSource = self
+        projectsCollectionView.delegate = self
         projectsCollectionView.maxNumberOfColumns = 1
 
         let collectionViewItemNib = NSNib(nibNamed: "ProjectCollectionViewItem", bundle: nil)!
@@ -79,5 +82,14 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectItem = item as! ProjectCollectionViewItem
         projectItem.projectName = projects![indexPath.item].name
         return projectItem
+    }
+
+    // MARK: - NSCollectionViewDelegate
+
+    func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
+        if let index = indexPaths.first?.item,
+            let project = projects?[index] {
+            didSelectProject?(project.id)
+        }
     }
 }

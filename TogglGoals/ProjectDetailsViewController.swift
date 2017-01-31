@@ -16,5 +16,8 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         super.viewDidLoad()
         // Do view setup here.
     }
-    
+
+    internal func onProjectSelected(projectId: Int64) {
+        Swift.print("selected project with id=\(projectId)")
+    }
 }
