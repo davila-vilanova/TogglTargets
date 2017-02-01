@@ -17,6 +17,9 @@ internal class ModelCoordinator: NSObject {
     internal var projects = Property<[Project]>(value: Array<Project>())
     internal var workspaces = Property<[Workspace]>(value: Array<Workspace>())
 
+    private var goalProperties = Dictionary<Int64, Property<TimeGoal>>()
+    private var observedGoalProperties = Dictionary<Int64, ObservedProperty<TimeGoal>>()
+
     private let apiCredential = TogglAPICredential()
 
     // TODO: inject these two?
@@ -58,6 +61,38 @@ internal class ModelCoordinator: NSObject {
             }
             networkQueue.addOperation(op)
         }
+    }
+
+    internal func goalPropertyForProjectId(_ projectId: Int64) -> Property<TimeGoal> {
+        let goalProperty: Property<TimeGoal>
+
+        if let existing = goalProperties[projectId] {
+            goalProperty = existing
+        } else {
+            goalProperty = Property<TimeGoal>(value: retrieveGoal(projectId: projectId))
+            let observed = ObservedProperty(original: goalProperty, valueObserver: { (goal) in
+                Swift.print("modified goal=\(goal)")
+            }, invalidationObserver: { 
+                Swift.print("invalidated goal projectId=\(projectId)")
+            })
+            observedGoalProperties[projectId] = observed
+            goalProperties[projectId] = goalProperty
+        }
+
+        return goalProperty
+    }
+
+    internal func initializeGoal(_ goal: TimeGoal) {
+        let p = goalPropertyForProjectId(goal.projectId)
+        p.value = goal
+    }
+
+    private var goals = Dictionary<Int64, TimeGoal>()
+    private func retrieveGoal(projectId: Int64) -> TimeGoal? {
+        return goals[projectId]
+    }
+    private func storeGoal(goal: TimeGoal) {
+        goals[goal.projectId] = goal
     }
 }
 

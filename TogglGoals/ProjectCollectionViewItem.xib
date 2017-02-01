@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16B2548a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E144f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner"/>
@@ -10,29 +12,42 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <collectionViewItem id="xT6-c0-85Y" customClass="ProjectCollectionViewItem" customModule="TogglGoals" customModuleProvider="target">
             <connections>
+                <outlet property="goalLabel" destination="pcZ-U4-eHq" id="8f4-J9-CRf"/>
                 <outlet property="projectNameLabel" destination="484-m5-m2m" id="Wnc-OK-DKc"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="dv5-AE-MPs"/>
             </connections>
         </collectionViewItem>
         <customView wantsLayer="YES" id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="137" height="50"/>
+            <rect key="frame" x="0.0" y="0.0" width="137" height="78"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="484-m5-m2m">
-                    <rect key="frame" x="18" y="17" width="101" height="17"/>
+                    <rect key="frame" x="18" y="45" width="101" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="project name" id="MGk-G1-zEk">
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="systemMedium" size="13"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pcZ-U4-eHq">
+                    <rect key="frame" x="18" y="20" width="101" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="goal" id="8g6-dx-UR5">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
             </subviews>
             <constraints>
+                <constraint firstAttribute="trailing" secondItem="pcZ-U4-eHq" secondAttribute="trailing" constant="20" symbolic="YES" id="3pW-7B-mpa"/>
+                <constraint firstItem="pcZ-U4-eHq" firstAttribute="top" secondItem="484-m5-m2m" secondAttribute="bottom" constant="8" id="A63-7C-V3T"/>
+                <constraint firstAttribute="bottom" secondItem="pcZ-U4-eHq" secondAttribute="bottom" constant="20" symbolic="YES" id="IsN-G9-vem"/>
                 <constraint firstAttribute="trailing" secondItem="484-m5-m2m" secondAttribute="trailing" constant="20" symbolic="YES" id="XeB-F8-cAv"/>
+                <constraint firstItem="pcZ-U4-eHq" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" id="Z0D-uH-Wlq"/>
+                <constraint firstItem="484-m5-m2m" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="16" id="qji-UA-orE"/>
                 <constraint firstItem="484-m5-m2m" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="vhf-oB-iXd"/>
-                <constraint firstItem="484-m5-m2m" firstAttribute="centerY" secondItem="Hz6-mo-xeY" secondAttribute="centerY" id="xq2-dZ-cnG"/>
             </constraints>
-            <point key="canvasLocation" x="-509.5" y="-719"/>
+            <point key="canvasLocation" x="-509.5" y="-705.5"/>
         </customView>
     </objects>
 </document>

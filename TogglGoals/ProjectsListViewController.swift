@@ -80,7 +80,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
-        projectItem.projectName = projects![indexPath.item].name
+        let project = projects?[indexPath.item]
+        projectItem.projectName = project?.name
+        if let projectId = project?.id {
+            projectItem.goalProperty = modelCoordinator?.goalPropertyForProjectId(projectId)
+        }
         return projectItem
     }
 

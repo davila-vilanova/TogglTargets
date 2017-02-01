@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16C63a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E144f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="box content view" minToolsVersion="7.0"/>
-        <capability name="cells containing NSDateComponentsFormatter" minSystemVersion="10.12"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
         <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
@@ -721,7 +720,9 @@
                                         <collectionView selectable="YES" allowsEmptySelection="NO" id="UNJ-j2-pFb">
                                             <rect key="frame" x="0.0" y="0.0" width="159" height="298"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <collectionViewGridLayout key="collectionViewLayout" id="zAH-3Z-8un"/>
+                                            <collectionViewGridLayout key="collectionViewLayout" id="zAH-3Z-8un">
+                                                <size key="minimumItemSize" width="0.0" height="80"/>
+                                            </collectionViewGridLayout>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
                                         </collectionView>
@@ -785,23 +786,24 @@
                                         <rect key="frame" x="0.0" y="0.0" width="160" height="22"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ehP-Hd-fQb" userLabel="monthly goal label">
-                                                <rect key="frame" x="-2" y="3" width="86" height="17"/>
-                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="monthly goal:" id="bzF-fQ-3sp">
+                                                <rect key="frame" x="-2" y="3" width="124" height="17"/>
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="monthly hours goal:" id="bzF-fQ-3sp">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BiS-Y9-O7e" userLabel="hours goal field">
-                                                <rect key="frame" x="90" y="0.0" width="70" height="22"/>
-                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="160 hours" drawsBackground="YES" id="CG7-n3-16n">
-                                                    <dateComponentsFormatter key="formatter" unitsStyle="positional" id="Tvh-Yy-AwG">
-                                                        <zeroFormattingBehavior key="zeroFormattingBehavior" none="YES"/>
-                                                    </dateComponentsFormatter>
+                                                <rect key="frame" x="128" y="0.0" width="32" height="22"/>
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="160" drawsBackground="YES" id="CG7-n3-16n">
+                                                    <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="i7g-2o-BQJ"/>
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
+                                                <connections>
+                                                    <action selector="monthlyHoursGoalEdited:" target="zvs-ll-aji" id="sPb-Th-8Zz"/>
+                                                </connections>
                                             </textField>
                                         </subviews>
                                         <constraints>
@@ -834,6 +836,9 @@
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    <connections>
+                                                        <action selector="workDaysPerWeekEdited:" target="zvs-ll-aji" id="KC4-zg-nmR"/>
+                                                    </connections>
                                                 </textFieldCell>
                                             </textField>
                                         </subviews>
@@ -1089,6 +1094,12 @@
                             <constraint firstItem="ifD-zz-iY5" firstAttribute="top" secondItem="aCi-JH-WTK" secondAttribute="top" constant="20" symbolic="YES" id="yg9-Kn-gLY"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="monthlyHoursGoalField" destination="BiS-Y9-O7e" id="OZm-sj-IQi"/>
+                        <outlet property="monthlyHoursGoalFormatter" destination="i7g-2o-BQJ" id="bTR-YS-zBk"/>
+                        <outlet property="workDaysPerWeekFormatter" destination="t89-Tu-PY4" id="D1Y-PD-cBz"/>
+                        <outlet property="workDaysPerWeekGoalField" destination="xYK-i9-THr" id="qG2-iE-tkt"/>
+                    </connections>
                 </viewController>
                 <customObject id="sX4-zk-LDV" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

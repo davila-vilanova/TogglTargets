@@ -123,8 +123,13 @@ extension Project {
 
 
 struct TimeGoal {
+    let projectId: Int64
     var hoursPerMonth: Int?
     var workDaysPerWeek: Int?
+
+    init(forProjectId projectId: Int64) {
+        self.projectId = projectId
+    }
 }
 
 struct TimeReport {
