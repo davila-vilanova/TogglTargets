@@ -11,6 +11,8 @@ import Foundation
 // ModelCoordinator is not thread safe
 internal class ModelCoordinator: NSObject {
     private let cache: ModelCache
+    private let goalsStore: GoalsStore
+
     private let notificationCenter = NotificationCenter.default
 
     internal var profile = Property<Profile>(value: nil)
@@ -33,9 +35,9 @@ internal class ModelCoordinator: NSObject {
         return q
     }()
 
-
-    internal init(cache: ModelCache) {
+    internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.cache = cache
+        self.goalsStore = goalsStore
         super.init()
         retrieveUserProfile()
     }
@@ -69,10 +71,14 @@ internal class ModelCoordinator: NSObject {
         if let existing = goalProperties[projectId] {
             goalProperty = existing
         } else {
-            goalProperty = Property<TimeGoal>(value: retrieveGoal(projectId: projectId))
-            let observed = ObservedProperty(original: goalProperty, valueObserver: { (goal) in
+            let goal = goalsStore.retrieveGoal(projectId: projectId)
+            goalProperty = Property<TimeGoal>(value: goal)
+            let observed = ObservedProperty(original: goalProperty, valueObserver: {[weak self] (goal) in
                 Swift.print("modified goal=\(goal)")
-            }, invalidationObserver: { 
+                if let g = goal {
+                    self?.goalsStore.storeGoal(goal: g)
+                }
+            }, invalidationObserver: {
                 Swift.print("invalidated goal projectId=\(projectId)")
             })
             observedGoalProperties[projectId] = observed
@@ -85,14 +91,6 @@ internal class ModelCoordinator: NSObject {
     internal func initializeGoal(_ goal: TimeGoal) {
         let p = goalPropertyForProjectId(goal.projectId)
         p.value = goal
-    }
-
-    private var goals = Dictionary<Int64, TimeGoal>()
-    private func retrieveGoal(projectId: Int64) -> TimeGoal? {
-        return goals[projectId]
-    }
-    private func storeGoal(goal: TimeGoal) {
-        goals[goal.projectId] = goal
     }
 }
 

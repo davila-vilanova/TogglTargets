@@ -12,7 +12,8 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate, ModelCoordinatorContaining {
     lazy var modelCoordinator: ModelCoordinator? = {
         let modelCache = ModelCache()
-        return ModelCoordinator(cache: modelCache)
+        let goalsStore = GoalsStore()
+        return ModelCoordinator(cache: modelCache, goalsStore: goalsStore)
     }()
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
