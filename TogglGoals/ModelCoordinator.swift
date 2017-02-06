@@ -19,8 +19,12 @@ internal class ModelCoordinator: NSObject {
     internal var projects = Property<[Project]>(value: Array<Project>())
     internal var workspaces = Property<[Workspace]>(value: Array<Workspace>())
 
+    private var reports = Property<[TimeReport]>(value: nil)
+
     private var goalProperties = Dictionary<Int64, Property<TimeGoal>>()
     private var observedGoalProperties = Dictionary<Int64, ObservedProperty<TimeGoal>>()
+
+    private var reportProperties = Dictionary<Int64, Property<TimeReport>>()
 
     private let apiCredential = TogglAPICredential()
 
@@ -61,7 +65,22 @@ internal class ModelCoordinator: NSObject {
                     self.projects.value = projects
                 }
             }
+            let cop = ReportsCollectingOperation()
+            cop.completionBlock = { [weak self, weak cop] in
+                if let collectedReports = cop?.collectedReports,
+                    let s = self {
+                    for (projectId, report) in collectedReports {
+                        let p = s.reportPropertyForProjectId(projectId)
+                        p.value = report
+                    }
+                }
+            }
+            let top = ReportsLoadingTriggeringOperation(credential: apiCredential, reportsCollectingOperation: cop)
+            top.addDependency(op)
+            cop.addDependency(top)
             networkQueue.addOperation(op)
+            networkQueue.addOperation(top)
+            networkQueue.addOperation(cop)
         }
     }
 
@@ -91,6 +110,19 @@ internal class ModelCoordinator: NSObject {
     internal func initializeGoal(_ goal: TimeGoal) {
         let p = goalPropertyForProjectId(goal.projectId)
         p.value = goal
+    }
+
+    internal func reportPropertyForProjectId(_ projectId: Int64) -> Property<TimeReport> {
+        let reportProperty: Property<TimeReport>
+
+        if let existing = reportProperties[projectId] {
+            reportProperty = existing
+        } else {
+            reportProperty = Property<TimeReport>(value: nil)
+            reportProperties[projectId] = reportProperty
+        }
+
+        return reportProperty
     }
 }
 

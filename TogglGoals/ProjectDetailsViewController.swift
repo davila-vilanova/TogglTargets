@@ -14,6 +14,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var monthlyHoursGoalFormatter: NumberFormatter!
     @IBOutlet weak var workDaysPerWeekGoalField: NSTextField!
     @IBOutlet weak var workDaysPerWeekFormatter: NumberFormatter!
+    @IBOutlet weak var projectName: NSTextField!
 
     var modelCoordinator: ModelCoordinator?
     private var observedGoalProperty: ObservedProperty<TimeGoal>?
@@ -24,7 +25,16 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         // Do view setup here.
     }
 
-    internal func onProjectSelected(projectId: Int64) {
+    internal func onProjectSelected(project: Project) {
+        let projectId = project.id
+
+
+        if let name = project.name {
+            projectName.stringValue = name
+        } else {
+            projectName.stringValue = "No name"
+        }
+
         Swift.print("selected project with id=\(projectId)")
         self.projectId = projectId
 

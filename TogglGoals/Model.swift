@@ -133,9 +133,11 @@ struct TimeGoal {
 }
 
 struct TimeReport {
-    let workedTime: TimeInterval?
+    let projectId: Int64
+    let workedTime: TimeInterval
 
-    init(workedTime: TimeInterval) {
+    init(projectId: Int64, workedTime: TimeInterval) {
+        self.projectId = projectId
         self.workedTime = workedTime
     }
 }

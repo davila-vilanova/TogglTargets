@@ -57,8 +57,8 @@ class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorCon
     }
 
     private func setupProjectSelectionClosure() {
-        projectsListViewController?.didSelectProject = { [weak self] projectId in
-            self?.projectDetailsViewController?.onProjectSelected(projectId: projectId)
+        projectsListViewController?.didSelectProject = { [weak self] project in
+            self?.projectDetailsViewController?.onProjectSelected(project: project)
         }
     }
 }

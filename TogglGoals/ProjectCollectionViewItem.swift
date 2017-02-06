@@ -12,6 +12,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem
 {
     @IBOutlet weak var projectNameLabel: NSTextField!
     @IBOutlet weak var goalLabel: NSTextField!
+    @IBOutlet weak var reportLabel: NSTextField!
 
     var projectName: String? {
         didSet {
@@ -49,6 +50,28 @@ class ProjectCollectionViewItem: NSCollectionViewItem
         }
     }
 
+    private var observedReportProperty: ObservedProperty<TimeReport>?
+    internal var reportProperty: Property<TimeReport>? {
+        set {
+            if let p = newValue {
+                observedReportProperty =
+                    ObservedProperty(original: p,
+                                     valueObserver: {[weak self] (report) in
+                                        self?.updateReportLabel(report: report)
+                    },
+                                     invalidationObserver: {
+
+                    })
+                updateReportLabel(report: p.value)
+            } else {
+                observedReportProperty?.unobserve()
+            }
+        }
+        get {
+            return observedReportProperty?.original
+        }
+    }
+
     override var textField: NSTextField? {
         get {
             return projectNameLabel
@@ -82,14 +105,36 @@ class ProjectCollectionViewItem: NSCollectionViewItem
         guard isViewLoaded else {
             return
         }
+        let newStringValue: String
         if let g = goal {
             if let hours = g.hoursPerMonth {
-                goalLabel.stringValue = "\(hours) hours per month"
+                newStringValue = "\(hours) hours per month"
             } else {
-                goalLabel.stringValue = "? hours per month"
+                newStringValue = "? hours per month"
             }
         } else {
-            goalLabel.stringValue = "(no goal)"
+            newStringValue = "(no goal)"
+        }
+
+        DispatchQueue.main.async { [weak self, newStringValue] in
+            self?.goalLabel.stringValue = newStringValue
+        }
+    }
+
+    private func updateReportLabel(report: TimeReport?) {
+        guard isViewLoaded else {
+            return
+        }
+        let newStringValue: String
+        if let r = report {
+            let hours = r.workedTime / 3600
+            newStringValue = String.init(format: "%.2f hours worked", hours)
+        } else {
+            newStringValue = "(no report)"
+        }
+
+        DispatchQueue.main.async { [weak self, newStringValue] in
+            self?.reportLabel.stringValue = newStringValue
         }
     }
 }

@@ -11,7 +11,7 @@ import Cocoa
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, ModelCoordinatorContaining {
     let projectItemIdentifier = "ProjectItemIdentifier"
 
-    internal var didSelectProject: ( (Int64) -> () )?
+    internal var didSelectProject: ( (Project) -> () )?
 
     var modelCoordinator: ModelCoordinator? {
         didSet {
@@ -84,6 +84,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         projectItem.projectName = project?.name
         if let projectId = project?.id {
             projectItem.goalProperty = modelCoordinator?.goalPropertyForProjectId(projectId)
+            projectItem.reportProperty = modelCoordinator?.reportPropertyForProjectId(projectId)
         }
         return projectItem
     }
@@ -93,7 +94,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
         if let index = indexPaths.first?.item,
             let project = projects?[index] {
-            didSelectProject?(project.id)
+            didSelectProject?(project)
         }
     }
 }

@@ -9,8 +9,8 @@
 import Foundation
 
 struct TogglAPICredential {
-    let loginname = "david@davi.la"
-    let password = "Go$zKDMKAcGmKByl7rwbE3MMMpKnAvKsz5rycpAI|usGsvBU1A"
+    let loginname = "8e536ec872a3900a616198ecb3415c03"
+    let password = "api_token"
 
     let authHeaderKey = "Authorization"
 
