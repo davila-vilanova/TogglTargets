@@ -50,7 +50,7 @@ internal class ModelCoordinator: NSObject {
         let (profile, shouldRefresh) = self.cache.retrieveUserProfile()
         self.profile.value = profile
         if shouldRefresh {
-            let op = ProfileLoadingOperation(credential: apiCredential)
+            let op = NetworkRetrieveProfileOperation(credential: apiCredential)
             op.completionBlock = {
                 if let profile = op.model?.0 {
                     self.cache.storeUserProfile(profile)
@@ -65,7 +65,7 @@ internal class ModelCoordinator: NSObject {
                     self.projects.value = projects
                 }
             }
-            let cop = ReportsCollectingOperation()
+            let cop = CollectRetrievedReportsOperation()
             cop.completionBlock = { [weak self, weak cop] in
                 if let collectedReports = cop?.collectedReports,
                     let s = self {
@@ -75,7 +75,7 @@ internal class ModelCoordinator: NSObject {
                     }
                 }
             }
-            let top = ReportsLoadingTriggeringOperation(credential: apiCredential, reportsCollectingOperation: cop)
+            let top = SpawnRetrievalOfReportsOperation(credential: apiCredential, CollectRetrievedReportsOperation: cop)
             top.addDependency(op)
             cop.addDependency(top)
             networkQueue.addOperation(op)
