@@ -1,5 +1,5 @@
 //
-//  SpawnRetrievalOfReportsOperation.swift
+//  SpawnRetrievalOfProjectsOperation.swift
 //  TogglGoals
 //
 //  Created by David Davila on 06.02.17.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-internal class SpawnRetrievalOfReportsOperation: Operation {
+internal class SpawnRetrievalOfProjectsOperation: Operation {
     private var _retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation?
     private var retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation? {
         get {
@@ -23,15 +23,14 @@ internal class SpawnRetrievalOfReportsOperation: Operation {
         }
     }
 
-
     private let credential: TogglAPICredential
-    private let collectRetrievedReportsOperation: CollectRetrievedReportsOperation
+    private let collectRetrievedProjectsOperation: CollectRetrievedProjectsOperation
 
-    init(credential: TogglAPICredential, collectRetrievedReportsOperation: CollectRetrievedReportsOperation) {
+    init(credential: TogglAPICredential, collectRetrievedProjectsOperation: CollectRetrievedProjectsOperation) {
         self.credential = credential
-        self.collectRetrievedReportsOperation = collectRetrievedReportsOperation
+        self.collectRetrievedProjectsOperation = collectRetrievedProjectsOperation
         super.init()
-        self.collectRetrievedReportsOperation.addDependency(self)
+        self.collectRetrievedProjectsOperation.addDependency(self)
     }
 
     override func main() {
@@ -47,15 +46,15 @@ internal class SpawnRetrievalOfReportsOperation: Operation {
 
         if let workspaces = operation.model {
             for w in workspaces {
-                let op = NetworkRetrieveReportsOperation(credential: credential, workspaceId: w.id)
-                collectRetrievedReportsOperation.addDependency(op)
+                let op = NetworkRetrieveProjectsOperation(credential: credential, workspaceId: w.id)
+                collectRetrievedProjectsOperation.addDependency(op)
                 OperationQueue.current?.addOperation(op)
             }
         } else if let error = operation.error {
             // TODO
             print(error)
         } else {
-            
+
         }
     }
 }

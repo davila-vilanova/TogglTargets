@@ -9,17 +9,17 @@
 import Foundation
 
 internal class CollectRetrievedReportsOperation: Operation {
-    private var _NetworkRetrieveReportsOperation: NetworkRetrieveReportsOperation?
-    private var NetworkRetrieveReportsOperation: NetworkRetrieveReportsOperation? {
+    private var _networkRetrieveReportsOperation: NetworkRetrieveReportsOperation?
+    private var networkRetrieveReportsOperation: NetworkRetrieveReportsOperation? {
         get {
-            if _NetworkRetrieveReportsOperation == nil {
+            if _networkRetrieveReportsOperation == nil {
                 for operation in dependencies {
                     if let reportsOperation = operation as? NetworkRetrieveReportsOperation {
-                        _NetworkRetrieveReportsOperation = reportsOperation
+                        _networkRetrieveReportsOperation = reportsOperation
                     }
                 }
             }
-            return _NetworkRetrieveReportsOperation
+            return _networkRetrieveReportsOperation
         }
     }
 
@@ -30,11 +30,11 @@ internal class CollectRetrievedReportsOperation: Operation {
             return
         }
 
-        guard NetworkRetrieveReportsOperation != nil else {
+        guard networkRetrieveReportsOperation != nil else {
             return
         }
 
-        let operation = NetworkRetrieveReportsOperation!
+        let operation = networkRetrieveReportsOperation!
 
         if let reports = operation.model {
             for (projectId, report) in reports {

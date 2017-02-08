@@ -66,13 +66,11 @@ extension Workspace {
         }
     }
 
-    static func collectionFromTogglAPI(dictionary: StringKeyedDictionary) -> [Workspace] {
+    static func collectionFromTogglAPI(dictionaries: [StringKeyedDictionary]) -> [Workspace] {
         var workspaces = Array<Workspace>()
-        if let workspacesDictionaries = dictionary["workspaces"] as? [StringKeyedDictionary] {
-            for workspaceDictionary in workspacesDictionaries {
-                if let workspace = Workspace.fromTogglAPI(dictionary: workspaceDictionary) {
-                    workspaces.append(workspace)
-                }
+        for workspaceDictionary in dictionaries {
+            if let workspace = Workspace.fromTogglAPI(dictionary: workspaceDictionary) {
+                workspaces.append(workspace)
             }
         }
         return workspaces
@@ -108,13 +106,11 @@ extension Project {
         return nil
     }
 
-    static func collectionFromTogglAPI(dictionary: StringKeyedDictionary) -> [Project] {
+    static func collectionFromTogglAPI(dictionaries: [StringKeyedDictionary]) -> [Project] {
         var projects = Array<Project>()
-        if let projectsDictionaries = dictionary["projects"] as? [StringKeyedDictionary] {
-            for projectDictionary in projectsDictionaries {
-                if let project = Project.fromTogglAPI(dictionary: projectDictionary) {
-                    projects.append(project)
-                }
+        for projectDictionary in dictionaries {
+            if let project = Project.fromTogglAPI(dictionary: projectDictionary) {
+                projects.append(project)
             }
         }
         return projects

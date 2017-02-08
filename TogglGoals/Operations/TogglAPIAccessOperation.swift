@@ -120,7 +120,9 @@ class TogglAPIAccessOperation<T>: Operation, URLSessionDataDelegate {
     }
 
     // MARK: - URL
-    let rootAPIURLString = "https://www.toggl.com"
+    internal let rootAPIURLString = "https://www.toggl.com"
+    internal let apiV8Path = "/api/v8"
+    internal let reportsAPIV2Path = "/reports/api/v2"
 
     var endpointPath: String {
         get {

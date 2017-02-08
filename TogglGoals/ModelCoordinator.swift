@@ -50,24 +50,34 @@ internal class ModelCoordinator: NSObject {
         let (profile, shouldRefresh) = self.cache.retrieveUserProfile()
         self.profile.value = profile
         if shouldRefresh {
-            let op = NetworkRetrieveProfileOperation(credential: apiCredential)
-            op.completionBlock = {
-                if let profile = op.model?.0 {
+            let profileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
+            profileOp.completionBlock = {
+                if let profile = profileOp.model {
                     self.cache.storeUserProfile(profile)
                     self.profile.value = profile
                 }
-                if let workspaces = op.model?.1 {
+            }
+            let workspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
+            workspacesOp.completionBlock = {
+                if let workspaces = workspacesOp.model {
                     self.cache.storeWorkspaces(workspaces)
                     self.workspaces.value = workspaces
                 }
-                if let projects = op.model?.2 {
-                    self.cache.storeProjects(projects)
-                    self.projects.value = projects
+            }
+
+            let collectProjectsOp = CollectRetrievedProjectsOperation()
+            collectProjectsOp.completionBlock = { [weak self, weak collectProjectsOp] in
+                if let collectedProjects = collectProjectsOp?.collectedProjects,
+                    let s = self {
+                    s.projects.value?.append(contentsOf: collectedProjects) // TODO: this works only if there's a unique load at startup
                 }
             }
-            let cop = CollectRetrievedReportsOperation()
-            cop.completionBlock = { [weak self, weak cop] in
-                if let collectedReports = cop?.collectedReports,
+
+            let spawnRetrievalOfProjectsOp = SpawnRetrievalOfProjectsOperation(credential: apiCredential, collectRetrievedProjectsOperation: collectProjectsOp)
+
+            let collectReportsOp = CollectRetrievedReportsOperation()
+            collectReportsOp.completionBlock = { [weak self, weak collectReportsOp] in
+                if let collectedReports = collectReportsOp?.collectedReports,
                     let s = self {
                     for (projectId, report) in collectedReports {
                         let p = s.reportPropertyForProjectId(projectId)
@@ -75,12 +85,17 @@ internal class ModelCoordinator: NSObject {
                     }
                 }
             }
-            let top = SpawnRetrievalOfReportsOperation(credential: apiCredential, CollectRetrievedReportsOperation: cop)
-            top.addDependency(op)
-            cop.addDependency(top)
-            networkQueue.addOperation(op)
-            networkQueue.addOperation(top)
-            networkQueue.addOperation(cop)
+            let spawnRetrievalOfReportsOp = SpawnRetrievalOfReportsOperation(credential: apiCredential, collectRetrievedReportsOperation: collectReportsOp)
+
+            spawnRetrievalOfProjectsOp.addDependency(workspacesOp)
+            spawnRetrievalOfReportsOp.addDependency(workspacesOp)
+
+            networkQueue.addOperation(profileOp)
+            networkQueue.addOperation(workspacesOp)
+            networkQueue.addOperation(spawnRetrievalOfProjectsOp)
+            networkQueue.addOperation(collectProjectsOp)
+            networkQueue.addOperation(spawnRetrievalOfReportsOp)
+            networkQueue.addOperation(collectReportsOp)
         }
     }
 

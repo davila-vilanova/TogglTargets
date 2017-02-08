@@ -8,22 +8,21 @@
 
 import Foundation
 
-class NetworkRetrieveProfileOperation: TogglAPIAccessOperation<(Profile, [Workspace], [Project])> {
+class NetworkRetrieveProfileOperation: TogglAPIAccessOperation<Profile> {
     override var endpointPath: String {
         get {
-            return "/api/v8/me?with_related_data=true"
+            return "\(apiV8Path)/me"
         }
     }
 
-    override func unmarshallModel(from data: Data) -> (Profile, [Workspace], [Project])? {
+    override func unmarshallModel(from data: Data) -> Profile? {
         let json = try! JSONSerialization.jsonObject(with: data, options: [])
         if let dict = json as? Dictionary<String, Any>,
             let dataDict = dict["data"] as? Dictionary<String, Any>,
             let profile = Profile.fromTogglAPI(dictionary: dataDict) {
-            let workspaces = Workspace.collectionFromTogglAPI(dictionary: dataDict)
-            let projects = Project.collectionFromTogglAPI(dictionary: dataDict)
-            return (profile, workspaces, projects)
+            return profile
+        } else {
+            return nil
         }
-        return nil
     }
 }

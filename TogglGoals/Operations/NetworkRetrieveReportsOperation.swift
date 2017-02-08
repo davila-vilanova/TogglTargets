@@ -14,7 +14,7 @@ internal class NetworkRetrieveReportsOperation: TogglAPIAccessOperation<Dictiona
             let since = "2017-01-01"
             let until = "2017-01-31"
             let userAgent = "david@davi.la"
-            return "/reports/api/v2/summary?workspace_id=\(workspaceId)&since=\(since)&until=\(until)&grouping=projects&subgrouping=users&user_agent=\(userAgent)"
+            return "\(reportsAPIV2Path)/summary?workspace_id=\(workspaceId)&since=\(since)&until=\(until)&grouping=projects&subgrouping=users&user_agent=\(userAgent)"
         }
     }
 
