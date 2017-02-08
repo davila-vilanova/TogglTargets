@@ -51,18 +51,14 @@ internal class ModelCoordinator: NSObject {
         self.profile.value = profile
         if shouldRefresh {
             let profileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
-            profileOp.completionBlock = {
-                if let profile = profileOp.model {
-                    self.cache.storeUserProfile(profile)
-                    self.profile.value = profile
-                }
+            profileOp.onSuccess = { profile in
+                self.cache.storeUserProfile(profile)
+                self.profile.value = profile
             }
             let workspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
-            workspacesOp.completionBlock = {
-                if let workspaces = workspacesOp.model {
-                    self.cache.storeWorkspaces(workspaces)
-                    self.workspaces.value = workspaces
-                }
+            workspacesOp.onSuccess = { workspaces in
+                self.cache.storeWorkspaces(workspaces)
+                self.workspaces.value = workspaces
             }
 
             let collectProjectsOp = CollectRetrievedProjectsOperation()

@@ -112,8 +112,14 @@ class TogglAPIAccessOperation<T>: Operation, URLSessionDataDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let e = error {
             self.error = e
+            onError?(e)
         } else {
             self.model = unmarshallModel(from: self.data)
+            if let model = self.model {
+                onSuccess?(model)
+            } else {
+                // TODO: trigger error. Let unmarshallModel throw error above.
+            }
         }
         isExecuting = false
         isFinished = true
@@ -142,9 +148,11 @@ class TogglAPIAccessOperation<T>: Operation, URLSessionDataDelegate {
     var response: URLResponse?
     var data: Data = Data()
     var error: Error?
-    
     var model: T?
-    
+
+    var onError: ( (Error) -> () )?
+    var onSuccess: ( (T) -> () )?
+
     func unmarshallModel(from data: Data) -> T? {
         assert(false, "override me in subclass")
         return nil
