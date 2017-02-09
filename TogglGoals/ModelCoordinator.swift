@@ -61,48 +61,50 @@ internal class ModelCoordinator: NSObject {
                 self.workspaces.value = workspaces
             }
 
-            let collectProjectsOp = CollectRetrievedProjectsOperation()
-            collectProjectsOp.completionBlock = { [weak self, weak collectProjectsOp] in
-                if let collectedProjects = collectProjectsOp?.collectedProjects,
-                    let s = self {
-                    s.projects.value?.append(contentsOf: collectedProjects) // TODO: this works only if there's a unique load at startup
+            let collectProjectsOp = CollectionOperation<NetworkRetrieveProjectsOperation>() { [weak self] operations in
+                for retrieveProjectsOp in operations {
+                    if let retrievedProjects = retrieveProjectsOp.model {
+                        self?.projects.value?.append(contentsOf: retrievedProjects)
+                    }
                 }
+
             }
 
             let spawnRetrievalOfProjectsOp =
-                SpawningOperation<Workspace, [Project], CollectRetrievedProjectsOperation> (
+                SpawningOperation<Workspace, [Project], CollectionOperation<NetworkRetrieveProjectsOperation>> (
                     inputRetrievalOperation:workspacesOp,
-                    outputCollectionOperation: collectProjectsOp) { [weak self] workspace in
+                    outputCollectionOperation: collectProjectsOp) { [weak self, weak collectProjectsOp] workspace in
                         if let s = self {
-                            return NetworkRetrieveProjectsOperation(credential: s.apiCredential, workspaceId: workspace.id)
+                            let op = NetworkRetrieveProjectsOperation(credential: s.apiCredential, workspaceId: workspace.id)
+                            collectProjectsOp?.addDependency(op)
+                            return op
                         }
                         return nil
             }
 
-            let collectReportsOp = CollectRetrievedReportsOperation()
-            collectReportsOp.completionBlock = { [weak self, weak collectReportsOp] in
-                if let collectedReports = collectReportsOp?.collectedReports,
-                    let s = self {
-                    for (projectId, report) in collectedReports {
-                        let p = s.reportPropertyForProjectId(projectId)
-                        p.value = report
+            let collectReportsOp = CollectionOperation<NetworkRetrieveReportsOperation>() { [weak self] operations in
+                for retrieveReportsOp in operations {
+                    if let retrievedReports = retrieveReportsOp.model,
+                        let unwrappedSelf = self {
+                        for (projectId, report) in retrievedReports {
+                            let p = unwrappedSelf.reportPropertyForProjectId(projectId)
+                            p.value = report
+                        }
                     }
                 }
             }
+
             let spawnRetrievalOfReportsOp =
-                SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, CollectRetrievedReportsOperation> (
+                SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, CollectionOperation<NetworkRetrieveReportsOperation>> (
                     inputRetrievalOperation: workspacesOp,
-                    outputCollectionOperation: collectReportsOp) { [weak self] workspace in
+                    outputCollectionOperation: collectReportsOp) { [weak self, weak collectReportsOp] workspace in
                         if let s = self {
-                            return NetworkRetrieveReportsOperation(credential: s.apiCredential, workspaceId: workspace.id)
+                            let op = NetworkRetrieveReportsOperation(credential: s.apiCredential, workspaceId: workspace.id)
+                            collectReportsOp?.addDependency(op)
+                            return op
                         }
                         return nil
             }
-
-//                SpawnRetrievalOfReportsOperation(credential: apiCredential, collectRetrievedReportsOperation: collectReportsOp)
-
-            spawnRetrievalOfProjectsOp.addDependency(workspacesOp)
-            spawnRetrievalOfReportsOp.addDependency(workspacesOp)
 
             networkQueue.addOperation(profileOp)
             networkQueue.addOperation(workspacesOp)
