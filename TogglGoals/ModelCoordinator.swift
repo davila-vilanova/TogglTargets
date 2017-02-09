@@ -69,7 +69,15 @@ internal class ModelCoordinator: NSObject {
                 }
             }
 
-            let spawnRetrievalOfProjectsOp = SpawnRetrievalOfProjectsOperation(credential: apiCredential, collectRetrievedProjectsOperation: collectProjectsOp)
+            let spawnRetrievalOfProjectsOp =
+                SpawningOperation<Workspace, [Project], CollectRetrievedProjectsOperation> (
+                    inputRetrievalOperation:workspacesOp,
+                    outputCollectionOperation: collectProjectsOp) { [weak self] workspace in
+                        if let s = self {
+                            return NetworkRetrieveProjectsOperation(credential: s.apiCredential, workspaceId: workspace.id)
+                        }
+                        return nil
+            }
 
             let collectReportsOp = CollectRetrievedReportsOperation()
             collectReportsOp.completionBlock = { [weak self, weak collectReportsOp] in
@@ -81,7 +89,17 @@ internal class ModelCoordinator: NSObject {
                     }
                 }
             }
-            let spawnRetrievalOfReportsOp = SpawnRetrievalOfReportsOperation(credential: apiCredential, collectRetrievedReportsOperation: collectReportsOp)
+            let spawnRetrievalOfReportsOp =
+                SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, CollectRetrievedReportsOperation> (
+                    inputRetrievalOperation: workspacesOp,
+                    outputCollectionOperation: collectReportsOp) { [weak self] workspace in
+                        if let s = self {
+                            return NetworkRetrieveReportsOperation(credential: s.apiCredential, workspaceId: workspace.id)
+                        }
+                        return nil
+            }
+
+//                SpawnRetrievalOfReportsOperation(credential: apiCredential, collectRetrievedReportsOperation: collectReportsOp)
 
             spawnRetrievalOfProjectsOp.addDependency(workspacesOp)
             spawnRetrievalOfReportsOp.addDependency(workspacesOp)
