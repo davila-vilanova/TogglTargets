@@ -73,11 +73,9 @@ internal class ModelCoordinator: NSObject {
             let spawnRetrievalOfProjectsOp =
                 SpawningOperation<Workspace, [Project], CollectionOperation<NetworkRetrieveProjectsOperation>> (
                     inputRetrievalOperation:workspacesOp,
-                    outputCollectionOperation: collectProjectsOp) { [weak self, weak collectProjectsOp] workspace in
+                    outputCollectionOperation: collectProjectsOp) { [weak self] workspace in
                         if let s = self {
-                            let op = NetworkRetrieveProjectsOperation(credential: s.apiCredential, workspaceId: workspace.id)
-                            collectProjectsOp?.addDependency(op)
-                            return op
+                            return NetworkRetrieveProjectsOperation(credential: s.apiCredential, workspaceId: workspace.id)
                         }
                         return nil
             }
@@ -97,11 +95,9 @@ internal class ModelCoordinator: NSObject {
             let spawnRetrievalOfReportsOp =
                 SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, CollectionOperation<NetworkRetrieveReportsOperation>> (
                     inputRetrievalOperation: workspacesOp,
-                    outputCollectionOperation: collectReportsOp) { [weak self, weak collectReportsOp] workspace in
+                    outputCollectionOperation: collectReportsOp) { [weak self] workspace in
                         if let s = self {
-                            let op = NetworkRetrieveReportsOperation(credential: s.apiCredential, workspaceId: workspace.id)
-                            collectReportsOp?.addDependency(op)
-                            return op
+                            return NetworkRetrieveReportsOperation(credential: s.apiCredential, workspaceId: workspace.id)
                         }
                         return nil
             }
