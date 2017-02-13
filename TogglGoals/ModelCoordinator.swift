@@ -46,6 +46,26 @@ internal class ModelCoordinator: NSObject {
         retrieveUserProfile()
     }
 
+    private func sortAndSetProjects(_ unsortedProjects: [Project]) {
+        // TODO: clean up
+        // TODO: sorting only takes place right after loading projects. Better if sorting happens also after editing goal.
+        self.projects.value = unsortedProjects.sorted(by: { (p1, p2) -> Bool in
+            let g1 = goalsStore.retrieveGoal(projectId: p1.id)
+            let g2 = goalsStore.retrieveGoal(projectId: p2.id)
+
+            if let hours1 = g1?.hoursPerMonth {
+                if let hours2 = g2?.hoursPerMonth {
+                    return hours1 >= hours2
+                } else {
+                    return true
+                }
+            } else {
+                return g2?.hoursPerMonth == nil
+            }
+        })
+    }
+
+
     private func retrieveUserProfile() {
         let (profile, shouldRefresh) = self.cache.retrieveUserProfile()
         self.profile.value = profile
@@ -69,11 +89,14 @@ internal class ModelCoordinator: NSObject {
                         NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)
                     },
                     collectionClosure: { [weak self] retrieveProjectsOps in
+                        var allProjects = Array<Project>()
                         for retrieveProjectsOp in retrieveProjectsOps {
                             if let retrievedProjects = retrieveProjectsOp.model {
-                                self?.projects.value?.append(contentsOf: retrievedProjects)
+                                allProjects.append(contentsOf: retrievedProjects)
                             }
                         }
+
+                        self?.sortAndSetProjects(allProjects)
                     })
 
             let retrieveReportsOp =
