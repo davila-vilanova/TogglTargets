@@ -11,17 +11,19 @@ import Foundation
 internal class NetworkRetrieveReportsOperation: TogglAPIAccessOperation<Dictionary<Int64, TimeReport>> {
     override var endpointPath: String {
         get {
-            let since = "2017-01-01"
-            let until = "2017-01-31"
             let userAgent = "david@davi.la"
             return "\(reportsAPIV2Path)/summary?workspace_id=\(workspaceId)&since=\(since)&until=\(until)&grouping=projects&subgrouping=users&user_agent=\(userAgent)"
         }
     }
 
     let workspaceId: Int64
+    let since: String
+    let until: String
 
-    init(credential: TogglAPICredential, workspaceId: Int64) {
+    init(credential: TogglAPICredential, workspaceId: Int64, since: String, until: String) {
         self.workspaceId = workspaceId
+        self.since = since
+        self.until = until
         super.init(credential: credential)
     }
 

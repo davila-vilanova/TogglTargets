@@ -103,7 +103,7 @@ internal class ModelCoordinator: NSObject {
                 SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, NetworkRetrieveReportsOperation>(
                     inputRetrievalOperation: workspacesOp,
                     spawnOperationMaker: { [credential = apiCredential] workspace in
-                        NetworkRetrieveReportsOperation(credential: credential, workspaceId: workspace.id)
+                        NetworkRetrieveReportsOperation(credential: credential, workspaceId: workspace.id, since: firstDateOfTheMonth(), until: lastDateOfTheMonth())
                     },
                     collectionClosure: { [weak self] retrieveReportsOps in
                         for retrieveReportsOp in retrieveReportsOps {
@@ -169,4 +169,31 @@ internal class ModelCoordinator: NSObject {
 
 protocol ModelCoordinatorContaining {
     var modelCoordinator: ModelCoordinator? { get set }
+}
+
+fileprivate func firstDateOfTheMonth() -> String {
+    return dateString(monthDifferential: 0, day: 1)
+}
+
+fileprivate func lastDateOfTheMonth() -> String {
+    return dateString(monthDifferential: 1, day: 0)
+}
+
+fileprivate func dateString(monthDifferential: Int, day: Int) -> String {
+    var calendar = Calendar(identifier: .gregorian)
+    let timeZone = TimeZone.current
+    calendar.timeZone = timeZone
+    let now = Date()
+
+    let calendarComponents: Set<Calendar.Component> = [.year, .month, .day]
+    var components = calendar.dateComponents(calendarComponents, from: now)
+    components.month? += monthDifferential
+    components.day = day
+    let lastDayOfMonth = calendar.date(from: components)!
+
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withYear, .withMonth, .withDay, .withDashSeparatorInDate]
+    formatter.timeZone = timeZone
+
+    return formatter.string(from: lastDayOfMonth)
 }
