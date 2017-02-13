@@ -1,0 +1,4 @@
+Easier to use spawning - collection ops
+if SpawningOperation knows about the NetworkRetrieveProjectsOperation, it knows about the corresponding CollectionOperation and it might know about the corresponding OutputModel (if possible to access from generic type).
+With that knowledge it could receive the collection closure along with the spawning closure. Or it could receive a maker of the collection operation. Use a maker (factory) instead of the operation spawner.
+

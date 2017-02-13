@@ -55,59 +55,50 @@ internal class ModelCoordinator: NSObject {
                 self.cache.storeUserProfile(profile)
                 self.profile.value = profile
             }
+
             let workspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
             workspacesOp.onSuccess = { workspaces in
                 self.cache.storeWorkspaces(workspaces)
                 self.workspaces.value = workspaces
             }
 
-            let collectProjectsOp = CollectionOperation<NetworkRetrieveProjectsOperation>() { [weak self] operations in
-                for retrieveProjectsOp in operations {
-                    if let retrievedProjects = retrieveProjectsOp.model {
-                        self?.projects.value?.append(contentsOf: retrievedProjects)
-                    }
-                }
-
-            }
-
-            let spawnRetrievalOfProjectsOp =
-                SpawningOperation<Workspace, [Project], CollectionOperation<NetworkRetrieveProjectsOperation>> (
-                    inputRetrievalOperation:workspacesOp,
-                    outputCollectionOperation: collectProjectsOp) { [weak self] workspace in
-                        if let s = self {
-                            return NetworkRetrieveProjectsOperation(credential: s.apiCredential, workspaceId: workspace.id)
-                        }
-                        return nil
-            }
-
-            let collectReportsOp = CollectionOperation<NetworkRetrieveReportsOperation>() { [weak self] operations in
-                for retrieveReportsOp in operations {
-                    if let retrievedReports = retrieveReportsOp.model,
-                        let unwrappedSelf = self {
-                        for (projectId, report) in retrievedReports {
-                            let p = unwrappedSelf.reportPropertyForProjectId(projectId)
-                            p.value = report
-                        }
-                    }
-                }
-            }
-
-            let spawnRetrievalOfReportsOp =
-                SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, CollectionOperation<NetworkRetrieveReportsOperation>> (
+            let retrieveProjectsOp =
+                SpawningOperation<Workspace, [Project], NetworkRetrieveProjectsOperation>(
                     inputRetrievalOperation: workspacesOp,
-                    outputCollectionOperation: collectReportsOp) { [weak self] workspace in
-                        if let s = self {
-                            return NetworkRetrieveReportsOperation(credential: s.apiCredential, workspaceId: workspace.id)
+                    spawnOperationMaker: { [credential = apiCredential] workspace in
+                        NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)
+                    },
+                    collectionClosure: { [weak self] retrieveProjectsOps in
+                        for retrieveProjectsOp in retrieveProjectsOps {
+                            if let retrievedProjects = retrieveProjectsOp.model {
+                                self?.projects.value?.append(contentsOf: retrievedProjects)
+                            }
                         }
-                        return nil
-            }
+                    })
+
+            let retrieveReportsOp =
+                SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, NetworkRetrieveReportsOperation>(
+                    inputRetrievalOperation: workspacesOp,
+                    spawnOperationMaker: { [credential = apiCredential] workspace in
+                        NetworkRetrieveReportsOperation(credential: credential, workspaceId: workspace.id)
+                    },
+                    collectionClosure: { [weak self] retrieveReportsOps in
+                        for retrieveReportsOp in retrieveReportsOps {
+                            if let retrievedReports = retrieveReportsOp.model,
+                                let unwrappedSelf = self {
+                                for (projectId, report) in retrievedReports {
+                                    let p = unwrappedSelf.reportPropertyForProjectId(projectId)
+                                    p.value = report
+                                }
+                            }
+                        }
+                    })
+
 
             networkQueue.addOperation(profileOp)
             networkQueue.addOperation(workspacesOp)
-            networkQueue.addOperation(spawnRetrievalOfProjectsOp)
-            networkQueue.addOperation(collectProjectsOp)
-            networkQueue.addOperation(spawnRetrievalOfReportsOp)
-            networkQueue.addOperation(collectReportsOp)
+            networkQueue.addOperation(retrieveProjectsOp)
+            networkQueue.addOperation(retrieveReportsOp)
         }
     }
 
