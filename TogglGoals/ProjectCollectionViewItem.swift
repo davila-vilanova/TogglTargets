@@ -130,7 +130,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem
             let hours = r.workedTime / 3600
             newStringValue = String.init(format: "%.2f hours worked", hours)
         } else {
-            newStringValue = "(no report)"
+            newStringValue = "Zero hours worked"
         }
 
         DispatchQueue.main.async { [weak self, newStringValue] in
