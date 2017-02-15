@@ -28,7 +28,6 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     internal func onProjectSelected(project: Project) {
         let projectId = project.id
 
-
         if let name = project.name {
             projectName.stringValue = name
         } else {
@@ -55,7 +54,9 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     @IBAction func monthlyHoursGoalEdited(_ sender: NSTextField) {
         if let parsedHours = monthlyHoursGoalFormatter.number(from: sender.stringValue) {
-            observedGoalProperty?.original?.value?.hoursPerMonth = parsedHours.intValue
+            let hoursPerMonth = parsedHours.intValue
+            createGoalIfNotExists(hoursPerMonth: hoursPerMonth)
+            observedGoalProperty?.original?.value?.hoursPerMonth = hoursPerMonth
         } else {
             sender.stringValue = ""
         }
@@ -63,28 +64,26 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     @IBAction func workDaysPerWeekEdited(_ sender: NSTextFieldCell) {
         if let parsedDays = workDaysPerWeekFormatter.number(from: sender.stringValue) {
-            observedGoalProperty?.original?.value?.workDaysPerWeek = parsedDays.intValue
+            let daysPerWeek = parsedDays.intValue
+            createGoalIfNotExists(daysPerWeek: daysPerWeek)
+            observedGoalProperty?.original?.value?.workDaysPerWeek = daysPerWeek
         } else {
             sender.stringValue = ""
         }
     }
 
     private func handleGoalValue(_ goal: TimeGoal?) {
-        if let g = goal {
-            displayGoal(goal: g)
-        } else if let p = projectId {
-            createGoal(projectId: p)
-        }
+        displayGoal(goal: goal)
     }
 
-    private func displayGoal(goal: TimeGoal) {
-        if let hours = goal.hoursPerMonth,
+    private func displayGoal(goal: TimeGoal?) {
+        if let hours = goal?.hoursPerMonth,
             let hoursString = monthlyHoursGoalFormatter.string(from: NSNumber(value: hours)) {
             monthlyHoursGoalField.stringValue = hoursString
         } else {
             monthlyHoursGoalField.stringValue = ""
         }
-        if let days = goal.workDaysPerWeek,
+        if let days = goal?.workDaysPerWeek,
             let daysString = workDaysPerWeekFormatter.string(from: NSNumber(value: days)) {
             workDaysPerWeekGoalField.stringValue = daysString
         } else {
@@ -92,10 +91,13 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         }
     }
 
-    private func createGoal(projectId: Int64) {
-        var goal = TimeGoal(forProjectId: projectId)
-        goal.hoursPerMonth = 25
-        goal.workDaysPerWeek = 5
-        modelCoordinator?.initializeGoal(goal)
+    private func createGoalIfNotExists(hoursPerMonth: Int = 0, daysPerWeek: Int = 0) {
+        if self.observedGoalProperty?.original?.value == nil,
+            let projectId = self.projectId {
+            var goal = TimeGoal(forProjectId: projectId)
+            goal.hoursPerMonth = hoursPerMonth
+            goal.workDaysPerWeek = daysPerWeek
+            modelCoordinator?.initializeGoal(goal)
+        }
     }
 }
