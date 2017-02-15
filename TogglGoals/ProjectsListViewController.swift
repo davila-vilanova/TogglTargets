@@ -65,6 +65,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     func refresh() {
         projectsCollectionView.reloadData()
+        if let projects = self.projects,
+            !projects.isEmpty,
+            projectsCollectionView.selectionIndexes.isEmpty {
+            projectsCollectionView.selectItems(at: [IndexPath(item: 0, section: 0)], scrollPosition: .top)
+            didSelectProject?(projects[0])
+        }
     }
 
     // MARK: - NSCollectionViewDataSource
