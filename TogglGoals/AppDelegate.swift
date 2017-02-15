@@ -10,19 +10,72 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, ModelCoordinatorContaining {
-    lazy var modelCoordinator: ModelCoordinator? = {
+    var modelCoordinator: ModelCoordinator?
+
+    override init() {
+        super.init()
+
+        let supportDir: URL
+
+        do {
+            supportDir = try SupportDirectoryProvider.shared.appSupportDirectory()
+        } catch {
+            fatalError("Can't access app support directory")
+        }
+
         let modelCache = ModelCache()
-        let goalsStore = GoalsStore()
-        return ModelCoordinator(cache: modelCache, goalsStore: goalsStore)
-    }()
+        if let goalsStore = GoalsStore(baseDirectory: supportDir) {
+            modelCoordinator = ModelCoordinator(cache: modelCache, goalsStore: goalsStore)
+        } else {
+            fatalError("Goals store failed to initialize")
+        }
+    }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
-
 }
 
+fileprivate class SupportDirectoryProvider {
+    static var shared: SupportDirectoryProvider = { SupportDirectoryProvider() }()
+
+    private let fileManager = FileManager.default
+
+    private let defaultAppIdentifier = "la.davi.TogglGoals" // fallback if no bundle ID available
+    private var _appIdentifier: String?
+    private var appIdentifier: String {
+        get {
+            if let identifier = _appIdentifier {
+                return identifier
+            } else if let identifier = Bundle.main.bundleIdentifier {
+                _appIdentifier = identifier
+                return identifier
+            } else {
+                return defaultAppIdentifier
+            }
+        }
+    }
+
+    private var _appSupportDirectory: URL?
+    func appSupportDirectory() throws -> URL {
+        if let supportDir = _appSupportDirectory {
+            return supportDir
+        }
+
+        let userAppSupportDir = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+
+        let supportDir = URL(fileURLWithPath: appIdentifier, relativeTo: userAppSupportDir)
+
+        do {
+            try _ = supportDir.checkResourceIsReachable()
+        } catch {
+            try fileManager.createDirectory(at: supportDir, withIntermediateDirectories: true, attributes: nil)
+        }
+
+        _appSupportDirectory = supportDir
+        return supportDir
+    }
+}

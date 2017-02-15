@@ -11,4 +11,6 @@ ReportsProvidingOperation
 
 
 cacheRead - cache write in TogglAPIAccessOperation or analogous
+NSURL *appSupportDir = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:&error];
 
+make it exciting

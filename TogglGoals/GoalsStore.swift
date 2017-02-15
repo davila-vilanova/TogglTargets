@@ -20,10 +20,15 @@ class GoalsStore {
     let hoursPerMonth = Expression<Int?>("hours_per_month")
     let workDaysPerWeek = Expression<Int?>("work_days_per_week")
 
-    init() {
-        db = try! Connection("goalsdb.sqlite3")
-        ensureTableCreated()
-        retrieveAllGoals()
+    init?(baseDirectory: URL?) {
+        do {
+            let databaseURL = URL(fileURLWithPath: "goalsdb.sqlite3", relativeTo: baseDirectory)
+            db = try Connection(databaseURL.absoluteString)
+            ensureTableCreated()
+            retrieveAllGoals()
+        } catch {
+            return nil
+        }
     }
 
     internal func retrieveGoal(projectId: Int64) -> TimeGoal? {
