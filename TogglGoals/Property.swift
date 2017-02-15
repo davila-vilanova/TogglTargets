@@ -95,7 +95,7 @@ internal class ObservedProperty<T> {
 
     internal init(original: Property<T>,
                   valueObserver: @escaping ValueObserver,
-                  invalidationObserver: @escaping InvalidationObserver) {
+                  invalidationObserver: @escaping InvalidationObserver = { }) {
         guard !original.isInvalidated else {
             invalidationObserver()
             return
@@ -120,6 +120,15 @@ internal class ObservedProperty<T> {
         observerToken = nil
         valueObserver = nil
         invalidationObserver = nil
+    }
+
+    internal func reportImmediately() -> ObservedProperty<T> {
+        if isInvalidated {
+            invalidationObserver?()
+        } else {
+            valueObserver?(original?.value)
+        }
+        return self
     }
 
     deinit {

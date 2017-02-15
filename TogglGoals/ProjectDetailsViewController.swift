@@ -17,8 +17,9 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var projectName: NSTextField!
 
     var modelCoordinator: ModelCoordinator?
+    private var representedProject: Project?
     private var observedGoalProperty: ObservedProperty<TimeGoal>?
-    private var projectId: Int64?
+    private var observedReportProperty: ObservedProperty<TimeReport>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +27,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     }
 
     internal func onProjectSelected(project: Project) {
-        let projectId = project.id
+        self.representedProject = project
 
         if let name = project.name {
             projectName.stringValue = name
@@ -34,21 +35,17 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
             projectName.stringValue = "No name"
         }
 
-        Swift.print("selected project with id=\(projectId)")
-        self.projectId = projectId
+        Swift.print("selected project=\(project)")
 
         if let mc = modelCoordinator {
-            let goalProperty = mc.goalPropertyForProjectId(projectId)
-            Swift.print("Goal for project=\(goalProperty)")
+            let goalProperty = mc.goalPropertyForProjectId(project.id)
 
             observedGoalProperty?.unobserve()
-            observedGoalProperty =
-                ObservedProperty<TimeGoal>(original: goalProperty,
-                                           valueObserver: { [weak self] (goal) in
-                                            self?.handleGoalValue(goal)
-                    },
-                                           invalidationObserver: { })
-            handleGoalValue(goalProperty.value)
+            observedGoalProperty = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (goal) in self?.handleGoalValue(goal)}).reportImmediately()
+
+            let reportProperty = mc.reportPropertyForProjectId(project.id)
+            observedReportProperty?.unobserve()
+            observedReportProperty = ObservedProperty<TimeReport>(original: reportProperty, valueObserver: { [weak self] (report) in self?.handleReportValue(report) }).reportImmediately()
         }
     }
 
@@ -76,6 +73,10 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         displayGoal(goal: goal)
     }
 
+    private func handleReportValue(_ report: TimeReport?) {
+        print("new report value=\(report)");
+    }
+
     private func displayGoal(goal: TimeGoal?) {
         if let hours = goal?.hoursPerMonth,
             let hoursString = monthlyHoursGoalFormatter.string(from: NSNumber(value: hours)) {
@@ -93,7 +94,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     private func createGoalIfNotExists(hoursPerMonth: Int = 0, daysPerWeek: Int = 0) {
         if self.observedGoalProperty?.original?.value == nil,
-            let projectId = self.projectId {
+            let projectId = representedProject?.id {
             var goal = TimeGoal(forProjectId: projectId)
             goal.hoursPerMonth = hoursPerMonth
             goal.workDaysPerWeek = daysPerWeek
