@@ -117,6 +117,77 @@ extension Project {
     }
 }
 
+enum Weekday: Int {
+    case sunday = 0
+    case monday
+    case tuesday
+    case wednesday
+    case thursday
+    case friday
+    case saturday
+
+    static let allDays: Set<Weekday> = {
+        var days = Set<Weekday>()
+        var dayIndex = 0
+        while let day = Weekday(rawValue: dayIndex) {
+            days.insert(day)
+            dayIndex += 1
+        }
+        return days
+    }()
+
+    static let allDaysOrdered: Array<Weekday> = {
+        var days = Array<Weekday>()
+        var dayIndex = 0
+        while let day = Weekday(rawValue: dayIndex) {
+            days.append(day)
+            dayIndex += 1
+        }
+        return days
+    }()
+}
+
+struct WeekdaySelection {
+    private var selectionDict = Dictionary<Weekday, Bool>()
+
+    mutating func select(_ day: Weekday) {
+        selectionDict[day] = true
+    }
+
+    mutating func deselect(_ day: Weekday) {
+        selectionDict[day] = false
+    }
+
+    func isSelected(_ day: Weekday) -> Bool {
+        if let selection = selectionDict[day] {
+            return selection
+        } else {
+            return false
+        }
+    }
+
+    var debugDescription: String {
+        get {
+            var desc: String = ""
+            for day in Weekday.allDaysOrdered {
+                let selected = isSelected(day) ? "✅" : "❌"
+                desc += "[\(day):\(selected)]"
+            }
+            return desc
+        }
+    }
+}
+
+extension WeekdaySelection: Equatable {
+    static func ==(lhs: WeekdaySelection, rhs: WeekdaySelection) -> Bool {
+        for day in Weekday.allDays {
+            if lhs.isSelected(day) != rhs.isSelected(day) {
+                return false
+            }
+        }
+        return true
+    }
+}
 
 struct TimeGoal {
     let projectId: Int64

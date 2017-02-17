@@ -12,8 +12,8 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     @IBOutlet weak var monthlyHoursGoalField: NSTextField!
     @IBOutlet weak var monthlyHoursGoalFormatter: NumberFormatter!
-    @IBOutlet weak var workDaysPerWeekGoalField: NSTextField!
-    @IBOutlet weak var workDaysPerWeekFormatter: NumberFormatter!
+    @IBOutlet weak var weekWorkDaysControl: NSSegmentedControl!
+
     @IBOutlet weak var projectName: NSTextField!
 
     var modelCoordinator: ModelCoordinator?
@@ -21,9 +21,52 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     private var observedGoalProperty: ObservedProperty<TimeGoal>?
     private var observedReportProperty: ObservedProperty<TimeReport>?
 
+    private lazy var calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.autoupdatingCurrent
+        return calendar
+    }()
+
+    private var segmentsToWeekdays = Dictionary<Int, Weekday>()
+    private var weekdaysToSegments = Dictionary<Weekday, Int>()
+
+    private var selectedWorkDays = Set<Weekday>()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do view setup here.
+
+        populateWeekWorkDaysControl()
+    }
+
+    private func populateWeekWorkDaysControl() {
+        let weekdaySymbols = calendar.veryShortWeekdaySymbols
+        weekWorkDaysControl.segmentCount = weekdaySymbols.count
+
+        let startFrom = Weekday.monday
+        var dayIndex = startFrom.rawValue
+        var segmentIndex = 0
+
+        segmentsToWeekdays.removeAll()
+        weekdaysToSegments.removeAll()
+
+        func addSegment(_ day: Weekday) {
+            let daySymbol = weekdaySymbols[day.rawValue]
+            weekWorkDaysControl.setLabel(daySymbol, forSegment: segmentIndex)
+            segmentsToWeekdays[segmentIndex] = day
+            weekdaysToSegments[day] = segmentIndex
+            segmentIndex += 1
+        }
+
+        while let day = Weekday(rawValue: dayIndex) {
+            addSegment(day)
+            dayIndex += 1
+        }
+
+        dayIndex = 0
+        while let day = Weekday(rawValue: dayIndex), dayIndex < startFrom.rawValue {
+            addSegment(day)
+            dayIndex += 1
+        }
     }
 
     internal func onProjectSelected(project: Project) {
@@ -59,14 +102,19 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         }
     }
 
-    @IBAction func workDaysPerWeekEdited(_ sender: NSTextFieldCell) {
-        if let parsedDays = workDaysPerWeekFormatter.number(from: sender.stringValue) {
-            let daysPerWeek = parsedDays.intValue
-            createGoalIfNotExists(daysPerWeek: daysPerWeek)
-            observedGoalProperty?.original?.value?.workDaysPerWeek = daysPerWeek
-        } else {
-            sender.stringValue = ""
+
+    @IBAction func weekWorkDaysEdited(_ sender: NSSegmentedControl) {
+        var selection = WeekdaySelection()
+
+        for (day, segmentIndex) in weekdaysToSegments {
+            assert(segmentIndex < sender.segmentCount)
+            if sender.isSelected(forSegment: segmentIndex) {
+                selection.select(day)
+            } else {
+                selection.deselect(day)
+            }
         }
+        print("day selection: \(selection.debugDescription)")
     }
 
     private func handleGoalValue(_ goal: TimeGoal?) {
@@ -84,12 +132,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         } else {
             monthlyHoursGoalField.stringValue = ""
         }
-        if let days = goal?.workDaysPerWeek,
-            let daysString = workDaysPerWeekFormatter.string(from: NSNumber(value: days)) {
-            workDaysPerWeekGoalField.stringValue = daysString
-        } else {
-            workDaysPerWeekGoalField.stringValue = ""
-        }
+        // TODO: display work days per week
     }
 
     private func createGoalIfNotExists(hoursPerMonth: Int = 0, daysPerWeek: Int = 0) {
