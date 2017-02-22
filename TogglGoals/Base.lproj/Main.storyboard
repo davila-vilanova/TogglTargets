@@ -1073,6 +1073,16 @@
                                     <constraint firstAttribute="height" constant="45" id="Nb8-TN-lPn"/>
                                 </constraints>
                             </box>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O7w-Ao-X9F">
+                                <rect key="frame" x="383" y="384" width="82" height="19"/>
+                                <buttonCell key="cell" type="recessed" title="create goal" bezelStyle="recessed" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QnR-dT-cnD">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                    <font key="font" metaFont="systemBold" size="12"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="createGoal:" target="zvs-ll-aji" id="2I7-Rs-8cm"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="mln-Aq-QDd" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="05e-uy-mXq"/>
@@ -1083,7 +1093,9 @@
                             <constraint firstItem="P1q-um-IkR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="xWN-8s-auk" secondAttribute="trailing" constant="20" id="6bS-We-APX"/>
                             <constraint firstItem="zy6-xm-THW" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="6cu-Ym-6Z1"/>
                             <constraint firstItem="lal-vl-FyN" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="ARZ-Td-L4X"/>
+                            <constraint firstItem="KmV-P0-dzM" firstAttribute="leading" secondItem="O7w-Ao-X9F" secondAttribute="trailing" constant="8" symbolic="YES" id="AW3-2J-ILZ"/>
                             <constraint firstItem="xWN-8s-auk" firstAttribute="top" secondItem="zy6-xm-THW" secondAttribute="bottom" constant="8" symbolic="YES" id="Bod-zM-Psb"/>
+                            <constraint firstItem="KmV-P0-dzM" firstAttribute="centerY" secondItem="O7w-Ao-X9F" secondAttribute="centerY" id="H3x-kc-pS0"/>
                             <constraint firstItem="xWN-8s-auk" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="Hne-kv-E8c"/>
                             <constraint firstItem="Zz8-u3-exR" firstAttribute="top" secondItem="P1q-um-IkR" secondAttribute="bottom" constant="8" symbolic="YES" id="Kkj-xp-Rt1"/>
                             <constraint firstItem="zy6-xm-THW" firstAttribute="top" secondItem="gsF-QE-CKg" secondAttribute="bottom" constant="20" symbolic="YES" id="MB0-bU-glf"/>
@@ -1111,6 +1123,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="goalButton" destination="O7w-Ao-X9F" id="Mmd-aL-2BP"/>
                         <outlet property="monthlyHoursGoalField" destination="BiS-Y9-O7e" id="OZm-sj-IQi"/>
                         <outlet property="monthlyHoursGoalFormatter" destination="i7g-2o-BQJ" id="bTR-YS-zBk"/>
                         <outlet property="projectName" destination="ifD-zz-iY5" id="pO9-jg-jgp"/>

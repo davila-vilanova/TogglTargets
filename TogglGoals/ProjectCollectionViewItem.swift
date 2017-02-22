@@ -107,11 +107,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem
         }
         let newStringValue: String
         if let g = goal {
-            if let hours = g.hoursPerMonth {
-                newStringValue = "\(hours) hours per month"
-            } else {
-                newStringValue = "? hours per month"
-            }
+            newStringValue = "\(g.hoursPerMonth) hours per month"
         } else {
             newStringValue = "(no goal)"
         }

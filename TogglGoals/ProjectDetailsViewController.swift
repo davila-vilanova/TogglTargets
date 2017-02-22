@@ -15,6 +15,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var weekWorkDaysControl: NSSegmentedControl!
 
     @IBOutlet weak var projectName: NSTextField!
+    @IBOutlet weak var goalButton: NSButton!
 
     var modelCoordinator: ModelCoordinator?
     private var representedProject: Project?
@@ -29,8 +30,6 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
-
-    private var selectedWorkDays = Set<Weekday>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,8 +77,6 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
             projectName.stringValue = "No name"
         }
 
-        Swift.print("selected project=\(project)")
-
         if let mc = modelCoordinator {
             let goalProperty = mc.goalPropertyForProjectId(project.id)
 
@@ -95,26 +92,23 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBAction func monthlyHoursGoalEdited(_ sender: NSTextField) {
         if let parsedHours = monthlyHoursGoalFormatter.number(from: sender.stringValue) {
             let hoursPerMonth = parsedHours.intValue
-            createGoalIfNotExists(hoursPerMonth: hoursPerMonth)
             observedGoalProperty?.original?.value?.hoursPerMonth = hoursPerMonth
         } else {
             sender.stringValue = ""
         }
     }
 
-
     @IBAction func weekWorkDaysEdited(_ sender: NSSegmentedControl) {
-        var selection = WeekdaySelection()
+        var newSelection = WeekdaySelection()
 
         for (day, segmentIndex) in weekdaysToSegments {
             assert(segmentIndex < sender.segmentCount)
             if sender.isSelected(forSegment: segmentIndex) {
-                selection.select(day)
-            } else {
-                selection.deselect(day)
+                newSelection.select(day)
             }
         }
-        print("day selection: \(selection.debugDescription)")
+
+        observedGoalProperty?.original?.value?.workWeekdays = newSelection
     }
 
     private func handleGoalValue(_ goal: TimeGoal?) {
@@ -122,25 +116,48 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     }
 
     private func handleReportValue(_ report: TimeReport?) {
-        print("new report value=\(report)");
+//        print("new report value=\(report)");
     }
 
-    private func displayGoal(goal: TimeGoal?) {
-        if let hours = goal?.hoursPerMonth,
-            let hoursString = monthlyHoursGoalFormatter.string(from: NSNumber(value: hours)) {
-            monthlyHoursGoalField.stringValue = hoursString
-        } else {
-            monthlyHoursGoalField.stringValue = ""
+    private func displayGoal(goal optionalGoal: TimeGoal?) {
+        func setEnabledState(_ goalExists: Bool) {
+            goalButton.isEnabled = !goalExists
+            monthlyHoursGoalField.isEnabled = goalExists
+            weekWorkDaysControl.isEnabled = goalExists
         }
-        // TODO: display work days per week
+
+        if let goal = optionalGoal {
+
+            setEnabledState(true)
+
+            if let hoursString = monthlyHoursGoalFormatter.string(from: NSNumber(value: goal.hoursPerMonth)) {
+                monthlyHoursGoalField.stringValue = hoursString
+            } else {
+                monthlyHoursGoalField.stringValue = ""
+            }
+
+            for (day, segmentIndex) in weekdaysToSegments {
+                weekWorkDaysControl.setSelected(goal.workWeekdays.isSelected(day), forSegment: segmentIndex)
+            }
+        } else {
+            setEnabledState(false)
+
+            monthlyHoursGoalField.stringValue = ""
+            for (_, segmentIndex) in weekdaysToSegments {
+                weekWorkDaysControl.setSelected(false, forSegment: segmentIndex)
+            }
+        }
     }
 
-    private func createGoalIfNotExists(hoursPerMonth: Int = 0, daysPerWeek: Int = 0) {
+    @IBAction func createGoal(_ sender: Any) {
+        createGoalIfNotExists()
+    }
+
+    private func createGoalIfNotExists(hoursPerMonth: Int = 0,
+                                       workWeekdays: WeekdaySelection = WeekdaySelection.exceptWeekend) {
         if self.observedGoalProperty?.original?.value == nil,
             let projectId = representedProject?.id {
-            var goal = TimeGoal(forProjectId: projectId)
-            goal.hoursPerMonth = hoursPerMonth
-            goal.workDaysPerWeek = daysPerWeek
+            let goal = TimeGoal(forProjectId: projectId, hoursPerMonth: hoursPerMonth, workWeekdays: workWeekdays)
             modelCoordinator?.initializeGoal(goal)
         }
     }

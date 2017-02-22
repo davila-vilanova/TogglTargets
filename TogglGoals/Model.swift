@@ -166,15 +166,60 @@ struct WeekdaySelection {
         }
     }
 
-    var debugDescription: String {
-        get {
-            var desc: String = ""
-            for day in Weekday.allDaysOrdered {
-                let selected = isSelected(day) ? "✅" : "❌"
-                desc += "[\(day):\(selected)]"
+    var countOfSelectedDays: Int {
+        var count = 0
+        for (_, isSelected) in selectionDict {
+            if isSelected {
+                count += 1
             }
-            return desc
         }
+        return count
+    }
+}
+
+extension WeekdaySelection: CustomDebugStringConvertible {
+    var debugDescription: String {
+        var desc: String = "WeekdaySelection("
+        let count = countOfSelectedDays
+        if count == 0 {
+            desc += "no days selected"
+        } else if count == Weekday.allDays.count {
+            desc += "all days selected"
+        } else {
+            for day in Weekday.allDaysOrdered {
+                desc += isSelected(day) ? "O" : "X"
+            }
+        }
+        desc += ")"
+
+        return desc
+    }
+}
+
+extension WeekdaySelection {
+    static var exceptWeekend: WeekdaySelection {
+        get {
+            var s = wholeWeek
+            s.deselect(.saturday)
+            s.deselect(.sunday)
+            return s
+        }
+    }
+
+    static var wholeWeek: WeekdaySelection {
+        get {
+            var s = WeekdaySelection()
+            for day in Weekday.allDays {
+                s.select(day)
+            }
+            return s
+        }
+    }
+
+    static func singleDay(_ day: Weekday) -> WeekdaySelection {
+        var s = WeekdaySelection()
+        s.select(day)
+        return s
     }
 }
 
@@ -189,13 +234,56 @@ extension WeekdaySelection: Equatable {
     }
 }
 
+extension WeekdaySelection {
+    typealias IntegerRepresentationType = UInt8
+    var integerRepresentation: IntegerRepresentationType {
+        get {
+            var int = IntegerRepresentationType(0)
+            let orderedDays = Weekday.allDaysOrdered
+            assert(orderedDays.count >= MemoryLayout<IntegerRepresentationType>.size)
+
+            for day in orderedDays {
+                if isSelected(day) {
+                    int = int | IntegerRepresentationType(1 << day.rawValue)
+                }
+            }
+            return int
+        }
+
+        set {
+            let orderedDays = Weekday.allDaysOrdered
+            assert(orderedDays.count >= MemoryLayout<IntegerRepresentationType>.size)
+
+            for day in orderedDays {
+                if (newValue & IntegerRepresentationType(1 << day.rawValue)) != 0 {
+                    select(day)
+                }
+            }
+        }
+    }
+
+    init(integerRepresentation: IntegerRepresentationType) {
+        self.integerRepresentation = integerRepresentation
+    }
+}
+
 struct TimeGoal {
     let projectId: Int64
-    var hoursPerMonth: Int?
-    var workDaysPerWeek: Int?
+    var hoursPerMonth: Int
+    var workWeekdays: WeekdaySelection
 
-    init(forProjectId projectId: Int64) {
+    init(forProjectId projectId: Int64, hoursPerMonth: Int, workWeekdays: WeekdaySelection) {
         self.projectId = projectId
+        self.hoursPerMonth = hoursPerMonth
+        self.workWeekdays = workWeekdays
+    }
+}
+
+extension TimeGoal: CustomDebugStringConvertible {
+    var debugDescription: String {
+        get {
+            return "Goal(forProjectId: \(projectId), hoursPerMonth: \(hoursPerMonth), workWeekdays: \(workWeekdays))"
+        }
     }
 }
 
