@@ -23,7 +23,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     private var observedReportProperty: ObservedProperty<TimeReport>?
 
     private lazy var calendar: Calendar = {
-        var calendar = Calendar(identifier: .gregorian)
+        var calendar = Calendar(identifier: .iso8601)
         calendar.locale = Locale.autoupdatingCurrent
         return calendar
     }()

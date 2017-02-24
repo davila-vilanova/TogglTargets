@@ -11,7 +11,7 @@ import Foundation
 class StrategyComputer {
     private(set) var calendar: Calendar {
         didSet {
-            // assert gregorian, toggl deals with gregorian only
+            assert(calendar.identifier == .iso8601)
         }
     }
 

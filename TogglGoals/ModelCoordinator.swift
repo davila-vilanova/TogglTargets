@@ -180,7 +180,7 @@ fileprivate func lastDateOfTheMonth() -> String {
 }
 
 fileprivate func dateString(monthDifferential: Int, day: Int) -> String {
-    var calendar = Calendar(identifier: .gregorian)
+    var calendar = Calendar(identifier: .iso8601)
     let timeZone = TimeZone.current
     calendar.timeZone = timeZone
     let now = Date()
