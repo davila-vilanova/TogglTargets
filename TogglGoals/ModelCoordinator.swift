@@ -28,7 +28,7 @@ internal class ModelCoordinator: NSObject {
 
     private let apiCredential = TogglAPICredential()
 
-    // TODO: inject these two?
+    // TODO: inject these three?
     private lazy var mainQueue: DispatchQueue = {
         return DispatchQueue.main
     }()
@@ -37,6 +37,12 @@ internal class ModelCoordinator: NSObject {
         let q = OperationQueue()
         q.name = "NetworkQueue"
         return q
+    }()
+
+    private lazy var calendar: Calendar = {
+        var cal = Calendar(identifier: .iso8601)
+        cal.locale = Locale.current
+        return cal
     }()
 
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
@@ -102,8 +108,8 @@ internal class ModelCoordinator: NSObject {
             let retrieveReportsOp =
                 SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, NetworkRetrieveReportsOperation>(
                     inputRetrievalOperation: workspacesOp,
-                    spawnOperationMaker: { [credential = apiCredential] workspace in
-                        NetworkRetrieveReportsOperation(credential: credential, workspaceId: workspace.id, since: firstDateOfTheMonth(), until: lastDateOfTheMonth())
+                    spawnOperationMaker: { [apiCredential, calendar] workspace in
+                        NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: calendar.firstDateOfCurrentMonth, until: calendar.lastDateOfCurrentMonth, timezone: calendar.timeZone)
                     },
                     collectionClosure: { [weak self] retrieveReportsOps in
                         for retrieveReportsOp in retrieveReportsOps {
@@ -171,29 +177,26 @@ protocol ModelCoordinatorContaining {
     var modelCoordinator: ModelCoordinator? { get set }
 }
 
-fileprivate func firstDateOfTheMonth() -> String {
-    return dateString(monthDifferential: 0, day: 1)
+extension Calendar {
+    var firstDateOfCurrentMonth: Date {
+        let now = Date()
+        var components = dateComponents([.day, .month, .year, .hour, .minute, .second], from: now)
+        components.day = 1
+        components.hour = 0
+        components.minute = 0
+        components.second = 0
+        return date(from: components)!
+    }
+
+    var lastDateOfCurrentMonth: Date {
+        let now = Date()
+        let daysRange = range(of: .day, in: .month, for: now)
+        var components = dateComponents([.day, .month, .year], from: now)
+        components.day = daysRange!.upperBound - 1
+        components.hour = 23
+        components.minute = 59
+        components.second = 59 // TODO: check for leap seconds and other unforeseen corner cases
+        return date(from: components)!
+    }
 }
 
-fileprivate func lastDateOfTheMonth() -> String {
-    return dateString(monthDifferential: 1, day: 0)
-}
-
-fileprivate func dateString(monthDifferential: Int, day: Int) -> String {
-    var calendar = Calendar(identifier: .iso8601)
-    let timeZone = TimeZone.current
-    calendar.timeZone = timeZone
-    let now = Date()
-
-    let calendarComponents: Set<Calendar.Component> = [.year, .month, .day]
-    var components = calendar.dateComponents(calendarComponents, from: now)
-    components.month? += monthDifferential
-    components.day = day
-    let lastDayOfMonth = calendar.date(from: components)!
-
-    let formatter = ISO8601DateFormatter()
-    formatter.formatOptions = [.withYear, .withMonth, .withDay, .withDashSeparatorInDate]
-    formatter.timeZone = timeZone
-
-    return formatter.string(from: lastDayOfMonth)
-}
