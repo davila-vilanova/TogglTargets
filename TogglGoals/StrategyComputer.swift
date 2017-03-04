@@ -30,11 +30,6 @@ class StrategyComputer {
             // recompute if different
         }
     }
-    var month: Any? /* type TBD */ {
-        didSet {
-            // recompute if different
-        }
-    }
 
     var computationMode: ComputationMode = .fromToday {
         didSet {
@@ -47,11 +42,26 @@ class StrategyComputer {
     }
 
     var totalWorkdays: Int {
+        if let report = self.report, let goal = self.goal {
+            let startDateComponents = report.since
+            let endDateComponents = report.until
+            return calendar.countWeekdaysMatching(goal.workWeekdays, from: startDateComponents, until: endDateComponents)
+        } else {
+            return 0
+        }
+    }
+
+    var remainingFullWorkdays: Int {
         // TODO
         return 0
     }
 
-    var remainingFullWorkdays: Int {
+    var hoursTarget: Int {
+        // TODO
+        return 0
+    }
+
+    var workedHours: Int {
         // TODO
         return 0
     }
@@ -89,5 +99,66 @@ class StrategyComputer {
     var dayBaselineDifferential: Double {
         // TODO
         return 0.0
+    }
+}
+
+extension Weekday {
+    func dayIndex(for calendar: Calendar) -> Int {
+        let sum = calendar.firstWeekday + rawValue
+        let maxIndexBaseOne = Weekday.allDaysOrdered.last!.rawValue + 1
+        return sum > maxIndexBaseOne ? sum - maxIndexBaseOne : sum
+    }
+}
+
+extension Calendar {
+    func countWeekdaysMatching(_ weekday: Weekday, from: DateComponents, until: DateComponents) -> Int {
+        return countWeekdaysMatching([weekday], from: from, until: until)
+    }
+
+    func countWeekdaysMatching(_ weekdays: [Weekday], from start: DateComponents, until end: DateComponents) -> Int {
+        var count = 0
+
+        var matchComponents = Set<DateComponents>()
+        for weekday in weekdays {
+            matchComponents.insert(DateComponents(weekday: weekday.dayIndex(for: self)))
+        }
+
+        let oneDayIncrement = DateComponents(day: 1)
+        var stop = false
+        var eachDate = date(from: start)!
+        let endDate = date(from: end)!
+
+        while !stop {
+            for comps in matchComponents {
+                if date(eachDate, matchesComponents: comps) {
+                    count += 1
+                    break
+                }
+            }
+            eachDate = date(byAdding: oneDayIncrement, to: eachDate)!
+            if eachDate > endDate {
+                stop = true
+            }
+        }
+
+        return count
+    }
+}
+
+extension WeekdaySelection {
+    var selectedWeekdays: [Weekday] {
+        var retval = [Weekday]()
+        for day in Weekday.allDays {
+            if isSelected(day) {
+                retval.append(day)
+            }
+        }
+        return retval
+    }
+}
+
+extension Calendar {
+    func countWeekdaysMatching(_ selection: WeekdaySelection, from: DateComponents, until: DateComponents) -> Int {
+        return countWeekdaysMatching(selection.selectedWeekdays, from: from, until: until)
     }
 }

@@ -17,25 +17,22 @@ internal class NetworkRetrieveReportsOperation: TogglAPIAccessOperation<Dictiona
     }
 
     let workspaceId: Int64
-    let since: Date
+    let since: DateComponents
     let formattedSince: String
-    let until: Date
+    let until: DateComponents
     let formattedUntil: String
-    let timezone: TimeZone
 
-    init(credential: TogglAPICredential, workspaceId: Int64, since: Date, until: Date, timezone: TimeZone) {
+    init?(credential: TogglAPICredential, workspaceId: Int64, since: DateComponents, until: DateComponents) {
         self.workspaceId = workspaceId
         self.since = since
         self.until = until
-        self.timezone = timezone
 
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withYear, .withMonth, .withDay, .withDashSeparatorInDate]
-        formatter.timeZone = timezone
-
-        formattedSince = formatter.string(from: since)
-        formattedUntil = formatter.string(from: until)
-
+        do {
+            formattedSince = try ISO8601Date(from: since)
+            formattedUntil = try ISO8601Date(from: until)
+        } catch {
+            return nil
+        }
         super.init(credential: credential)
     }
 
@@ -51,7 +48,7 @@ internal class NetworkRetrieveReportsOperation: TogglAPIAccessOperation<Dictiona
                     let projectId = id.int64Value
                     let milliseconds = time.doubleValue
                     let timeInterval = milliseconds/1000
-                    let report = TimeReport(projectId: projectId, startDate: self.since, endDate: self.until, timezone: timezone,workedTime: timeInterval)
+                    let report = TimeReport(projectId: projectId, since: self.since, until: self.until, workedTime: timeInterval)
                     timeReports[projectId] = report
                 }
             }
@@ -59,4 +56,14 @@ internal class NetworkRetrieveReportsOperation: TogglAPIAccessOperation<Dictiona
 
         return timeReports
     }
+}
+
+fileprivate func ISO8601Date(from comps: DateComponents) throws -> String{
+    struct InvalidComponentsError: Error {
+        var localizedDescription = "Expected year, month and day in date components"
+    }
+    guard let year = comps.year, let month = comps.month, let day = comps.day else {
+        throw InvalidComponentsError()
+    }
+    return String(format:"%04d-%02d-%02d", year, month, day)
 }

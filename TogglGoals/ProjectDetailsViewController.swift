@@ -17,6 +17,16 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var projectName: NSTextField!
     @IBOutlet weak var goalButton: NSButton!
 
+    @IBOutlet weak var monthNameLabel: NSTextField!
+    @IBOutlet weak var totalWorkdaysLabel: NSTextField!
+    @IBOutlet weak var remainingFullWorkdaysLabel: NSTextField!
+    @IBOutlet weak var workDaysProgressIndicator: NSProgressIndicator!
+    @IBOutlet weak var workHoursProgressIndicator: NSProgressIndicator!
+    @IBOutlet weak var totalHoursStrategyLabel: NSTextField!
+    @IBOutlet weak var hoursPerDayLabel: NSTextField!
+    @IBOutlet weak var baselineDifferentialLabel: NSTextField!
+    @IBOutlet weak var baselineLabel: NSTextField!
+
     var modelCoordinator: ModelCoordinator?
     private var representedProject: Project?
     private var observedGoalProperty: ObservedProperty<TimeGoal>?
@@ -30,6 +40,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
+    private var strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,11 +92,13 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
             let goalProperty = mc.goalPropertyForProjectId(project.id)
 
             observedGoalProperty?.unobserve()
-            observedGoalProperty = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (goal) in self?.handleGoalValue(goal)}).reportImmediately()
+            observedGoalProperty = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (goal) in self?.handleGoalValue(goal)})
+            observedGoalProperty?.reportImmediately()
 
             let reportProperty = mc.reportPropertyForProjectId(project.id)
             observedReportProperty?.unobserve()
-            observedReportProperty = ObservedProperty<TimeReport>(original: reportProperty, valueObserver: { [weak self] (report) in self?.handleReportValue(report) }).reportImmediately()
+            observedReportProperty = ObservedProperty<TimeReport>(original: reportProperty, valueObserver: { [weak self] (report) in self?.handleReportValue(report) })
+            observedReportProperty?.reportImmediately()
         }
     }
 
@@ -113,10 +126,11 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     private func handleGoalValue(_ goal: TimeGoal?) {
         displayGoal(goal: goal)
+        updateStrategy()
     }
 
     private func handleReportValue(_ report: TimeReport?) {
-//        print("new report value=\(report)");
+        updateStrategy()
     }
 
     private func displayGoal(goal optionalGoal: TimeGoal?) {
@@ -146,6 +160,25 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
             for (_, segmentIndex) in weekdaysToSegments {
                 weekWorkDaysControl.setSelected(false, forSegment: segmentIndex)
             }
+        }
+    }
+
+    private func updateStrategy() {
+        if let goal = observedGoalProperty?.original?.value,
+            let report = observedReportProperty?.original?.value {
+            strategyComputer.goal = goal
+            strategyComputer.report = report
+
+            monthNameLabel.stringValue = "TBD"
+
+            totalWorkdaysLabel.integerValue = strategyComputer.totalWorkdays
+            remainingFullWorkdaysLabel.integerValue = strategyComputer.remainingFullWorkdays
+            workDaysProgressIndicator.doubleValue = strategyComputer.monthProgress
+            workHoursProgressIndicator.doubleValue = strategyComputer.goalCompletionProgress
+            totalHoursStrategyLabel.integerValue = strategyComputer.hoursTarget
+            hoursPerDayLabel.doubleValue = strategyComputer.dayBaselineAdjustedToProgress
+            baselineDifferentialLabel.doubleValue = strategyComputer.dayBaselineDifferential
+            baselineLabel.doubleValue = strategyComputer.dayBaseline
         }
     }
 

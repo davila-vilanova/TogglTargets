@@ -74,6 +74,24 @@ internal class Property<T> {
     }
 }
 
+fileprivate func describeUnwrappedOrNil(_ value: Any?) -> String {
+    let valueDescription: String
+
+    if let unwrappedValue = value {
+        valueDescription = "\(unwrappedValue)"
+    } else {
+        valueDescription = "nil"
+    }
+
+    return valueDescription
+}
+
+extension Property: CustomDebugStringConvertible {
+    var debugDescription: String {
+        return "Property(value=\(describeUnwrappedOrNil(value)))"
+    }
+}
+
 internal class ObservedProperty<T> {
     internal typealias ValueObserver = ((T?) -> ())
     internal typealias InvalidationObserver = (() -> ())
@@ -122,6 +140,7 @@ internal class ObservedProperty<T> {
         invalidationObserver = nil
     }
 
+    @discardableResult
     internal func reportImmediately() -> ObservedProperty<T> {
         if isInvalidated {
             invalidationObserver?()
@@ -133,5 +152,11 @@ internal class ObservedProperty<T> {
 
     deinit {
         unobserve()
+    }
+}
+
+extension ObservedProperty: CustomDebugStringConvertible {
+    var debugDescription: String {
+        return "ObservedProperty(original=\(describeUnwrappedOrNil(original)))"
     }
 }

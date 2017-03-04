@@ -105,11 +105,13 @@ internal class ModelCoordinator: NSObject {
                         self?.sortAndSetProjects(allProjects)
                     })
 
+            let dates = calendar.firstAndLastDayOfCurrentMonth
+
             let retrieveReportsOp =
                 SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, NetworkRetrieveReportsOperation>(
                     inputRetrievalOperation: workspacesOp,
-                    spawnOperationMaker: { [apiCredential, calendar] workspace in
-                        NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: calendar.firstDateOfCurrentMonth, until: calendar.lastDateOfCurrentMonth, timezone: calendar.timeZone)
+                    spawnOperationMaker: { [apiCredential, dates] workspace in
+                        NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: dates.first, until: dates.last)! // force unwrap because it is known both dates have the year, month, day components
                     },
                     collectionClosure: { [weak self] retrieveReportsOps in
                         for retrieveReportsOp in retrieveReportsOps {
@@ -178,25 +180,14 @@ protocol ModelCoordinatorContaining {
 }
 
 extension Calendar {
-    var firstDateOfCurrentMonth: Date {
+    var firstAndLastDayOfCurrentMonth: (first: DateComponents, last: DateComponents) {
         let now = Date()
-        var components = dateComponents([.day, .month, .year, .hour, .minute, .second], from: now)
-        components.day = 1
-        components.hour = 0
-        components.minute = 0
-        components.second = 0
-        return date(from: components)!
-    }
-
-    var lastDateOfCurrentMonth: Date {
-        let now = Date()
-        let daysRange = range(of: .day, in: .month, for: now)
-        var components = dateComponents([.day, .month, .year], from: now)
-        components.day = daysRange!.upperBound - 1
-        components.hour = 23
-        components.minute = 59
-        components.second = 59 // TODO: check for leap seconds and other unforeseen corner cases
-        return date(from: components)!
+        var first = dateComponents([.day, .month, .year], from: now)
+        var last = dateComponents([.day, .month, .year], from: now)
+        first.day = 1
+        let daysRange = range(of: .day, in: .month, for: now)!
+        last.day = daysRange.upperBound - 1
+        return (first, last)
     }
 }
 
