@@ -105,13 +105,15 @@ internal class ModelCoordinator: NSObject {
                         self?.sortAndSetProjects(allProjects)
                     })
 
-            let dates = calendar.firstAndLastDayOfCurrentMonth
+            let now = Date()
+            let firstDay = calendar.firstDayOfMonth(for: now)
+            let lastDay = calendar.lastDayOfMonth(for: now)
 
             let retrieveReportsOp =
                 SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, NetworkRetrieveReportsOperation>(
                     inputRetrievalOperation: workspacesOp,
-                    spawnOperationMaker: { [apiCredential, dates] workspace in
-                        NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: dates.first, until: dates.last)! // force unwrap because it is known both dates have the year, month, day components
+                    spawnOperationMaker: { [apiCredential, firstDay, lastDay] workspace in
+                        NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: firstDay, until: lastDay)! // force unwrap because it is known both dates have the year, month, day components
                     },
                     collectionClosure: { [weak self] retrieveReportsOps in
                         for retrieveReportsOp in retrieveReportsOps {
@@ -180,14 +182,31 @@ protocol ModelCoordinatorContaining {
 }
 
 extension Calendar {
-    var firstAndLastDayOfCurrentMonth: (first: DateComponents, last: DateComponents) {
-        let now = Date()
-        var first = dateComponents([.day, .month, .year], from: now)
-        var last = dateComponents([.day, .month, .year], from: now)
+    func firstDayOfMonth(for date: Date) -> DateComponents {
+        var first = dateComponents([.day, .month, .year], from: date)
         first.day = 1
-        let daysRange = range(of: .day, in: .month, for: now)!
-        last.day = daysRange.upperBound - 1
-        return (first, last)
+        return first
+    }
+
+    func lastDayOfMonth(for date: Date) -> DateComponents {
+        var last = dateComponents([.day, .month, .year], from: date)
+        last.day = lastDayInMonth(for: date)
+        return last
+    }
+
+    func nextDayInMonth(for date: Date) -> DateComponents? {
+        var comps = dateComponents([.day, .month, .year], from: date)
+        let day = comps.day!
+        guard day < lastDayInMonth(for: date) else {
+            return nil
+        }
+        comps.day = day + 1
+        return comps
+    }
+
+    private func lastDayInMonth(for date: Date) -> Int {
+        let daysRange = range(of: .day, in: .month, for: date)!
+        return daysRange.upperBound - 1
     }
 }
 

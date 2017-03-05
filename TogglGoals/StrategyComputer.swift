@@ -42,19 +42,30 @@ class StrategyComputer {
     }
 
     var totalWorkdays: Int {
-        if let report = self.report, let goal = self.goal {
-            let startDateComponents = report.since
-            let endDateComponents = report.until
-            return calendar.countWeekdaysMatching(goal.workWeekdays, from: startDateComponents, until: endDateComponents)
-        } else {
+        guard let goal = self.goal else {
             return 0
         }
+        let c = calendar
+        let now = Date() // TODO: "global now, tic tac"
+        let first = c.firstDayOfMonth(for: now)
+        let last = c.lastDayOfMonth(for: now)
+        return c.countWeekdaysMatching(goal.workWeekdays, from: first, to: last)
     }
 
     var remainingFullWorkdays: Int {
-        // TODO
-        return 0
+        guard let goal = self.goal else {
+            return 0
+        }
+        let c = calendar
+        let now = Date()
+        let maybeTomorrow = c.nextDayInMonth(for: now)
+        guard let tomorrow = maybeTomorrow else {
+            return 0
+        }
+        let last = c.lastDayOfMonth(for: now)
+        return c.countWeekdaysMatching(goal.workWeekdays, from: tomorrow, to: last)
     }
+
 
     var hoursTarget: Int {
         // TODO
@@ -112,10 +123,10 @@ extension Weekday {
 
 extension Calendar {
     func countWeekdaysMatching(_ weekday: Weekday, from: DateComponents, until: DateComponents) -> Int {
-        return countWeekdaysMatching([weekday], from: from, until: until)
+        return countWeekdaysMatching([weekday], from: from, to: until)
     }
 
-    func countWeekdaysMatching(_ weekdays: [Weekday], from start: DateComponents, until end: DateComponents) -> Int {
+    func countWeekdaysMatching(_ weekdays: [Weekday], from start: DateComponents, to end: DateComponents) -> Int {
         var count = 0
 
         var matchComponents = Set<DateComponents>()
@@ -158,7 +169,7 @@ extension WeekdaySelection {
 }
 
 extension Calendar {
-    func countWeekdaysMatching(_ selection: WeekdaySelection, from: DateComponents, until: DateComponents) -> Int {
-        return countWeekdaysMatching(selection.selectedWeekdays, from: from, until: until)
+    func countWeekdaysMatching(_ selection: WeekdaySelection, from: DateComponents, to: DateComponents) -> Int {
+        return countWeekdaysMatching(selection.selectedWeekdays, from: from, to: to)
     }
 }
