@@ -40,7 +40,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
-    private var strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601))
+    private var strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601), now: Date())
 
     override func viewDidLoad() {
         super.viewDidLoad()
