@@ -162,7 +162,7 @@ extension Calendar {
 
     func countWeekdaysMatching(_ weekdays: [Weekday], from start: DateComponents, to end: DateComponents) throws -> Int {
         let requiredComponents: Set<Calendar.Component> = [.year, .month, .day]
-        let irrelevantComponents: Set<Calendar.Component> = [.hour, .minute, .second, .nanosecond, .era, .quarter, .weekOfMonth, .weekOfYear, .weekday, .weekdayOrdinal, .yearForWeekOfYear]
+        let componentsToDiscard: Set<Calendar.Component> = [.hour, .minute, .second, .nanosecond, .era, .quarter, .weekOfMonth, .weekOfYear, .weekday, .weekdayOrdinal, .yearForWeekOfYear]
 
         for comp in requiredComponents {
             guard start.value(for: comp) != nil, end.value(for: comp) != nil else {
@@ -173,7 +173,7 @@ extension Calendar {
         var sanitizedStart = start
         var sanitizedEnd = end
 
-        for comp in irrelevantComponents {
+        for comp in componentsToDiscard {
             sanitizedStart.setValue(nil, for: comp)
             sanitizedEnd.setValue(nil, for: comp)
         }
@@ -186,22 +186,24 @@ extension Calendar {
         }
 
         let oneDayIncrement = DateComponents(day: 1)
-        var stop = false
-        guard var eachDate = date(from: sanitizedStart), let endDate = date(from: sanitizedEnd) else {
+        guard var testeeDate = date(from: sanitizedStart), let endDate = date(from: sanitizedEnd) else {
             throw CountWeekdaysError.invalidDateComponents
         }
 
-        while !stop {
+        while testeeDate < endDate || isDate(testeeDate, inSameDayAs: endDate) {
             for comps in matchComponents {
-                if date(eachDate, matchesComponents: comps) {
+                if date(testeeDate, matchesComponents: comps) {
                     count += 1
                     break
                 }
             }
-            eachDate = date(byAdding: oneDayIncrement, to: eachDate)!
-            if eachDate > endDate && !isDate(eachDate, inSameDayAs: endDate) {
-                stop = true
-            }
+
+            var nextDate: Date;
+            repeat {
+                nextDate = date(byAdding: oneDayIncrement, to: testeeDate)!
+            } while isDate(nextDate, inSameDayAs: testeeDate)
+
+            testeeDate = nextDate
         }
 
         return count
