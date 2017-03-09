@@ -150,33 +150,54 @@ extension Weekday {
     }
 }
 
-extension Calendar {
-    func countWeekdaysMatching(_ weekday: Weekday, from: DateComponents, until: DateComponents) throws -> Int {
-        return try countWeekdaysMatching([weekday], from: from, to: until)
+extension DateComponents {
+    static var dayComponents: Set<Calendar.Component> {
+        return [.year, .month, .day]
     }
 
+    var hasDayComponentsSet: Bool {
+        return hasAllComponentsSet(from: DateComponents.dayComponents)
+    }
+
+    func hasAllComponentsSet(from requiredComponents: Set<Calendar.Component>) -> Bool {
+        for calendarComponent in requiredComponents {
+            if value(for: calendarComponent) == nil {
+                return false
+            }
+        }
+        return true
+    }
+
+    func trimmedToDayComponents() -> DateComponents {
+        return trimmedToComponents(DateComponents.dayComponents)
+    }
+
+    func trimmedToComponents(_ components: Set<Calendar.Component>) -> DateComponents {
+        var returnDateComponents = DateComponents()
+        for calendarComponent in components {
+            returnDateComponents.setValue(self.value(for: calendarComponent), for: calendarComponent)
+        }
+        return returnDateComponents
+    }
+}
+
+extension Calendar {
     enum CountWeekdaysError: Error {
         case missingDateComponents
         case invalidDateComponents
     }
 
+    func countWeekdaysMatching(_ weekday: Weekday, from: DateComponents, until: DateComponents) throws -> Int {
+        return try countWeekdaysMatching([weekday], from: from, to: until)
+    }
+
     func countWeekdaysMatching(_ weekdays: [Weekday], from start: DateComponents, to end: DateComponents) throws -> Int {
-        let requiredComponents: Set<Calendar.Component> = [.year, .month, .day]
-        let componentsToDiscard: Set<Calendar.Component> = [.hour, .minute, .second, .nanosecond, .era, .quarter, .weekOfMonth, .weekOfYear, .weekday, .weekdayOrdinal, .yearForWeekOfYear]
-
-        for comp in requiredComponents {
-            guard start.value(for: comp) != nil, end.value(for: comp) != nil else {
-                throw CountWeekdaysError.missingDateComponents
-            }
+        guard start.hasDayComponentsSet, end.hasDayComponentsSet else {
+            throw CountWeekdaysError.missingDateComponents
         }
 
-        var sanitizedStart = start
-        var sanitizedEnd = end
-
-        for comp in componentsToDiscard {
-            sanitizedStart.setValue(nil, for: comp)
-            sanitizedEnd.setValue(nil, for: comp)
-        }
+        let trimmedStart = start.trimmedToDayComponents()
+        let trimmedEnd = end.trimmedToDayComponents()
 
         var count = 0
 
@@ -186,7 +207,7 @@ extension Calendar {
         }
 
         let oneDayIncrement = DateComponents(day: 1)
-        guard var testeeDate = date(from: sanitizedStart), let endDate = date(from: sanitizedEnd) else {
+        guard var testeeDate = date(from: trimmedStart), let endDate = date(from: trimmedEnd) else {
             throw CountWeekdaysError.invalidDateComponents
         }
 
