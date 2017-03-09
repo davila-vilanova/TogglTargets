@@ -86,7 +86,7 @@ class CountWeekdaysTests: XCTestCase {
         print("iterations=\(iterations)")
     }
 
-    func testFocusOnCase() {
+    func testPerformanceExample() {
         let tz = TimeZone(identifier: "Europe/London")!
 
         var calendar = Calendar(identifier: .iso8601)
@@ -95,15 +95,8 @@ class CountWeekdaysTests: XCTestCase {
         let startComps = DateComponents(year: 2015, month: 10, day: 1)
         let endComps = DateComponents(year: 2015, month: 10, day: 31)
 
-        let count = try! calendar.countWeekdaysMatching(day, from: startComps, until: endComps)
-        XCTAssertEqual(count, 4, "seconds from gmt = \(tz.secondsFromGMT())")
-    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
         self.measure {
-            // Put the code you want to measure the time of here.
+            _ = try! calendar.countWeekdaysMatching(day, from: startComps, until: endComps)
         }
     }
-
 }
