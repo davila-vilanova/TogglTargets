@@ -87,7 +87,7 @@ class StrategyComputer {
         guard let report = self.report else {
             return 0
         }
-        return report.workedTime
+        return report.workedTime / 3600
     }
 
     var remainingHoursToGoal: Double {
@@ -104,7 +104,9 @@ class StrategyComputer {
         guard remainingFullWorkdays <= totalWorkdays else {
             return 1
         }
-        return Double(remainingFullWorkdays) / Double(totalWorkdays)
+        let elapsedWorkdays = totalWorkdays - remainingFullWorkdays
+
+        return 1.0 / Double(elapsedWorkdays)
     }
 
     var goalCompletionProgress: Double {
@@ -128,19 +130,18 @@ class StrategyComputer {
     }
 
     var dayBaselineAdjustedToProgress: Double {
-        let hoursTarget = Double(self.hoursTarget)
         let remainingFullWorkdays = Double(self.remainingFullWorkdays)
         guard remainingFullWorkdays > 0 else {
             return 0
         }
-        return hoursTarget / remainingFullWorkdays
+        return remainingHoursToGoal / remainingFullWorkdays
     }
 
     var dayBaselineDifferential: Double {
         guard dayBaseline > 0 else {
             return 0
         }
-        return (dayBaselineAdjustedToProgress - dayBaseline) / dayBaseline
+        return 100 * (dayBaselineAdjustedToProgress - dayBaseline) / dayBaseline
     }
 }
 
