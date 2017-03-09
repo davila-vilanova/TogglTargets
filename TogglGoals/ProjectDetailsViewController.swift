@@ -20,6 +20,9 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var monthNameLabel: NSTextField!
     @IBOutlet weak var totalWorkdaysLabel: NSTextField!
     @IBOutlet weak var remainingFullWorkdaysLabel: NSTextField!
+    @IBOutlet weak var hoursWorkedLabel: NSTextField!
+    @IBOutlet weak var hoursLeftLabel: NSTextField!
+
     @IBOutlet weak var workDaysProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var workHoursProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var totalHoursStrategyLabel: NSTextField!
@@ -173,8 +176,12 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
             totalWorkdaysLabel.integerValue = strategyComputer.totalWorkdays
             remainingFullWorkdaysLabel.integerValue = strategyComputer.remainingFullWorkdays
-            workDaysProgressIndicator.doubleValue = strategyComputer.monthProgress
-            workHoursProgressIndicator.doubleValue = strategyComputer.goalCompletionProgress
+            workDaysProgressIndicator.maxValue = Double(strategyComputer.totalWorkdays)
+            workDaysProgressIndicator.doubleValue = Double(strategyComputer.totalWorkdays - strategyComputer.remainingFullWorkdays)
+            workHoursProgressIndicator.maxValue = Double(strategyComputer.hoursTarget)
+            workHoursProgressIndicator.doubleValue = strategyComputer.workedHours
+            hoursWorkedLabel.doubleValue = strategyComputer.workedHours
+            hoursLeftLabel.doubleValue = strategyComputer.remainingHoursToGoal
             totalHoursStrategyLabel.integerValue = strategyComputer.hoursTarget
             hoursPerDayLabel.doubleValue = strategyComputer.dayBaselineAdjustedToProgress
             baselineDifferentialLabel.doubleValue = strategyComputer.dayBaselineDifferential
