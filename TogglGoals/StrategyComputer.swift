@@ -9,6 +9,8 @@
 import Foundation
 
 class StrategyComputer {
+    let hourTimeInterval: TimeInterval = 3600
+
     private(set) var calendar: Calendar {
         didSet {
             assert(calendar.identifier == .iso8601)
@@ -75,58 +77,30 @@ class StrategyComputer {
         }
     }
 
-
-    var hoursTarget: Int {
+    var timeGoal: TimeInterval {
         guard let goal = self.goal else {
             return 0
         }
-        return goal.hoursPerMonth
+        return TimeInterval(goal.hoursPerMonth) * hourTimeInterval
     }
 
-    var workedHours: Double {
+    var workedTime: TimeInterval {
         guard let report = self.report else {
             return 0
         }
-        return report.workedTime / 3600
+        return report.workedTime
     }
 
-    var remainingHoursToGoal: Double {
-        guard let goal = self.goal else {
-            return 0
-        }
-        return Double(goal.hoursPerMonth) - workedHours
+    var remainingTimeToGoal: TimeInterval {
+        return timeGoal - workedTime
     }
 
-    var monthProgress: Double {
-        guard totalWorkdays > 0 else {
-            return 1
-        }
-        guard remainingFullWorkdays <= totalWorkdays else {
-            return 1
-        }
-        let elapsedWorkdays = totalWorkdays - remainingFullWorkdays
-
-        return 1.0 / Double(elapsedWorkdays)
-    }
-
-    var goalCompletionProgress: Double {
-        let hoursTarget = Double(self.hoursTarget)
-        guard hoursTarget > 0 else {
-            return 1
-        }
-        guard workedHours <= hoursTarget else {
-            return 1
-        }
-        return workedHours / hoursTarget
-    }
-
-    var dayBaseline: Double {
-        let hoursTarget = Double(self.hoursTarget)
+    var dayBaseline: TimeInterval {
         let totalWorkdays = Double(self.totalWorkdays)
         guard totalWorkdays > 0 else {
             return 0
         }
-        return hoursTarget / totalWorkdays
+        return timeGoal / totalWorkdays
     }
 
     var dayBaselineAdjustedToProgress: Double {
@@ -134,14 +108,14 @@ class StrategyComputer {
         guard remainingFullWorkdays > 0 else {
             return 0
         }
-        return remainingHoursToGoal / remainingFullWorkdays
+        return remainingTimeToGoal / remainingFullWorkdays
     }
 
     var dayBaselineDifferential: Double {
         guard dayBaseline > 0 else {
             return 0
         }
-        return 100 * (dayBaselineAdjustedToProgress - dayBaseline) / dayBaseline
+        return (dayBaselineAdjustedToProgress - dayBaseline) / dayBaseline
     }
 }
 

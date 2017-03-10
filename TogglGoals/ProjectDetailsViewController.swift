@@ -30,6 +30,13 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var baselineDifferentialLabel: NSTextField!
     @IBOutlet weak var baselineLabel: NSTextField!
 
+    private lazy var timeFormatter: DateComponentsFormatter = {
+        let f = DateComponentsFormatter()
+        f.allowedUnits = [.hour, .minute]
+        f.zeroFormattingBehavior = .dropAll
+        return f
+    }()
+
     var modelCoordinator: ModelCoordinator?
     private var representedProject: Project?
     private var observedGoalProperty: ObservedProperty<TimeGoal>?
@@ -176,16 +183,18 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
             totalWorkdaysLabel.integerValue = strategyComputer.totalWorkdays
             remainingFullWorkdaysLabel.integerValue = strategyComputer.remainingFullWorkdays
+
             workDaysProgressIndicator.maxValue = Double(strategyComputer.totalWorkdays)
             workDaysProgressIndicator.doubleValue = Double(strategyComputer.totalWorkdays - strategyComputer.remainingFullWorkdays)
-            workHoursProgressIndicator.maxValue = Double(strategyComputer.hoursTarget)
-            workHoursProgressIndicator.doubleValue = strategyComputer.workedHours
-            hoursWorkedLabel.doubleValue = strategyComputer.workedHours
-            hoursLeftLabel.doubleValue = strategyComputer.remainingHoursToGoal
-            totalHoursStrategyLabel.integerValue = strategyComputer.hoursTarget
-            hoursPerDayLabel.doubleValue = strategyComputer.dayBaselineAdjustedToProgress
-            baselineDifferentialLabel.doubleValue = strategyComputer.dayBaselineDifferential
-            baselineLabel.doubleValue = strategyComputer.dayBaseline
+            workHoursProgressIndicator.maxValue = strategyComputer.timeGoal
+            workHoursProgressIndicator.doubleValue = strategyComputer.workedTime
+
+            hoursWorkedLabel.stringValue = timeFormatter.string(from: strategyComputer.workedTime)!
+            hoursLeftLabel.stringValue = timeFormatter.string(from: strategyComputer.remainingTimeToGoal)!
+            totalHoursStrategyLabel.stringValue = timeFormatter.string(from: strategyComputer.timeGoal)!
+            hoursPerDayLabel.stringValue = timeFormatter.string(from: strategyComputer.dayBaselineAdjustedToProgress)!
+            baselineDifferentialLabel.doubleValue = strategyComputer.dayBaselineDifferential * 100
+            baselineLabel.stringValue = timeFormatter.string(from: strategyComputer.dayBaseline)!
         }
     }
 
