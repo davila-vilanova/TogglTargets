@@ -1123,8 +1123,8 @@
                                     </menu>
                                 </popUpButtonCell>
                             </popUpButton>
-                            <stackView wantsLayer="YES" distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="Zz8-u3-exR" userLabel="Stack View: Baseline">
-                                <rect key="frame" x="20" y="170" width="396" height="17"/>
+                            <stackView wantsLayer="YES" distribution="fill" orientation="horizontal" alignment="firstBaseline" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="Zz8-u3-exR" userLabel="Stack View: Baseline">
+                                <rect key="frame" x="20" y="170" width="372" height="17"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w8x-Sh-WG9">
                                         <rect key="frame" x="-2" y="0.0" width="34" height="17"/>
@@ -1135,7 +1135,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hv3-rh-DXJ" userLabel="Hours Per Day Label">
-                                        <rect key="frame" x="36" y="0.0" width="13" height="17"/>
+                                        <rect key="frame" x="30" y="0.0" width="13" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0" id="iO0-Eg-Z3O">
                                             <font key="font" metaFont="systemSemibold" size="13"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1143,48 +1143,16 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="dtr-n5-Jqe">
-                                        <rect key="frame" x="53" y="0.0" width="88" height="17"/>
+                                        <rect key="frame" x="41" y="0.0" width="88" height="17"/>
                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="hours per day" id="Haa-j6-WbO">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tj0-wm-fTC">
-                                        <rect key="frame" x="145" y="0.0" width="34" height="14"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="that's" id="OZ1-fH-2YX">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="loV-UA-93u">
-                                        <rect key="frame" x="183" y="0.0" width="20" height="14"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0%" id="Fia-l4-7eT">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CxS-Zx-pEt">
-                                        <rect key="frame" x="207" y="0.0" width="138" height="14"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="more than the baseline of" id="wRa-rj-yim">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sfD-vG-xRp">
-                                        <rect key="frame" x="349" y="0.0" width="11" height="14"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0" id="9K6-mO-Oym">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eA7-DW-YGm">
-                                        <rect key="frame" x="364" y="0.0" width="34" height="14"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="hours" id="j6J-wv-iMa">
+                                        <rect key="frame" x="127" y="0.0" width="247" height="14"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="That's 10% more than your baseline of 4 hours" id="Fia-l4-7eT">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1196,16 +1164,8 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -1299,7 +1259,6 @@
                     </view>
                     <connections>
                         <outlet property="baselineDifferentialLabel" destination="loV-UA-93u" id="oin-b4-3Al"/>
-                        <outlet property="baselineLabel" destination="sfD-vG-xRp" id="jxS-7K-lll"/>
                         <outlet property="goalButton" destination="O7w-Ao-X9F" id="Mmd-aL-2BP"/>
                         <outlet property="hoursLeftLabel" destination="j3x-M1-42r" id="JBg-bQ-d47"/>
                         <outlet property="hoursPerDayLabel" destination="hv3-rh-DXJ" id="Alk-oM-Y60"/>

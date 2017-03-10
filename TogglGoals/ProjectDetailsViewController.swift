@@ -28,12 +28,17 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var totalHoursStrategyLabel: NSTextField!
     @IBOutlet weak var hoursPerDayLabel: NSTextField!
     @IBOutlet weak var baselineDifferentialLabel: NSTextField!
-    @IBOutlet weak var baselineLabel: NSTextField!
 
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
         f.allowedUnits = [.hour, .minute]
         f.zeroFormattingBehavior = .dropAll
+        return f
+    }()
+
+    private lazy var percentFormatter: NumberFormatter = {
+        var f = NumberFormatter()
+        f.numberStyle = .percent
         return f
     }()
 
@@ -174,28 +179,47 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     }
 
     private func updateStrategy() {
-        if let goal = observedGoalProperty?.original?.value,
-            let report = observedReportProperty?.original?.value {
-            strategyComputer.goal = goal
-            strategyComputer.report = report
-
-            monthNameLabel.stringValue = "TBD"
-
-            totalWorkdaysLabel.integerValue = strategyComputer.totalWorkdays
-            remainingFullWorkdaysLabel.integerValue = strategyComputer.remainingFullWorkdays
-
-            workDaysProgressIndicator.maxValue = Double(strategyComputer.totalWorkdays)
-            workDaysProgressIndicator.doubleValue = Double(strategyComputer.totalWorkdays - strategyComputer.remainingFullWorkdays)
-            workHoursProgressIndicator.maxValue = strategyComputer.timeGoal
-            workHoursProgressIndicator.doubleValue = strategyComputer.workedTime
-
-            hoursWorkedLabel.stringValue = timeFormatter.string(from: strategyComputer.workedTime)!
-            hoursLeftLabel.stringValue = timeFormatter.string(from: strategyComputer.remainingTimeToGoal)!
-            totalHoursStrategyLabel.stringValue = timeFormatter.string(from: strategyComputer.timeGoal)!
-            hoursPerDayLabel.stringValue = timeFormatter.string(from: strategyComputer.dayBaselineAdjustedToProgress)!
-            baselineDifferentialLabel.doubleValue = strategyComputer.dayBaselineDifferential * 100
-            baselineLabel.stringValue = timeFormatter.string(from: strategyComputer.dayBaseline)!
+        guard let goal = observedGoalProperty?.original?.value,
+            let report = observedReportProperty?.original?.value else {
+                return
         }
+        strategyComputer.goal = goal
+        strategyComputer.report = report
+
+        monthNameLabel.stringValue = "TBD"
+
+        totalWorkdaysLabel.integerValue = strategyComputer.totalWorkdays
+        remainingFullWorkdaysLabel.integerValue = strategyComputer.remainingFullWorkdays
+
+        workDaysProgressIndicator.maxValue = Double(strategyComputer.totalWorkdays)
+        workDaysProgressIndicator.doubleValue = Double(strategyComputer.totalWorkdays - strategyComputer.remainingFullWorkdays)
+        workHoursProgressIndicator.maxValue = strategyComputer.timeGoal
+        workHoursProgressIndicator.doubleValue = strategyComputer.workedTime
+
+        hoursWorkedLabel.stringValue = timeFormatter.string(from: strategyComputer.workedTime)!
+        hoursLeftLabel.stringValue = timeFormatter.string(from: strategyComputer.remainingTimeToGoal)!
+        totalHoursStrategyLabel.stringValue = timeFormatter.string(from: strategyComputer.timeGoal)!
+        hoursPerDayLabel.stringValue = timeFormatter.string(from: strategyComputer.dayBaselineAdjustedToProgress)!
+
+
+        let dayBaseline = timeFormatter.string(from: strategyComputer.dayBaseline)!
+        let dayBaselineDifferential = strategyComputer.dayBaselineDifferential
+        let absoluteBaselineDifferential = Double.abs(dayBaselineDifferential)
+
+        let baselineDifferentialText: String
+
+        if absoluteBaselineDifferential < 0.01 {
+            baselineDifferentialText = "That prety much matches your baseline of \(dayBaseline) hours"
+        } else {
+            let formattedBaselineDifferential = percentFormatter.string(from: NSNumber(value: Double.abs(dayBaselineDifferential)))!
+            if dayBaselineDifferential > 0 {
+                baselineDifferentialText = "That is \(formattedBaselineDifferential) more than your baseline of \(dayBaseline) hours"
+            } else {
+                baselineDifferentialText = "That is \(formattedBaselineDifferential) less than your baseline of \(dayBaseline) hours"
+            }
+        }
+
+        baselineDifferentialLabel.stringValue = baselineDifferentialText
     }
 
     @IBAction func createGoal(_ sender: Any) {
