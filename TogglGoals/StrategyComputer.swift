@@ -92,7 +92,7 @@ class StrategyComputer {
     }
 
     var remainingTimeToGoal: TimeInterval {
-        return timeGoal - workedTime
+        return Double.maximum(timeGoal - workedTime, 0)
     }
 
     var dayBaseline: TimeInterval {
