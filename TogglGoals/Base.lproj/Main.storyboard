@@ -1101,14 +1101,22 @@
                                 </customSpacing>
                             </stackView>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P1q-um-IkR">
-                                <rect key="frame" x="378" y="192" width="127" height="26"/>
+                                <rect key="frame" x="352" y="192" width="153" height="26"/>
                                 <popUpButtonCell key="cell" type="push" title="from today" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ZdU-XK-sRP" id="oxl-y1-eIn">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="7Rw-Up-0KS">
                                         <items>
-                                            <menuItem title="from today" state="on" id="ZdU-XK-sRP"/>
-                                            <menuItem title="from tomorrow" id="z9H-sX-Ays"/>
+                                            <menuItem title="from today" state="on" id="ZdU-XK-sRP">
+                                                <connections>
+                                                    <action selector="computeStrategyFromToday:" target="zvs-ll-aji" id="CzR-bL-geX"/>
+                                                </connections>
+                                            </menuItem>
+                                            <menuItem title="from next work day" id="z9H-sX-Ays">
+                                                <connections>
+                                                    <action selector="computeStrategyFromNextWorkDay:" target="zvs-ll-aji" id="NrF-fE-u26"/>
+                                                </connections>
+                                            </menuItem>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>

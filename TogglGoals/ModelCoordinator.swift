@@ -194,11 +194,15 @@ extension Calendar {
         return last
     }
 
-    func nextDayInMonth(for date: Date) -> DateComponents? {
+    enum NextDayInMonthError: Error {
+        case noMoreDaysInMonth
+    }
+
+    func nextDayInMonth(for date: Date) throws -> DateComponents {
         var comps = dateComponents([.day, .month, .year], from: date)
         let day = comps.day!
         guard day < lastDayInMonth(for: date) else {
-            return nil
+            throw NextDayInMonthError.noMoreDaysInMonth
         }
         comps.day = day + 1
         return comps

@@ -65,13 +65,22 @@ class StrategyComputer {
             return 0
         }
         let c = calendar
-        let maybeTomorrow = c.nextDayInMonth(for: now)
-        guard let tomorrow = maybeTomorrow else {
-            return 0
+        let dayComponents: DateComponents
+
+        switch (computationMode) {
+        case .fromToday:
+            dayComponents = c.dateComponents([.day, .month, .year], from: now)
+        case .fromNextWorkDay:
+            do {
+                try dayComponents = c.nextDayInMonth(for: now)
+            } catch {
+                return 0
+            }
         }
+
         let last = c.lastDayOfMonth(for: now)
         do {
-            return try c.countWeekdaysMatching(goal.workWeekdays, from: tomorrow, to: last)
+            return try c.countWeekdaysMatching(goal.workWeekdays, from: dayComponents, to: last)
         } catch {
             return 0
         }

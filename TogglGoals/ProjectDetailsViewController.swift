@@ -179,6 +179,17 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         }
     }
 
+    @IBAction func computeStrategyFromToday(_ sender: NSMenuItem) {
+        strategyComputer.computationMode = .fromToday
+        updateStrategy()
+    }
+
+
+    @IBAction func computeStrategyFromNextWorkDay(_ sender: NSMenuItem) {
+        strategyComputer.computationMode = .fromNextWorkDay
+        updateStrategy()
+    }
+
     private func updateStrategy() {
         guard let goal = observedGoalProperty?.original?.value,
             let report = observedReportProperty?.original?.value else {
