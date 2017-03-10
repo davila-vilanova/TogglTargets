@@ -33,6 +33,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         let f = DateComponentsFormatter()
         f.allowedUnits = [.hour, .minute]
         f.zeroFormattingBehavior = .dropAll
+        f.unitsStyle = .full
         return f
     }()
 
@@ -209,13 +210,13 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         let baselineDifferentialText: String
 
         if absoluteBaselineDifferential < 0.01 {
-            baselineDifferentialText = "That prety much matches your baseline of \(dayBaseline) hours"
+            baselineDifferentialText = "That prety much matches your baseline of \(dayBaseline)"
         } else {
             let formattedBaselineDifferential = percentFormatter.string(from: NSNumber(value: Double.abs(dayBaselineDifferential)))!
             if dayBaselineDifferential > 0 {
-                baselineDifferentialText = "That is \(formattedBaselineDifferential) more than your baseline of \(dayBaseline) hours"
+                baselineDifferentialText = "That is \(formattedBaselineDifferential) more than your baseline of \(dayBaseline)"
             } else {
-                baselineDifferentialText = "That is \(formattedBaselineDifferential) less than your baseline of \(dayBaseline) hours"
+                baselineDifferentialText = "That is \(formattedBaselineDifferential) less than your baseline of \(dayBaseline)"
             }
         }
 
