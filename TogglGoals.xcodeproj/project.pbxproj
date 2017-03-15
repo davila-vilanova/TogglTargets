@@ -54,6 +54,8 @@
 		63CE9A1E1E3AA12200176AB4 /* APIAccessError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */; };
 		63CE9A201E3AA2F800176AB4 /* TogglAPICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */; };
 		63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A211E3B4B7300176AB4 /* ModelCache.swift */; };
+		63D4EB961E79D15B00D55033 /* DateTimeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4EB951E79D15B00D55033 /* DateTimeExtensions.swift */; };
+		63D4EB971E79D15B00D55033 /* DateTimeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4EB951E79D15B00D55033 /* DateTimeExtensions.swift */; };
 		63FA1F981DBB796D00612A09 /* ProjectCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FA1F961DBB796D00612A09 /* ProjectCollectionViewItem.swift */; };
 		63FA1F991DBB796D00612A09 /* ProjectCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63FA1F971DBB796D00612A09 /* ProjectCollectionViewItem.xib */; };
 /* End PBXBuildFile section */
@@ -135,6 +137,7 @@
 		63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIAccessError.swift; sourceTree = "<group>"; };
 		63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63CE9A211E3B4B7300176AB4 /* ModelCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCache.swift; sourceTree = "<group>"; };
+		63D4EB951E79D15B00D55033 /* DateTimeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensions.swift; sourceTree = "<group>"; };
 		63FA1F961DBB796D00612A09 /* ProjectCollectionViewItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectCollectionViewItem.swift; sourceTree = "<group>"; };
 		63FA1F971DBB796D00612A09 /* ProjectCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCollectionViewItem.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -210,6 +213,7 @@
 				632EEBF31E427A3700608D01 /* GoalsStore.swift */,
 				63B5D8A41E48FF7000042897 /* Operations */,
 				633392161E5F5CFB00427F50 /* StrategyComputer.swift */,
+				63D4EB951E79D15B00D55033 /* DateTimeExtensions.swift */,
 			);
 			path = TogglGoals;
 			sourceTree = "<group>";
@@ -417,6 +421,7 @@
 				63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */,
 				63593AEC1E511BD6000473CC /* SpawningOperation.swift in Sources */,
 				63FA1F981DBB796D00612A09 /* ProjectCollectionViewItem.swift in Sources */,
+				63D4EB961E79D15B00D55033 /* DateTimeExtensions.swift in Sources */,
 				632EEBF41E427A3700608D01 /* GoalsStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -431,6 +436,7 @@
 				636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */,
 				63B5D8AC1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */,
 				63B5D8AF1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */,
+				63D4EB971E79D15B00D55033 /* DateTimeExtensions.swift in Sources */,
 				639434E41E3D2F0C0055A5B7 /* TogglAPICredential.swift in Sources */,
 				63593AEA1E511B93000473CC /* CollectionOperation.swift in Sources */,
 				639434E31E3D2EFE0055A5B7 /* ModelCache.swift in Sources */,

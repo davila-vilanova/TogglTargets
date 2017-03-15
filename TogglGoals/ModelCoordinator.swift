@@ -181,36 +181,4 @@ protocol ModelCoordinatorContaining {
     var modelCoordinator: ModelCoordinator? { get set }
 }
 
-extension Calendar {
-    func firstDayOfMonth(for date: Date) -> DateComponents {
-        var first = dateComponents([.day, .month, .year], from: date)
-        first.day = 1
-        return first
-    }
-
-    func lastDayOfMonth(for date: Date) -> DateComponents {
-        var last = dateComponents([.day, .month, .year], from: date)
-        last.day = lastDayInMonth(for: date)
-        return last
-    }
-
-    enum NextDayInMonthError: Error {
-        case noMoreDaysInMonth
-    }
-
-    func nextDayInMonth(for date: Date) throws -> DateComponents {
-        var comps = dateComponents([.day, .month, .year], from: date)
-        let day = comps.day!
-        guard day < lastDayInMonth(for: date) else {
-            throw NextDayInMonthError.noMoreDaysInMonth
-        }
-        comps.day = day + 1
-        return comps
-    }
-
-    private func lastDayInMonth(for date: Date) -> Int {
-        let daysRange = range(of: .day, in: .month, for: date)!
-        return daysRange.upperBound - 1
-    }
-}
 

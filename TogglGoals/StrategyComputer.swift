@@ -134,37 +134,6 @@ extension Weekday {
     }
 }
 
-extension DateComponents {
-    static var dayComponents: Set<Calendar.Component> {
-        return [.year, .month, .day]
-    }
-
-    var hasDayComponentsSet: Bool {
-        return hasAllComponentsSet(from: DateComponents.dayComponents)
-    }
-
-    func hasAllComponentsSet(from requiredComponents: Set<Calendar.Component>) -> Bool {
-        for calendarComponent in requiredComponents {
-            if value(for: calendarComponent) == nil {
-                return false
-            }
-        }
-        return true
-    }
-
-    func trimmedToDayComponents() -> DateComponents {
-        return trimmedToComponents(DateComponents.dayComponents)
-    }
-
-    func trimmedToComponents(_ components: Set<Calendar.Component>) -> DateComponents {
-        var returnDateComponents = DateComponents()
-        for calendarComponent in components {
-            returnDateComponents.setValue(self.value(for: calendarComponent), for: calendarComponent)
-        }
-        return returnDateComponents
-    }
-}
-
 extension Calendar {
     enum CountWeekdaysError: Error {
         case missingDateComponents
