@@ -69,7 +69,7 @@ class StrategyComputer {
 
         switch (computationMode) {
         case .fromToday:
-            dayComponents = c.dateComponents([.day, .month, .year], from: now)
+            dayComponents = c.dayComponents(from: now)
         case .fromNextWorkDay:
             do {
                 try dayComponents = c.nextDayInMonth(for: now)

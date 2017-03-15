@@ -9,16 +9,20 @@
 import Foundation
 
 extension Calendar {
+    func dayComponents(from date: Date) -> DateComponents {
+        return dateComponents(DateComponents.dayComponents, from: date)
+    }
+
     func firstDayOfMonth(for date: Date) -> DateComponents {
-        var first = dateComponents([.day, .month, .year], from: date)
-        first.day = 1
-        return first
+        var comps = dayComponents(from: date)
+        comps.day = 1
+        return comps
     }
 
     func lastDayOfMonth(for date: Date) -> DateComponents {
-        var last = dateComponents([.day, .month, .year], from: date)
-        last.day = lastDayInMonth(for: date)
-        return last
+        var comps = dayComponents(from: date)
+        comps.day = lastDayInMonth(for: date)
+        return comps
     }
 
     enum NextDayInMonthError: Error {
@@ -26,7 +30,7 @@ extension Calendar {
     }
 
     func nextDayInMonth(for date: Date) throws -> DateComponents {
-        var comps = dateComponents([.day, .month, .year], from: date)
+        var comps = dayComponents(from: date)
         let day = comps.day!
         guard day < lastDayInMonth(for: date) else {
             throw NextDayInMonthError.noMoreDaysInMonth
