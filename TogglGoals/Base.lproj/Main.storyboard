@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E175b" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E189a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
@@ -1257,6 +1257,9 @@
                     </view>
                     <connections>
                         <outlet property="baselineDifferentialLabel" destination="loV-UA-93u" id="oin-b4-3Al"/>
+                        <outlet property="computeStrategyFromButton" destination="P1q-um-IkR" id="Vdp-gO-eQ3"/>
+                        <outlet property="fromNextWorkDayItem" destination="z9H-sX-Ays" id="fKh-cm-Xjf"/>
+                        <outlet property="fromTodayItem" destination="ZdU-XK-sRP" id="Jk7-gE-JnB"/>
                         <outlet property="goalButton" destination="O7w-Ao-X9F" id="Mmd-aL-2BP"/>
                         <outlet property="hoursLeftLabel" destination="j3x-M1-42r" id="JBg-bQ-d47"/>
                         <outlet property="hoursPerDayLabel" destination="hv3-rh-DXJ" id="Alk-oM-Y60"/>

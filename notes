@@ -14,3 +14,8 @@ cacheRead - cache write in TogglAPIAccessOperation or analogous
 NSURL *appSupportDir = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:&error];
 
 make it exciting
+
+test startPeriod > endPeriod and startStrategy > endPeriod in StrategyComputer / countWeekdaysMatching()
+use toggl account's timezone
+support periods of lengths other than one month (must periods be global across projects?). Corresponding reports would have to be retrieved unless all time entries are retrieved. "Month" is inappropriately hardcoded at several places in the project. One example: Calendar.c.nextDayInMonth(for: Date)
+

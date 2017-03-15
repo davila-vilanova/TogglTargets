@@ -26,6 +26,11 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var workDaysProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var workHoursProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var totalHoursStrategyLabel: NSTextField!
+
+    @IBOutlet weak var computeStrategyFromButton: NSPopUpButton!
+    @IBOutlet weak var fromTodayItem: NSMenuItem!
+    @IBOutlet weak var fromNextWorkDayItem: NSMenuItem!
+
     @IBOutlet weak var hoursPerDayLabel: NSTextField!
     @IBOutlet weak var baselineDifferentialLabel: NSTextField!
 
@@ -56,12 +61,15 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
-    private var strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601), now: Date())
+    private var strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601))
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         populateWeekWorkDaysControl()
+        // TODO: save and restore state of computeStrategyFromButton / decide on whether state is global or project specific
+        computeStrategyFromButton.select(fromTodayItem)
+        computeStrategyFromToday(fromTodayItem)
     }
 
     private func populateWeekWorkDaysControl() {
@@ -180,14 +188,20 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     }
 
     @IBAction func computeStrategyFromToday(_ sender: NSMenuItem) {
-        strategyComputer.computationMode = .fromToday
+        let now = Date()
+        strategyComputer.startStrategyDay = calendar.dayComponents(from: now)
         updateStrategy()
     }
 
 
     @IBAction func computeStrategyFromNextWorkDay(_ sender: NSMenuItem) {
-        strategyComputer.computationMode = .fromNextWorkDay
-        updateStrategy()
+        let now = Date()
+        do {
+            strategyComputer.startStrategyDay = try calendar.nextDayInMonth(for: now)
+            updateStrategy()
+        } catch {
+
+        }
     }
 
     private func updateStrategy() {
@@ -201,10 +215,10 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         monthNameLabel.stringValue = "TBD"
 
         totalWorkdaysLabel.integerValue = strategyComputer.totalWorkdays
-        remainingFullWorkdaysLabel.integerValue = strategyComputer.remainingFullWorkdays
+        remainingFullWorkdaysLabel.integerValue = strategyComputer.remainingWorkdays
 
         workDaysProgressIndicator.maxValue = Double(strategyComputer.totalWorkdays)
-        workDaysProgressIndicator.doubleValue = Double(strategyComputer.totalWorkdays - strategyComputer.remainingFullWorkdays)
+        workDaysProgressIndicator.doubleValue = Double(strategyComputer.totalWorkdays - strategyComputer.remainingWorkdays)
         workHoursProgressIndicator.maxValue = strategyComputer.timeGoal
         workHoursProgressIndicator.doubleValue = strategyComputer.workedTime
 

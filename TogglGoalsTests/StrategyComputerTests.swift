@@ -21,12 +21,13 @@ class StrategyComputerTests: XCTestCase {
         calendar.timeZone = z
 
         let date = try! calendar.date(from: DayComponents(year: year, month: month, day: day))
-        let sc = StrategyComputer(calendar: calendar, now: date)
+        let sc = StrategyComputer(calendar: calendar)
         sc.goal = TimeGoal(forProjectId: 0, hoursPerMonth: hoursTarget, workWeekdays: WeekdaySelection.exceptWeekend)
         sc.report = TimeReport(projectId: 0, since: DayComponents(year: year, month: month, day: 1), until: DayComponents(year: year, month: month, day: 28), workedTime: TimeInterval(workedHours * 3600))
+        sc.startStrategyDay = calendar.dayComponents(from: date)
 
         XCTAssertEqual(sc.totalWorkdays, 20)
-        XCTAssertEqual(sc.remainingFullWorkdays, 17)
+        XCTAssertEqual(sc.remainingWorkdays, 17)
 
         let accuracy = 0.01
         XCTAssertEqualWithAccuracy(sc.timeGoal, TimeInterval(hoursTarget * 3600), accuracy: accuracy)

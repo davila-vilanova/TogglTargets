@@ -17,11 +17,20 @@ class StrategyComputer {
         }
     }
 
-    private var now: Date
+    var startPeriodDay: DayComponents? {
+        guard let report = self.report else {
+            return nil
+        }
+        return report.since
+    }
 
-    enum ComputationMode {
-        case fromToday
-        case fromNextWorkDay
+    var startStrategyDay: DayComponents?
+
+    var endPeriodDay: DayComponents? {
+        guard let report = self.report else {
+            return nil
+        }
+        return report.until
     }
 
     var goal: TimeGoal? {
@@ -35,52 +44,36 @@ class StrategyComputer {
         }
     }
 
-    var computationMode: ComputationMode = .fromToday {
-        didSet {
-            // recompute if different
-        }
-    }
-
-    init(calendar: Calendar, now: Date) {
+    init(calendar: Calendar) {
         self.calendar = calendar
-        self.now = now
     }
 
     var totalWorkdays: Int {
-        guard let goal = self.goal else {
-            return 0
+        guard let goal = self.goal,
+            let start = self.startPeriodDay,
+            let end = self.endPeriodDay
+            else {
+                return 0
         }
+
         let c = calendar
-        let first = c.firstDayOfMonth(for: now)
-        let last = c.lastDayOfMonth(for: now)
         do {
-            return try c.countWeekdaysMatching(goal.workWeekdays, from: first, to: last)
+            return try c.countWeekdaysMatching(goal.workWeekdays, from: start, to: end)
         } catch {
             return 0
         }
     }
 
-    var remainingFullWorkdays: Int {
-        guard let goal = self.goal else {
-            return 0
-        }
-        let c = calendar
-        let dayComponents: DayComponents
-
-        switch (computationMode) {
-        case .fromToday:
-            dayComponents = c.dayComponents(from: now)
-        case .fromNextWorkDay:
-            do {
-                try dayComponents = c.nextDayInMonth(for: now)
-            } catch {
+    var remainingWorkdays: Int {
+        guard let goal = self.goal,
+            let start = self.startStrategyDay,
+            let end = self.endPeriodDay else {
                 return 0
-            }
         }
 
-        let last = c.lastDayOfMonth(for: now)
+        let c = calendar
         do {
-            return try c.countWeekdaysMatching(goal.workWeekdays, from: dayComponents, to: last)
+            return try c.countWeekdaysMatching(goal.workWeekdays, from: start, to: end)
         } catch {
             return 0
         }
@@ -113,7 +106,7 @@ class StrategyComputer {
     }
 
     var dayBaselineAdjustedToProgress: Double {
-        let remainingFullWorkdays = Double(self.remainingFullWorkdays)
+        let remainingFullWorkdays = Double(self.remainingWorkdays)
         guard remainingFullWorkdays > 0 else {
             return 0
         }
