@@ -20,10 +20,10 @@ class StrategyComputerTests: XCTestCase {
         let z = TimeZone(identifier: "America/Chicago")!
         calendar.timeZone = z
 
-        let date = calendar.date(from: DateComponents(year: year, month: month, day: day))!
+        let date = try! calendar.date(from: DayComponents(year: year, month: month, day: day))
         let sc = StrategyComputer(calendar: calendar, now: date)
         sc.goal = TimeGoal(forProjectId: 0, hoursPerMonth: hoursTarget, workWeekdays: WeekdaySelection.exceptWeekend)
-        sc.report = TimeReport(projectId: 0, since: DateComponents(year: year, month: month, day: 1), until: DateComponents(year: year, month: month, day: 28), workedTime: TimeInterval(workedHours * 3600))
+        sc.report = TimeReport(projectId: 0, since: DayComponents(year: year, month: month, day: 1), until: DayComponents(year: year, month: month, day: 28), workedTime: TimeInterval(workedHours * 3600))
 
         XCTAssertEqual(sc.totalWorkdays, 20)
         XCTAssertEqual(sc.remainingFullWorkdays, 17)

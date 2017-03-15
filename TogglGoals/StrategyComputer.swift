@@ -65,7 +65,7 @@ class StrategyComputer {
             return 0
         }
         let c = calendar
-        let dayComponents: DateComponents
+        let dayComponents: DayComponents
 
         switch (computationMode) {
         case .fromToday:
@@ -135,23 +135,11 @@ extension Weekday {
 }
 
 extension Calendar {
-    enum CountWeekdaysError: Error {
-        case missingDateComponents
-        case invalidDateComponents
-    }
-
-    func countWeekdaysMatching(_ weekday: Weekday, from: DateComponents, until: DateComponents) throws -> Int {
+    func countWeekdaysMatching(_ weekday: Weekday, from: DayComponents, until: DayComponents) throws -> Int {
         return try countWeekdaysMatching([weekday], from: from, to: until)
     }
 
-    func countWeekdaysMatching(_ weekdays: [Weekday], from start: DateComponents, to end: DateComponents) throws -> Int {
-        guard start.hasDayComponentsSet, end.hasDayComponentsSet else {
-            throw CountWeekdaysError.missingDateComponents
-        }
-
-        let trimmedStart = start.trimmedToDayComponents()
-        let trimmedEnd = end.trimmedToDayComponents()
-
+    func countWeekdaysMatching(_ weekdays: [Weekday], from start: DayComponents, to end: DayComponents) throws -> Int {
         var count = 0
 
         var matchComponents = Set<DateComponents>()
@@ -160,9 +148,8 @@ extension Calendar {
         }
 
         let oneDayIncrement = DateComponents(day: 1)
-        guard var testeeDate = date(from: trimmedStart), let endDate = date(from: trimmedEnd) else {
-            throw CountWeekdaysError.invalidDateComponents
-        }
+        var testeeDate = try date(from: start)
+        let endDate = try date(from: end)
 
         while testeeDate < endDate || isDate(testeeDate, inSameDayAs: endDate) {
             for comps in matchComponents {
@@ -197,7 +184,7 @@ extension WeekdaySelection {
 }
 
 extension Calendar {
-    func countWeekdaysMatching(_ selection: WeekdaySelection, from: DateComponents, to: DateComponents) throws -> Int {
+    func countWeekdaysMatching(_ selection: WeekdaySelection, from: DayComponents, to: DayComponents) throws -> Int {
         return try countWeekdaysMatching(selection.selectedWeekdays, from: from, to: to)
     }
 }

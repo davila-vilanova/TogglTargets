@@ -289,11 +289,11 @@ extension TimeGoal: CustomDebugStringConvertible {
 
 struct TimeReport {
     let projectId: Int64
-    let since: DateComponents
-    let until: DateComponents
+    let since: DayComponents
+    let until: DayComponents
     let workedTime: TimeInterval
 
-    init(projectId: Int64, since: DateComponents, until: DateComponents, workedTime: TimeInterval) {
+    init(projectId: Int64, since: DayComponents, until: DayComponents, workedTime: TimeInterval) {
         self.projectId = projectId
         self.since = since
         self.until = until

@@ -17,22 +17,19 @@ internal class NetworkRetrieveReportsOperation: TogglAPIAccessOperation<Dictiona
     }
 
     let workspaceId: Int64
-    let since: DateComponents
+    let since: DayComponents
     let formattedSince: String
-    let until: DateComponents
+    let until: DayComponents
     let formattedUntil: String
 
-    init?(credential: TogglAPICredential, workspaceId: Int64, since: DateComponents, until: DateComponents) {
+    init(credential: TogglAPICredential, workspaceId: Int64, since: DayComponents, until: DayComponents) {
         self.workspaceId = workspaceId
         self.since = since
         self.until = until
 
-        do {
-            formattedSince = try ISO8601Date(from: since)
-            formattedUntil = try ISO8601Date(from: until)
-        } catch {
-            return nil
-        }
+        formattedSince = ISO8601Date(from: since)
+        formattedUntil = ISO8601Date(from: until)
+
         super.init(credential: credential)
     }
 
@@ -58,12 +55,6 @@ internal class NetworkRetrieveReportsOperation: TogglAPIAccessOperation<Dictiona
     }
 }
 
-fileprivate func ISO8601Date(from comps: DateComponents) throws -> String{
-    struct InvalidComponentsError: Error {
-        var localizedDescription = "Expected year, month and day in date components"
-    }
-    guard let year = comps.year, let month = comps.month, let day = comps.day else {
-        throw InvalidComponentsError()
-    }
-    return String(format:"%04d-%02d-%02d", year, month, day)
+fileprivate func ISO8601Date(from comps: DayComponents) -> String{
+    return String(format:"%04d-%02d-%02d", comps.year, comps.month, comps.day)
 }

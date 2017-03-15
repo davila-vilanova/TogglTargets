@@ -113,7 +113,7 @@ internal class ModelCoordinator: NSObject {
                 SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, NetworkRetrieveReportsOperation>(
                     inputRetrievalOperation: workspacesOp,
                     spawnOperationMaker: { [apiCredential, firstDay, lastDay] workspace in
-                        NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: firstDay, until: lastDay)! // force unwrap because it is known both dates have the year, month, day components
+                        NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: firstDay, until: lastDay)
                     },
                     collectionClosure: { [weak self] retrieveReportsOps in
                         for retrieveReportsOp in retrieveReportsOps {

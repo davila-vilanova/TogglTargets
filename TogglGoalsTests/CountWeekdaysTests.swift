@@ -21,8 +21,8 @@ class CountWeekdaysTests: XCTestCase {
     }
 
     func testCountWeekdaysWorksInAllKnownTimezonesForMarch() {
-        let startComps = DateComponents(year: 2017, month: 3, day: 1)//, hour: 0, minute: 0)
-        let endComps = DateComponents(year: 2017, month: 3, day: 31)//, hour: 23, minute: 59)
+        let startComps = DayComponents(year: 2017, month: 3, day: 1)//, hour: 0, minute: 0)
+        let endComps = DayComponents(year: 2017, month: 3, day: 31)//, hour: 23, minute: 59)
 
         let expectedCount: Dictionary<Weekday, Int> =
             [ .monday : 4,
@@ -54,8 +54,8 @@ class CountWeekdaysTests: XCTestCase {
     }
 
     func testCountWeekdaysWorksInAllKnownTimezonesForOctober() {
-        let startComps = DateComponents(year: 2016, month: 10, day: 1)
-        let endComps = DateComponents(year: 2016, month: 10, day: 31)
+        let startComps = DayComponents(year: 2016, month: 10, day: 1)
+        let endComps = DayComponents(year: 2016, month: 10, day: 31)
 
         let expectedCount: Dictionary<Weekday, Int> =
             [ .monday : 5,
@@ -92,8 +92,8 @@ class CountWeekdaysTests: XCTestCase {
         var calendar = Calendar(identifier: .iso8601)
         calendar.timeZone = tz
         let day = Weekday.monday
-        let startComps = DateComponents(year: 2015, month: 10, day: 1)
-        let endComps = DateComponents(year: 2015, month: 10, day: 31)
+        let startComps = DayComponents(year: 2015, month: 10, day: 1)
+        let endComps = DayComponents(year: 2015, month: 10, day: 31)
 
         self.measure {
             _ = try! calendar.countWeekdaysMatching(day, from: startComps, until: endComps)
