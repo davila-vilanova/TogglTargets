@@ -28,12 +28,12 @@ class StrategyComputerTests: XCTestCase {
         XCTAssertEqual(sc.totalWorkdays, 20)
         XCTAssertEqual(sc.remainingFullWorkdays, 17)
 
-        let accuracy = 0.001
+        let accuracy = 0.01
         XCTAssertEqualWithAccuracy(sc.timeGoal, TimeInterval(hoursTarget * 3600), accuracy: accuracy)
         XCTAssertEqualWithAccuracy(sc.workedTime, TimeInterval(workedHours * 3600), accuracy: accuracy)
         XCTAssertEqualWithAccuracy(sc.remainingTimeToGoal, TimeInterval(69.0 * 3600), accuracy: accuracy)
-        XCTAssertEqualWithAccuracy(sc.dayBaseline, 4.0, accuracy: accuracy)
-        XCTAssertEqualWithAccuracy(sc.dayBaselineAdjustedToProgress, 4.058823, accuracy: accuracy)
-        XCTAssertEqualWithAccuracy(sc.dayBaselineDifferential, 1.47, accuracy: accuracy)
+        XCTAssertEqualWithAccuracy(sc.dayBaseline, TimeInterval(4.0 * 3600), accuracy: accuracy)
+        XCTAssertEqualWithAccuracy(sc.dayBaselineAdjustedToProgress, TimeInterval(4.058823 * 3600), accuracy: accuracy)
+        XCTAssertEqualWithAccuracy(sc.dayBaselineDifferential, (1.47 / 100), accuracy: accuracy)
     }
 }
