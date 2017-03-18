@@ -32,6 +32,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ModelCoordinatorContaining {
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        modelCoordinator?.refreshRunningTimeEntry()
+    }
+
+    func applicationDidBecomeActive(_ notification: Notification) {
+//        modelCoordinator?.refreshRunningTimeEntry()
+    }
+
+    func applicationWillResignActive(_ notification: Notification) {
+//        modelCoordinator?.stopRefreshingRunningTimeEntry()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

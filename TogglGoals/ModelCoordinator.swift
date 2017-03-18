@@ -18,6 +18,8 @@ internal class ModelCoordinator: NSObject {
     internal var profile = Property<Profile>(value: nil)
     internal var projects = Property<[Project]>(value: Array<Project>())
     internal var workspaces = Property<[Workspace]>(value: Array<Workspace>())
+    internal let runningEntry = Property<RunningEntry>(value: nil)
+    internal var runningEntryRefreshTimer: Timer?
 
     private var reports = Property<[TimeReport]>(value: nil)
 
@@ -41,7 +43,7 @@ internal class ModelCoordinator: NSObject {
 
     private lazy var calendar: Calendar = {
         var cal = Calendar(identifier: .iso8601)
-        cal.locale = Locale.current
+        cal.locale = Locale.current // TODO: get from user profile
         return cal
     }()
 
@@ -174,6 +176,39 @@ internal class ModelCoordinator: NSObject {
         }
 
         return reportProperty
+    }
+
+
+    func refreshRunningTimeEntry() {
+        retrieveRunningTimeEntry()
+        if let oldTimer = runningEntryRefreshTimer,
+            oldTimer.isValid {
+            oldTimer.invalidate()
+        }
+        runningEntryRefreshTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true, block: { [weak self] (timer) in
+            guard let s = self else {
+                return
+            }
+            s.retrieveRunningTimeEntry()
+        })
+    }
+
+    internal func stopRefreshingRunningTimeEntry() {
+        guard let timer = runningEntryRefreshTimer else {
+            return
+        }
+        if timer.isValid {
+            timer.invalidate()
+        }
+        runningEntryRefreshTimer = nil
+    }
+
+    private func retrieveRunningTimeEntry() {
+        let op = NetworkRetrieveRunningEntryOperation(credential: apiCredential)
+        op.onSuccess = { runningEntry in
+            self.runningEntry.value = runningEntry
+        }
+        networkQueue.addOperation(op)
     }
 }
 
