@@ -28,11 +28,14 @@ class NetworkRetrieveRunningEntryOperation: TogglAPIAccessOperation<RunningEntry
 
 extension RunningEntry {
     static func fromTogglAPI(dictionary: StringKeyedDictionary) -> RunningEntry? {
+        let dateFormatter = ISO8601DateFormatter()
         if let id = dictionary["id"] as? Int64,
             let projectId = dictionary["projectId"] as? Int64,
             let start = dictionary["start"] as? String,
-            let parsedStart = ISO8601DateFormatter().date(from: start) {
-            return RunningEntry(id: id, projectId: projectId, start: parsedStart)
+            let at = dictionary["at"] as? String,
+            let parsedStart = dateFormatter.date(from: start),
+            let parsedAt = dateFormatter.date(from: at) {
+            return RunningEntry(id: id, projectId: projectId, start: parsedStart, retrieved: parsedAt)
         } else {
             return nil
         }

@@ -305,4 +305,5 @@ struct RunningEntry {
     let id: Int64
     let projectId: Int64
     let start: Date
+    let retrieved: Date
 }
