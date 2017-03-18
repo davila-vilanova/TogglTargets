@@ -300,3 +300,9 @@ struct TimeReport {
         self.workedTime = workedTime
     }
 }
+
+struct RunningEntry {
+    let id: Int64
+    let projectId: Int64
+    let start: Date
+}
