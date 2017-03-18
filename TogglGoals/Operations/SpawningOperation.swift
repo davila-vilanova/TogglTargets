@@ -10,7 +10,7 @@ import Foundation
 
 class SpawningOperation<InputModel, OutputModel, OutputRetriever: Operation>: Operation {
     private var inputRetrievalOperation: TogglAPIAccessOperation<[InputModel]> // whichever operation will/did load all the items for each of which a new operation must be spawned
-    private let outputRetrievalOperationSpawner: ( (InputModel)-> TogglAPIAccessOperation<OutputModel> )
+    private let outputRetrievalOperationSpawner: ( (InputModel)-> [TogglAPIAccessOperation<OutputModel>] )
     private let outputCollectionOperation: Operation
 
     private var queue: OperationQueue? {
@@ -20,7 +20,7 @@ class SpawningOperation<InputModel, OutputModel, OutputRetriever: Operation>: Op
     }
 
     init(inputRetrievalOperation: TogglAPIAccessOperation<[InputModel]>,
-         spawnOperationMaker: @escaping (InputModel) -> TogglAPIAccessOperation<OutputModel>,
+         spawnOperationMaker: @escaping (InputModel) -> [TogglAPIAccessOperation<OutputModel>],
          collectionClosure: @escaping (Set<OutputRetriever>) -> ()) {
 
         self.inputRetrievalOperation = inputRetrievalOperation
@@ -44,9 +44,11 @@ class SpawningOperation<InputModel, OutputModel, OutputRetriever: Operation>: Op
             Swift.print(error)
         } else if let inputs = inputRetrievalOperation.model {
             for input in inputs {
-                let op = outputRetrievalOperationSpawner(input)
-                self.outputCollectionOperation.addDependency(op)
-                queueOperation(op)
+                let spawnedOps = outputRetrievalOperationSpawner(input)
+                for spawnedOp in spawnedOps {
+                    self.outputCollectionOperation.addDependency(spawnedOp)
+                    queueOperation(spawnedOp)
+                }
             }
         }
     }

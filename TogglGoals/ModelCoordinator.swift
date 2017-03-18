@@ -94,7 +94,7 @@ internal class ModelCoordinator: NSObject {
                 SpawningOperation<Workspace, [Project], NetworkRetrieveProjectsOperation>(
                     inputRetrievalOperation: workspacesOp,
                     spawnOperationMaker: { [credential = apiCredential] workspace in
-                        NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)
+                        [NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)]
                     },
                     collectionClosure: { [weak self] retrieveProjectsOps in
                         var allProjects = Array<Project>()
@@ -115,7 +115,7 @@ internal class ModelCoordinator: NSObject {
                 SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, NetworkRetrieveReportsOperation>(
                     inputRetrievalOperation: workspacesOp,
                     spawnOperationMaker: { [apiCredential, firstDay, lastDay] workspace in
-                        NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: firstDay, until: lastDay)
+                        [NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: firstDay, until: lastDay)]
                     },
                     collectionClosure: { [weak self] retrieveReportsOps in
                         for retrieveReportsOp in retrieveReportsOps {
