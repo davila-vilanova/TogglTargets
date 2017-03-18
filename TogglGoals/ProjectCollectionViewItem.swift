@@ -50,8 +50,8 @@ class ProjectCollectionViewItem: NSCollectionViewItem
         }
     }
 
-    private var observedReportProperty: ObservedProperty<TimeReport>?
-    internal var reportProperty: Property<TimeReport>? {
+    private var observedReportProperty: ObservedProperty<TwoPartTimeReport>?
+    internal var reportProperty: Property<TwoPartTimeReport>? {
         set {
             if let p = newValue {
                 observedReportProperty =

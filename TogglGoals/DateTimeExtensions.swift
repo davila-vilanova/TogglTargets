@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct DayComponents {
+struct DayComponents: Equatable {
     var year: Int
     var month: Int
     var day: Int
@@ -19,6 +19,12 @@ struct DayComponents {
 
     func toDateComponents() -> DateComponents {
         return DateComponents(year: year, month: month, day: day)
+    }
+
+    static func ==(lhs: DayComponents, rhs: DayComponents) -> Bool {
+        return lhs.day == rhs.day &&
+            lhs.month == rhs.month &&
+            lhs.year == rhs.year
     }
 }
 

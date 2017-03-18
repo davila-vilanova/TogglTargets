@@ -45,7 +45,7 @@ internal class NetworkRetrieveReportsOperation: TogglAPIAccessOperation<Dictiona
                     let projectId = id.int64Value
                     let milliseconds = time.doubleValue
                     let timeInterval = milliseconds/1000
-                    let report = TimeReport(projectId: projectId, since: self.since, until: self.until, workedTime: timeInterval)
+                    let report = SingleTimeReport(projectId: projectId, since: self.since, until: self.until, workedTime: timeInterval)
                     timeReports[projectId] = report
                 }
             }

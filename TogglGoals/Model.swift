@@ -287,7 +287,14 @@ extension TimeGoal: CustomDebugStringConvertible {
     }
 }
 
-struct TimeReport {
+protocol TimeReport {
+    var projectId: Int64 { get }
+    var since: DayComponents { get }
+    var until: DayComponents { get }
+    var workedTime: TimeInterval { get }
+}
+
+struct SingleTimeReport: TimeReport {
     let projectId: Int64
     let since: DayComponents
     let until: DayComponents
@@ -298,6 +305,23 @@ struct TimeReport {
         self.since = since
         self.until = until
         self.workedTime = workedTime
+    }
+}
+
+struct TwoPartTimeReport: TimeReport {
+    let upToYesterdayReport: TimeReport
+    let todayReport: TimeReport
+    var projectId: Int64 {
+        return upToYesterdayReport.projectId
+    }
+    var since: DayComponents {
+        return upToYesterdayReport.since
+    }
+    var until: DayComponents {
+        return todayReport.until
+    }
+    var workedTime: TimeInterval {
+        return upToYesterdayReport.workedTime + todayReport.workedTime
     }
 }
 

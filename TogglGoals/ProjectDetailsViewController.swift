@@ -51,7 +51,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     var modelCoordinator: ModelCoordinator?
     private var representedProject: Project?
     private var observedGoalProperty: ObservedProperty<TimeGoal>?
-    private var observedReportProperty: ObservedProperty<TimeReport>?
+    private var observedReportProperty: ObservedProperty<TwoPartTimeReport>?
 
     private lazy var calendar: Calendar = {
         var calendar = Calendar(identifier: .iso8601)
@@ -121,7 +121,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
             let reportProperty = mc.reportPropertyForProjectId(project.id)
             observedReportProperty?.unobserve()
-            observedReportProperty = ObservedProperty<TimeReport>(original: reportProperty, valueObserver: { [weak self] (report) in self?.handleReportValue(report) })
+            observedReportProperty = ObservedProperty<TwoPartTimeReport>(original: reportProperty, valueObserver: { [weak self] (report) in self?.handleReportValue(report) })
             observedReportProperty?.reportImmediately()
         }
     }
