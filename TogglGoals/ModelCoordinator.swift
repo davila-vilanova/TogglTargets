@@ -106,16 +106,26 @@ internal class ModelCoordinator: NSObject {
                     })
 
             let now = Date()
-            let firstDay = calendar.firstDayOfMonth(for: now)
-            let yesterday = calendar.dayComponents(from: now) // TODO !!
+            let startOfPeriod = calendar.firstDayOfMonth(for: now)
+            let yesterday = try? calendar.previousDay(for: now, notBefore: startOfPeriod)
             let today = calendar.dayComponents(from: now)
 
             let retrieveReportsOp =
                 SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, NetworkRetrieveReportsOperation>(
                     inputRetrievalOperation: workspacesOp,
-                    spawnOperationMaker: { [apiCredential, firstDay, yesterday, today] workspace in
-                        [NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: firstDay, until: yesterday),
-                         NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: today, until: today)]
+                    spawnOperationMaker: { [apiCredential, startOfPeriod, yesterday, today] workspace in
+                        let retrieveUpToYesterdayReport: NetworkRetrieveReportsOperation?
+                        if let y = yesterday {
+                            retrieveUpToYesterdayReport = NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: startOfPeriod, until: y)
+                        } else {
+                            retrieveUpToYesterdayReport = nil
+                        }
+                        let retrieveTodayReport = NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, singleDay: today)
+                        if let r = retrieveUpToYesterdayReport {
+                            return [r, retrieveTodayReport]
+                        } else {
+                            return [retrieveTodayReport]
+                        }
                     },
                     collectionClosure: { [weak self] retrieveReportsOps in
                         guard let s = self else {
@@ -129,31 +139,41 @@ internal class ModelCoordinator: NSObject {
                             }
                             for (projectId, report) in retrievedReports {
                                 switch report.since {
-                                case firstDay: upToYesterdayReports[projectId] = report
+                                case startOfPeriod: upToYesterdayReports[projectId] = report
                                 case today: todayReports[projectId] = report
                                 default: assert(false, "report has unexpected start date")
                                 }
                             }
                             for (projectId, upToYesterdayReport) in upToYesterdayReports {
-                                let todayReport: TimeReport
-                                if let r = todayReports[projectId] {
-                                    todayReport = r
+                                let workedTimeUntilYesterday = upToYesterdayReport.workedTime
+                                let workedTimeToday: TimeInterval
+
+                                if let todayReport = todayReports[projectId] {
+                                    workedTimeToday = todayReport.workedTime
+                                    todayReports.removeValue(forKey: projectId)
                                 } else {
-                                    todayReport = SingleTimeReport(projectId: projectId, since: today, until: today, workedTime: 0)
+                                    workedTimeToday = 0
                                 }
+
                                 let prop = s.reportPropertyForProjectId(projectId)
-                                prop.value = TwoPartTimeReport(upToYesterdayReport: upToYesterdayReport, todayReport: todayReport)
+                                prop.value = TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
                             }
                             for (projectId, todayReport) in todayReports {
-                                let prop = s.reportPropertyForProjectId(projectId)
-                                if prop.value == nil {
-                                    let upToYesterdayReport = SingleTimeReport(projectId: projectId, since: firstDay, until: yesterday, workedTime: 0)
-                                    prop.value = TwoPartTimeReport(upToYesterdayReport: upToYesterdayReport, todayReport: todayReport)
+                                let workedTimeToday = todayReport.workedTime
+                                let workedTimeUntilYesterday: TimeInterval
+
+                                if let upToYesterdayReport = upToYesterdayReports[projectId] {
+                                    workedTimeUntilYesterday = upToYesterdayReport.workedTime
+                                } else {
+                                    workedTimeUntilYesterday = 0
                                 }
+
+                                let prop = s.reportPropertyForProjectId(projectId)
+                                assert(prop.value == nil)
+                                prop.value = TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
                             }
                         }
                     })
-
 
             networkQueue.addOperation(profileOp)
             networkQueue.addOperation(workspacesOp)

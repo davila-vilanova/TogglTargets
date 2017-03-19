@@ -33,6 +33,10 @@ internal class NetworkRetrieveReportsOperation: TogglAPIAccessOperation<Dictiona
         super.init(credential: credential)
     }
 
+    convenience init(credential: TogglAPICredential, workspaceId: Int64, singleDay: DayComponents) {
+        self.init(credential: credential, workspaceId: workspaceId, since: singleDay, until: singleDay)
+    }
+
     override func unmarshallModel(from data: Data) -> Dictionary<Int64, TimeReport>? {
         var timeReports = Dictionary<Int64, TimeReport>()
 

@@ -299,30 +299,17 @@ struct SingleTimeReport: TimeReport {
     let since: DayComponents
     let until: DayComponents
     let workedTime: TimeInterval
-
-    init(projectId: Int64, since: DayComponents, until: DayComponents, workedTime: TimeInterval) {
-        self.projectId = projectId
-        self.since = since
-        self.until = until
-        self.workedTime = workedTime
-    }
 }
 
 struct TwoPartTimeReport: TimeReport {
-    let upToYesterdayReport: TimeReport
-    let todayReport: TimeReport
-    var projectId: Int64 {
-        return upToYesterdayReport.projectId
-    }
-    var since: DayComponents {
-        return upToYesterdayReport.since
-    }
-    var until: DayComponents {
-        return todayReport.until
-    }
+    let projectId: Int64
+    let since: DayComponents
+    let until: DayComponents
     var workedTime: TimeInterval {
-        return upToYesterdayReport.workedTime + todayReport.workedTime
+        return workedTimeUntilYesterday + workedTimeToday
     }
+    let workedTimeUntilYesterday: TimeInterval
+    let workedTimeToday: TimeInterval
 }
 
 struct RunningEntry {
