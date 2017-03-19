@@ -23,7 +23,7 @@ class StrategyComputerTests: XCTestCase {
         let date = try! calendar.date(from: DayComponents(year: year, month: month, day: day))
         let sc = StrategyComputer(calendar: calendar)
         sc.goal = TimeGoal(forProjectId: 0, hoursPerMonth: hoursTarget, workWeekdays: WeekdaySelection.exceptWeekend)
-        sc.report = TimeReport(projectId: 0, since: DayComponents(year: year, month: month, day: 1), until: DayComponents(year: year, month: month, day: 28), workedTime: TimeInterval(workedHours * 3600))
+        sc.report = SingleTimeReport(projectId: 0, since: DayComponents(year: year, month: month, day: 1), until: DayComponents(year: year, month: month, day: 28), workedTime: TimeInterval(workedHours * 3600))
         sc.startStrategyDay = calendar.dayComponents(from: date)
 
         XCTAssertEqual(sc.totalWorkdays, 20)

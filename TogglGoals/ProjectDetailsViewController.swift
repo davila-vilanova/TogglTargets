@@ -197,7 +197,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBAction func computeStrategyFromNextWorkDay(_ sender: NSMenuItem) {
         let now = Date()
         do {
-            strategyComputer.startStrategyDay = try calendar.nextDayInMonth(for: now)
+            strategyComputer.startStrategyDay = try calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now))
             updateStrategy()
         } catch {
 

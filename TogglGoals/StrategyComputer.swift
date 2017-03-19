@@ -144,7 +144,7 @@ extension Calendar {
         var testeeDate = try date(from: start)
         let endDate = try date(from: end)
 
-        while testeeDate < endDate || isDate(testeeDate, inSameDayAs: endDate) {
+        while testeeDate < endDate || isDate(testeeDate, inSameDayAs: endDate) { // TODO !isLaterDay
             for comps in matchComponents {
                 if date(testeeDate, matchesComponents: comps) {
                     count += 1

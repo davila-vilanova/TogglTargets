@@ -56,21 +56,44 @@ extension Calendar {
         return dayComps
     }
 
-    enum NextDayInMonthError: Error {
-        case noMoreDaysInMonth
+    enum DayCalculationError: Error {
+        case resultExceedsProvidedBoundary
     }
 
-    func nextDayInMonth(for date: Date) throws -> DayComponents {
-        var dayComps = dayComponents(from: date)
-        guard dayComps.day < lastDayInMonth(for: date) else {
-            throw NextDayInMonthError.noMoreDaysInMonth
+    // TODO: apples to apples
+    func nextDay(for originalDate: Date, notAfter: DayComponents) throws -> DayComponents {
+        // TODO: could use date(bySetting component: Calendar.Component, value: Int, of date: Date) -> Date?
+        let oneDayIncrement = DateComponents(day: 1)
+        let adjustedDate = date(byAdding: oneDayIncrement, to: originalDate)!
+        let notAfterDate = try date(from: notAfter)
+        if isDate(adjustedDate, inLaterDayThan: notAfterDate) {
+            throw DayCalculationError.resultExceedsProvidedBoundary
         }
-        dayComps.day += 1
-        return dayComps
+        return dayComponents(from: adjustedDate)
+    }
+
+    func previousDay(for originalDate: Date, notBefore: DayComponents) throws -> DayComponents {
+        let oneDayDecrement = DateComponents(day: -1)
+        let adjustedDate = date(byAdding: oneDayDecrement, to: originalDate)!
+        let notBeforeDate = try date(from: notBefore)
+        if isDate(adjustedDate, inEarlierDayThan: notBeforeDate) {
+            throw DayCalculationError.resultExceedsProvidedBoundary
+        }
+        return dayComponents(from: adjustedDate)
     }
 
     private func lastDayInMonth(for date: Date) -> Int {
         let daysRange = range(of: .day, in: .month, for: date)!
         return daysRange.upperBound - 1
+    }
+}
+
+extension Calendar {
+    func isDate(_ compared: Date, inEarlierDayThan reference: Date) -> Bool {
+        return compared < reference && !isDate(compared, inSameDayAs: reference)
+    }
+
+    func isDate(_ compared: Date, inLaterDayThan reference: Date) -> Bool {
+        return compared > reference && !isDate(compared, inSameDayAs: reference)
     }
 }
