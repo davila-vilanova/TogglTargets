@@ -17,5 +17,7 @@ make it exciting
 
 test startPeriod > endPeriod and startStrategy > endPeriod in StrategyComputer / countWeekdaysMatching()
 use toggl account's timezone
-support periods of lengths other than one month (must periods be global across projects?). Corresponding reports would have to be retrieved unless all time entries are retrieved. "Month" is inappropriately hardcoded at several places in the project. One example: Calendar.c.nextDayInMonth(for: Date)
+support periods of lengths other than one month. Store start and end of period in TimeGoal (renamed to Goal only) Corresponding reports would have to be retrieved unless all time entries are retrieved. "Month" may still be inappropriately hardcoded at several places in the project.
+global now? and how that will play with the timezone coming from toggl account
 
+use more properties to autoupdate values

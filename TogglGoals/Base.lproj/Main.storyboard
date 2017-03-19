@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E189a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E191a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
@@ -1258,6 +1258,7 @@
                     <connections>
                         <outlet property="baselineDifferentialLabel" destination="loV-UA-93u" id="oin-b4-3Al"/>
                         <outlet property="computeStrategyFromButton" destination="P1q-um-IkR" id="Vdp-gO-eQ3"/>
+                        <outlet property="dayProgressBox" destination="Elu-ec-vK2" id="Jld-Eh-BfQ"/>
                         <outlet property="fromNextWorkDayItem" destination="z9H-sX-Ays" id="fKh-cm-Xjf"/>
                         <outlet property="fromTodayItem" destination="ZdU-XK-sRP" id="Jk7-gE-JnB"/>
                         <outlet property="goalButton" destination="O7w-Ao-X9F" id="Mmd-aL-2BP"/>
@@ -1269,6 +1270,9 @@
                         <outlet property="monthlyHoursGoalFormatter" destination="i7g-2o-BQJ" id="bTR-YS-zBk"/>
                         <outlet property="projectName" destination="ifD-zz-iY5" id="pO9-jg-jgp"/>
                         <outlet property="remainingFullWorkdaysLabel" destination="8mv-UW-Kdh" id="DRs-0A-Z5F"/>
+                        <outlet property="timeRemainingToWorkTodayLabel" destination="Kyo-Ep-mfH" id="NA8-0d-Opw"/>
+                        <outlet property="timeWorkedTodayLabel" destination="AQj-ov-P6c" id="rpF-Za-XeC"/>
+                        <outlet property="todayProgressIndicator" destination="U6i-Rs-8tc" id="TAn-cB-jQS"/>
                         <outlet property="totalHoursStrategyLabel" destination="0o5-hv-lLH" id="yVY-sa-NEe"/>
                         <outlet property="totalWorkdaysLabel" destination="nm7-jT-fqf" id="8Vb-cc-yag"/>
                         <outlet property="weekWorkDaysControl" destination="VI6-Xu-wpt" id="Ors-cc-xq3"/>

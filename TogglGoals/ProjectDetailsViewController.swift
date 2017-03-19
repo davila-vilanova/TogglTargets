@@ -34,6 +34,11 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var hoursPerDayLabel: NSTextField!
     @IBOutlet weak var baselineDifferentialLabel: NSTextField!
 
+    @IBOutlet weak var dayProgressBox: NSBox!
+    @IBOutlet weak var todayProgressIndicator: NSProgressIndicator!
+    @IBOutlet weak var timeWorkedTodayLabel: NSTextField!
+    @IBOutlet weak var timeRemainingToWorkTodayLabel: NSTextField!
+
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
         f.allowedUnits = [.hour, .minute]
@@ -189,6 +194,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     @IBAction func computeStrategyFromToday(_ sender: NSMenuItem) {
         let now = Date()
+        timeRemainingToWorkTodayLabel.isHidden = false
         strategyComputer.startStrategyDay = calendar.dayComponents(from: now)
         updateStrategy()
     }
@@ -196,6 +202,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     @IBAction func computeStrategyFromNextWorkDay(_ sender: NSMenuItem) {
         let now = Date()
+        timeRemainingToWorkTodayLabel.isHidden = true
         do {
             strategyComputer.startStrategyDay = try calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now))
             updateStrategy()
@@ -209,8 +216,14 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
             let report = observedReportProperty?.original?.value else {
                 return
         }
+
+        let now = Date()
+        strategyComputer.startPeriodDay = calendar.firstDayOfMonth(for: now)
+        strategyComputer.endPeriodDay = calendar.lastDayOfMonth(for: now)
+        strategyComputer.now = now
         strategyComputer.goal = goal
         strategyComputer.report = report
+        strategyComputer.runningEntry = modelCoordinator?.runningEntry.value
 
         monthNameLabel.stringValue = "TBD"
 
@@ -246,6 +259,27 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         }
 
         baselineDifferentialLabel.stringValue = baselineDifferentialText
+
+        let formattedTimeWorkedToday = timeFormatter.string(from: strategyComputer.workedTimeToday)!
+        timeWorkedTodayLabel.stringValue = "\(formattedTimeWorkedToday) worked today"
+
+        if strategyComputer.isComputingStrategyFromToday {
+//            let hasWorkedToday = strategyComputer.workedTimeToday > 0
+            let formattedTimeRemainingToWorkToday = timeFormatter.string(from: strategyComputer.remainingTimeToDayBaselineToday)!
+            timeRemainingToWorkTodayLabel.stringValue = "\(formattedTimeRemainingToWorkToday) left to meet your goal today"
+            todayProgressIndicator.isIndeterminate = false
+            todayProgressIndicator.maxValue = strategyComputer.dayBaselineAdjustedToProgress
+            todayProgressIndicator.doubleValue = strategyComputer.workedTimeToday
+        } else {
+            todayProgressIndicator.doubleValue = 0
+            if strategyComputer.runningEntryBelongsToProject {
+                todayProgressIndicator.isIndeterminate = true
+                todayProgressIndicator.startAnimation(self)
+            } else {
+                todayProgressIndicator.isIndeterminate = false
+                todayProgressIndicator.stopAnimation(self)
+            }
+        }
     }
 
     @IBAction func createGoal(_ sender: Any) {

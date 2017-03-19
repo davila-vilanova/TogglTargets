@@ -17,35 +17,31 @@ class StrategyComputer {
         }
     }
 
-    var startPeriodDay: DayComponents? {
-        guard let report = self.report else {
-            return nil
-        }
-        return report.since
-    }
-
+    var startPeriodDay: DayComponents?
     var startStrategyDay: DayComponents?
-
-    var endPeriodDay: DayComponents? {
-        guard let report = self.report else {
-            return nil
-        }
-        return report.until
-    }
+    var endPeriodDay: DayComponents?
+    var now: Date?
 
     var goal: TimeGoal? {
         didSet {
             // recompute if different
         }
     }
-    var report: TimeReport?  {
+
+    var report: TwoPartTimeReport?  {
         didSet {
             // recompute if different
         }
     }
 
+    var runningEntry: RunningEntry?
+
     init(calendar: Calendar) {
         self.calendar = calendar
+    }
+
+    var projectId: Int64? {
+        return report?.projectId
     }
 
     var totalWorkdays: Int {
@@ -86,11 +82,58 @@ class StrategyComputer {
         return TimeInterval(goal.hoursPerMonth) * hourTimeInterval
     }
 
+    var isComputingStrategyFromToday: Bool {
+        guard let startStrategyDay = self.startStrategyDay else {
+            return false
+        }
+        return startStrategyDay == calendar.dayComponents(from: Date())
+    }
+
     var workedTime: TimeInterval {
         guard let report = self.report else {
             return 0
         }
-        return report.workedTime
+        if isComputingStrategyFromToday { // today
+            return report.workedTimeUntilYesterday
+        } else {
+            return report.workedTime
+        }
+    }
+
+    var workedTimeToday: TimeInterval {
+        guard let report = self.report else {
+            return 0
+        }
+        return report.workedTimeToday + runningTime
+    }
+
+    var remainingTimeToDayBaselineToday: TimeInterval {
+        if !isComputingStrategyFromToday {
+            return 0
+        }
+        let remaining = dayBaselineAdjustedToProgress - workedTimeToday
+        if remaining < 0 {
+            return 0
+        } else {
+            return remaining
+        }
+    }
+
+    var runningEntryBelongsToProject: Bool {
+        guard let runningEntry = self.runningEntry,
+            let projectId = self.projectId else {
+            return false
+        }
+        return runningEntry.projectId == projectId
+    }
+
+    var runningTime: TimeInterval {
+        guard let runningEntry = self.runningEntry,
+            runningEntryBelongsToProject,
+            let now = self.now else {
+                return 0
+        }
+        return now.timeIntervalSince(runningEntry.start)
     }
 
     var remainingTimeToGoal: TimeInterval {
