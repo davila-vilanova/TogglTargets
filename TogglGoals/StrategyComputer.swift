@@ -96,7 +96,7 @@ class StrategyComputer {
         if isComputingStrategyFromToday { // today
             return report.workedTimeUntilYesterday
         } else {
-            return report.workedTime
+            return report.workedTime + runningTime
         }
     }
 
