@@ -253,14 +253,14 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
         let dayBaseline = timeFormatter.string(from: strategyComputer.dayBaseline)!
         let dayBaselineDifferential = strategyComputer.dayBaselineDifferential
-        let absoluteBaselineDifferential = Double.abs(dayBaselineDifferential)
+        let absoluteBaselineDifferential = abs(dayBaselineDifferential)
 
         let baselineDifferentialText: String
 
         if absoluteBaselineDifferential < 0.01 {
             baselineDifferentialText = "That prety much matches your baseline of \(dayBaseline)"
         } else {
-            let formattedBaselineDifferential = percentFormatter.string(from: NSNumber(value: Double.abs(dayBaselineDifferential)))!
+            let formattedBaselineDifferential = percentFormatter.string(from: NSNumber(value: abs(dayBaselineDifferential)))!
             if dayBaselineDifferential > 0 {
                 baselineDifferentialText = "That is \(formattedBaselineDifferential) more than your baseline of \(dayBaseline)"
             } else {

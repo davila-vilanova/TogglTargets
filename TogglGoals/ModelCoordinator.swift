@@ -191,7 +191,7 @@ internal class ModelCoordinator: NSObject {
             let goal = goalsStore.retrieveGoal(projectId: projectId)
             goalProperty = Property<TimeGoal>(value: goal)
             let observed = ObservedProperty(original: goalProperty, valueObserver: {[weak self] (goal) in
-                Swift.print("modified goal=\(goal)")
+                Swift.print("modified goal=\(String(describing: goal))")
                 if let g = goal {
                     self?.goalsStore.storeGoal(goal: g)
                 }
