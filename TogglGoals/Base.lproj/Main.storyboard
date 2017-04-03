@@ -1299,6 +1299,9 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <font key="font" metaFont="message"/>
                         <tabViewItems/>
+                        <connections>
+                            <outlet property="delegate" destination="wbJ-Y1-IIV" id="3CO-cf-MyW"/>
+                        </connections>
                     </tabView>
                     <connections>
                         <segue destination="iZ6-o4-gFV" kind="relationship" relationship="tabItems" id="sJZ-lq-CC2"/>
