@@ -169,7 +169,7 @@ internal class ModelCoordinator: NSObject {
                                 }
 
                                 let prop = s.reportPropertyForProjectId(projectId)
-                                assert(prop.value == nil)
+//                                assert(prop.value == nil) TODO
                                 prop.value = TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
                             }
                         }

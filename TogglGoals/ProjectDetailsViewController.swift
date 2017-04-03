@@ -72,6 +72,9 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         super.viewDidLoad()
 
         populateWeekWorkDaysControl()
+
+        displayRepresentedProject()
+
         // TODO: save and restore state of computeStrategyFromButton / decide on whether state is global or project specific
         computeStrategyFromButton.select(fromTodayItem)
         computeStrategyFromToday(fromTodayItem)
@@ -110,6 +113,15 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     internal func onProjectSelected(project: Project) {
         self.representedProject = project
+        displayRepresentedProject()
+    }
+
+    internal func displayRepresentedProject() {
+        guard isViewLoaded == true,
+            let project = self.representedProject,
+            let mc = modelCoordinator else {
+            return;
+        }
 
         if let name = project.name {
             projectName.stringValue = name
@@ -117,18 +129,16 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
             projectName.stringValue = "No name"
         }
 
-        if let mc = modelCoordinator {
-            let goalProperty = mc.goalPropertyForProjectId(project.id)
+        let goalProperty = mc.goalPropertyForProjectId(project.id)
 
-            observedGoalProperty?.unobserve()
-            observedGoalProperty = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (goal) in self?.handleGoalValue(goal)})
-            observedGoalProperty?.reportImmediately()
+        observedGoalProperty?.unobserve()
+        observedGoalProperty = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (goal) in self?.handleGoalValue(goal)})
+        observedGoalProperty?.reportImmediately()
 
-            let reportProperty = mc.reportPropertyForProjectId(project.id)
-            observedReportProperty?.unobserve()
-            observedReportProperty = ObservedProperty<TwoPartTimeReport>(original: reportProperty, valueObserver: { [weak self] (report) in self?.handleReportValue(report) })
-            observedReportProperty?.reportImmediately()
-        }
+        let reportProperty = mc.reportPropertyForProjectId(project.id)
+        observedReportProperty?.unobserve()
+        observedReportProperty = ObservedProperty<TwoPartTimeReport>(original: reportProperty, valueObserver: { [weak self] (report) in self?.handleReportValue(report) })
+        observedReportProperty?.reportImmediately()
     }
 
     @IBAction func monthlyHoursGoalEdited(_ sender: NSTextField) {

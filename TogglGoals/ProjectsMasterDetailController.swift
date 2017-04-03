@@ -9,32 +9,45 @@
 import Cocoa
 
 class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorContaining {
-    private var cachedModelCoordinator: ModelCoordinator?
-    private var projectsListViewController: ProjectsListViewController?
-    private var projectDetailsViewController: ProjectDetailsViewController?
+    private enum SplitItemIndex: Int {
+        case projectsList = 0
+        case selectionDetail
+    }
 
-    var modelCoordinator: ModelCoordinator? {
+    private var _modelCoordinator: ModelCoordinator?
+    internal var modelCoordinator: ModelCoordinator? {
         get {
             // As the topmost controller, it will retrieve the ModelCoordinator from the app delegate
             // and propagate it to the contained controllers
 
-            if let coordinator = cachedModelCoordinator {
+            if let coordinator = _modelCoordinator {
                 return coordinator
             }
             let coordinator = (NSApplication.shared().delegate as! ModelCoordinatorContaining).modelCoordinator
-            cachedModelCoordinator = coordinator
+            _modelCoordinator = coordinator
             return coordinator
         }
 
         set {
-            cachedModelCoordinator = newValue
+            _modelCoordinator = newValue
         }
+    }
+
+    private var projectsListViewController: ProjectsListViewController {
+        return splitViewItem(.projectsList).viewController as! ProjectsListViewController
+    }
+
+    private var selectionDetailViewController: SelectionDetailViewController {
+        return splitViewItem(.selectionDetail).viewController as! SelectionDetailViewController
+    }
+
+    private func splitViewItem(_ index: SplitItemIndex) -> NSSplitViewItem {
+        return splitViewItems[index.rawValue]
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupModelCoordinatorInChildControllers()
-        findViewControllers()
         setupProjectSelectionClosure()
     }
 
@@ -46,19 +59,10 @@ class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorCon
         }
     }
 
-    private func findViewControllers() {
-        for item in splitViewItems {
-            if let listVC = item.viewController as? ProjectsListViewController {
-                projectsListViewController = listVC
-            } else if let detailsVC = item.viewController as? ProjectDetailsViewController {
-                projectDetailsViewController = detailsVC
-            }
-        }
-    }
-
     private func setupProjectSelectionClosure() {
-        projectsListViewController?.didSelectProject = { [weak self] project in
-            self?.projectDetailsViewController?.onProjectSelected(project: project)
+        projectsListViewController.didSelectProject = { [weak self] project in
+            guard let s = self else { return }
+            s.selectionDetailViewController.selection = project
         }
     }
 }

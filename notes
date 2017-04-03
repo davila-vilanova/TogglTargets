@@ -21,3 +21,10 @@ support periods of lengths other than one month. Store start and end of period i
 global now? and how that will play with the timezone coming from toggl account
 
 use more properties to autoupdate values
+
+do not show time to work today when today is not a day in the goal weekday selection unless already worked today
+
+
+---
+
+

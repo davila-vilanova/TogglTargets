@@ -36,6 +36,7 @@
 		636A784B1DBBECAA00751A51 /* ColoredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636A784A1DBBECAA00751A51 /* ColoredView.swift */; };
 		636ABD4D1DBE3162002C42BE /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636ABD4C1DBE3162002C42BE /* Model.swift */; };
 		636ABD4E1DBE3162002C42BE /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636ABD4C1DBE3162002C42BE /* Model.swift */; };
+		637F96DC1E817585000E9FC5 /* EmptySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637F96DB1E817585000E9FC5 /* EmptySelectionViewController.swift */; };
 		63817A011DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63817A001DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift */; };
 		639434E31E3D2EFE0055A5B7 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A211E3B4B7300176AB4 /* ModelCache.swift */; };
 		639434E41E3D2F0C0055A5B7 /* TogglAPICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */; };
@@ -54,6 +55,7 @@
 		63CE9A1E1E3AA12200176AB4 /* APIAccessError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */; };
 		63CE9A201E3AA2F800176AB4 /* TogglAPICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */; };
 		63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A211E3B4B7300176AB4 /* ModelCache.swift */; };
+		63D2E8A71E928AF4001DA2E1 /* SelectionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D2E8A61E928AF4001DA2E1 /* SelectionDetailViewController.swift */; };
 		63D4EB961E79D15B00D55033 /* DateTimeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4EB951E79D15B00D55033 /* DateTimeExtensions.swift */; };
 		63D4EB971E79D15B00D55033 /* DateTimeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4EB951E79D15B00D55033 /* DateTimeExtensions.swift */; };
 		63EAD8E31E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E21E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift */; };
@@ -130,6 +132,7 @@
 		636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountWeekdaysTests.swift; sourceTree = "<group>"; };
 		636A784A1DBBECAA00751A51 /* ColoredView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColoredView.swift; sourceTree = "<group>"; };
 		636ABD4C1DBE3162002C42BE /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		637F96DB1E817585000E9FC5 /* EmptySelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptySelectionViewController.swift; sourceTree = "<group>"; };
 		63817A001DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsMasterDetailWindowController.swift; sourceTree = "<group>"; };
 		639434E61E3D2F410055A5B7 /* Property.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Property.swift; sourceTree = "<group>"; };
 		639FD05B1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveWorkspacesOperation.swift; sourceTree = "<group>"; };
@@ -140,6 +143,7 @@
 		63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIAccessError.swift; sourceTree = "<group>"; };
 		63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63CE9A211E3B4B7300176AB4 /* ModelCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCache.swift; sourceTree = "<group>"; };
+		63D2E8A61E928AF4001DA2E1 /* SelectionDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionDetailViewController.swift; sourceTree = "<group>"; };
 		63D4EB951E79D15B00D55033 /* DateTimeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensions.swift; sourceTree = "<group>"; };
 		63EAD8E21E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveRunningEntryOperation.swift; sourceTree = "<group>"; };
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
@@ -205,6 +209,7 @@
 				632957701DBA9C8800E11A10 /* ProjectsMasterDetailController.swift */,
 				632957721DBA9D8500E11A10 /* ProjectsListViewController.swift */,
 				632957751DBA9D9600E11A10 /* ProjectDetailsViewController.swift */,
+				637F96DB1E817585000E9FC5 /* EmptySelectionViewController.swift */,
 				63FA1F961DBB796D00612A09 /* ProjectCollectionViewItem.swift */,
 				63FA1F971DBB796D00612A09 /* ProjectCollectionViewItem.xib */,
 				636A784A1DBBECAA00751A51 /* ColoredView.swift */,
@@ -219,6 +224,7 @@
 				63B5D8A41E48FF7000042897 /* Operations */,
 				633392161E5F5CFB00427F50 /* StrategyComputer.swift */,
 				63D4EB951E79D15B00D55033 /* DateTimeExtensions.swift */,
+				63D2E8A61E928AF4001DA2E1 /* SelectionDetailViewController.swift */,
 			);
 			path = TogglGoals;
 			sourceTree = "<group>";
@@ -415,6 +421,7 @@
 				632957731DBA9D8500E11A10 /* ProjectsListViewController.swift in Sources */,
 				639FD05C1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift in Sources */,
 				632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */,
+				637F96DC1E817585000E9FC5 /* EmptySelectionViewController.swift in Sources */,
 				639434E71E3D2F410055A5B7 /* Property.swift in Sources */,
 				63B5D8AE1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */,
 				63593AE61E511AD0000473CC /* CollectionOperation.swift in Sources */,
@@ -424,6 +431,7 @@
 				63817A011DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift in Sources */,
 				639FD05F1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */,
 				633392171E5F5CFB00427F50 /* StrategyComputer.swift in Sources */,
+				63D2E8A71E928AF4001DA2E1 /* SelectionDetailViewController.swift in Sources */,
 				63CE9A1E1E3AA12200176AB4 /* APIAccessError.swift in Sources */,
 				63B5D8B71E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */,
 				63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */,

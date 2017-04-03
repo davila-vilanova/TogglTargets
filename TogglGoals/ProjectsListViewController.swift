@@ -11,7 +11,7 @@ import Cocoa
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, ModelCoordinatorContaining {
     let projectItemIdentifier = "ProjectItemIdentifier"
 
-    internal var didSelectProject: ( (Project) -> () )?
+    internal var didSelectProject: ( (Project?) -> () )?
 
     var modelCoordinator: ModelCoordinator? {
         didSet {
@@ -65,11 +65,15 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     func refresh() {
         projectsCollectionView.reloadData()
-        if let projects = self.projects,
-            !projects.isEmpty,
-            projectsCollectionView.selectionIndexes.isEmpty {
-            projectsCollectionView.selectItems(at: [IndexPath(item: 0, section: 0)], scrollPosition: .top)
-            didSelectProject?(projects[0])
+        updateSelection()
+    }
+
+    private func updateSelection() {
+        if let index = projectsCollectionView.selectionIndexPaths.first?.item,
+            let project = projects?[index] {
+            didSelectProject?(project)
+        } else {
+            didSelectProject?(nil)
         }
     }
 
@@ -98,9 +102,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - NSCollectionViewDelegate
 
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
-        if let index = indexPaths.first?.item,
-            let project = projects?[index] {
-            didSelectProject?(project)
-        }
+        updateSelection()
+    }
+
+    func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
+        updateSelection()
     }
 }

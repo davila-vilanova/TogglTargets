@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16E191a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16F43c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -688,7 +688,7 @@
                 <splitViewController id="ak2-zI-3MP" customClass="ProjectsMasterDetailController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <splitViewItems>
                         <splitViewItem id="UZA-Se-y7j"/>
-                        <splitViewItem id="Akq-qC-p5Q"/>
+                        <splitViewItem id="b6j-cj-9Lk"/>
                     </splitViewItems>
                     <splitView key="splitView" dividerStyle="thin" vertical="YES" id="Tyn-3W-UrQ">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
@@ -696,7 +696,7 @@
                     </splitView>
                     <connections>
                         <segue destination="uJx-25-i9K" kind="relationship" relationship="splitItems" id="saQ-Co-8OQ"/>
-                        <segue destination="zvs-ll-aji" kind="relationship" relationship="splitItems" id="H2Q-lc-Kg5"/>
+                        <segue destination="wbJ-Y1-IIV" kind="relationship" relationship="splitItems" id="GoA-O6-MJr"/>
                     </connections>
                 </splitViewController>
                 <customObject id="qEG-eu-hIH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -717,7 +717,7 @@
                                     <rect key="frame" x="1" y="1" width="159" height="298"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <collectionView selectable="YES" allowsEmptySelection="NO" id="UNJ-j2-pFb">
+                                        <collectionView selectable="YES" id="UNJ-j2-pFb">
                                             <rect key="frame" x="0.0" y="0.0" width="159" height="298"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <collectionViewGridLayout key="collectionViewLayout" id="zAH-3Z-8un">
@@ -760,12 +760,12 @@
         <!--Project Details View Controller-->
         <scene sceneID="huO-mY-84c">
             <objects>
-                <viewController id="zvs-ll-aji" customClass="ProjectDetailsViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ProjectDetailsViewController" id="zvs-ll-aji" customClass="ProjectDetailsViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="aCi-JH-WTK">
                         <rect key="frame" x="0.0" y="0.0" width="522" height="424"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ifD-zz-iY5">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ifD-zz-iY5">
                                 <rect key="frame" x="18" y="385" width="104" height="19"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="project name" id="5WW-Al-IxS">
                                     <font key="font" size="16" name=".AppleSystemUIFontDemi"/>
@@ -785,7 +785,7 @@
                                     <stackView distribution="equalCentering" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="99E-97-cT4">
                                         <rect key="frame" x="0.0" y="0.0" width="160" height="22"/>
                                         <subviews>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ehP-Hd-fQb" userLabel="monthly goal label">
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ehP-Hd-fQb" userLabel="monthly goal label">
                                                 <rect key="frame" x="-2" y="3" width="124" height="17"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="monthly hours goal:" id="bzF-fQ-3sp">
                                                     <font key="font" metaFont="system"/>
@@ -793,7 +793,7 @@
                                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BiS-Y9-O7e" userLabel="hours goal field">
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BiS-Y9-O7e" userLabel="hours goal field">
                                                 <rect key="frame" x="128" y="0.0" width="32" height="22"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="0" drawsBackground="YES" id="CG7-n3-16n">
                                                     <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="i7g-2o-BQJ"/>
@@ -821,7 +821,7 @@
                                     <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oLC-cT-yAR">
                                         <rect key="frame" x="198" y="1" width="284" height="21"/>
                                         <subviews>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jvK-uZ-jzo">
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jvK-uZ-jzo">
                                                 <rect key="frame" x="-2" y="3" width="128" height="17"/>
                                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="work days per week:" id="CzO-33-cPm">
                                                     <font key="font" metaFont="system"/>
@@ -883,7 +883,7 @@
                             <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DID-tl-OEf">
                                 <rect key="frame" x="20" y="321" width="86" height="17"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lal-vl-FyN">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lal-vl-FyN">
                                         <rect key="frame" x="-2" y="0.0" width="73" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="this month:" id="KQd-tU-w14">
                                             <font key="font" metaFont="system"/>
@@ -891,7 +891,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="23h-Iy-7og">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="23h-Iy-7og">
                                         <rect key="frame" x="75" y="0.0" width="13" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="A" id="vA8-Xe-OYM">
                                             <font key="font" metaFont="system"/>
@@ -918,7 +918,7 @@
                                         <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nWk-IN-Ubr" userLabel="Stack View: Work Days in Month">
                                             <rect key="frame" x="6" y="46" width="142" height="14"/>
                                             <subviews>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="yVY-05-qiV">
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yVY-05-qiV">
                                                     <rect key="frame" x="-2" y="0.0" width="82" height="14"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="this month has" id="gC7-gV-NJ1">
                                                         <font key="font" metaFont="smallSystem"/>
@@ -926,7 +926,7 @@
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nm7-jT-fqf">
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nm7-jT-fqf">
                                                     <rect key="frame" x="78" y="0.0" width="11" height="14"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0" id="Dol-2V-4w6">
                                                         <font key="font" metaFont="smallSystem"/>
@@ -934,7 +934,7 @@
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="v1T-4c-61D">
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v1T-4c-61D">
                                                     <rect key="frame" x="87" y="0.0" width="57" height="14"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="work days" id="D9y-iN-pSR">
                                                         <font key="font" metaFont="smallSystem"/>
@@ -957,7 +957,7 @@
                                         <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nmv-eP-otz" userLabel="Stack View: Remaining Full Workdays">
                                             <rect key="frame" x="372" y="46" width="102" height="14"/>
                                             <subviews>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8mv-UW-Kdh">
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8mv-UW-Kdh">
                                                     <rect key="frame" x="-2" y="0.0" width="11" height="14"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0" id="LjQ-Sj-6P5">
                                                         <font key="font" metaFont="smallSystem"/>
@@ -965,7 +965,7 @@
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mwg-PJ-a4S">
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mwg-PJ-a4S">
                                                     <rect key="frame" x="7" y="0.0" width="97" height="14"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="full work days left" id="T4o-ir-cZF" userLabel="full work days left">
                                                         <font key="font" metaFont="smallSystem"/>
@@ -992,7 +992,7 @@
                                         <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l1p-o2-LqX" userLabel="Stack View: Hours Worked This month">
                                             <rect key="frame" x="6" y="6" width="140" height="14"/>
                                             <subviews>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ErC-S5-MAP">
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ErC-S5-MAP">
                                                     <rect key="frame" x="-2" y="0.0" width="44" height="14"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="FcO-kU-Xb0">
                                                         <font key="font" metaFont="smallSystem"/>
@@ -1000,7 +1000,7 @@
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ry0-41-cHe">
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ry0-41-cHe">
                                                     <rect key="frame" x="40" y="0.0" width="102" height="14"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="worked this month" id="EA3-4A-lat">
                                                         <font key="font" metaFont="smallSystem"/>
@@ -1021,7 +1021,7 @@
                                         <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W2f-Ay-dIw" userLabel="Stack View: Hours Left to Goal">
                                             <rect key="frame" x="414" y="6" width="60" height="14"/>
                                             <subviews>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j3x-M1-42r">
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j3x-M1-42r">
                                                     <rect key="frame" x="-2" y="0.0" width="44" height="14"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="OGx-fB-RJW">
                                                         <font key="font" metaFont="smallSystem"/>
@@ -1029,7 +1029,7 @@
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DRg-Kp-7PP">
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DRg-Kp-7PP">
                                                     <rect key="frame" x="40" y="0.0" width="22" height="14"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="left" id="JSO-c3-Bq1">
                                                         <font key="font" metaFont="smallSystem"/>
@@ -1074,7 +1074,7 @@
                             <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1YG-1P-FX0" userLabel="Stack View: Total Hours Strategy">
                                 <rect key="frame" x="20" y="197" width="252" height="18"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xWN-8s-auk">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xWN-8s-auk">
                                         <rect key="frame" x="-2" y="0.0" width="202" height="18"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="to reach your monthly goal of" id="1xq-o8-OBg">
                                             <font key="font" size="14" name=".AppleSystemUIFontDemi"/>
@@ -1082,7 +1082,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0o5-hv-lLH">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0o5-hv-lLH">
                                         <rect key="frame" x="198" y="0.0" width="56" height="18"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="tuu-0d-G8L">
                                             <font key="font" size="14" name=".AppleSystemUIFontDemi"/>
@@ -1124,7 +1124,7 @@
                             <stackView wantsLayer="YES" distribution="fill" orientation="horizontal" alignment="firstBaseline" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="Zz8-u3-exR" userLabel="Stack View: Baseline">
                                 <rect key="frame" x="20" y="170" width="373" height="17"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w8x-Sh-WG9">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w8x-Sh-WG9">
                                         <rect key="frame" x="-2" y="0.0" width="34" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="work" id="yCm-WT-Dgg">
                                             <font key="font" metaFont="system"/>
@@ -1132,7 +1132,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hv3-rh-DXJ" userLabel="Hours Per Day Label">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hv3-rh-DXJ" userLabel="Hours Per Day Label">
                                         <rect key="frame" x="30" y="0.0" width="52" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="iO0-Eg-Z3O">
                                             <font key="font" metaFont="systemSemibold" size="13"/>
@@ -1140,7 +1140,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="dtr-n5-Jqe">
+                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dtr-n5-Jqe">
                                         <rect key="frame" x="80" y="0.0" width="50" height="17"/>
                                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="per day" id="Haa-j6-WbO">
                                             <font key="font" metaFont="system"/>
@@ -1148,7 +1148,7 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="loV-UA-93u">
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="loV-UA-93u">
                                         <rect key="frame" x="128" y="0.0" width="247" height="14"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="That's 10% more than your baseline of 4 hours" id="Fia-l4-7eT">
                                             <font key="font" metaFont="smallSystem"/>
@@ -1179,7 +1179,7 @@
                                         <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="U6i-Rs-8tc">
                                             <rect key="frame" x="6" y="18" width="468" height="20"/>
                                         </progressIndicator>
-                                        <textField horizontalHuggingPriority="252" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AQj-ov-P6c">
+                                        <textField horizontalHuggingPriority="252" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AQj-ov-P6c">
                                             <rect key="frame" x="4" y="6" width="119" height="14"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="X hours worked today" id="z2O-xm-WLm">
                                                 <font key="font" metaFont="smallSystem"/>
@@ -1187,7 +1187,7 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Kyo-Ep-mfH">
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kyo-Ep-mfH">
                                             <rect key="frame" x="411" y="6" width="65" height="14"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Y hours left" id="wTF-8b-SMw">
                                                 <font key="font" metaFont="smallSystem"/>
@@ -1282,7 +1282,59 @@
                 </viewController>
                 <customObject id="sX4-zk-LDV" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="341" y="1199"/>
+            <point key="canvasLocation" x="926" y="1444"/>
+        </scene>
+        <!--Selection Detail View Controller-->
+        <scene sceneID="uIT-hn-0X3">
+            <objects>
+                <customObject id="lI5-8m-Rnk" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <tabViewController tabStyle="unspecified" id="wbJ-Y1-IIV" customClass="SelectionDetailViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabViewItems>
+                        <tabViewItem id="LmC-pS-23n"/>
+                        <tabViewItem id="w0E-yV-RVl"/>
+                    </tabViewItems>
+                    <viewControllerTransitionOptions key="transitionOptions" crossfade="YES"/>
+                    <tabView key="tabView" misplaced="YES" type="noTabsNoBorder" id="vca-o2-3aw">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <font key="font" metaFont="message"/>
+                        <tabViewItems/>
+                    </tabView>
+                    <connections>
+                        <segue destination="iZ6-o4-gFV" kind="relationship" relationship="tabItems" id="sJZ-lq-CC2"/>
+                        <segue destination="zvs-ll-aji" kind="relationship" relationship="tabItems" id="sC3-iP-OYr"/>
+                    </connections>
+                </tabViewController>
+            </objects>
+            <point key="canvasLocation" x="279" y="1137"/>
+        </scene>
+        <!--Empty Selection View Controller-->
+        <scene sceneID="hIu-gf-ZQy">
+            <objects>
+                <viewController id="iZ6-o4-gFV" customClass="EmptySelectionViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="MjY-gb-2eL">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DHb-ma-adO">
+                                <rect key="frame" x="155" y="141" width="141" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="please select a project" id="EHa-P4-qQ6">
+                                    <font key="font" metaFont="message"/>
+                                    <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <accessibility identifier="EmptySelectionViewController"/>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="DHb-ma-adO" firstAttribute="centerY" secondItem="MjY-gb-2eL" secondAttribute="centerY" id="FJu-g4-8fZ"/>
+                            <constraint firstItem="DHb-ma-adO" firstAttribute="centerX" secondItem="MjY-gb-2eL" secondAttribute="centerX" id="NUl-Rk-OMN"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="OBD-zQ-HWF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="867" y="1027"/>
         </scene>
     </scenes>
 </document>
