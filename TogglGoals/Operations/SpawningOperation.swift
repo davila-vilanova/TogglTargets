@@ -8,9 +8,9 @@
 
 import Foundation
 
-class SpawningOperation<InputModel, OutputModel, OutputRetriever: Operation>: Operation {
-    private var inputRetrievalOperation: TogglAPIAccessOperation<[InputModel]> // whichever operation will/did load all the items for each of which a new operation must be spawned
-    private let outputRetrievalOperationSpawner: ( (InputModel)-> [TogglAPIAccessOperation<OutputModel>] )
+class SpawningOperation<InputArrayElement, SpawnedOperationOutput, SpawnedOperationType: Operation>: Operation {
+    private var inputRetrievalOperation: TogglAPIAccessOperation<[InputArrayElement]> // whichever operation will/did load all the items for each of which a new operation must be spawned
+    private let outputRetrievalSpawnedOperationsMaker: ( (InputArrayElement)-> [TogglAPIAccessOperation<SpawnedOperationOutput>] )
     private let outputCollectionOperation: Operation
 
     private var queue: OperationQueue? {
@@ -19,13 +19,13 @@ class SpawningOperation<InputModel, OutputModel, OutputRetriever: Operation>: Op
         }
     }
 
-    init(inputRetrievalOperation: TogglAPIAccessOperation<[InputModel]>,
-         spawnOperationMaker: @escaping (InputModel) -> [TogglAPIAccessOperation<OutputModel>],
-         collectionClosure: @escaping (Set<OutputRetriever>) -> ()) {
+    init(inputRetrievalOperation: TogglAPIAccessOperation<[InputArrayElement]>,
+         spawnedOperationsMaker: @escaping (InputArrayElement) -> [TogglAPIAccessOperation<SpawnedOperationOutput>],
+         collectionClosure: @escaping (Set<SpawnedOperationType>) -> ()) {
 
         self.inputRetrievalOperation = inputRetrievalOperation
-        self.outputRetrievalOperationSpawner = spawnOperationMaker
-        self.outputCollectionOperation = CollectionOperation<OutputRetriever>(collectionClosure)
+        self.outputRetrievalSpawnedOperationsMaker = spawnedOperationsMaker
+        self.outputCollectionOperation = CollectionOperation<SpawnedOperationType>(collectionClosure)
 
         super.init()
 
@@ -44,7 +44,7 @@ class SpawningOperation<InputModel, OutputModel, OutputRetriever: Operation>: Op
             Swift.print(error)
         } else if let inputs = inputRetrievalOperation.model {
             for input in inputs {
-                let spawnedOps = outputRetrievalOperationSpawner(input)
+                let spawnedOps = outputRetrievalSpawnedOperationsMaker(input)
                 for spawnedOp in spawnedOps {
                     self.outputCollectionOperation.addDependency(spawnedOp)
                     queueOperation(spawnedOp)
