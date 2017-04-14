@@ -32,3 +32,36 @@ class NetworkRetrieveProjectsOperation: TogglAPIAccessOperation<[Project]> {
         }
     }
 }
+
+/** 
+  Spawns NetworkRetrieveProjectsOperations from the results of a NetworkRetrieveWorkspacesOperation
+  Collects all retrieved projects in an array of Projects
+*/
+class NetworkRetrieveProjectsSpawningOperation: SpawningOperation<Workspace, [Project], NetworkRetrieveProjectsOperation> {
+  
+    typealias CollectedOutput = [Project]
+    
+    init(retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation,
+         credential: TogglAPICredential,
+         onComplete: @escaping (CollectedOutput) -> ()) {
+        
+        func makeSpawnedOperations(from workspace: Workspace) -> [TogglAPIAccessOperation<[Project]>] {
+            return [NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)]
+        }
+     
+        func collectProjectsRetrieved(by allSpawnedOperations: Set<NetworkRetrieveProjectsOperation>) -> CollectedOutput {
+            var allProjects = [Project]()
+            for retrieveProjectsOperation in allSpawnedOperations {
+                if let retrievedProjects = retrieveProjectsOperation.model {
+                    allProjects.append(contentsOf: retrievedProjects)
+                }
+            }
+            return allProjects
+        }
+
+        super.init(inputRetrievalOperation: retrieveWorkspacesOperation,
+                   spawnedOperationsMaker: makeSpawnedOperations) { spawnedRetrieveProjectsOperations in
+                    onComplete(collectProjectsRetrieved(by: spawnedRetrieveProjectsOperations))
+        }
+    }
+}

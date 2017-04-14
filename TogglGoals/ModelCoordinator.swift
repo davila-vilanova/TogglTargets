@@ -49,7 +49,7 @@ internal class ModelCoordinator: NSObject {
         self.cache = cache
         self.goalsStore = goalsStore
         super.init()
-        retrieveUserProfile()
+        retrieveUserDataFromToggl()
     }
 
     private func sortAndSetProjects(_ unsortedProjects: [Project]) {
@@ -70,116 +70,35 @@ internal class ModelCoordinator: NSObject {
             }
         })
     }
-
-
-    private func retrieveUserProfile() {
-        let (profile, shouldRefresh) = self.cache.retrieveUserProfile()
-        self.profile.value = profile
-        if shouldRefresh {
-            let profileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
-            profileOp.onSuccess = { profile in
-                self.cache.storeUserProfile(profile)
-                self.profile.value = profile
-            }
-
-            let workspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
-            workspacesOp.onSuccess = { workspaces in
-                self.cache.storeWorkspaces(workspaces)
-                self.workspaces.value = workspaces
-            }
-
-            let retrieveProjectsOp =
-                SpawningOperation<Workspace, [Project], NetworkRetrieveProjectsOperation>(
-                    inputRetrievalOperation: workspacesOp,
-                    spawnOperationMaker: { [credential = apiCredential] workspace in
-                        [NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)]
-                    },
-                    collectionClosure: { [weak self] retrieveProjectsOps in
-                        var allProjects = Array<Project>()
-                        for retrieveProjectsOp in retrieveProjectsOps {
-                            if let retrievedProjects = retrieveProjectsOp.model {
-                                allProjects.append(contentsOf: retrievedProjects)
-                            }
-                        }
-
-                        self?.sortAndSetProjects(allProjects)
-                    })
-
-            let now = Date()
-            let startOfPeriod = calendar.firstDayOfMonth(for: now)
-            let yesterday = try? calendar.previousDay(for: now, notBefore: startOfPeriod)
-            let today = calendar.dayComponents(from: now)
-
-            let retrieveReportsOp =
-                SpawningOperation<Workspace, Dictionary<Int64, TimeReport>, NetworkRetrieveReportsOperation>(
-                    inputRetrievalOperation: workspacesOp,
-                    spawnOperationMaker: { [apiCredential, startOfPeriod, yesterday, today] workspace in
-                        let retrieveUpToYesterdayReport: NetworkRetrieveReportsOperation?
-                        if let y = yesterday {
-                            retrieveUpToYesterdayReport = NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, since: startOfPeriod, until: y)
-                        } else {
-                            retrieveUpToYesterdayReport = nil
-                        }
-                        let retrieveTodayReport = NetworkRetrieveReportsOperation(credential: apiCredential, workspaceId: workspace.id, singleDay: today)
-                        if let r = retrieveUpToYesterdayReport {
-                            return [r, retrieveTodayReport]
-                        } else {
-                            return [retrieveTodayReport]
-                        }
-                    },
-                    collectionClosure: { [weak self] retrieveReportsOps in
-                        guard let s = self else {
-                            return
-                        }
-                        var upToYesterdayReports = Dictionary<Int64, TimeReport>()
-                        var todayReports = Dictionary<Int64, TimeReport>()
-                        for retrieveReportsOp in retrieveReportsOps {
-                            guard let retrievedReports = retrieveReportsOp.model else {
-                                return;
-                            }
-                            for (projectId, report) in retrievedReports {
-                                switch report.since {
-                                case startOfPeriod: upToYesterdayReports[projectId] = report
-                                case today: todayReports[projectId] = report
-                                default: assert(false, "report has unexpected start date")
-                                }
-                            }
-                            for (projectId, upToYesterdayReport) in upToYesterdayReports {
-                                let workedTimeUntilYesterday = upToYesterdayReport.workedTime
-                                let workedTimeToday: TimeInterval
-
-                                if let todayReport = todayReports[projectId] {
-                                    workedTimeToday = todayReport.workedTime
-                                    todayReports.removeValue(forKey: projectId)
-                                } else {
-                                    workedTimeToday = 0
-                                }
-
-                                let prop = s.reportPropertyForProjectId(projectId)
-                                prop.value = TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
-                            }
-                            for (projectId, todayReport) in todayReports {
-                                let workedTimeToday = todayReport.workedTime
-                                let workedTimeUntilYesterday: TimeInterval
-
-                                if let upToYesterdayReport = upToYesterdayReports[projectId] {
-                                    workedTimeUntilYesterday = upToYesterdayReport.workedTime
-                                } else {
-                                    workedTimeUntilYesterday = 0
-                                }
-
-                                let prop = s.reportPropertyForProjectId(projectId)
-//                                assert(prop.value == nil) TODO
-                                prop.value = TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
-                            }
-                        }
-                    })
-
-            networkQueue.addOperation(profileOp)
-            networkQueue.addOperation(workspacesOp)
-            networkQueue.addOperation(retrieveProjectsOp)
-            networkQueue.addOperation(retrieveReportsOp)
+    private func retrieveUserDataFromToggl() {
+        let retrieveProfileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
+        retrieveProfileOp.onSuccess = { profile in
+            self.profile.value = profile
         }
+
+        let retrieveWorkspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
+
+        let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential) {
+            [weak projectsProperty = self.projects] (retrievedProjects) in
+            guard let p = projectsProperty else {
+                return
+            }
+            p.value = retrievedProjects
+        }
+
+        let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, calendar: calendar) { [weak self] (collectedReports) in
+            guard let s = self else {
+                return
+            }
+            for (projectId, report) in collectedReports {
+                s.reportPropertyForProjectId(projectId).value = report
+            }
+        }
+        
+        networkQueue.addOperation(retrieveProfileOp)
+        networkQueue.addOperation(retrieveWorkspacesOp)
+        networkQueue.addOperation(retrieveProjectsOp)
+        networkQueue.addOperation(retrieveReportsOp)
     }
 
     internal func goalPropertyForProjectId(_ projectId: Int64) -> Property<TimeGoal> {
