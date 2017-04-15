@@ -10,14 +10,14 @@ import Foundation
 
 // ModelCoordinator is not thread safe
 internal class ModelCoordinator: NSObject {
-    private let cache: ModelCache
     private let goalsStore: GoalsStore
 
     private let notificationCenter = NotificationCenter.default
 
     internal var profile = Property<Profile>(value: nil)
-    internal var projects = Property<[Project]>(value: Array<Project>())
-    internal var workspaces = Property<[Workspace]>(value: Array<Workspace>())
+    internal var projects = Property<[Troika]>(value: Array<Troika>()) // sorted
+//    internal var projects = Property<[Project]>(value: Array<Project>())
+
     internal let runningEntry = Property<RunningEntry>(value: nil)
     internal var runningEntryRefreshTimer: Timer?
 
@@ -46,30 +46,26 @@ internal class ModelCoordinator: NSObject {
     }()
 
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
-        self.cache = cache
         self.goalsStore = goalsStore
         super.init()
         retrieveUserDataFromToggl()
     }
 
-    private func sortAndSetProjects(_ unsortedProjects: [Project]) {
-        // TODO: clean up
+    private func sortAndSetProjects(_ unsortedProjects: [Troika]) {
         // TODO: sorting only takes place right after loading projects. Better if sorting happens also after editing goal.
-        self.projects.value = unsortedProjects.sorted(by: { (p1, p2) -> Bool in
-            let g1 = goalsStore.retrieveGoal(projectId: p1.id)
-            let g2 = goalsStore.retrieveGoal(projectId: p2.id)
-
-            if let hours1 = g1?.hoursPerMonth {
-                if let hours2 = g2?.hoursPerMonth {
-                    return hours1 >= hours2
-                } else {
-                    return true
-                }
-            } else {
-                return g2?.hoursPerMonth == nil
+        self.projects.value = unsortedProjects.sorted {
+            // a project with goal comes before a project without it
+            if $0.goal != nil, $1.goal == nil {
+                return true
+            } else if $0.goal == nil, $1.goal != nil {
+                return false
             }
-        })
+            
+            // when two projects have goals the one with the larger goal comes first
+            return $0.goal!.hoursPerMonth > $1.goal!.hoursPerMonth
+        }
     }
+
     private func retrieveUserDataFromToggl() {
         let retrieveProfileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
         retrieveProfileOp.onSuccess = { profile in
@@ -78,27 +74,18 @@ internal class ModelCoordinator: NSObject {
 
         let retrieveWorkspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
 
-        let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential) {
-            [weak projectsProperty = self.projects] (retrievedProjects) in
-            guard let p = projectsProperty else {
-                return
-            }
-            p.value = retrievedProjects
-        }
-
-        let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, calendar: calendar) { [weak self] (collectedReports) in
-            guard let s = self else {
-                return
-            }
-            for (projectId, report) in collectedReports {
-                s.reportPropertyForProjectId(projectId).value = report
-            }
+        let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential)
+        let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, calendar: calendar)
+        
+       let troikasCollectingOperation = ProjectsGoalsReportsCollectingOperation(retrieveProjectsOperation: retrieveProjectsOp, retrieveReportsOperation: retrieveReportsOp, goalStore: goalsStore) { [weak self] troikas in
+            self?.sortAndSetProjects(troikas)
         }
         
         networkQueue.addOperation(retrieveProfileOp)
         networkQueue.addOperation(retrieveWorkspacesOp)
         networkQueue.addOperation(retrieveProjectsOp)
         networkQueue.addOperation(retrieveReportsOp)
+        networkQueue.addOperation(troikasCollectingOperation)
     }
 
     internal func goalPropertyForProjectId(_ projectId: Int64) -> Property<TimeGoal> {

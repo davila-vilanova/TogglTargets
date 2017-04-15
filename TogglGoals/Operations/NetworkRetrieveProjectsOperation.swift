@@ -38,30 +38,28 @@ class NetworkRetrieveProjectsOperation: TogglAPIAccessOperation<[Project]> {
   Collects all retrieved projects in an array of Projects
 */
 class NetworkRetrieveProjectsSpawningOperation: SpawningOperation<Workspace, [Project], NetworkRetrieveProjectsOperation> {
-  
     typealias CollectedOutput = [Project]
-    
-    init(retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation,
-         credential: TogglAPICredential,
-         onComplete: @escaping (CollectedOutput) -> ()) {
-        
-        func makeSpawnedOperations(from workspace: Workspace) -> [TogglAPIAccessOperation<[Project]>] {
-            return [NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)]
-        }
-     
-        func collectProjectsRetrieved(by allSpawnedOperations: Set<NetworkRetrieveProjectsOperation>) -> CollectedOutput {
-            var allProjects = [Project]()
-            for retrieveProjectsOperation in allSpawnedOperations {
-                if let retrievedProjects = retrieveProjectsOperation.model {
-                    allProjects.append(contentsOf: retrievedProjects)
-                }
-            }
-            return allProjects
-        }
 
-        super.init(inputRetrievalOperation: retrieveWorkspacesOperation,
-                   spawnedOperationsMaker: makeSpawnedOperations) { spawnedRetrieveProjectsOperations in
-                    onComplete(collectProjectsRetrieved(by: spawnedRetrieveProjectsOperations))
+    var collectedOutput: CollectedOutput?
+    
+    let credential: TogglAPICredential
+    
+    init(retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation, credential: TogglAPICredential) {
+        self.credential = credential
+        super.init(inputRetrievalOperation: retrieveWorkspacesOperation)
+    }
+    
+    override func makeOperationsToSpawn(from workspace: Workspace) -> [NetworkRetrieveProjectsOperation] {
+        return [NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)]
+    }
+    
+    override func collectOutput(from spawnedOperations: Set<NetworkRetrieveProjectsOperation>) {
+        var allProjects = [Project]()
+        for retrieveProjectsOperation in spawnedOperations {
+            if let retrievedProjects = retrieveProjectsOperation.model {
+                allProjects.append(contentsOf: retrievedProjects)
+            }
         }
+        collectedOutput = allProjects
     }
 }

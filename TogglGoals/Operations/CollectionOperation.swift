@@ -9,16 +9,16 @@
 import Foundation
 
 internal class CollectionOperation<DependentOperation: Operation>: Operation {
-    private let collectionClosure: ((Set<DependentOperation>)->())
-
-    init(_ collectionClosure: @escaping ((Set<DependentOperation>)->())) {
-        self.collectionClosure = collectionClosure
-    }
+    var collectionClosure: ((Set<DependentOperation>)->())?
 
     override func main() {
         guard !isCancelled else {
             return
         }
+        guard let collectionClosure = self.collectionClosure else {
+            return
+        }
+        
         var collectableOperations = Set<DependentOperation>()
         for dependency in dependencies {
             if let collectableOperation = dependency as? DependentOperation {

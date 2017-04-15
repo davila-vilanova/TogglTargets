@@ -70,93 +70,93 @@ fileprivate func ISO8601Date(from comps: DayComponents) -> String{
 internal class NetworkRetrieveReportsSpawningOperation: SpawningOperation<Workspace, Dictionary<Int64, TimeReport>,  NetworkRetrieveReportsOperation> {
     
     typealias CollectedOutput = Dictionary<Int64, TwoPartTimeReport>
-    
-    init(retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation,
-         credential: TogglAPICredential,
-         calendar: Calendar,
-         onComplete: @escaping (CollectedOutput) -> ()) {
-        
-        let now = Date()
-        let startOfPeriod = calendar.firstDayOfMonth(for: now)
-        let yesterday = try? calendar.previousDay(for: now, notBefore: startOfPeriod)
-        let today = calendar.dayComponents(from: now)
 
-        func makeSpawnedOperations(from workspace: Workspace) -> [TogglAPIAccessOperation<Dictionary<Int64, TimeReport>>] {
-            let retrieveUpToYesterdayReportOperation: NetworkRetrieveReportsOperation?
-            if let y = yesterday {
-                retrieveUpToYesterdayReportOperation =
-                    NetworkRetrieveReportsOperation(credential: credential, workspaceId: workspace.id,
-                                                    since: startOfPeriod, until: y)
-            } else {
-                retrieveUpToYesterdayReportOperation = nil
-            }
-            let retrieveTodayReport =
-                NetworkRetrieveReportsOperation(credential: credential, workspaceId: workspace.id, singleDay: today)
-            if let r = retrieveUpToYesterdayReportOperation {
-                return [r, retrieveTodayReport]
-            } else {
-                return [retrieveTodayReport]
-            }
+    var collectedOutput: CollectedOutput?
+    
+    let credential: TogglAPICredential
+    let startOfPeriod: DayComponents
+    let yesterday: DayComponents?
+    let today: DayComponents
+    
+    init(retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation, credential: TogglAPICredential, calendar: Calendar) {
+        self.credential = credential
+        let now = Date()
+        startOfPeriod = calendar.firstDayOfMonth(for: now)
+        yesterday = try? calendar.previousDay(for: now, notBefore: startOfPeriod)
+        today = calendar.dayComponents(from: now)
+     
+        super.init(inputRetrievalOperation: retrieveWorkspacesOperation)
+    }
+    
+    override func makeOperationsToSpawn(from workspace: Workspace) -> [NetworkRetrieveReportsOperation] {
+        let retrieveUpToYesterdayReportOperation: NetworkRetrieveReportsOperation?
+        if let y = yesterday {
+            retrieveUpToYesterdayReportOperation =
+                NetworkRetrieveReportsOperation(credential: credential, workspaceId: workspace.id,
+                                                since: startOfPeriod, until: y)
+        } else {
+            retrieveUpToYesterdayReportOperation = nil
+        }
+        let retrieveTodayReport =
+            NetworkRetrieveReportsOperation(credential: credential, workspaceId: workspace.id, singleDay: today)
+        if let r = retrieveUpToYesterdayReportOperation {
+            return [r, retrieveTodayReport]
+        } else {
+            return [retrieveTodayReport]
+        }
+    }
+    
+    override func collectOutput(from spawnedOperations: Set<NetworkRetrieveReportsOperation>) {
+        var upToYesterdayReports = Dictionary<Int64, TimeReport>()
+        var todayReports = Dictionary<Int64, TimeReport>()
+        var collectedReports = CollectedOutput()
+        
+        func addReportToCollected(for projectId: Int64, workedTimeUntilYesterday: TimeInterval, workedTimeToday: TimeInterval) {
+            collectedReports[projectId] =
+                TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today,
+                                  workedTimeUntilYesterday: workedTimeUntilYesterday,
+                                  workedTimeToday: workedTimeToday)
         }
         
-        func collectReportsRetrieved(by allSpawnedOperations: Set<NetworkRetrieveReportsOperation>) -> CollectedOutput {
-            var upToYesterdayReports = Dictionary<Int64, TimeReport>()
-            var todayReports = Dictionary<Int64, TimeReport>()
-            var collectedReports = CollectedOutput()
-            
-            func addReportToCollected(for projectId: Int64, workedTimeUntilYesterday: TimeInterval, workedTimeToday: TimeInterval) {
-                collectedReports[projectId] =
-                    TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today,
-                                      workedTimeUntilYesterday: workedTimeUntilYesterday,
-                                      workedTimeToday: workedTimeToday)
+        for retrieveReportsOperation in spawnedOperations {
+            guard let retrievedReports = retrieveReportsOperation.model else {
+                continue
             }
-            
-            for retrieveReportsOperation in allSpawnedOperations {
-                guard let retrievedReports = retrieveReportsOperation.model else {
-                    continue
-                }
-                for (projectId, report) in retrievedReports {
-                    switch report.since {
-                    case startOfPeriod: upToYesterdayReports[projectId] = report
-                    case today: todayReports[projectId] = report
-                    default: assert (false, "report has unexpected start date")
-                    }
-                }
-                
-                for (projectId, upToYesterdayReport) in upToYesterdayReports {
-                    let workedTimeUntilYesterday = upToYesterdayReport.workedTime
-                    let workedTimeToday: TimeInterval
-                    
-                    if let todayReport = todayReports[projectId] {
-                        workedTimeToday = todayReport.workedTime
-                        todayReports.removeValue(forKey: projectId)
-                    } else {
-                        workedTimeToday = 0
-                    }
-                    
-                    addReportToCollected(for: projectId, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
-                }
-                
-                for (projectId, todayReport) in todayReports {
-                    let workedTimeToday = todayReport.workedTime
-                    let workedTimeUntilYesterday: TimeInterval
-                    
-                    if let upToYesterdayReport = upToYesterdayReports[projectId] {
-                        workedTimeUntilYesterday = upToYesterdayReport.workedTime
-                    } else {
-                        workedTimeUntilYesterday = 0
-                    }
-                    
-                    addReportToCollected(for: projectId, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
+            for (projectId, report) in retrievedReports {
+                switch report.since {
+                case startOfPeriod: upToYesterdayReports[projectId] = report
+                case today: todayReports[projectId] = report
+                default: assert (false, "report has unexpected start date")
                 }
             }
             
-            return collectedReports
+            for (projectId, upToYesterdayReport) in upToYesterdayReports {
+                let workedTimeUntilYesterday = upToYesterdayReport.workedTime
+                let workedTimeToday: TimeInterval
+                
+                if let todayReport = todayReports[projectId] {
+                    workedTimeToday = todayReport.workedTime
+                    todayReports.removeValue(forKey: projectId)
+                } else {
+                    workedTimeToday = 0
+                }
+                
+                addReportToCollected(for: projectId, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
+            }
+            
+            for (projectId, todayReport) in todayReports {
+                let workedTimeToday = todayReport.workedTime
+                let workedTimeUntilYesterday: TimeInterval
+                
+                if let upToYesterdayReport = upToYesterdayReports[projectId] {
+                    workedTimeUntilYesterday = upToYesterdayReport.workedTime
+                } else {
+                    workedTimeUntilYesterday = 0
+                }
+                
+                addReportToCollected(for: projectId, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
+            }
         }
-        
-        super.init(inputRetrievalOperation: retrieveWorkspacesOperation,
-                   spawnedOperationsMaker: makeSpawnedOperations) { spawnedRetrieveReportsOperations in
-                    onComplete(collectReportsRetrieved(by: spawnedRetrieveReportsOperations))
-        }
+        collectedOutput = collectedReports
     }
 }
