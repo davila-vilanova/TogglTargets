@@ -12,19 +12,40 @@ import Foundation
 internal class ModelCoordinator: NSObject {
     private let goalsStore: GoalsStore
 
-    private let notificationCenter = NotificationCenter.default
-
     internal var profile = Property<Profile>(value: nil)
-    internal var projects = Property<[Troika]>(value: Array<Troika>()) // sorted
-//    internal var projects = Property<[Project]>(value: Array<Project>())
-
+    private var projects = Dictionary<Int64, Project>() {
+        didSet {
+            let projectIds = [Int64](projects.keys)
+            sortedProjectIds = projectIds.sorted { id0, id1 in
+                let goal0 = goalsStore.retrieveGoal(projectId: id0),
+                goal1 = goalsStore.retrieveGoal(projectId: id1)
+                // a project with goal comes before a project without it
+                if goal0 != nil, goal1 == nil {
+                    return true
+                } else if goal0 == nil, goal1 != nil {
+                    return false
+                }
+                
+                // when two projects have goals the one with the larger goal comes first
+                return goal0!.hoursPerMonth > goal1!.hoursPerMonth
+            }
+        }
+    }
+    
+    internal var sortedProjectIds = [Int64]() {
+        didSet {
+            let indexOfLastProjectWithGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
+                goalsStore.retrieveGoal(projectId: projectId) != nil
+            }
+            idsOfProjectsWithGoals = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
+            idsOfProjectsWithoutGoals = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
+        }
+    }
+    internal var idsOfProjectsWithGoals = ArraySlice<Int64>()
+    internal var idsOfProjectsWithoutGoals = ArraySlice<Int64>()
+    
     internal let runningEntry = Property<RunningEntry>(value: nil)
     internal var runningEntryRefreshTimer: Timer?
-
-    private var goalProperties = Dictionary<Int64, Property<TimeGoal>>()
-    private var observedGoalProperties = Dictionary<Int64, ObservedProperty<TimeGoal>>()
-
-    private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport>>()
 
     private let apiCredential = TogglAPICredential()
 
@@ -51,21 +72,6 @@ internal class ModelCoordinator: NSObject {
         retrieveUserDataFromToggl()
     }
 
-    private func sortAndSetProjects(_ unsortedProjects: [Troika]) {
-        // TODO: sorting only takes place right after loading projects. Better if sorting happens also after editing goal.
-        self.projects.value = unsortedProjects.sorted {
-            // a project with goal comes before a project without it
-            if $0.goal != nil, $1.goal == nil {
-                return true
-            } else if $0.goal == nil, $1.goal != nil {
-                return false
-            }
-            
-            // when two projects have goals the one with the larger goal comes first
-            return $0.goal!.hoursPerMonth > $1.goal!.hoursPerMonth
-        }
-    }
-
     private func retrieveUserDataFromToggl() {
         let retrieveProfileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
         retrieveProfileOp.onSuccess = { profile in
@@ -78,7 +84,7 @@ internal class ModelCoordinator: NSObject {
         let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, calendar: calendar)
         
        let troikasCollectingOperation = ProjectsGoalsReportsCollectingOperation(retrieveProjectsOperation: retrieveProjectsOp, retrieveReportsOperation: retrieveReportsOp, goalStore: goalsStore) { [weak self] troikas in
-            self?.sortAndSetProjects(troikas)
+            self?.projects = troikas
         }
         
         networkQueue.addOperation(retrieveProfileOp)
@@ -88,48 +94,14 @@ internal class ModelCoordinator: NSObject {
         networkQueue.addOperation(troikasCollectingOperation)
     }
 
-    internal func goalPropertyForProjectId(_ projectId: Int64) -> Property<TimeGoal> {
-        let goalProperty: Property<TimeGoal>
-
-        if let existing = goalProperties[projectId] {
-            goalProperty = existing
-        } else {
-            let goal = goalsStore.retrieveGoal(projectId: projectId)
-            goalProperty = Property<TimeGoal>(value: goal)
-            let observed = ObservedProperty(original: goalProperty, valueObserver: {[weak self] (goal) in
-                Swift.print("modified goal=\(String(describing: goal))")
-                if let g = goal {
-                    self?.goalsStore.storeGoal(goal: g)
-                }
-            }, invalidationObserver: {
-                Swift.print("invalidated goal projectId=\(projectId)")
-            })
-            observedGoalProperties[projectId] = observed
-            goalProperties[projectId] = goalProperty
+    internal func setGoal(_ goal: TimeGoal) {
+        guard let troika = projects[goal.projectId] else {
+            return
         }
-
-        return goalProperty
+        troika.goal.value = goal
     }
 
-    internal func initializeGoal(_ goal: TimeGoal) {
-        let p = goalPropertyForProjectId(goal.projectId)
-        p.value = goal
-    }
-
-    internal func reportPropertyForProjectId(_ projectId: Int64) -> Property<TwoPartTimeReport> {
-        let reportProperty: Property<TwoPartTimeReport>
-
-        if let existing = reportProperties[projectId] {
-            reportProperty = existing
-        } else {
-            reportProperty = Property<TwoPartTimeReport>(value: nil)
-            reportProperties[projectId] = reportProperty
-        }
-
-        return reportProperty
-    }
-
-
+    
     func refreshRunningTimeEntry() {
         retrieveRunningTimeEntry()
         if let oldTimer = runningEntryRefreshTimer,
@@ -167,4 +139,23 @@ protocol ModelCoordinatorContaining {
     var modelCoordinator: ModelCoordinator? { get set }
 }
 
+extension Collection {
+    /// Finds such index N that predicate is true for all elements up to
+    /// but not including the index N, and is false for all elements
+    /// starting with index N.
+    /// Behavior is undefined if there is no such N.
+    func binarySearch(predicate: (Iterator.Element) -> Bool) -> Index {
+        var low = startIndex
+        var high = endIndex
+        while low != high {
+            let mid = index(low, offsetBy: distance(from: low, to: high)/2)
+            if predicate(self[mid]) {
+                low = index(after: mid)
+            } else {
+                high = mid
+            }
+        }
+        return low
+    }
+}
 

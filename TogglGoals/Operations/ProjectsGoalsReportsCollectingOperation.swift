@@ -9,7 +9,7 @@
 import Foundation
 
 class ProjectsGoalsReportsCollectingOperation: Operation {
-    typealias Output = [Troika]
+    typealias Output = Dictionary<Int64, Troika>
     
     let retrieveProjectsOperation: NetworkRetrieveProjectsSpawningOperation
     let retrieveReportsOperation: NetworkRetrieveReportsSpawningOperation
@@ -48,7 +48,7 @@ class ProjectsGoalsReportsCollectingOperation: Operation {
             let projectId = project.id
             let goal = goalStore.retrieveGoal(projectId: projectId)
             let report = reports?[projectId]
-            output.append(Troika(project: project, goal: goal, report: report))
+            output[projectId] = Troika(project: project, goal: Property(value: goal), report: report)
         }
         
         DispatchQueue.main.async {
