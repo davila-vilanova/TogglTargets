@@ -88,12 +88,6 @@ struct Project {
     }
 }
 
-struct Troika {
-    let project: Project
-    let goal: TimeGoal?
-    let report: TimeReport?
-}
-
 extension Project {
     static func fromTogglAPI(dictionary: StringKeyedDictionary) -> Project? {
         if let id = dictionary["id"] as? Int64 {
