@@ -8,23 +8,27 @@
 
 import Foundation
 
-internal class CollectionOperation<DependentOperation: Operation>: Operation {
-    var collectionClosure: ((Set<DependentOperation>)->())?
+internal class CollectionOperation<DependentOperation: Operation, CollectedOutput>: Operation {
+
+    var collectedOutput: CollectedOutput?
+
+    var collectionClosure: (()->CollectedOutput)?
 
     override func main() {
         guard !isCancelled else {
             return
         }
-        guard let collectionClosure = self.collectionClosure else {
-            return
-        }
-        
+
         var collectableOperations = Set<DependentOperation>()
         for dependency in dependencies {
             if let collectableOperation = dependency as? DependentOperation {
                 collectableOperations.insert(collectableOperation)
             }
         }
-        collectionClosure(collectableOperations)
+        collectedOutput = collectOutput(collectableOperations)
+    }
+
+    internal func collectOutput(_ collectableOperations: Set<DependentOperation>) -> CollectedOutput? {
+        return collectedOutput
     }
 }

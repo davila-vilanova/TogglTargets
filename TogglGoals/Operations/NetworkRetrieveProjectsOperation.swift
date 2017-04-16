@@ -40,26 +40,30 @@ class NetworkRetrieveProjectsOperation: TogglAPIAccessOperation<[Project]> {
 class NetworkRetrieveProjectsSpawningOperation: SpawningOperation<Workspace, [Project], NetworkRetrieveProjectsOperation> {
     typealias CollectedOutput = [Project]
 
-    var collectedOutput: CollectedOutput?
-    
     let credential: TogglAPICredential
     
     init(retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation, credential: TogglAPICredential) {
         self.credential = credential
         super.init(inputRetrievalOperation: retrieveWorkspacesOperation)
+        super.outputCollectionOperation.collectionClosure = { spawnedOperations in
+        }
     }
     
     override func makeOperationsToSpawn(from workspace: Workspace) -> [NetworkRetrieveProjectsOperation] {
         return [NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)]
     }
-    
-    override func collectOutput(from spawnedOperations: Set<NetworkRetrieveProjectsOperation>) {
+}
+
+class ProjectsCollectionOperation: CollectionOperation<NetworkRetrieveProjectsOperation, Dictionary<Int64, Project>> {
+    func collectOutput(_ collectableOperations: Set<NetworkRetrieveProjectsOperation>) -> Dictionary<Int64, Project>? {
         var allProjects = [Project]()
-        for retrieveProjectsOperation in spawnedOperations {
+        for retrieveProjectsOperation in collectableOperations {
             if let retrievedProjects = retrieveProjectsOperation.model {
+                for project in retrievePro
+                
                 allProjects.append(contentsOf: retrievedProjects)
             }
         }
-        collectedOutput = allProjects
+        return allProjects
     }
 }

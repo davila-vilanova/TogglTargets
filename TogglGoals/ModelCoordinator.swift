@@ -37,13 +37,16 @@ internal class ModelCoordinator: NSObject {
             let indexOfLastProjectWithGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
                 goalsStore.retrieveGoal(projectId: projectId) != nil
             }
-            idsOfProjectsWithGoals = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
-            idsOfProjectsWithoutGoals = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
+            idsOfProjectsWithGoals.value = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
+            idsOfProjectsWithoutGoals.value = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
         }
     }
-    internal var idsOfProjectsWithGoals = ArraySlice<Int64>()
-    internal var idsOfProjectsWithoutGoals = ArraySlice<Int64>()
-    
+    internal var idsOfProjectsWithGoals = Property<ArraySlice<Int64>>(value: ArraySlice<Int64>())
+    internal var idsOfProjectsWithoutGoals = Property<ArraySlice<Int64>>(value: ArraySlice<Int64>())
+
+    internal var cachedGoals = Property<Dictionary<Int64, TimeGoal>>(value: Dictionary<Int64, TimeGoal>())
+    internal var reports = Property<Dictionary<Int64, TwoPartTimeReport>>(value: Dictionary<Int64, TwoPartTimeReport>())
+
     internal let runningEntry = Property<RunningEntry>(value: nil)
     internal var runningEntryRefreshTimer: Timer?
 
@@ -82,16 +85,15 @@ internal class ModelCoordinator: NSObject {
 
         let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential)
         let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, calendar: calendar)
-        
-       let troikasCollectingOperation = ProjectsGoalsReportsCollectingOperation(retrieveProjectsOperation: retrieveProjectsOp, retrieveReportsOperation: retrieveReportsOp, goalStore: goalsStore) { [weak self] troikas in
-            self?.projects = troikas
+
+        retrieveProjectsOp.outputCollectionOperation.completionBlock = { [weak self]
+            
         }
-        
+
         networkQueue.addOperation(retrieveProfileOp)
         networkQueue.addOperation(retrieveWorkspacesOp)
         networkQueue.addOperation(retrieveProjectsOp)
         networkQueue.addOperation(retrieveReportsOp)
-        networkQueue.addOperation(troikasCollectingOperation)
     }
 
     internal func setGoal(_ goal: TimeGoal) {

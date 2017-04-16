@@ -10,7 +10,7 @@ import Foundation
 
 class SpawningOperation<InputArrayElement, SpawnedOperationOutput, SpawnedOperationType: Operation>: Operation {
     private var inputRetrievalOperation: TogglAPIAccessOperation<[InputArrayElement]> // whichever operation will/did load all the items for each of which a new operation must be spawned
-    let outputCollectionOperation: CollectionOperation<SpawnedOperationType>
+    public let outputCollectionOperation: CollectionOperation<SpawnedOperationType>
 
     private var queue: OperationQueue? {
         get {
@@ -27,7 +27,6 @@ class SpawningOperation<InputArrayElement, SpawnedOperationOutput, SpawnedOperat
         addDependency(inputRetrievalOperation)
 
         self.outputCollectionOperation.addDependency(self)
-        outputCollectionOperation.collectionClosure = collectOutput
         queueOperation(self.outputCollectionOperation)
     }
 
@@ -52,10 +51,6 @@ class SpawningOperation<InputArrayElement, SpawnedOperationOutput, SpawnedOperat
   
     func makeOperationsToSpawn(from inputElement: InputArrayElement) -> [SpawnedOperationType] {
         return [SpawnedOperationType]()
-    }
-    
-    func collectOutput(from spawnedOperations: Set<SpawnedOperationType>) {
-        
     }
     
     private func queueOperation(_ op: Operation) {
