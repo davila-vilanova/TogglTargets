@@ -21,7 +21,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
     }
 
-    var projects: [Project]? {
+    var projectIds: [Int64]? {
         didSet {
             refresh()
         }
@@ -42,23 +42,23 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         bindToProjects()
     }
 
-    private var observedProjects: ObservedProperty<[Project]>?
+    private var observedProjectIds: ObservedProperty<[Int64]>?
 
     private func bindToProjects() {
-        guard observedProjects == nil else {
+        guard observedProjectIds == nil else {
             return
         }
 
-        if let projectsProperty = modelCoordinator?.projects {
-            observedProjects =
-                ObservedProperty<[Project]>(original: projectsProperty,
-                                            valueObserver: { [weak self] (projects) in
-                                                if let p = projects {
-                                                    self?.projects = p
+        if let projectIdsProperty = modelCoordinator?.sortedProjectIdsProperty {
+            observedProjectIds =
+                ObservedProperty<[Int64]>(original: projectIdsProperty,
+                                            valueObserver: { [weak self] (projectIds) in
+                                                if let p = projectIds {
+                                                    self?.projectIds = p
                                                 }
                                             },
                                             invalidationObserver: { [weak self] in
-                                                self?.observedProjects = nil
+                                                self?.observedProjectIds = nil
                                             })
         }
     }
@@ -70,7 +70,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     private func updateSelection() {
         if let index = projectsCollectionView.selectionIndexPaths.first?.item,
-            let project = projects?[index] {
+            let projectId = projectIds?[index],
+            let project = modelCoordinator?.project(for: projectId) {
             didSelectProject?(project)
         } else {
             didSelectProject?(nil)
@@ -80,8 +81,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - NSCollectionViewDataSource
 
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        if let projects = self.projects {
-            return projects.count
+        if let projectsIds = self.projectIds {
+            return projectsIds.count
         } else {
             return 0
         }
@@ -90,12 +91,14 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
-        let project = projects?[indexPath.item]
-        projectItem.projectName = project?.name
-        if let projectId = project?.id {
-            projectItem.goalProperty = modelCoordinator?.goalPropertyForProjectId(projectId)
-            projectItem.reportProperty = modelCoordinator?.reportPropertyForProjectId(projectId)
+        
+        if let projectId = projectIds?[indexPath.item],
+            let project = modelCoordinator?.project(for: projectId) {
+            projectItem.projectName = project.name
+            projectItem.goalProperty = modelCoordinator?.goalProperty(for: projectId)
+            projectItem.reportProperty = modelCoordinator?.reportProperty(for: projectId)
         }
+        
         return projectItem
     }
 

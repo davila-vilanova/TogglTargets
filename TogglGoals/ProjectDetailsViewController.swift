@@ -129,18 +129,23 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
             projectName.stringValue = "No name"
         }
 
-        let goalProperty = mc.goalPropertyForProjectId(project.id)
-
-        observedGoalProperty?.unobserve()
-        observedGoalProperty = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (goal) in self?.handleGoalValue(goal)})
-        observedGoalProperty?.reportImmediately()
-
-        let reportProperty = mc.reportPropertyForProjectId(project.id)
+        let goalProperty = mc.goalProperty(for: project.id)
+        observeGoalProperty(goalProperty).reportImmediately()
+        
+        let reportProperty = mc.reportProperty(for: project.id)
         observedReportProperty?.unobserve()
         observedReportProperty = ObservedProperty<TwoPartTimeReport>(original: reportProperty, valueObserver: { [weak self] (report) in self?.handleReportValue(report) })
         observedReportProperty?.reportImmediately()
     }
-
+    
+    @discardableResult
+    private func observeGoalProperty(_ goalProperty: Property<TimeGoal>) -> ObservedProperty<TimeGoal> {
+        observedGoalProperty?.unobserve()
+        let observed = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (goal) in self?.handleGoalValue(goal)})
+        observedGoalProperty = observed
+        return observed
+    }
+    
     @IBAction func monthlyHoursGoalEdited(_ sender: NSTextField) {
         if let parsedHours = monthlyHoursGoalFormatter.number(from: sender.stringValue) {
             let hoursPerMonth = parsedHours.intValue
@@ -298,10 +303,13 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     private func createGoalIfNotExists(hoursPerMonth: Int = 0,
                                        workWeekdays: WeekdaySelection = WeekdaySelection.exceptWeekend) {
-        if self.observedGoalProperty?.original?.value == nil,
-            let projectId = representedProject?.id {
-            let goal = TimeGoal(forProjectId: projectId, hoursPerMonth: hoursPerMonth, workWeekdays: workWeekdays)
-            modelCoordinator?.initializeGoal(goal)
+        guard self.observedGoalProperty?.original?.value == nil,
+            let modelCoordinator = self.modelCoordinator,
+            let projectId = representedProject?.id else {
+                return
         }
+        let goal = TimeGoal(forProjectId: projectId, hoursPerMonth: hoursPerMonth, workWeekdays: workWeekdays)
+        let goalProperty = modelCoordinator.setGoal(goal)
+        observeGoalProperty(goalProperty)
     }
 }

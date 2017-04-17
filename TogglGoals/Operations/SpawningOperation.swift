@@ -8,9 +8,9 @@
 
 import Foundation
 
-class SpawningOperation<InputArrayElement, SpawnedOperationOutput, SpawnedOperationType: Operation>: Operation {
+class SpawningOperation<InputArrayElement, CollectionOperation: Operation>: Operation {
     private var inputRetrievalOperation: TogglAPIAccessOperation<[InputArrayElement]> // whichever operation will/did load all the items for each of which a new operation must be spawned
-    public let outputCollectionOperation: CollectionOperation<SpawnedOperationType>
+    public let outputCollectionOperation: CollectionOperation
 
     private var queue: OperationQueue? {
         get {
@@ -20,16 +20,17 @@ class SpawningOperation<InputArrayElement, SpawnedOperationOutput, SpawnedOperat
 
     init(inputRetrievalOperation: TogglAPIAccessOperation<[InputArrayElement]>) {
         self.inputRetrievalOperation = inputRetrievalOperation
-        self.outputCollectionOperation = CollectionOperation<SpawnedOperationType>()
+        self.outputCollectionOperation = CollectionOperation()
 
         super.init()
 
         addDependency(inputRetrievalOperation)
 
+        configureCollectionOperation()
         self.outputCollectionOperation.addDependency(self)
         queueOperation(self.outputCollectionOperation)
     }
-
+    
     override func main() {
         guard !isCancelled else {
             return
@@ -49,8 +50,13 @@ class SpawningOperation<InputArrayElement, SpawnedOperationOutput, SpawnedOperat
         }
     }
   
-    func makeOperationsToSpawn(from inputElement: InputArrayElement) -> [SpawnedOperationType] {
-        return [SpawnedOperationType]()
+    
+    func configureCollectionOperation() {
+        
+    }
+    
+    func makeOperationsToSpawn(from inputElement: InputArrayElement) -> [Operation] {
+        return [Operation]()
     }
     
     private func queueOperation(_ op: Operation) {

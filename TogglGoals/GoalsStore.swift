@@ -12,14 +12,15 @@ import SQLite
 class GoalsStore {
     private let db: Connection
 
-    private var cachedGoals = Dictionary<Int64, TimeGoal>()
+    private let goalsTable = Table("time_goal")
+    private let idExpression = Expression<Int64>("id")
+    private let projectIdExpression = Expression<Int64>("project_id")
+    private let hoursPerMonthExpression = Expression<Int>("hours_per_month")
+    private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
 
-    let goalsTable = Table("time_goal")
-    let id = Expression<Int64>("id")
-    let projectId = Expression<Int64>("project_id")
-    let hoursPerMonth = Expression<Int>("hours_per_month")
-    let workWeekdays = Expression<WeekdaySelection>("work_weekdays")
-
+    private var goalProperties = Dictionary<Int64, Property<TimeGoal>>()
+    private var observedGoals = Dictionary<Int64, ObservedProperty<TimeGoal>>()
+    
     init?(baseDirectory: URL?) {
         do {
             let databaseURL = URL(fileURLWithPath: "goalsdb.sqlite3", relativeTo: baseDirectory)
@@ -31,37 +32,68 @@ class GoalsStore {
         }
     }
 
-    internal func retrieveGoal(projectId: Int64) -> TimeGoal? {
-        return cachedGoals[projectId]
+    func goalProperty(for projectId: Int64) -> Property<TimeGoal> {
+        if let property = goalProperties[projectId] {
+            return property
+        } else {
+            let property = Property<TimeGoal>(value: nil) // promise to call if one is created later
+            let observed = ObservedProperty<TimeGoal>(original: property, valueObserver: { [weak self] (goal) in
+                guard let modifiedGoal = goal else {
+                    return
+                }
+                self?.storeGoal(modifiedGoal)
+                }, invalidationObserver: { [weak self] in
+                    self?.goalProperties.removeValue(forKey: projectId)
+                    self?.observedGoals.removeValue(forKey: projectId)
+            })
+            goalProperties[projectId] = property
+            observedGoals[projectId] = observed
+            
+            return property
+        }
     }
-
-    internal func storeGoal(goal: TimeGoal) {
-        cachedGoals[goal.projectId] = goal
+    
+    @discardableResult
+    func storeNew(goal: TimeGoal) -> Property<TimeGoal> {
+        let property = goalProperty(for: goal.projectId)
+        property.value = goal
+        return property
+    }
+    
+    private func storeGoal(_ goal: TimeGoal) {
         try! db.run(goalsTable.insert(or: .replace,
-                                      projectId <- goal.projectId,
-                                      hoursPerMonth <- goal.hoursPerMonth,
-                                      workWeekdays <- goal.workWeekdays))
+                                      projectIdExpression <- goal.projectId,
+                                      hoursPerMonthExpression <- goal.hoursPerMonth,
+                                      workWeekdaysExpression <- goal.workWeekdays))
         // TODO: synchronize periodically instead of writing immediately
     }
 
     private func ensureTableCreated() {
         try! db.run(goalsTable.create(ifNotExists: true) { t in
-            t.column(id, primaryKey: .autoincrement)
-            t.column(projectId, unique: true)
-            t.column(hoursPerMonth)
-            t.column(workWeekdays)
+            t.column(idExpression, primaryKey: .autoincrement)
+            t.column(projectIdExpression, unique: true)
+            t.column(hoursPerMonthExpression)
+            t.column(workWeekdaysExpression)
         })
     }
 
     private func retrieveAllGoals() {
-        for retrievedGoal in try! db.prepare(goalsTable) {
-            let projectIdValue = retrievedGoal[projectId]
-            let hoursPerMonthValue = retrievedGoal[hoursPerMonth]
-            let workWeekdaysValue = retrievedGoal.get(workWeekdays) // [1]
+        var retrievedGoals = [TimeGoal]()
+        let retrievedRows = try! db.prepare(goalsTable)
+        for retrievedRow in retrievedRows {
+            let projectIdValue = retrievedRow[projectIdExpression]
+            let hoursPerMonthValue = retrievedRow[hoursPerMonthExpression]
+            let workWeekdaysValue = retrievedRow.get(workWeekdaysExpression) // [1]
             let goal = TimeGoal(forProjectId: projectIdValue, hoursPerMonth: hoursPerMonthValue, workWeekdays: workWeekdaysValue)
-
-            cachedGoals[projectIdValue] = goal
+            
+            retrievedGoals.append(goal)
         }
+        
+        for goal in retrievedGoals {
+            let property = goalProperty(for: goal.projectId)
+            property.value = goal
+        }
+        
         // [1] Can't use subscripts with custom types. 
         // https://github.com/stephencelis/SQLite.swift/blob/master/Documentation/Index.md#custom-type-caveats
         // (f3da195)
@@ -86,5 +118,4 @@ extension WeekdaySelection: Value {
             return Datatype(integerRepresentation)
         }
     }
-
 }

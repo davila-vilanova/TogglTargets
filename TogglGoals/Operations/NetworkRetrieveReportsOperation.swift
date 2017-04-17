@@ -67,7 +67,7 @@ fileprivate func ISO8601Date(from comps: DayComponents) -> String{
  Spawns NetworkRetrieveReportsOperations from the results of a NetworkRetrieveWorkspacesOperation
  Collects all retrieved reports in a Dictionary<Int64, TwoPartTimeReport>
 */
-internal class NetworkRetrieveReportsSpawningOperation: SpawningOperation<Workspace, Dictionary<Int64, TimeReport>,  NetworkRetrieveReportsOperation> {
+internal class NetworkRetrieveReportsSpawningOperation: SpawningOperation<Workspace, ReportsCollectionOperation> {
     
     typealias CollectedOutput = Dictionary<Int64, TwoPartTimeReport>
 
@@ -88,7 +88,13 @@ internal class NetworkRetrieveReportsSpawningOperation: SpawningOperation<Worksp
         super.init(inputRetrievalOperation: retrieveWorkspacesOperation)
     }
     
-    override func makeOperationsToSpawn(from workspace: Workspace) -> [NetworkRetrieveReportsOperation] {
+    override func configureCollectionOperation() {
+        outputCollectionOperation.startOfPeriod = startOfPeriod
+        outputCollectionOperation.yesterday = yesterday
+        outputCollectionOperation.today = today
+    }
+    
+    override func makeOperationsToSpawn(from workspace: Workspace) -> [Operation] {
         let retrieveUpToYesterdayReportOperation: NetworkRetrieveReportsOperation?
         if let y = yesterday {
             retrieveUpToYesterdayReportOperation =
@@ -105,11 +111,17 @@ internal class NetworkRetrieveReportsSpawningOperation: SpawningOperation<Worksp
             return [retrieveTodayReport]
         }
     }
+}
+
+class ReportsCollectionOperation: CollectionOperation<NetworkRetrieveReportsOperation, Dictionary<Int64, TwoPartTimeReport>> {
+    var startOfPeriod: DayComponents!
+    var yesterday: DayComponents?
+    var today: DayComponents!
     
-    override func collectOutput(from spawnedOperations: Set<NetworkRetrieveReportsOperation>) {
+    override func collectOutput(_ spawnedOperations: Set<NetworkRetrieveReportsOperation>) -> Dictionary<Int64, TwoPartTimeReport>? {
         var upToYesterdayReports = Dictionary<Int64, TimeReport>()
         var todayReports = Dictionary<Int64, TimeReport>()
-        var collectedReports = CollectedOutput()
+        var collectedReports = Dictionary<Int64, TwoPartTimeReport>()
         
         func addReportToCollected(for projectId: Int64, workedTimeUntilYesterday: TimeInterval, workedTimeToday: TimeInterval) {
             collectedReports[projectId] =
@@ -126,7 +138,7 @@ internal class NetworkRetrieveReportsSpawningOperation: SpawningOperation<Worksp
                 switch report.since {
                 case startOfPeriod: upToYesterdayReports[projectId] = report
                 case today: todayReports[projectId] = report
-                default: assert (false, "report has unexpected start date")
+                default: assert (false, "report has an unexpected start date")
                 }
             }
             
@@ -157,6 +169,7 @@ internal class NetworkRetrieveReportsSpawningOperation: SpawningOperation<Worksp
                 addReportToCollected(for: projectId, workedTimeUntilYesterday: workedTimeUntilYesterday, workedTimeToday: workedTimeToday)
             }
         }
-        collectedOutput = collectedReports
+        return collectedReports
     }
 }
+

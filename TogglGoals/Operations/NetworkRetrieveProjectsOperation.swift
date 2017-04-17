@@ -37,33 +37,29 @@ class NetworkRetrieveProjectsOperation: TogglAPIAccessOperation<[Project]> {
   Spawns NetworkRetrieveProjectsOperations from the results of a NetworkRetrieveWorkspacesOperation
   Collects all retrieved projects in an array of Projects
 */
-class NetworkRetrieveProjectsSpawningOperation: SpawningOperation<Workspace, [Project], NetworkRetrieveProjectsOperation> {
-    typealias CollectedOutput = [Project]
-
+class NetworkRetrieveProjectsSpawningOperation: SpawningOperation<Workspace, ProjectsCollectionOperation> {
     let credential: TogglAPICredential
     
     init(retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation, credential: TogglAPICredential) {
         self.credential = credential
         super.init(inputRetrievalOperation: retrieveWorkspacesOperation)
-        super.outputCollectionOperation.collectionClosure = { spawnedOperations in
-        }
     }
     
-    override func makeOperationsToSpawn(from workspace: Workspace) -> [NetworkRetrieveProjectsOperation] {
+    override func makeOperationsToSpawn(from workspace: Workspace) -> [Operation] {
         return [NetworkRetrieveProjectsOperation(credential: credential, workspaceId: workspace.id)]
     }
 }
 
 class ProjectsCollectionOperation: CollectionOperation<NetworkRetrieveProjectsOperation, Dictionary<Int64, Project>> {
-    func collectOutput(_ collectableOperations: Set<NetworkRetrieveProjectsOperation>) -> Dictionary<Int64, Project>? {
-        var allProjects = [Project]()
-        for retrieveProjectsOperation in collectableOperations {
+    override func collectOutput(_ spawnedOperations: Set<NetworkRetrieveProjectsOperation>) -> Dictionary<Int64, Project>? {
+        var collectedProject = Dictionary<Int64, Project>()
+        for retrieveProjectsOperation in spawnedOperations {
             if let retrievedProjects = retrieveProjectsOperation.model {
-                for project in retrievePro
-                
-                allProjects.append(contentsOf: retrievedProjects)
+                for project in retrievedProjects {
+                    collectedProject[project.id] = project
+                }
             }
         }
-        return allProjects
+        return collectedProject
     }
 }

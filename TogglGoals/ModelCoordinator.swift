@@ -12,41 +12,48 @@ import Foundation
 internal class ModelCoordinator: NSObject {
     private let goalsStore: GoalsStore
 
-    internal var profile = Property<Profile>(value: nil)
+    internal var profileProperty = Property<Profile>(value: nil)
     private var projects = Dictionary<Int64, Project>() {
         didSet {
             let projectIds = [Int64](projects.keys)
-            sortedProjectIds = projectIds.sorted { id0, id1 in
-                let goal0 = goalsStore.retrieveGoal(projectId: id0),
-                goal1 = goalsStore.retrieveGoal(projectId: id1)
-                // a project with goal comes before a project without it
+            let sortedProjectIds = projectIds.sorted { id0, id1 in
+                let goal0 = goalsStore.goalProperty(for: id0).value,
+                goal1 = goalsStore.goalProperty(for: id1).value
                 if goal0 != nil, goal1 == nil {
+                    // a project with goal comes before a project without it
                     return true
-                } else if goal0 == nil, goal1 != nil {
+                } else if let hoursPerMonth0 = goal0?.hoursPerMonth,
+                    let hoursPerMonth1 = goal1?.hoursPerMonth {
+                    // when two projects have goals the one with the larger goal comes first
+                    return hoursPerMonth0 > hoursPerMonth1
+                } else {
                     return false
                 }
-                
-                // when two projects have goals the one with the larger goal comes first
-                return goal0!.hoursPerMonth > goal1!.hoursPerMonth
             }
+            
+            sortedProjectIdsProperty.value = sortedProjectIds
         }
     }
     
-    internal var sortedProjectIds = [Int64]() {
+    internal var sortedProjectIdsProperty = Property<[Int64]>(value: [Int64]()) {
         didSet {
-            let indexOfLastProjectWithGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
-                goalsStore.retrieveGoal(projectId: projectId) != nil
+            guard let sortedProjectIds = sortedProjectIdsProperty.value else {
+                idsOfProjectsWithGoalsProperty.value = nil
+                idsOfProjectsWithoutGoalsProperty.value = nil
+                return
             }
-            idsOfProjectsWithGoals.value = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
-            idsOfProjectsWithoutGoals.value = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
+            let indexOfLastProjectWithGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
+                goalsStore.goalProperty(for: projectId).value != nil
+            }
+            idsOfProjectsWithGoalsProperty.value = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
+            idsOfProjectsWithoutGoalsProperty.value = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
         }
     }
-    internal var idsOfProjectsWithGoals = Property<ArraySlice<Int64>>(value: ArraySlice<Int64>())
-    internal var idsOfProjectsWithoutGoals = Property<ArraySlice<Int64>>(value: ArraySlice<Int64>())
+    internal var idsOfProjectsWithGoalsProperty = Property<ArraySlice<Int64>>(value: ArraySlice<Int64>())
+    internal var idsOfProjectsWithoutGoalsProperty = Property<ArraySlice<Int64>>(value: ArraySlice<Int64>())
 
-    internal var cachedGoals = Property<Dictionary<Int64, TimeGoal>>(value: Dictionary<Int64, TimeGoal>())
-    internal var reports = Property<Dictionary<Int64, TwoPartTimeReport>>(value: Dictionary<Int64, TwoPartTimeReport>())
-
+    private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport>>()
+    
     internal let runningEntry = Property<RunningEntry>(value: nil)
     internal var runningEntryRefreshTimer: Timer?
 
@@ -78,7 +85,7 @@ internal class ModelCoordinator: NSObject {
     private func retrieveUserDataFromToggl() {
         let retrieveProfileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
         retrieveProfileOp.onSuccess = { profile in
-            self.profile.value = profile
+            self.profileProperty.value = profile
         }
 
         let retrieveWorkspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
@@ -86,23 +93,47 @@ internal class ModelCoordinator: NSObject {
         let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential)
         let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, calendar: calendar)
 
-        retrieveProjectsOp.outputCollectionOperation.completionBlock = { [weak self]
-            
+        retrieveProjectsOp.outputCollectionOperation.completionBlock = { [weak self] in
+            if let projects = retrieveProjectsOp.outputCollectionOperation.collectedOutput {
+                self?.projects = projects
+            }
         }
 
+        retrieveReportsOp.outputCollectionOperation.completionBlock = { [weak self] in
+            if let reports = retrieveReportsOp.outputCollectionOperation.collectedOutput {
+                for (projectId, report) in reports {
+                    self?.reportProperties[projectId] = Property(value: report)
+                }
+            }
+        }
+        
         networkQueue.addOperation(retrieveProfileOp)
         networkQueue.addOperation(retrieveWorkspacesOp)
         networkQueue.addOperation(retrieveProjectsOp)
         networkQueue.addOperation(retrieveReportsOp)
     }
 
-    internal func setGoal(_ goal: TimeGoal) {
-        guard let troika = projects[goal.projectId] else {
-            return
-        }
-        troika.goal.value = goal
+    internal func project(for id: Int64) -> Project? {
+        return projects[id]
+    }
+    
+    internal func goalProperty(for projectId: Int64) -> Property<TimeGoal> {
+        return goalsStore.goalProperty(for: projectId)
+    }
+    
+    internal func setGoal(_ goal: TimeGoal) -> Property<TimeGoal> {
+        return goalsStore.storeNew(goal: goal)
     }
 
+    internal func reportProperty(for projectId: Int64) -> Property<TwoPartTimeReport> {
+        if let property = reportProperties[projectId] {
+            return property
+        } else {
+            let property = Property<TwoPartTimeReport>(value: nil)
+            reportProperties[projectId] = property
+            return property
+        }
+    }
     
     func refreshRunningTimeEntry() {
         retrieveRunningTimeEntry()
