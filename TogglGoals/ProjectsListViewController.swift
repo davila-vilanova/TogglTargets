@@ -9,8 +9,9 @@
 import Cocoa
 
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, ModelCoordinatorContaining {
-    let projectItemIdentifier = "ProjectItemIdentifier"
-
+    private let projectItemIdentifier = "ProjectItemIdentifier"
+    private let sectionHeader = "SectionHeader"
+    
     internal var didSelectProject: ( (Project?) -> () )?
 
     var modelCoordinator: ModelCoordinator? {
@@ -34,11 +35,13 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         projectsCollectionView.dataSource = self
         projectsCollectionView.delegate = self
-        projectsCollectionView.maxNumberOfColumns = 1
 
-        let collectionViewItemNib = NSNib(nibNamed: "ProjectCollectionViewItem", bundle: nil)!
-        projectsCollectionView.register(collectionViewItemNib, forItemWithIdentifier: projectItemIdentifier)
+        let itemNib = NSNib(nibNamed: "ProjectCollectionViewItem", bundle: nil)!
+        projectsCollectionView.register(itemNib, forItemWithIdentifier: projectItemIdentifier)
 
+        let headerNib = NSNib(nibNamed: "ProjectCollectionViewHeader", bundle: nil)!
+        projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, withIdentifier: sectionHeader)
+        
         bindToProjects()
     }
 
@@ -79,7 +82,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     // MARK: - NSCollectionViewDataSource
-
+    
+    func numberOfSections(in collectionView: NSCollectionView) -> Int {
+        return 2
+    }
+    
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         if let projectsIds = self.projectIds {
             return projectsIds.count
@@ -102,6 +109,14 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         return projectItem
     }
 
+    func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> NSView {
+        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionElementKindSectionHeader, withIdentifier: sectionHeader, for: indexPath)
+        if let header = view as? ProjectCollectionViewHeader {
+            header.title = "all projects"
+        }
+        return view
+    }
+    
     // MARK: - NSCollectionViewDelegate
 
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {

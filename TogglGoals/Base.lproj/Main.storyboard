@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16F43c" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
@@ -707,22 +707,20 @@
         <scene sceneID="yrl-iP-dwh">
             <objects>
                 <viewController id="uJx-25-i9K" customClass="ProjectsListViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="0s5-6J-xQn">
+                    <view key="view" wantsLayer="YES" id="0s5-6J-xQn">
                         <rect key="frame" x="0.0" y="0.0" width="161" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kat-8d-Ff9">
+                            <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kat-8d-Ff9">
                                 <rect key="frame" x="0.0" y="0.0" width="161" height="300"/>
-                                <clipView key="contentView" drawsBackground="NO" id="V9W-AF-Ttj">
-                                    <rect key="frame" x="1" y="1" width="159" height="298"/>
+                                <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="V9W-AF-Ttj">
+                                    <rect key="frame" x="0.0" y="0.0" width="161" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <collectionView selectable="YES" id="UNJ-j2-pFb">
-                                            <rect key="frame" x="0.0" y="0.0" width="159" height="298"/>
+                                        <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb">
+                                            <rect key="frame" x="0.0" y="0.0" width="161" height="300"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <collectionViewGridLayout key="collectionViewLayout" id="zAH-3Z-8un">
-                                                <size key="minimumItemSize" width="0.0" height="110"/>
-                                            </collectionViewGridLayout>
+                                            <collectionViewLayout key="collectionViewLayout" id="tRH-Rt-gTE" customClass="ListLayout" customModule="TogglGoals" customModuleProvider="target"/>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
                                         </collectionView>
@@ -733,11 +731,11 @@
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="eXF-ou-lGI"/>
                                 </constraints>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="EPZ-py-eHf">
-                                    <rect key="frame" x="1" y="263" width="138" height="16"/>
+                                    <rect key="frame" x="2" y="282" width="157" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Q81-ig-h5S">
-                                    <rect key="frame" x="144" y="1" width="16" height="278"/>
+                                    <rect key="frame" x="143" y="2" width="16" height="296"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>

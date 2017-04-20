@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16E144f" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
@@ -19,11 +19,11 @@
             </connections>
         </collectionViewItem>
         <customView wantsLayer="YES" id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="137" height="103"/>
+            <rect key="frame" x="0.0" y="0.0" width="140" height="83"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="484-m5-m2m">
-                    <rect key="frame" x="18" y="70" width="101" height="17"/>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="484-m5-m2m">
+                    <rect key="frame" x="6" y="58" width="128" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="project name" id="MGk-G1-zEk">
                         <font key="font" metaFont="systemMedium" size="13"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -31,7 +31,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pcZ-U4-eHq">
-                    <rect key="frame" x="18" y="45" width="101" height="17"/>
+                    <rect key="frame" x="6" y="33" width="128" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="goal" id="8g6-dx-UR5">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
@@ -39,7 +39,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oej-8K-uOr" userLabel="Report Label">
-                    <rect key="frame" x="18" y="20" width="101" height="17"/>
+                    <rect key="frame" x="6" y="8" width="128" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="report" id="qMh-YV-Zys">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
@@ -48,16 +48,16 @@
                 </textField>
             </subviews>
             <constraints>
-                <constraint firstItem="Oej-8K-uOr" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="1EF-e8-Nhb"/>
-                <constraint firstAttribute="trailing" secondItem="pcZ-U4-eHq" secondAttribute="trailing" constant="20" symbolic="YES" id="3pW-7B-mpa"/>
-                <constraint firstItem="Oej-8K-uOr" firstAttribute="top" secondItem="pcZ-U4-eHq" secondAttribute="bottom" constant="8" symbolic="YES" id="8Rd-h7-gVz"/>
-                <constraint firstItem="pcZ-U4-eHq" firstAttribute="top" secondItem="484-m5-m2m" secondAttribute="bottom" constant="8" id="A63-7C-V3T"/>
-                <constraint firstAttribute="bottom" secondItem="Oej-8K-uOr" secondAttribute="bottom" constant="20" symbolic="YES" id="I6v-Pd-oeK"/>
-                <constraint firstAttribute="trailing" secondItem="484-m5-m2m" secondAttribute="trailing" constant="20" symbolic="YES" id="XeB-F8-cAv"/>
-                <constraint firstItem="pcZ-U4-eHq" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" id="Z0D-uH-Wlq"/>
-                <constraint firstAttribute="trailing" secondItem="Oej-8K-uOr" secondAttribute="trailing" constant="20" symbolic="YES" id="ga8-Xs-S1E"/>
-                <constraint firstItem="484-m5-m2m" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="16" id="qji-UA-orE"/>
-                <constraint firstItem="484-m5-m2m" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="vhf-oB-iXd"/>
+                <constraint firstItem="Oej-8K-uOr" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" identifier="report leading" id="1EF-e8-Nhb"/>
+                <constraint firstAttribute="trailing" secondItem="pcZ-U4-eHq" secondAttribute="trailing" constant="8" identifier="goal trailing" id="3pW-7B-mpa"/>
+                <constraint firstItem="Oej-8K-uOr" firstAttribute="top" secondItem="pcZ-U4-eHq" secondAttribute="bottom" constant="8" symbolic="YES" identifier="report top" id="8Rd-h7-gVz"/>
+                <constraint firstItem="pcZ-U4-eHq" firstAttribute="top" secondItem="484-m5-m2m" secondAttribute="bottom" constant="8" identifier="goal top" id="A63-7C-V3T"/>
+                <constraint firstAttribute="bottom" secondItem="Oej-8K-uOr" secondAttribute="bottom" constant="8" identifier="report bottom" id="I6v-Pd-oeK"/>
+                <constraint firstAttribute="trailing" secondItem="484-m5-m2m" secondAttribute="trailing" constant="8" identifier="project name trailing" id="XeB-F8-cAv"/>
+                <constraint firstItem="pcZ-U4-eHq" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" identifier="goal leading" id="Z0D-uH-Wlq"/>
+                <constraint firstAttribute="trailing" secondItem="Oej-8K-uOr" secondAttribute="trailing" constant="8" identifier="report trailing" id="ga8-Xs-S1E"/>
+                <constraint firstItem="484-m5-m2m" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="8" identifier="project name top" id="qji-UA-orE"/>
+                <constraint firstItem="484-m5-m2m" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" identifier="project name leading" id="vhf-oB-iXd"/>
             </constraints>
             <point key="canvasLocation" x="-509.5" y="-642.5"/>
         </customView>
