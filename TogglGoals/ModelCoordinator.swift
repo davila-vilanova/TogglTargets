@@ -16,7 +16,7 @@ internal class ModelCoordinator: NSObject {
     private var projects = Dictionary<Int64, Project>() {
         didSet {
             let projectIds = [Int64](projects.keys)
-            let sortedProjectIds = projectIds.sorted { id0, id1 in
+            sortedProjectIds = projectIds.sorted { id0, id1 in
                 let goal0 = goalsStore.goalProperty(for: id0).value,
                 goal1 = goalsStore.goalProperty(for: id1).value
                 if goal0 != nil, goal1 == nil {
@@ -30,28 +30,27 @@ internal class ModelCoordinator: NSObject {
                     return false
                 }
             }
-            
-            sortedProjectIdsProperty.value = sortedProjectIds
+            projectsProperty.value = ProjectsByGoals(projects: projects,
+                                                     idsOfProjectsWithGoals: idsOfProjectsWithGoals,
+                                                     idsOfProjectsWithoutGoals: idsOfProjectsWithoutGoals)
         }
     }
     
-    internal var sortedProjectIdsProperty = Property<[Int64]>(value: [Int64]()) {
+    internal var sortedProjectIds = [Int64]() {
         didSet {
-            guard let sortedProjectIds = sortedProjectIdsProperty.value else {
-                idsOfProjectsWithGoalsProperty.value = nil
-                idsOfProjectsWithoutGoalsProperty.value = nil
-                return
-            }
             let indexOfLastProjectWithGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
                 goalsStore.goalProperty(for: projectId).value != nil
             }
-            idsOfProjectsWithGoalsProperty.value = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
-            idsOfProjectsWithoutGoalsProperty.value = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
+            idsOfProjectsWithGoals = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
+            idsOfProjectsWithoutGoals = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
         }
     }
-    internal var idsOfProjectsWithGoalsProperty = Property<ArraySlice<Int64>>(value: ArraySlice<Int64>())
-    internal var idsOfProjectsWithoutGoalsProperty = Property<ArraySlice<Int64>>(value: ArraySlice<Int64>())
+    
+    private var idsOfProjectsWithGoals = ArraySlice<Int64>()
+    private var idsOfProjectsWithoutGoals = ArraySlice<Int64>()
 
+    internal let projectsProperty = Property<ProjectsByGoals>(value: nil)
+    
     private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport>>()
     
     internal let runningEntry = Property<RunningEntry>(value: nil)
@@ -165,6 +164,26 @@ internal class ModelCoordinator: NSObject {
             self.runningEntry.value = runningEntry
         }
         networkQueue.addOperation(op)
+    }
+}
+
+struct ProjectsByGoals {
+    let projects: Dictionary<Int64, Project>
+    let idsOfProjectsWithGoals: ArraySlice<Int64>
+    let idsOfProjectsWithoutGoals: ArraySlice<Int64>
+}
+
+extension ProjectsByGoals {
+    func project(for indexPath: IndexPath) -> Project? {
+        let projectIds: ArraySlice<Int64>
+        switch indexPath.section {
+        case 0: projectIds = idsOfProjectsWithGoals
+        case 1: projectIds = idsOfProjectsWithoutGoals
+        default: return nil
+        }
+        
+        let projectId = projectIds[indexPath.item + projectIds.startIndex]
+        return projects[projectId]
     }
 }
 

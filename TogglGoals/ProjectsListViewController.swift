@@ -10,7 +10,7 @@ import Cocoa
 
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, ModelCoordinatorContaining {
     private let projectItemIdentifier = "ProjectItemIdentifier"
-    private let sectionHeader = "SectionHeader"
+    private let sectionHeaderIdentifier = "SectionHeaderIdentifier"
     
     internal var didSelectProject: ( (Project?) -> () )?
 
@@ -22,7 +22,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
     }
 
-    var projectIds: [Int64]? {
+    var projectsByGoals: ProjectsByGoals? {
         didSet {
             refresh()
         }
@@ -40,30 +40,27 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         projectsCollectionView.register(itemNib, forItemWithIdentifier: projectItemIdentifier)
 
         let headerNib = NSNib(nibNamed: "ProjectCollectionViewHeader", bundle: nil)!
-        projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, withIdentifier: sectionHeader)
+        projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, withIdentifier: sectionHeaderIdentifier)
         
         bindToProjects()
     }
 
-    private var observedProjectIds: ObservedProperty<[Int64]>?
-
+    private var observedProjects: ObservedProperty<ProjectsByGoals>?
+    
     private func bindToProjects() {
-        guard observedProjectIds == nil else {
+        guard observedProjects == nil,
+            let projectsProperty = modelCoordinator?.projectsProperty else {
             return
         }
-
-        if let projectIdsProperty = modelCoordinator?.sortedProjectIdsProperty {
-            observedProjectIds =
-                ObservedProperty<[Int64]>(original: projectIdsProperty,
-                                            valueObserver: { [weak self] (projectIds) in
-                                                if let p = projectIds {
-                                                    self?.projectIds = p
-                                                }
-                                            },
-                                            invalidationObserver: { [weak self] in
-                                                self?.observedProjectIds = nil
-                                            })
-        }
+        
+        observedProjects =
+            ObservedProperty<ProjectsByGoals>(original: projectsProperty,
+                                              valueObserver: { [weak self] (projects) in
+                                                self?.projectsByGoals = projects
+                },
+                                              invalidationObserver: { [weak self] in
+                                                self?.observedProjects = nil
+            })
     }
 
     func refresh() {
@@ -72,15 +69,18 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     private func updateSelection() {
-        if let index = projectsCollectionView.selectionIndexPaths.first?.item,
-            let projectId = projectIds?[index],
-            let project = modelCoordinator?.project(for: projectId) {
-            didSelectProject?(project)
-        } else {
-            didSelectProject?(nil)
+        guard let didSelectProject = self.didSelectProject else {
+            return
         }
+        
+        guard let indexPath = projectsCollectionView.selectionIndexPaths.first else {
+            didSelectProject(nil)
+            return
+        }
+        
+        didSelectProject(projectsByGoals?.project(for: indexPath))
     }
-
+    
     // MARK: - NSCollectionViewDataSource
     
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
@@ -88,10 +88,13 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        if let projectsIds = self.projectIds {
-            return projectsIds.count
-        } else {
+        guard let projectsByGoals = projectsByGoals else {
             return 0
+        }
+        switch section {
+        case 0: return projectsByGoals.idsOfProjectsWithGoals.count
+        case 1: return projectsByGoals.idsOfProjectsWithoutGoals.count
+        default: return 0
         }
     }
 
@@ -99,20 +102,24 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
         
-        if let projectId = projectIds?[indexPath.item],
-            let project = modelCoordinator?.project(for: projectId) {
+        if let project = projectsByGoals?.project(for: indexPath) {
             projectItem.projectName = project.name
-            projectItem.goalProperty = modelCoordinator?.goalProperty(for: projectId)
-            projectItem.reportProperty = modelCoordinator?.reportProperty(for: projectId)
+            projectItem.goalProperty = modelCoordinator?.goalProperty(for: project.id)
+            projectItem.reportProperty = modelCoordinator?.reportProperty(for: project.id)
         }
         
         return projectItem
     }
 
     func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> NSView {
-        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionElementKindSectionHeader, withIdentifier: sectionHeader, for: indexPath)
+        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionElementKindSectionHeader, withIdentifier: sectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
-            header.title = "all projects"
+            switch indexPath.section {
+            case 0: header.title = "projects with goals"
+            case 1: header.title = "projects without goals"
+            default: print("unexpected section in indexPath (\(indexPath))")
+            }
+            
         }
         return view
     }

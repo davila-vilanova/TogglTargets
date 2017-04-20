@@ -8,8 +8,6 @@
 
 import Cocoa
 
-let ListLayoutHeaderKind = "ListLayoutHeaderType"
-
 class ListLayout: NSCollectionViewLayout {
     private var itemRects = Dictionary<IndexPath, CGRect>()
     private var headerRects = Dictionary<IndexPath, CGRect>()
@@ -65,7 +63,7 @@ class ListLayout: NSCollectionViewLayout {
         
         for (indexPath, headerRect) in headerRects {
             if headerRect.intersects(rect) {
-                let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: ListLayoutHeaderKind, with: indexPath)
+                let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, with: indexPath)
                 attributes.frame = headerRect
                 allAttributes.append(attributes)
             }
@@ -92,13 +90,13 @@ class ListLayout: NSCollectionViewLayout {
     }
     
     override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
-        guard elementKind == ListLayoutHeaderKind else {
+        guard elementKind == NSCollectionElementKindSectionHeader else {
             return nil
         }
         guard let headerRect = headerRects[indexPath] else {
             return nil
         }
-        let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: ListLayoutHeaderKind, with: indexPath)
+        let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, with: indexPath)
         attributes.frame = headerRect
         return attributes
     }
