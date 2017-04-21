@@ -15,40 +15,39 @@ internal class ModelCoordinator: NSObject {
     internal var profileProperty = Property<Profile>(value: nil)
     private var projects = Dictionary<Int64, Project>() {
         didSet {
-            let projectIds = [Int64](projects.keys)
-            sortedProjectIds = projectIds.sorted { id0, id1 in
-                let goal0 = goalsStore.goalProperty(for: id0).value,
-                goal1 = goalsStore.goalProperty(for: id1).value
-                if goal0 != nil, goal1 == nil {
-                    // a project with goal comes before a project without it
-                    return true
-                } else if let hoursPerMonth0 = goal0?.hoursPerMonth,
-                    let hoursPerMonth1 = goal1?.hoursPerMonth {
-                    // when two projects have goals the one with the larger goal comes first
-                    return hoursPerMonth0 > hoursPerMonth1
-                } else {
-                    return false
-                }
-            }
-            projectsProperty.value = ProjectsByGoals(projects: projects,
-                                                     idsOfProjectsWithGoals: idsOfProjectsWithGoals,
-                                                     idsOfProjectsWithoutGoals: idsOfProjectsWithoutGoals)
+            sortProjects()
         }
     }
     
-    internal var sortedProjectIds = [Int64]() {
-        didSet {
-            let indexOfLastProjectWithGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
-                goalsStore.goalProperty(for: projectId).value != nil
+    private func sortProjects() {
+        let projectIds = [Int64](projects.keys)
+        let sortedProjectIds = projectIds.sorted { id0, id1 in
+            let goal0 = goalsStore.goalProperty(for: id0).value,
+            goal1 = goalsStore.goalProperty(for: id1).value
+            if goal0 != nil, goal1 == nil {
+                // a project with goal comes before a project without it
+                return true
+            } else if let hoursPerMonth0 = goal0?.hoursPerMonth,
+                let hoursPerMonth1 = goal1?.hoursPerMonth {
+                // when two projects have goals the one with the larger goal comes first
+                return hoursPerMonth0 > hoursPerMonth1
+            } else {
+                return false
             }
-            idsOfProjectsWithGoals = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
-            idsOfProjectsWithoutGoals = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
         }
-    }
-    
-    private var idsOfProjectsWithGoals = ArraySlice<Int64>()
-    private var idsOfProjectsWithoutGoals = ArraySlice<Int64>()
+        
+        let indexOfLastProjectWithGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
+            goalsStore.goalProperty(for: projectId).value != nil
+        }
+        let idsOfProjectsWithGoals = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
+        let idsOfProjectsWithoutGoals = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
 
+        projectsProperty.value = ProjectsByGoals(projects: projects,
+                                                 sortedProjectIds: sortedProjectIds,
+                                                 idsOfProjectsWithGoals: idsOfProjectsWithGoals,
+                                                 idsOfProjectsWithoutGoals: idsOfProjectsWithoutGoals)
+    }
+    
     internal let projectsProperty = Property<ProjectsByGoals>(value: nil)
     
     private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport>>()
@@ -120,8 +119,11 @@ internal class ModelCoordinator: NSObject {
         return goalsStore.goalProperty(for: projectId)
     }
     
+    @discardableResult
     internal func setGoal(_ goal: TimeGoal) -> Property<TimeGoal> {
-        return goalsStore.storeNew(goal: goal)
+        let property = goalsStore.storeNew(goal: goal)
+        sortProjects()
+        return property
     }
 
     internal func reportProperty(for projectId: Int64) -> Property<TwoPartTimeReport> {
@@ -169,6 +171,7 @@ internal class ModelCoordinator: NSObject {
 
 struct ProjectsByGoals {
     let projects: Dictionary<Int64, Project>
+    let sortedProjectIds: [Int64]
     let idsOfProjectsWithGoals: ArraySlice<Int64>
     let idsOfProjectsWithoutGoals: ArraySlice<Int64>
 }
