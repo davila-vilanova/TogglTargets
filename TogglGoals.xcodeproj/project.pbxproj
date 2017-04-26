@@ -10,7 +10,6 @@
 		632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957451DBA99F000E11A10 /* AppDelegate.swift */; };
 		6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 632957491DBA99F000E11A10 /* Assets.xcassets */; };
 		6329574D1DBA99F000E11A10 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6329574B1DBA99F000E11A10 /* Main.storyboard */; };
-		632957581DBA99F000E11A10 /* TogglGoalsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957571DBA99F000E11A10 /* TogglGoalsTests.swift */; };
 		632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */; };
 		632957711DBA9C8800E11A10 /* ProjectsMasterDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957701DBA9C8800E11A10 /* ProjectsMasterDetailController.swift */; };
 		632957731DBA9D8500E11A10 /* ProjectsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957721DBA9D8500E11A10 /* ProjectsListViewController.swift */; };
@@ -22,6 +21,7 @@
 		632EEBF21E4278F300608D01 /* SQLite.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 632EEBF11E4278F300608D01 /* SQLite.framework.dSYM */; };
 		632EEBF41E427A3700608D01 /* GoalsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632EEBF31E427A3700608D01 /* GoalsStore.swift */; };
 		632EEBF51E427AE100608D01 /* GoalsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632EEBF31E427A3700608D01 /* GoalsStore.swift */; };
+		6332F51B1EADF29900CDE608 /* ProjectsByGoalsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6332F51A1EADF29900CDE608 /* ProjectsByGoalsTests.swift */; };
 		633392171E5F5CFB00427F50 /* StrategyComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633392161E5F5CFB00427F50 /* StrategyComputer.swift */; };
 		633392181E5F5CFB00427F50 /* StrategyComputer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633392161E5F5CFB00427F50 /* StrategyComputer.swift */; };
 		633CEADB1E6C2A8500831611 /* StrategyComputerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633CEADA1E6C2A8500831611 /* StrategyComputerTests.swift */; };
@@ -40,6 +40,10 @@
 		636AD81B1EA4B26C00F463C5 /* ProjectCollectionViewHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 636AD8191EA4B26C00F463C5 /* ProjectCollectionViewHeader.xib */; };
 		636AD81D1EA6A4BB00F463C5 /* ListLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636AD81C1EA6A4BB00F463C5 /* ListLayout.swift */; };
 		636AD81E1EA6A4BB00F463C5 /* ListLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636AD81C1EA6A4BB00F463C5 /* ListLayout.swift */; };
+		637995A11EAA826400C0CF24 /* ProjectListUpdateDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637995A01EAA826400C0CF24 /* ProjectListUpdateDiffTests.swift */; };
+		637995A21EAA9BC600C0CF24 /* ProjectsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957721DBA9D8500E11A10 /* ProjectsListViewController.swift */; };
+		637995A31EAA9BF700C0CF24 /* ProjectCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FA1F961DBB796D00612A09 /* ProjectCollectionViewItem.swift */; };
+		637995A41EAA9C0C00C0CF24 /* ProjectCollectionViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636AD8181EA4B26C00F463C5 /* ProjectCollectionViewHeader.swift */; };
 		637F96DC1E817585000E9FC5 /* EmptySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637F96DB1E817585000E9FC5 /* EmptySelectionViewController.swift */; };
 		63817A011DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63817A001DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift */; };
 		639434E31E3D2EFE0055A5B7 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A211E3B4B7300176AB4 /* ModelCache.swift */; };
@@ -117,7 +121,6 @@
 		6329574C1DBA99F000E11A10 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6329574E1DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		632957531DBA99F000E11A10 /* TogglGoalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglGoalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		632957571DBA99F000E11A10 /* TogglGoalsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglGoalsTests.swift; sourceTree = "<group>"; };
 		632957591DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6329575E1DBA99F000E11A10 /* TogglGoalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglGoalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglGoalsUITests.swift; sourceTree = "<group>"; };
@@ -128,6 +131,7 @@
 		632EEBE81E42786100608D01 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/Mac/SQLite.framework; sourceTree = "<group>"; };
 		632EEBF11E4278F300608D01 /* SQLite.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = SQLite.framework.dSYM; path = Carthage/Build/Mac/SQLite.framework.dSYM; sourceTree = "<group>"; };
 		632EEBF31E427A3700608D01 /* GoalsStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalsStore.swift; sourceTree = "<group>"; };
+		6332F51A1EADF29900CDE608 /* ProjectsByGoalsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsByGoalsTests.swift; sourceTree = "<group>"; };
 		633392161E5F5CFB00427F50 /* StrategyComputer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrategyComputer.swift; sourceTree = "<group>"; };
 		633CEADA1E6C2A8500831611 /* StrategyComputerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrategyComputerTests.swift; sourceTree = "<group>"; };
 		6351B82D1DC0DCA500E0AB1E /* ModelCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCoordinator.swift; sourceTree = "<group>"; };
@@ -139,6 +143,7 @@
 		636AD8181EA4B26C00F463C5 /* ProjectCollectionViewHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectCollectionViewHeader.swift; sourceTree = "<group>"; };
 		636AD8191EA4B26C00F463C5 /* ProjectCollectionViewHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCollectionViewHeader.xib; sourceTree = "<group>"; };
 		636AD81C1EA6A4BB00F463C5 /* ListLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListLayout.swift; sourceTree = "<group>"; };
+		637995A01EAA826400C0CF24 /* ProjectListUpdateDiffTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectListUpdateDiffTests.swift; sourceTree = "<group>"; };
 		637F96DB1E817585000E9FC5 /* EmptySelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptySelectionViewController.swift; sourceTree = "<group>"; };
 		63817A001DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsMasterDetailWindowController.swift; sourceTree = "<group>"; };
 		639434E61E3D2F410055A5B7 /* Property.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Property.swift; sourceTree = "<group>"; };
@@ -242,11 +247,12 @@
 		632957561DBA99F000E11A10 /* TogglGoalsTests */ = {
 			isa = PBXGroup;
 			children = (
-				632957571DBA99F000E11A10 /* TogglGoalsTests.swift */,
 				632957591DBA99F000E11A10 /* Info.plist */,
 				633CEADA1E6C2A8500831611 /* StrategyComputerTests.swift */,
 				636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */,
 				63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */,
+				637995A01EAA826400C0CF24 /* ProjectListUpdateDiffTests.swift */,
+				6332F51A1EADF29900CDE608 /* ProjectsByGoalsTests.swift */,
 			);
 			path = TogglGoalsTests;
 			sourceTree = "<group>";
@@ -464,15 +470,19 @@
 				63593AED1E511BD6000473CC /* SpawningOperation.swift in Sources */,
 				636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */,
 				63B5D8AC1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */,
+				637995A11EAA826400C0CF24 /* ProjectListUpdateDiffTests.swift in Sources */,
 				63B5D8AF1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */,
+				637995A31EAA9BF700C0CF24 /* ProjectCollectionViewItem.swift in Sources */,
 				63D4EB971E79D15B00D55033 /* DateTimeExtensions.swift in Sources */,
+				637995A21EAA9BC600C0CF24 /* ProjectsListViewController.swift in Sources */,
 				639434E41E3D2F0C0055A5B7 /* TogglAPICredential.swift in Sources */,
 				63593AEA1E511B93000473CC /* CollectionOperation.swift in Sources */,
 				63EAD8E41E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift in Sources */,
 				639434E31E3D2EFE0055A5B7 /* ModelCache.swift in Sources */,
+				637995A41EAA9C0C00C0CF24 /* ProjectCollectionViewHeader.swift in Sources */,
 				633392181E5F5CFB00427F50 /* StrategyComputer.swift in Sources */,
+				6332F51B1EADF29900CDE608 /* ProjectsByGoalsTests.swift in Sources */,
 				63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */,
-				632957581DBA99F000E11A10 /* TogglGoalsTests.swift in Sources */,
 				6351B82F1DC0DCA500E0AB1E /* ModelCoordinator.swift in Sources */,
 				636AD81E1EA6A4BB00F463C5 /* ListLayout.swift in Sources */,
 				633CEADB1E6C2A8500831611 /* StrategyComputerTests.swift in Sources */,

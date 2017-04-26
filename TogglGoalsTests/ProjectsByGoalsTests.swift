@@ -1,16 +1,15 @@
 //
-//  TogglGoalsTests.swift
-//  TogglGoalsTests
+//  ProjectsByGoalsTests.swift
+//  TogglGoals
 //
-//  Created by David Davila on 21/10/2016.
-//  Copyright © 2016 davi. All rights reserved.
+//  Created by David Dávila on 24.04.17.
+//  Copyright © 2017 davi. All rights reserved.
 //
 
 import XCTest
-@testable import TogglGoals
 
-class TogglGoalsTests: XCTestCase {
-    
+class ProjectsByGoalsTests: XCTestCase {
+
     override func setUp() {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -20,17 +19,18 @@ class TogglGoalsTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
+
     func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let pbgs = ProjectsByGoals(projects: Dictionary<Int64, Project>(), sortedProjectIds: [45, 4, 31, 5], indexOfFirstProjectWithoutGoal: 2)
+        XCTAssertEqual(pbgs.idsOfProjectsWithGoals, [45, 4])
+        XCTAssertEqual(pbgs.idsOfProjectsWithoutGoals, [31, 5])
     }
-    
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measure {
             // Put the code you want to measure the time of here.
         }
     }
-    
+
 }

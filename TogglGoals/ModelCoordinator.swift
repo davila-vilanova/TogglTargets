@@ -36,16 +36,13 @@ internal class ModelCoordinator: NSObject {
             }
         }
         
-        let indexOfLastProjectWithGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
+        let indexOfFirstProjectWithoutGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
             goalsStore.goalProperty(for: projectId).value != nil
         }
-        let idsOfProjectsWithGoals = sortedProjectIds.prefix(indexOfLastProjectWithGoal)
-        let idsOfProjectsWithoutGoals = sortedProjectIds.suffix(sortedProjectIds.count - indexOfLastProjectWithGoal)
-
+        
         projectsProperty.value = ProjectsByGoals(projects: projects,
                                                  sortedProjectIds: sortedProjectIds,
-                                                 idsOfProjectsWithGoals: idsOfProjectsWithGoals,
-                                                 idsOfProjectsWithoutGoals: idsOfProjectsWithoutGoals)
+                                                 indexOfFirstProjectWithoutGoal: indexOfFirstProjectWithoutGoal)
     }
     
     internal let projectsProperty = Property<ProjectsByGoals>(value: nil)
@@ -174,6 +171,13 @@ struct ProjectsByGoals {
     let sortedProjectIds: [Int64]
     let idsOfProjectsWithGoals: ArraySlice<Int64>
     let idsOfProjectsWithoutGoals: ArraySlice<Int64>
+    
+    init(projects: Dictionary<Int64, Project>, sortedProjectIds: [Int64], indexOfFirstProjectWithoutGoal: Int) {
+        self.projects = projects
+        self.sortedProjectIds = sortedProjectIds
+        idsOfProjectsWithGoals = sortedProjectIds.prefix(indexOfFirstProjectWithoutGoal)
+        idsOfProjectsWithoutGoals = sortedProjectIds.suffix(sortedProjectIds.count - indexOfFirstProjectWithoutGoal)
+    }
 }
 
 extension ProjectsByGoals {
@@ -187,6 +191,24 @@ extension ProjectsByGoals {
         
         let projectId = projectIds[indexPath.item + projectIds.startIndex]
         return projects[projectId]
+    }
+}
+
+extension ProjectsByGoals {
+    func indexPath(for indexInSortedProjects: Int) -> IndexPath? {
+        guard indexInSortedProjects >= 0, indexInSortedProjects < sortedProjectIds.endIndex else {
+            return nil
+        }
+        let section: Int, slice: ArraySlice<Int64>
+        if indexInSortedProjects < idsOfProjectsWithGoals.endIndex {
+            section = SectionIndex.projectsWithGoals.rawValue
+            slice = idsOfProjectsWithGoals
+        } else {
+            section = SectionIndex.projectsWithoutGoals.rawValue
+            slice = idsOfProjectsWithoutGoals
+        }
+        let item = indexInSortedProjects - slice.startIndex
+        return IndexPath(item: item, section: section)
     }
 }
 

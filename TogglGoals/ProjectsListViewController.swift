@@ -8,6 +8,13 @@
 
 import Cocoa
 
+
+enum SectionIndex: Int {
+    case projectsWithGoals = 0
+    case projectsWithoutGoals
+}
+fileprivate let NumberOfSections = 2
+
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, ModelCoordinatorContaining {
     private let projectItemIdentifier = "ProjectItemIdentifier"
     private let sectionHeaderIdentifier = "SectionHeaderIdentifier"
@@ -24,12 +31,17 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     var projectsByGoals: ProjectsByGoals? {
         didSet {
-            refresh()
+            if let old = oldValue, let new = projectsByGoals {
+                let diff = ProjectListUpdateDiff(oldProjectsValue: old, newProjectsValue: new)
+                refresh(with: diff)
+            } else {
+                refresh()
+            }
         }
     }
 
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -63,11 +75,21 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             })
     }
 
-    func refresh() {
-        projectsCollectionView.reloadData()
-        updateSelection()
-    }
+    fileprivate func refresh(with providedDiff: ProjectListUpdateDiff? = nil) {
+        guard let diff = providedDiff else {
+            projectsCollectionView.reloadData()
+            updateSelection()
+            return
+        }
+        for (oldIndexPath, newIndexPath) in diff.movedItems {
+            projectsCollectionView.moveItem(at: oldIndexPath, to: newIndexPath)
+        }
+        // First delete items at old index paths, then add items at new index paths
+        projectsCollectionView.deleteItems(at: diff.removedItems)
+        projectsCollectionView.insertItems(at: diff.addedItems)
+     }
 
+    
     private func updateSelection() {
         guard let didSelectProject = self.didSelectProject else {
             return
@@ -81,20 +103,20 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         didSelectProject(projectsByGoals?.project(for: indexPath))
     }
     
+    
     // MARK: - NSCollectionViewDataSource
     
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
-        return 2
+        return NumberOfSections
     }
     
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let projectsByGoals = projectsByGoals else {
             return 0
         }
-        switch section {
-        case 0: return projectsByGoals.idsOfProjectsWithGoals.count
-        case 1: return projectsByGoals.idsOfProjectsWithoutGoals.count
-        default: return 0
+        switch SectionIndex(rawValue: section)! {
+        case .projectsWithGoals: return projectsByGoals.idsOfProjectsWithGoals.count
+        case .projectsWithoutGoals: return projectsByGoals.idsOfProjectsWithoutGoals.count
         }
     }
 
@@ -114,12 +136,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> NSView {
         let view = collectionView.makeSupplementaryView(ofKind: NSCollectionElementKindSectionHeader, withIdentifier: sectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
-            switch indexPath.section {
-            case 0: header.title = "projects with goals"
-            case 1: header.title = "projects without goals"
-            default: print("unexpected section in indexPath (\(indexPath))")
+            switch SectionIndex(rawValue: indexPath.section)! {
+            case .projectsWithGoals: header.title = "projects with goals"
+            case .projectsWithoutGoals: header.title = "projects without goals"
             }
-            
+
         }
         return view
     }
@@ -132,5 +153,38 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
         updateSelection()
+    }
+}
+
+struct ProjectListUpdateDiff {
+    let movedItems: Dictionary<IndexPath, IndexPath>
+    let removedItems: Set<IndexPath>
+    let addedItems: Set<IndexPath>
+    
+    init(oldProjectsValue: ProjectsByGoals, newProjectsValue: ProjectsByGoals) {
+        var newIndexPathsByProjectId = Dictionary<Int64, IndexPath>()
+        for newIndex in newProjectsValue.sortedProjectIds.startIndex ..< newProjectsValue.sortedProjectIds.endIndex {
+            let projectId = newProjectsValue.sortedProjectIds[newIndex]
+            let newIndexPath = newProjectsValue.indexPath(for: newIndex)!
+            newIndexPathsByProjectId[projectId] = newIndexPath
+        }
+        
+        var movedIndexPaths = Dictionary<IndexPath, IndexPath>()
+        var oldIndexPathsOfRemovedItems = Set<IndexPath>()
+        for oldIndex in oldProjectsValue.sortedProjectIds.startIndex ..< oldProjectsValue.sortedProjectIds.endIndex {
+            let projectId = oldProjectsValue.sortedProjectIds[oldIndex]
+            let oldIndexPath = oldProjectsValue.indexPath(for: oldIndex)!
+            if let newIndexPath = newIndexPathsByProjectId.removeValue(forKey: projectId) {
+                if oldIndexPath != newIndexPath {
+                    movedIndexPaths[oldIndexPath] = newIndexPath
+                }
+            } else {
+                oldIndexPathsOfRemovedItems.insert(oldIndexPath)
+            }
+        }
+        
+        movedItems = movedIndexPaths
+        removedItems = oldIndexPathsOfRemovedItems
+        addedItems = Set<IndexPath>(newIndexPathsByProjectId.values) // Remaining ones - not removed in previous step
     }
 }
