@@ -53,7 +53,40 @@ class ListLayout: NSCollectionViewLayout {
         
         contentSize = CGSize(width: max(fullItemWidth, fullHeaderWidth), height: yPos)
     }
-    
+
+    override func prepare(forCollectionViewUpdates updateItems: [NSCollectionViewUpdateItem]) {
+        for updateItem in updateItems {
+            switch updateItem.updateAction {
+            case .insert:
+                accountForInsertion(at: updateItem.indexPathAfterUpdate!)
+            case .delete:
+                accountForDeletion(at: updateItem.indexPathBeforeUpdate!)
+            case .move:
+                accountForMove(from: updateItem.indexPathBeforeUpdate!, to: updateItem.indexPathAfterUpdate!)
+            case .reload:
+                continue
+            case .none:
+                continue
+            }
+        }
+    }
+
+    private func accountForInsertion(at indexPath: IndexPath) {
+        offsetRects(from: indexPath, by: 1)
+    }
+
+    private func accountForDeletion(at indexPath: IndexPath) {
+        offsetRects(from: indexPath, by: -1)
+    }
+
+    private func accountForMove(from: IndexPath, to: IndexPath) {
+
+    }
+
+    private func offsetRects(from indexPath: IndexPath, by count: Int) {
+
+    }
+
     override var collectionViewContentSize: NSSize {
         return contentSize
     }
