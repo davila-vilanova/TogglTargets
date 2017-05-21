@@ -10,7 +10,7 @@ import Foundation
 
 // Identity hence class
 internal class Property<T> {
-    fileprivate typealias UpdateObserver = ((T?, Bool) -> ())
+    fileprivate typealias UpdateObserver = ((Property<T>) -> ())
     fileprivate typealias ObserverToken = UUID
 
     private var _value: T?
@@ -64,7 +64,7 @@ internal class Property<T> {
     private func notifyOfUpdate(skipTokens: Set<ObserverToken> = Set<ObserverToken>()) {
         for (token, observer) in updateObservers {
             if !skipTokens.contains(token) {
-                observer(isInvalidated ? nil : value, isInvalidated)
+                observer(self)
             }
         }
     }
@@ -121,12 +121,16 @@ internal class ObservedProperty<T> {
         self.original = original
         self.valueObserver = valueObserver
         self.invalidationObserver = invalidationObserver
-        self.observerToken = original.observeUpdates({ [weak self] (value, invalidated) in
-            if invalidated {
-                self?.invalidationObserver?()
-                self?.unobserve()
+        self.observerToken = original.observeUpdates({ [weak self] (property) in
+            guard let s = self else {
+                return
             }
-            self?.valueObserver?(value)
+            if property.isInvalidated {
+                s.invalidationObserver?()
+                s.unobserve()
+            } else {
+                s.valueObserver?(property.value)
+            }
         })
     }
 
