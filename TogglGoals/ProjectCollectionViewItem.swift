@@ -34,7 +34,8 @@ class ProjectCollectionViewItem: NSCollectionViewItem
             if let p = newValue {
                 observedGoalProperty =
                     ObservedProperty(original: p,
-                                     valueObserver: {[weak self] (goal) in
+                                     valueObserver: {[weak self] (op) in
+                                        let goal = op.original?.value
                                         self?.updateGoalLabel(goal: goal)
                     },
                                      invalidationObserver: {
@@ -56,7 +57,8 @@ class ProjectCollectionViewItem: NSCollectionViewItem
             if let p = newValue {
                 observedReportProperty =
                     ObservedProperty(original: p,
-                                     valueObserver: {[weak self] (report) in
+                                     valueObserver: {[weak self] (op) in
+                                        let report = op.original?.value
                                         self?.updateReportLabel(report: report)
                     },
                                      invalidationObserver: {

@@ -134,14 +134,14 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         
         let reportProperty = mc.reportProperty(for: project.id)
         observedReportProperty?.unobserve()
-        observedReportProperty = ObservedProperty<TwoPartTimeReport>(original: reportProperty, valueObserver: { [weak self] (report) in self?.handleReportValue(report) })
+        observedReportProperty = ObservedProperty<TwoPartTimeReport>(original: reportProperty, valueObserver: { [weak self] (op) in self?.handleReportValue(op.original?.value) })
         observedReportProperty?.reportImmediately()
     }
     
     @discardableResult
     private func observeGoalProperty(_ goalProperty: Property<TimeGoal>) -> ObservedProperty<TimeGoal> {
         observedGoalProperty?.unobserve()
-        let observed = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (goal) in self?.handleGoalValue(goal)})
+        let observed = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (op) in self?.handleGoalValue(op.original?.value)})
         observedGoalProperty = observed
         return observed
     }

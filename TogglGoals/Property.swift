@@ -93,7 +93,8 @@ extension Property: CustomDebugStringConvertible {
 }
 
 internal class ObservedProperty<T> {
-    internal typealias ValueObserver = ((T?) -> ())
+    internal typealias ValueObserver = ((ObservedProperty<T>) -> ())
+
     internal typealias InvalidationObserver = (() -> ())
 
     internal private(set) weak var original: Property<T>?
@@ -129,7 +130,7 @@ internal class ObservedProperty<T> {
                 s.invalidationObserver?()
                 s.unobserve()
             } else {
-                s.valueObserver?(property.value)
+                s.valueObserver?(s)
             }
         })
     }
@@ -149,7 +150,7 @@ internal class ObservedProperty<T> {
         if isInvalidated {
             invalidationObserver?()
         } else {
-            valueObserver?(original?.value)
+            valueObserver?(self)
         }
         return self
     }

@@ -37,8 +37,8 @@ class GoalsStore {
             return property
         } else {
             let property = Property<TimeGoal>(value: nil) // promise to call if one is created later
-            let observed = ObservedProperty<TimeGoal>(original: property, valueObserver: { [weak self] (goal) in
-                guard let modifiedGoal = goal else {
+            let observed = ObservedProperty<TimeGoal>(original: property, valueObserver: { [weak self] (op) in
+                guard let modifiedGoal = op.original?.value else {
                     return
                 }
                 self?.storeGoal(modifiedGoal)

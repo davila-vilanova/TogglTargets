@@ -67,8 +67,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         
         observedProjects =
             ObservedProperty<ProjectsByGoals>(original: projectsProperty,
-                                              valueObserver: { [weak self] (projects) in
-                                                self?.projectsByGoals = projects
+                                              valueObserver: { [weak self] (op) in
+                                                self?.projectsByGoals = op.original?.value
                 },
                                               invalidationObserver: { [weak self] in
                                                 self?.observedProjects = nil
