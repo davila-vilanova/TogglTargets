@@ -166,8 +166,8 @@ extension ObservedProperty: CustomDebugStringConvertible {
     }
 }
 
-struct CollectionUpdateClue<IndexType: Hashable> {
-    let addedItems: Set<IndexType>?
-    let removedItems: Set<IndexType>?
-    let movedItems: Dictionary<IndexType, IndexType>?
+struct CollectionUpdateClue {
+    let addedItems: Set<IndexPath>?
+    let removedItems: Set<IndexPath>?
+    let movedItems: Dictionary<IndexPath, IndexPath>?
 }
