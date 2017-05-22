@@ -24,6 +24,13 @@ internal class Property<T> {
         }
     }
 
+    var collectionUpdateClue: CollectionUpdateClue?
+    
+    func setCollectionValue(_ newValue: T, updateClue: CollectionUpdateClue) {
+        self.collectionUpdateClue = updateClue
+        self.value = newValue
+    }
+
     internal private(set) var isInvalidated = false
 
     private var updateObservers = Dictionary<ObserverToken, UpdateObserver>()
