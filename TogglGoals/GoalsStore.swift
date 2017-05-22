@@ -53,6 +53,10 @@ class GoalsStore {
         }
     }
     
+    func goalExists(for projectId: Int64) -> Bool {
+        return goalProperties[projectId]?.value != nil
+    }
+    
     @discardableResult
     func storeNew(goal: TimeGoal) -> Property<TimeGoal> {
         let property = goalProperty(for: goal.projectId)

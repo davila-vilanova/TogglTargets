@@ -61,7 +61,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     
     private func bindToProjects() {
         guard observedProjects == nil,
-            let projectsProperty = modelCoordinator?.projectsProperty else {
+            let projectsProperty = modelCoordinator?.projects else {
             return
         }
         

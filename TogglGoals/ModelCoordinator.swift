@@ -13,39 +13,7 @@ internal class ModelCoordinator: NSObject {
     private let goalsStore: GoalsStore
 
     internal var profileProperty = Property<Profile>(value: nil)
-    private var projects = Dictionary<Int64, Project>() {
-        didSet {
-            sortProjects()
-        }
-    }
-    
-    private func sortProjects() {
-        let projectIds = [Int64](projects.keys)
-        let sortedProjectIds = projectIds.sorted { id0, id1 in
-            let goal0 = goalsStore.goalProperty(for: id0).value,
-            goal1 = goalsStore.goalProperty(for: id1).value
-            if goal0 != nil, goal1 == nil {
-                // a project with goal comes before a project without it
-                return true
-            } else if let hoursPerMonth0 = goal0?.hoursPerMonth,
-                let hoursPerMonth1 = goal1?.hoursPerMonth {
-                // when two projects have goals the one with the larger goal comes first
-                return hoursPerMonth0 > hoursPerMonth1
-            } else {
-                return false
-            }
-        }
-        
-        let indexOfFirstProjectWithoutGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
-            goalsStore.goalProperty(for: projectId).value != nil
-        }
-        
-        projectsProperty.value = ProjectsByGoals(projects: projects,
-                                                 sortedProjectIds: sortedProjectIds,
-                                                 indexOfFirstProjectWithoutGoal: indexOfFirstProjectWithoutGoal)
-    }
-    
-    internal let projectsProperty = Property<ProjectsByGoals>(value: nil)
+    internal var projects = Property<ProjectsByGoals>(value: nil)
     
     private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport>>()
     
@@ -90,7 +58,10 @@ internal class ModelCoordinator: NSObject {
 
         retrieveProjectsOp.outputCollectionOperation.completionBlock = { [weak self] in
             if let projects = retrieveProjectsOp.outputCollectionOperation.collectedOutput {
-                self?.projects = projects
+                guard let s = self else {
+                    return
+                }
+                s.projects.value = ProjectsByGoals(projects: projects, goalsStore: s.goalsStore)
             }
         }
 
@@ -107,20 +78,13 @@ internal class ModelCoordinator: NSObject {
         networkQueue.addOperation(retrieveProjectsOp)
         networkQueue.addOperation(retrieveReportsOp)
     }
-
-    internal func project(for id: Int64) -> Project? {
-        return projects[id]
-    }
     
     internal func goalProperty(for projectId: Int64) -> Property<TimeGoal> {
         return goalsStore.goalProperty(for: projectId)
     }
     
-    @discardableResult
-    internal func setGoal(_ goal: TimeGoal) -> Property<TimeGoal> {
-        let property = goalsStore.storeNew(goal: goal)
-        sortProjects()
-        return property
+    internal func setNewGoal(_ goal: TimeGoal) {
+        goalsStore.storeNew(goal: goal)
     }
 
     internal func reportProperty(for projectId: Int64) -> Property<TwoPartTimeReport> {
@@ -166,52 +130,6 @@ internal class ModelCoordinator: NSObject {
     }
 }
 
-struct ProjectsByGoals {
-    let projects: Dictionary<Int64, Project>
-    let sortedProjectIds: [Int64]
-    let idsOfProjectsWithGoals: ArraySlice<Int64>
-    let idsOfProjectsWithoutGoals: ArraySlice<Int64>
-    
-    init(projects: Dictionary<Int64, Project>, sortedProjectIds: [Int64], indexOfFirstProjectWithoutGoal: Int) {
-        self.projects = projects
-        self.sortedProjectIds = sortedProjectIds
-        idsOfProjectsWithGoals = sortedProjectIds.prefix(indexOfFirstProjectWithoutGoal)
-        idsOfProjectsWithoutGoals = sortedProjectIds.suffix(sortedProjectIds.count - indexOfFirstProjectWithoutGoal)
-    }
-}
-
-extension ProjectsByGoals {
-    func project(for indexPath: IndexPath) -> Project? {
-        let projectIds: ArraySlice<Int64>
-        switch indexPath.section {
-        case 0: projectIds = idsOfProjectsWithGoals
-        case 1: projectIds = idsOfProjectsWithoutGoals
-        default: return nil
-        }
-        
-        let projectId = projectIds[indexPath.item + projectIds.startIndex]
-        return projects[projectId]
-    }
-}
-
-extension ProjectsByGoals {
-    func indexPath(for indexInSortedProjects: Int) -> IndexPath? {
-        guard indexInSortedProjects >= 0, indexInSortedProjects < sortedProjectIds.endIndex else {
-            return nil
-        }
-        let section: Int, slice: ArraySlice<Int64>
-        if indexInSortedProjects < idsOfProjectsWithGoals.endIndex {
-            section = SectionIndex.projectsWithGoals.rawValue
-            slice = idsOfProjectsWithGoals
-        } else {
-            section = SectionIndex.projectsWithoutGoals.rawValue
-            slice = idsOfProjectsWithoutGoals
-        }
-        let item = indexInSortedProjects - slice.startIndex
-        return IndexPath(item: item, section: section)
-    }
-}
-
 protocol ModelCoordinatorContaining {
     var modelCoordinator: ModelCoordinator? { get set }
 }
@@ -236,3 +154,29 @@ extension Collection {
     }
 }
 
+extension ProjectsByGoals {
+    init(projects: Dictionary<Int64, Project>, goalsStore: GoalsStore) {
+        let hasGoal = { [weak goalsStore] (projectId: Int64) -> Bool in
+            guard let store = goalsStore else {
+                return false
+            }
+            return store.goalExists(for: projectId)
+        }
+        let areGoalsInIncreasingOrder = { [weak goalsStore] (id0: Int64, id1: Int64) -> Bool in
+            let goal0 = goalsStore?.goalProperty(for: id0).value,
+            goal1 = goalsStore?.goalProperty(for: id1).value
+            if goal0 != nil, goal1 == nil {
+                // a project with goal comes before a project without it
+                return true
+            } else if let hoursPerMonth0 = goal0?.hoursPerMonth,
+                let hoursPerMonth1 = goal1?.hoursPerMonth {
+                // when two projects have goals the one with the larger goal comes first
+                return hoursPerMonth0 > hoursPerMonth1
+            } else {
+                return false
+            }
+        }
+        
+        self.init(projects: projects, hasGoal: hasGoal, areGoalsInIncreasingOrder: areGoalsInIncreasingOrder)
+    }
+}

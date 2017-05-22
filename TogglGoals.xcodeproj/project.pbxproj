@@ -60,6 +60,9 @@
 		63B5D8AF1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8AD1E49014000042897 /* NetworkRetrieveReportsOperation.swift */; };
 		63B5D8B71E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8B61E4901D000042897 /* TogglAPIAccessOperation.swift */; };
 		63B5D8B81E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8B61E4901D000042897 /* TogglAPIAccessOperation.swift */; };
+		63B7719F1ED365A1005739CF /* ProjectsByGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B7719E1ED365A1005739CF /* ProjectsByGoals.swift */; };
+		63B771A01ED365A1005739CF /* ProjectsByGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B7719E1ED365A1005739CF /* ProjectsByGoals.swift */; };
+		63B771A11ED365A1005739CF /* ProjectsByGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B7719E1ED365A1005739CF /* ProjectsByGoals.swift */; };
 		63CE9A1E1E3AA12200176AB4 /* APIAccessError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */; };
 		63CE9A201E3AA2F800176AB4 /* TogglAPICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */; };
 		63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A211E3B4B7300176AB4 /* ModelCache.swift */; };
@@ -152,6 +155,7 @@
 		63B5D8AA1E49011F00042897 /* NetworkRetrieveProfileOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveProfileOperation.swift; sourceTree = "<group>"; };
 		63B5D8AD1E49014000042897 /* NetworkRetrieveReportsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveReportsOperation.swift; sourceTree = "<group>"; };
 		63B5D8B61E4901D000042897 /* TogglAPIAccessOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPIAccessOperation.swift; sourceTree = "<group>"; };
+		63B7719E1ED365A1005739CF /* ProjectsByGoals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsByGoals.swift; sourceTree = "<group>"; };
 		63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIAccessError.swift; sourceTree = "<group>"; };
 		63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63CE9A211E3B4B7300176AB4 /* ModelCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCache.swift; sourceTree = "<group>"; };
@@ -240,6 +244,7 @@
 				636AD8181EA4B26C00F463C5 /* ProjectCollectionViewHeader.swift */,
 				636AD8191EA4B26C00F463C5 /* ProjectCollectionViewHeader.xib */,
 				636AD81C1EA6A4BB00F463C5 /* ListLayout.swift */,
+				63B7719E1ED365A1005739CF /* ProjectsByGoals.swift */,
 			);
 			path = TogglGoals;
 			sourceTree = "<group>";
@@ -451,6 +456,7 @@
 				639FD05F1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */,
 				633392171E5F5CFB00427F50 /* StrategyComputer.swift in Sources */,
 				63D2E8A71E928AF4001DA2E1 /* SelectionDetailViewController.swift in Sources */,
+				63B7719F1ED365A1005739CF /* ProjectsByGoals.swift in Sources */,
 				63CE9A1E1E3AA12200176AB4 /* APIAccessError.swift in Sources */,
 				63B5D8B71E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */,
 				63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */,
@@ -486,6 +492,7 @@
 				6351B82F1DC0DCA500E0AB1E /* ModelCoordinator.swift in Sources */,
 				636AD81E1EA6A4BB00F463C5 /* ListLayout.swift in Sources */,
 				633CEADB1E6C2A8500831611 /* StrategyComputerTests.swift in Sources */,
+				63B771A01ED365A1005739CF /* ProjectsByGoals.swift in Sources */,
 				632EEBF51E427AE100608D01 /* GoalsStore.swift in Sources */,
 				63B5D8B81E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */,
 				639FD05D1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift in Sources */,
@@ -500,6 +507,7 @@
 				632957781DBA9D9600E11A10 /* ProjectDetailsViewController.swift in Sources */,
 				632957741DBA9D8500E11A10 /* ProjectsListViewController.swift in Sources */,
 				632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */,
+				63B771A11ED365A1005739CF /* ProjectsByGoals.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

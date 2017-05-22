@@ -309,6 +309,6 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
                 return
         }
         let goal = TimeGoal(forProjectId: projectId, hoursPerMonth: hoursPerMonth, workWeekdays: workWeekdays)
-        modelCoordinator.setGoal(goal)
+        modelCoordinator.setNewGoal(goal)
     }
 }
