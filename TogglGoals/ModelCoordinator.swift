@@ -85,6 +85,13 @@ internal class ModelCoordinator: NSObject {
     
     internal func setNewGoal(_ goal: TimeGoal) {
         goalsStore.storeNew(goal: goal)
+        guard let projects = self.projects.value else {
+            return
+        }
+        let indexPaths = projects.moveProjectAfterAddition(of: goal)!
+        let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
+        self.projects.collectionUpdateClue = clue
+        self.projects.value = projects
     }
 
     internal func reportProperty(for projectId: Int64) -> Property<TwoPartTimeReport> {
@@ -132,26 +139,6 @@ internal class ModelCoordinator: NSObject {
 
 protocol ModelCoordinatorContaining {
     var modelCoordinator: ModelCoordinator? { get set }
-}
-
-extension Collection {
-    /// Finds such index N that predicate is true for all elements up to
-    /// but not including the index N, and is false for all elements
-    /// starting with index N.
-    /// Behavior is undefined if there is no such N.
-    func binarySearch(predicate: (Iterator.Element) -> Bool) -> Index {
-        var low = startIndex
-        var high = endIndex
-        while low != high {
-            let mid = index(low, offsetBy: distance(from: low, to: high)/2)
-            if predicate(self[mid]) {
-                low = index(after: mid)
-            } else {
-                high = mid
-            }
-        }
-        return low
-    }
 }
 
 extension ProjectsByGoals {

@@ -56,9 +56,7 @@ extension ProjectsByGoals {
         let projectId = projectIds[indexPath.item + projectIds.startIndex]
         return projects[projectId]
     }
-}
-
-extension ProjectsByGoals {
+    
     func indexPath(for indexInSortedProjects: Int) -> IndexPath? {
         guard indexInSortedProjects >= 0, indexInSortedProjects < sortedProjectIds.endIndex else {
             return nil
@@ -73,5 +71,41 @@ extension ProjectsByGoals {
         }
         let item = indexInSortedProjects - slice.startIndex
         return IndexPath(item: item, section: section)
+    }
+}
+
+extension ProjectsByGoals {
+    func moveProjectAfterAddition(of newGoal: TimeGoal) -> (IndexPath, IndexPath)? {
+        guard let oldIndex = sortedProjectIds.index(of: newGoal.projectId),
+        let oldIndexPath = indexPath(for: oldIndex) else {
+            return nil
+        }
+        let newIndex = sortedProjectIds.binarySearch { (projectId) -> Bool in
+            return areGoalsInIncreasingOrder(projectId, newGoal.projectId)
+        }
+        guard let newIndexPath = indexPath(for: newIndex) else {
+            return nil
+        }
+        return (oldIndexPath, newIndexPath)
+    }
+}
+
+extension Collection {
+    /// Finds such index N that predicate is true for all elements up to
+    /// but not including the index N, and is false for all elements
+    /// starting with index N.
+    /// Behavior is undefined if there is no such N.
+    func binarySearch(predicate: (Iterator.Element) -> Bool) -> Index {
+        var low = startIndex
+        var high = endIndex
+        while low != high {
+            let mid = index(low, offsetBy: distance(from: low, to: high)/2)
+            if predicate(self[mid]) {
+                low = index(after: mid)
+            } else {
+                high = mid
+            }
+        }
+        return low
     }
 }
