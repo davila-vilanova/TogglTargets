@@ -165,3 +165,9 @@ extension ObservedProperty: CustomDebugStringConvertible {
         return "ObservedProperty(original=\(describeUnwrappedOrNil(original)))"
     }
 }
+
+struct CollectionUpdateClue<IndexType: Hashable> {
+    let addedItems: Set<IndexType>?
+    let removedItems: Set<IndexType>?
+    let movedItems: Dictionary<IndexType, IndexType>?
+}

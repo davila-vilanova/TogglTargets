@@ -136,10 +136,3 @@ class ProjectCollectionViewItem: NSCollectionViewItem
         }
     }
 }
-
-struct CollectionUpdateClue<IndexType: Hashable> {
-    let addedItems: Set<IndexType>?
-    let removedItems: Set<IndexType>?
-    let movedItems: Dictionary<IndexType, IndexType>?
-}
-
