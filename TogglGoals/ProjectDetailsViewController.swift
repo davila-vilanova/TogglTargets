@@ -15,8 +15,10 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var weekWorkDaysControl: NSSegmentedControl!
 
     @IBOutlet weak var projectName: NSTextField!
-    @IBOutlet weak var goalButton: NSButton!
+    @IBOutlet weak var createGoalButton: NSButton!
+    @IBOutlet weak var deleteGoalButton: NSButton!
 
+    
     @IBOutlet weak var monthNameLabel: NSTextField!
     @IBOutlet weak var totalWorkdaysLabel: NSTextField!
     @IBOutlet weak var remainingFullWorkdaysLabel: NSTextField!
@@ -141,7 +143,11 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @discardableResult
     private func observeGoalProperty(_ goalProperty: Property<TimeGoal>) -> ObservedProperty<TimeGoal> {
         observedGoalProperty?.unobserve()
-        let observed = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (op) in self?.handleGoalValue(op.original?.value)})
+        let observed = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (op) in
+            self?.handleGoalValue(op.original?.value)
+            }, invalidationObserver: {
+                print("[details] goal invalidated")
+        })
         observedGoalProperty = observed
         return observed
     }
@@ -179,7 +185,8 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
     private func displayGoal(goal optionalGoal: TimeGoal?) {
         func setEnabledState(_ goalExists: Bool) {
-            goalButton.isEnabled = !goalExists
+            createGoalButton.isHidden = goalExists
+            deleteGoalButton.isHidden = !goalExists
             monthlyHoursGoalField.isEnabled = goalExists
             weekWorkDaysControl.isEnabled = goalExists
         }
@@ -298,17 +305,20 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     }
 
     @IBAction func createGoal(_ sender: Any) {
-        createGoalIfNotExists()
-    }
-
-    private func createGoalIfNotExists(hoursPerMonth: Int = 0,
-                                       workWeekdays: WeekdaySelection = WeekdaySelection.exceptWeekend) {
-        guard self.observedGoalProperty?.original?.value == nil,
+        guard observedGoalProperty?.original?.value == nil,
             let modelCoordinator = self.modelCoordinator,
             let projectId = representedProject?.id else {
                 return
         }
-        let goal = TimeGoal(forProjectId: projectId, hoursPerMonth: hoursPerMonth, workWeekdays: workWeekdays)
+        let goal = TimeGoal(forProjectId: projectId, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend)
         modelCoordinator.setNewGoal(goal)
+    }
+
+    @IBAction func deleteGoal(_ sender: Any) {
+        guard let goal = observedGoalProperty?.original?.value,
+            let modelCoordinator = self.modelCoordinator else {
+                return
+        }
+        modelCoordinator.deleteGoal(goal)
     }
 }

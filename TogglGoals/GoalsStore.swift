@@ -64,6 +64,12 @@ class GoalsStore {
         return property
     }
     
+    func deleteGoal(_ goal: TimeGoal) {
+        let q = goalsTable.filter(projectIdExpression == goal.projectId)
+        try! db.run(q.delete())
+        self.goalProperties[goal.projectId]?.value = nil
+    }
+    
     private func storeGoal(_ goal: TimeGoal) {
         try! db.run(goalsTable.insert(or: .replace,
                                       projectIdExpression <- goal.projectId,

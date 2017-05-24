@@ -202,4 +202,12 @@ struct CollectionUpdateClue {
         addedItems = nil
         removedItems = nil
     }
+    
+    init(itemRemovedFrom indexPath: IndexPath) {
+        removedItems = Set<IndexPath>()
+        removedItems?.insert(indexPath)
+        
+        movedItems = nil
+        addedItems = nil
+    }
 }

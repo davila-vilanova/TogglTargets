@@ -94,6 +94,17 @@ internal class ModelCoordinator: NSObject {
         self.projects.value = projects
     }
 
+    internal func deleteGoal(_ goal: TimeGoal) {
+        goalsStore.deleteGoal(goal)
+        guard var projects = self.projects.value else {
+            return
+        }
+        let indexPath = projects.moveProjectAfterRemoval(of: goal)!
+        let clue = CollectionUpdateClue(itemRemovedFrom: indexPath)
+        self.projects.collectionUpdateClue = clue
+        self.projects.value = projects
+    }
+    
     internal func reportProperty(for projectId: Int64) -> Property<TwoPartTimeReport> {
         if let property = reportProperties[projectId] {
             return property

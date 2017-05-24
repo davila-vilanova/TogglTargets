@@ -89,12 +89,22 @@ extension ProjectsByGoals {
         }
         sortProjectIds()
         
-        
         guard let newIndex = sortedProjectIds.index(of: projectId),
             let newIndexPath = indexPath(for: newIndex) else {
             return nil
         }
         return (oldIndexPath, newIndexPath)
+    }
+    
+    mutating func moveProjectAfterRemoval(of oldGoal: TimeGoal) -> IndexPath? {
+        let projectId = oldGoal.projectId
+        guard let oldIndex = sortedProjectIds.index(of: projectId),
+            let oldIndexPath = indexPath(for: oldIndex) else {
+            return nil
+        }
+        sortProjectIds()
+        
+        return oldIndexPath
     }
 }
 
