@@ -118,12 +118,16 @@ internal class ObservedProperty<T> {
     private var observerToken: Property<T>.ObserverToken?
     private var valueObserver: ValueObserver?
     private var invalidationObserver: InvalidationObserver?
-
+    private var queue: OperationQueue
+    
     internal init(original: Property<T>,
+                  queue: OperationQueue = OperationQueue.main,
                   valueObserver: @escaping ValueObserver,
                   invalidationObserver: @escaping InvalidationObserver = { }) {
+        self.queue = queue
+
         guard !original.isInvalidated else {
-            invalidationObserver()
+            callback { invalidationObserver() }
             return
         }
         self.original = original
@@ -134,10 +138,14 @@ internal class ObservedProperty<T> {
                 return
             }
             if property.isInvalidated {
-                s.invalidationObserver?()
+                s.callback {
+                    s.invalidationObserver?()
+                }
                 s.unobserve()
             } else {
-                s.valueObserver?(s)
+                s.callback {
+                    s.valueObserver?(s)
+                }
             }
         })
     }
@@ -155,15 +163,24 @@ internal class ObservedProperty<T> {
     @discardableResult
     internal func reportImmediately() -> ObservedProperty<T> {
         if isInvalidated {
-            invalidationObserver?()
+            callback { [weak self] in
+                self?.invalidationObserver?()
+            }
         } else {
-            valueObserver?(self)
+            callback { [weak self] in
+                guard let s = self else { return }
+                s.valueObserver?(s)
+            }
         }
         return self
     }
 
     deinit {
         unobserve()
+    }
+    
+    private func callback(_ closure: @escaping () -> Void) {
+        self.queue.addOperation(closure)
     }
 }
 
