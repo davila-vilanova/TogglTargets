@@ -85,7 +85,7 @@ internal class ModelCoordinator: NSObject {
     
     internal func setNewGoal(_ goal: TimeGoal) {
         goalsStore.storeNew(goal: goal)
-        guard let projects = self.projects.value else {
+        guard var projects = self.projects.value else {
             return
         }
         let indexPaths = projects.moveProjectAfterAddition(of: goal)!

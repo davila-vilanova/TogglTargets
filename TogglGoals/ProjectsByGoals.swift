@@ -11,10 +11,15 @@ import Foundation
 struct ProjectsByGoals {
     var projects: Dictionary<Int64, Project>! {
         didSet {
-            let projectIds = [Int64](projects.keys)
-            self.sortedProjectIds = projectIds.sorted(by: areGoalsInIncreasingOrder)
+            sortProjectIds()
         }
     }
+    
+    mutating func sortProjectIds() {
+        let projectIds = [Int64](projects.keys)
+        self.sortedProjectIds = projectIds.sorted(by: areGoalsInIncreasingOrder)
+    }
+    
     var sortedProjectIds: [Int64]! {
         didSet {
             let indexOfFirstProjectWithoutGoal = sortedProjectIds.binarySearch { (projectId) -> Bool in
@@ -35,7 +40,8 @@ struct ProjectsByGoals {
     init(projects: Dictionary<Int64, Project>, hasGoal: @escaping ProjectIdHasGoalFunction,         areGoalsInIncreasingOrder: @escaping ProjectIdsGoalsAreInIncreasingOrderFunction) {
         self.hasGoal = hasGoal
         self.areGoalsInIncreasingOrder = areGoalsInIncreasingOrder
-        defer { self.projects = projects }
+        self.projects = projects
+        sortProjectIds()
     }
 }
 
@@ -75,15 +81,17 @@ extension ProjectsByGoals {
 }
 
 extension ProjectsByGoals {
-    func moveProjectAfterAddition(of newGoal: TimeGoal) -> (IndexPath, IndexPath)? {
-        guard let oldIndex = sortedProjectIds.index(of: newGoal.projectId),
-        let oldIndexPath = indexPath(for: oldIndex) else {
+    mutating func moveProjectAfterAddition(of newGoal: TimeGoal) -> (IndexPath, IndexPath)? {
+        let projectId = newGoal.projectId
+        guard let oldIndex = sortedProjectIds.index(of: projectId),
+            let oldIndexPath = indexPath(for: oldIndex) else {
             return nil
         }
-        let newIndex = sortedProjectIds.binarySearch { (projectId) -> Bool in
-            return areGoalsInIncreasingOrder(projectId, newGoal.projectId)
-        }
-        guard let newIndexPath = indexPath(for: newIndex) else {
+        sortProjectIds()
+        
+        
+        guard let newIndex = sortedProjectIds.index(of: projectId),
+            let newIndexPath = indexPath(for: newIndex) else {
             return nil
         }
         return (oldIndexPath, newIndexPath)
