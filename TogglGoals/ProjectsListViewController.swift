@@ -78,16 +78,16 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
         if let moved = clue.movedItems {
             for (oldIndexPath, newIndexPath) in moved {
-                projectsCollectionView.moveItem(at: oldIndexPath, to: newIndexPath)
+                projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
             }
         }
 
         // First delete items at old index paths, then add items at new index paths
         if let removed = clue.removedItems {
-            projectsCollectionView.deleteItems(at: removed)
+            projectsCollectionView.animator().deleteItems(at: removed)
         }
         if let added = clue.addedItems {
-            projectsCollectionView.insertItems(at: added)
+            projectsCollectionView.animator().insertItems(at: added)
         }
      }
     
