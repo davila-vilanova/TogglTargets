@@ -57,6 +57,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let valueObserver = { [weak self] (op: ObservedProperty<ProjectsByGoals>) in
             if let clue = op.original?.collectionUpdateClue {
                 self?.refresh(with: clue)
+                op.original?.collectionUpdateClue = nil // TODO
             } else {
                 self?.refresh()
             }
