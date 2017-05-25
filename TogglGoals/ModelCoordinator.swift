@@ -88,7 +88,7 @@ internal class ModelCoordinator: NSObject {
         guard var projects = self.projects.value else {
             return
         }
-        let indexPaths = projects.moveProjectAfterAddition(of: goal)!
+        let indexPaths = projects.moveProjectAfterGoalChange(projectId: goal.projectId)!
         let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
         self.projects.collectionUpdateClue = clue
         self.projects.value = projects
@@ -99,8 +99,8 @@ internal class ModelCoordinator: NSObject {
         guard var projects = self.projects.value else {
             return
         }
-        let indexPath = projects.moveProjectAfterRemoval(of: goal)!
-        let clue = CollectionUpdateClue(itemRemovedFrom: indexPath)
+        let indexPaths = projects.moveProjectAfterGoalChange(projectId: goal.projectId)!
+        let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
         self.projects.collectionUpdateClue = clue
         self.projects.value = projects
     }
