@@ -24,6 +24,9 @@ class ListLayout: NSCollectionViewLayout {
             return
         }
         
+        itemRects.removeAll()
+        headerRects.removeAll()
+        
         let numberOfSections = collectionView.numberOfSections
         var yPos = CGFloat(0.0)
         for section in 0..<numberOfSections {
