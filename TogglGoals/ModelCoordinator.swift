@@ -15,6 +15,8 @@ internal class ModelCoordinator: NSObject {
     internal var profileProperty = Property<Profile>(value: nil)
     internal var projects = Property<ProjectsByGoals>(value: nil)
     
+    private var observedGoals = Dictionary<Int64, ObservedProperty<TimeGoal>>()
+    
     private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport>>()
     
     internal let runningEntry = Property<RunningEntry>(value: nil)
@@ -78,32 +80,41 @@ internal class ModelCoordinator: NSObject {
         networkQueue.addOperation(retrieveProjectsOp)
         networkQueue.addOperation(retrieveReportsOp)
     }
+
+    // MARK: - Goals
     
     internal func goalProperty(for projectId: Int64) -> Property<TimeGoal> {
-        return goalsStore.goalProperty(for: projectId)
+        let goalProperty = goalsStore.goalProperty(for: projectId)
+        observedGoals[projectId] =
+            ObservedProperty<TimeGoal>(original: goalProperty,
+                                       valueObserver: { [weak self] observedGoal in
+                                        self?.goalChanged(for: projectId)
+                },
+                                       invalidationObserver: { [weak self] in
+                                        self?.observedGoals.removeValue(forKey: projectId)
+            })
+        return goalProperty
     }
     
     internal func setNewGoal(_ goal: TimeGoal) {
         goalsStore.storeNew(goal: goal)
+    }
+
+    internal func deleteGoal(_ goal: TimeGoal) {
+        goalsStore.deleteGoal(goal)
+    }
+
+    private func goalChanged(for projectId: Int64) {
         guard var projects = self.projects.value else {
             return
         }
-        let indexPaths = projects.moveProjectAfterGoalChange(projectId: goal.projectId)!
+        let indexPaths = projects.moveProjectAfterGoalChange(projectId: projectId)!
         let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
         self.projects.collectionUpdateClue = clue
         self.projects.value = projects
     }
 
-    internal func deleteGoal(_ goal: TimeGoal) {
-        goalsStore.deleteGoal(goal)
-        guard var projects = self.projects.value else {
-            return
-        }
-        let indexPaths = projects.moveProjectAfterGoalChange(projectId: goal.projectId)!
-        let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
-        self.projects.collectionUpdateClue = clue
-        self.projects.value = projects
-    }
+    // MARK: -
     
     internal func reportProperty(for projectId: Int64) -> Property<TwoPartTimeReport> {
         if let property = reportProperties[projectId] {
