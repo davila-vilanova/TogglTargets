@@ -70,6 +70,8 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
     private var strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601))
 
+    var now: Date! // Set as the most current date when a project is selected
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -81,7 +83,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         computeStrategyFromButton.select(fromTodayItem)
         computeStrategyFromToday(fromTodayItem)
     }
-
+    
     private func populateWeekWorkDaysControl() {
         let weekdaySymbols = calendar.veryShortWeekdaySymbols
         weekWorkDaysControl.segmentCount = weekdaySymbols.count
@@ -116,6 +118,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     internal func onProjectSelected(project: Project) {
         self.representedProject = project
         displayRepresentedProject()
+        now = Date()
     }
 
     internal func displayRepresentedProject() {
@@ -192,7 +195,6 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         }
 
         if let goal = optionalGoal {
-
             setEnabledState(true)
 
             if let hoursString = monthlyHoursGoalFormatter.string(from: NSNumber(value: goal.hoursPerMonth)) {
@@ -239,7 +241,6 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
                 return
         }
 
-        let now = Date()
         strategyComputer.startPeriodDay = calendar.firstDayOfMonth(for: now)
         strategyComputer.endPeriodDay = calendar.lastDayOfMonth(for: now)
         strategyComputer.now = now
@@ -247,7 +248,9 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         strategyComputer.report = report
         strategyComputer.runningEntry = modelCoordinator?.runningEntry.value
 
-        monthNameLabel.stringValue = "TBD"
+        let comps = calendar.dateComponents([.month], from: now)
+        let monthName = calendar.monthSymbols[comps.month! - 1]
+        monthNameLabel.stringValue = monthName
 
         totalWorkdaysLabel.integerValue = strategyComputer.totalWorkdays
         remainingFullWorkdaysLabel.integerValue = strategyComputer.remainingWorkdays
