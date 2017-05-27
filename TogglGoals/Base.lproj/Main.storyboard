@@ -777,109 +777,11 @@
                                     <constraint firstAttribute="width" secondItem="KmV-P0-dzM" secondAttribute="height" multiplier="17:11" id="DYr-h3-3UJ"/>
                                 </constraints>
                             </customView>
-                            <stackView distribution="equalSpacing" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mln-Aq-QDd">
-                                <rect key="frame" x="20" y="355" width="482" height="22"/>
-                                <subviews>
-                                    <stackView distribution="equalCentering" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="99E-97-cT4">
-                                        <rect key="frame" x="0.0" y="0.0" width="160" height="22"/>
-                                        <subviews>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ehP-Hd-fQb" userLabel="monthly goal label">
-                                                <rect key="frame" x="-2" y="3" width="124" height="17"/>
-                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="monthly hours goal:" id="bzF-fQ-3sp">
-                                                    <font key="font" metaFont="system"/>
-                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                </textFieldCell>
-                                            </textField>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BiS-Y9-O7e" userLabel="hours goal field">
-                                                <rect key="frame" x="128" y="0.0" width="32" height="22"/>
-                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="0" drawsBackground="YES" id="CG7-n3-16n">
-                                                    <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="i7g-2o-BQJ"/>
-                                                    <font key="font" metaFont="system"/>
-                                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                </textFieldCell>
-                                                <connections>
-                                                    <action selector="monthlyHoursGoalEdited:" target="zvs-ll-aji" id="sPb-Th-8Zz"/>
-                                                </connections>
-                                            </textField>
-                                        </subviews>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="160" id="4ud-Df-7Hf"/>
-                                        </constraints>
-                                        <visibilityPriorities>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                        </visibilityPriorities>
-                                        <customSpacing>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                        </customSpacing>
-                                    </stackView>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oLC-cT-yAR">
-                                        <rect key="frame" x="198" y="1" width="284" height="21"/>
-                                        <subviews>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jvK-uZ-jzo">
-                                                <rect key="frame" x="-2" y="3" width="128" height="17"/>
-                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="work days per week:" id="CzO-33-cPm">
-                                                    <font key="font" metaFont="system"/>
-                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                </textFieldCell>
-                                            </textField>
-                                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VI6-Xu-wpt">
-                                                <rect key="frame" x="130" y="-2" width="156" height="24"/>
-                                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="eh4-RM-O0l">
-                                                    <font key="font" metaFont="system"/>
-                                                    <segments>
-                                                        <segment width="32"/>
-                                                        <segment width="32" tag="1"/>
-                                                        <segment width="32">
-                                                            <nil key="label"/>
-                                                        </segment>
-                                                        <segment>
-                                                            <nil key="label"/>
-                                                        </segment>
-                                                        <segment>
-                                                            <nil key="label"/>
-                                                        </segment>
-                                                        <segment>
-                                                            <nil key="label"/>
-                                                        </segment>
-                                                        <segment>
-                                                            <nil key="label"/>
-                                                        </segment>
-                                                    </segments>
-                                                </segmentedCell>
-                                                <connections>
-                                                    <action selector="weekWorkDaysEdited:" target="zvs-ll-aji" id="3KE-8g-qEL"/>
-                                                </connections>
-                                            </segmentedControl>
-                                        </subviews>
-                                        <visibilityPriorities>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                        </visibilityPriorities>
-                                        <customSpacing>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                        </customSpacing>
-                                    </stackView>
-                                </subviews>
-                                <visibilityPriorities>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                </visibilityPriorities>
-                                <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                </customSpacing>
-                            </stackView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="k1G-X5-OO2">
-                                <rect key="frame" x="20" y="344" width="482" height="5"/>
+                                <rect key="frame" x="20" y="343" width="482" height="5"/>
                             </box>
                             <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DID-tl-OEf">
-                                <rect key="frame" x="20" y="321" width="86" height="17"/>
+                                <rect key="frame" x="20" y="320" width="86" height="17"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lal-vl-FyN">
                                         <rect key="frame" x="-2" y="0.0" width="73" height="17"/>
@@ -908,7 +810,7 @@
                                 </customSpacing>
                             </stackView>
                             <box boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="gsF-QE-CKg" userLabel="Month Progress Box">
-                                <rect key="frame" x="20" y="244" width="482" height="68"/>
+                                <rect key="frame" x="20" y="243" width="482" height="68"/>
                                 <view key="contentView" id="ZqZ-Pp-X7i">
                                     <rect key="frame" x="1" y="1" width="480" height="66"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1067,10 +969,10 @@
                                 </view>
                             </box>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="zy6-xm-THW">
-                                <rect key="frame" x="20" y="221" width="482" height="5"/>
+                                <rect key="frame" x="20" y="220" width="482" height="5"/>
                             </box>
                             <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1YG-1P-FX0" userLabel="Stack View: Total Hours Strategy">
-                                <rect key="frame" x="20" y="197" width="252" height="18"/>
+                                <rect key="frame" x="20" y="196" width="252" height="18"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xWN-8s-auk">
                                         <rect key="frame" x="-2" y="0.0" width="202" height="18"/>
@@ -1099,7 +1001,7 @@
                                 </customSpacing>
                             </stackView>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P1q-um-IkR">
-                                <rect key="frame" x="352" y="192" width="153" height="26"/>
+                                <rect key="frame" x="352" y="191" width="153" height="26"/>
                                 <popUpButtonCell key="cell" type="push" title="from today" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ZdU-XK-sRP" id="oxl-y1-eIn">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -1120,7 +1022,7 @@
                                 </popUpButtonCell>
                             </popUpButton>
                             <stackView wantsLayer="YES" distribution="fill" orientation="horizontal" alignment="firstBaseline" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="Zz8-u3-exR" userLabel="Stack View: Baseline">
-                                <rect key="frame" x="20" y="170" width="373" height="17"/>
+                                <rect key="frame" x="20" y="169" width="373" height="17"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w8x-Sh-WG9">
                                         <rect key="frame" x="-2" y="0.0" width="34" height="17"/>
@@ -1241,17 +1143,23 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="6Nr-Rc-1SN">
+                                <rect key="frame" x="20" y="354" width="482" height="23"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="23" id="dQp-gm-SAb"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="mln-Aq-QDd" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="05e-uy-mXq"/>
                             <constraint firstAttribute="trailing" secondItem="KmV-P0-dzM" secondAttribute="trailing" constant="20" symbolic="YES" id="0Bb-gE-gap"/>
                             <constraint firstItem="Zz8-u3-exR" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="1df-73-eZ7"/>
                             <constraint firstItem="ifD-zz-iY5" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="4BL-iZ-OBF"/>
+                            <constraint firstItem="6Nr-Rc-1SN" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="4Ip-0Y-Bas"/>
                             <constraint firstItem="zy6-xm-THW" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="6cu-Ym-6Z1"/>
                             <constraint firstItem="P1q-um-IkR" firstAttribute="centerY" secondItem="1YG-1P-FX0" secondAttribute="centerY" id="J2t-L2-4Xo"/>
                             <constraint firstItem="Zz8-u3-exR" firstAttribute="top" secondItem="P1q-um-IkR" secondAttribute="bottom" constant="8" symbolic="YES" id="Kkj-xp-Rt1"/>
                             <constraint firstItem="zy6-xm-THW" firstAttribute="top" secondItem="gsF-QE-CKg" secondAttribute="bottom" constant="20" symbolic="YES" id="MB0-bU-glf"/>
-                            <constraint firstAttribute="trailing" secondItem="mln-Aq-QDd" secondAttribute="trailing" constant="20" symbolic="YES" id="MPq-lM-0jk"/>
+                            <constraint firstAttribute="trailing" secondItem="6Nr-Rc-1SN" secondAttribute="trailing" constant="20" symbolic="YES" id="NdN-hy-ov6"/>
                             <constraint firstAttribute="trailing" secondItem="gsF-QE-CKg" secondAttribute="trailing" constant="20" symbolic="YES" id="Pnx-wb-H1j"/>
                             <constraint firstItem="KmV-P0-dzM" firstAttribute="top" secondItem="ifD-zz-iY5" secondAttribute="top" id="ULg-uW-Xbu"/>
                             <constraint firstItem="KmV-P0-dzM" firstAttribute="leading" secondItem="AOp-rt-zH6" secondAttribute="trailing" constant="8" id="WNK-gV-4bf"/>
@@ -1259,17 +1167,17 @@
                             <constraint firstItem="KmV-P0-dzM" firstAttribute="height" secondItem="ifD-zz-iY5" secondAttribute="height" id="a39-2s-uGe"/>
                             <constraint firstItem="gsF-QE-CKg" firstAttribute="top" secondItem="DID-tl-OEf" secondAttribute="bottom" constant="9" id="bcd-iT-7E5"/>
                             <constraint firstAttribute="trailing" secondItem="P1q-um-IkR" secondAttribute="trailing" constant="20" symbolic="YES" id="ccW-kh-MRq"/>
-                            <constraint firstItem="k1G-X5-OO2" firstAttribute="top" secondItem="mln-Aq-QDd" secondAttribute="bottom" constant="8" symbolic="YES" id="e4p-bl-btV"/>
                             <constraint firstItem="DID-tl-OEf" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="evU-jJ-2dM"/>
                             <constraint firstAttribute="trailing" secondItem="k1G-X5-OO2" secondAttribute="trailing" constant="20" symbolic="YES" id="ggb-cI-BZn"/>
                             <constraint firstAttribute="bottom" secondItem="Elu-ec-vK2" secondAttribute="bottom" constant="20" symbolic="YES" id="jid-Vg-rKg"/>
                             <constraint firstItem="Elu-ec-vK2" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Zz8-u3-exR" secondAttribute="bottom" constant="16" symbolic="YES" id="lUE-G1-kHb"/>
                             <constraint firstAttribute="trailing" secondItem="Elu-ec-vK2" secondAttribute="trailing" constant="20" symbolic="YES" id="lsR-1X-9vD"/>
-                            <constraint firstItem="mln-Aq-QDd" firstAttribute="top" secondItem="ifD-zz-iY5" secondAttribute="bottom" constant="8" symbolic="YES" id="ndy-kT-uKd"/>
                             <constraint firstAttribute="trailing" secondItem="zy6-xm-THW" secondAttribute="trailing" constant="20" symbolic="YES" id="ojf-qj-SvS"/>
                             <constraint firstItem="DID-tl-OEf" firstAttribute="top" secondItem="k1G-X5-OO2" secondAttribute="bottom" constant="8" id="pZ1-uF-TLO"/>
+                            <constraint firstItem="6Nr-Rc-1SN" firstAttribute="top" secondItem="KmV-P0-dzM" secondAttribute="bottom" constant="8" symbolic="YES" id="qrC-tj-Ga5"/>
                             <constraint firstItem="1YG-1P-FX0" firstAttribute="top" secondItem="zy6-xm-THW" secondAttribute="bottom" constant="8" symbolic="YES" id="szP-de-b9O"/>
                             <constraint firstItem="gsF-QE-CKg" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="udu-7k-Cpw"/>
+                            <constraint firstItem="k1G-X5-OO2" firstAttribute="top" secondItem="6Nr-Rc-1SN" secondAttribute="bottom" constant="8" symbolic="YES" id="uzS-Mf-g8F"/>
                             <constraint firstItem="1YG-1P-FX0" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="vGG-E6-o3u"/>
                             <constraint firstItem="k1G-X5-OO2" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="vqI-B1-Ro6"/>
                             <constraint firstItem="ifD-zz-iY5" firstAttribute="top" secondItem="aCi-JH-WTK" secondAttribute="top" constant="20" symbolic="YES" id="yg9-Kn-gLY"/>
@@ -1284,12 +1192,11 @@
                         <outlet property="deleteGoalButton" destination="O7w-Ao-X9F" id="63F-vd-BVu"/>
                         <outlet property="fromNextWorkDayItem" destination="z9H-sX-Ays" id="fKh-cm-Xjf"/>
                         <outlet property="fromTodayItem" destination="ZdU-XK-sRP" id="Jk7-gE-JnB"/>
+                        <outlet property="goalView" destination="6Nr-Rc-1SN" id="2bI-i1-7x2"/>
                         <outlet property="hoursLeftLabel" destination="j3x-M1-42r" id="JBg-bQ-d47"/>
                         <outlet property="hoursPerDayLabel" destination="hv3-rh-DXJ" id="Alk-oM-Y60"/>
                         <outlet property="hoursWorkedLabel" destination="ErC-S5-MAP" id="eTE-jA-ggm"/>
                         <outlet property="monthNameLabel" destination="23h-Iy-7og" id="gxx-rV-8x7"/>
-                        <outlet property="monthlyHoursGoalField" destination="BiS-Y9-O7e" id="OZm-sj-IQi"/>
-                        <outlet property="monthlyHoursGoalFormatter" destination="i7g-2o-BQJ" id="bTR-YS-zBk"/>
                         <outlet property="projectName" destination="ifD-zz-iY5" id="pO9-jg-jgp"/>
                         <outlet property="remainingFullWorkdaysLabel" destination="8mv-UW-Kdh" id="DRs-0A-Z5F"/>
                         <outlet property="timeRemainingToWorkTodayLabel" destination="Kyo-Ep-mfH" id="NA8-0d-Opw"/>
@@ -1297,14 +1204,141 @@
                         <outlet property="todayProgressIndicator" destination="U6i-Rs-8tc" id="TAn-cB-jQS"/>
                         <outlet property="totalHoursStrategyLabel" destination="0o5-hv-lLH" id="yVY-sa-NEe"/>
                         <outlet property="totalWorkdaysLabel" destination="nm7-jT-fqf" id="8Vb-cc-yag"/>
-                        <outlet property="weekWorkDaysControl" destination="VI6-Xu-wpt" id="Ors-cc-xq3"/>
                         <outlet property="workDaysProgressIndicator" destination="lHc-db-RDd" id="wOS-m9-l5a"/>
                         <outlet property="workHoursProgressIndicator" destination="K80-oX-7dD" id="p4R-9x-6qG"/>
+                        <segue destination="a81-xu-Ddi" kind="custom" identifier="GoalVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="567-cz-qxm"/>
                     </connections>
                 </viewController>
                 <customObject id="sX4-zk-LDV" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1056" y="1440"/>
+        </scene>
+        <!--Goal View Controller-->
+        <scene sceneID="VH6-GV-Mqt">
+            <objects>
+                <viewController id="a81-xu-Ddi" customClass="GoalViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="rb9-j4-yIz">
+                        <rect key="frame" x="0.0" y="0.0" width="452" height="22"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView distribution="equalSpacing" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sMk-s4-1TW">
+                                <rect key="frame" x="0.0" y="0.0" width="452" height="22"/>
+                                <subviews>
+                                    <stackView distribution="equalCentering" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vf1-h0-Slh">
+                                        <rect key="frame" x="0.0" y="0.0" width="160" height="22"/>
+                                        <subviews>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vdS-WN-Sq2" userLabel="monthly goal label">
+                                                <rect key="frame" x="-2" y="3" width="124" height="17"/>
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="monthly hours goal:" id="RWg-38-I3M">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CBy-PQ-RVY" userLabel="hours goal field">
+                                                <rect key="frame" x="128" y="0.0" width="32" height="22"/>
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="0" drawsBackground="YES" id="fF3-3F-u0v">
+                                                    <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="Mc7-ow-3HZ"/>
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                                <connections>
+                                                    <action selector="monthlyHoursGoalEdited:" target="a81-xu-Ddi" id="suI-09-aIY"/>
+                                                </connections>
+                                            </textField>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="160" id="wjY-mY-qVG"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                    <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DU9-Bc-oT1">
+                                        <rect key="frame" x="168" y="1" width="284" height="21"/>
+                                        <subviews>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0IY-al-1Yv">
+                                                <rect key="frame" x="-2" y="3" width="128" height="17"/>
+                                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="work days per week:" id="A2l-u7-QTD">
+                                                    <font key="font" metaFont="system"/>
+                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                </textFieldCell>
+                                            </textField>
+                                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xET-i9-eZV">
+                                                <rect key="frame" x="130" y="-2" width="156" height="24"/>
+                                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="nzj-nl-MDn">
+                                                    <font key="font" metaFont="system"/>
+                                                    <segments>
+                                                        <segment width="32"/>
+                                                        <segment width="32" tag="1"/>
+                                                        <segment width="32">
+                                                            <nil key="label"/>
+                                                        </segment>
+                                                        <segment>
+                                                            <nil key="label"/>
+                                                        </segment>
+                                                        <segment>
+                                                            <nil key="label"/>
+                                                        </segment>
+                                                        <segment>
+                                                            <nil key="label"/>
+                                                        </segment>
+                                                        <segment>
+                                                            <nil key="label"/>
+                                                        </segment>
+                                                    </segments>
+                                                </segmentedCell>
+                                                <connections>
+                                                    <action selector="weekWorkDaysEdited:" target="a81-xu-Ddi" id="ohF-Dv-8ST"/>
+                                                </connections>
+                                            </segmentedControl>
+                                        </subviews>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="22" id="9Wt-BG-4Sy"/>
+                                </constraints>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="sMk-s4-1TW" firstAttribute="leading" secondItem="rb9-j4-yIz" secondAttribute="leading" id="QKH-Hj-tjf"/>
+                            <constraint firstItem="sMk-s4-1TW" firstAttribute="top" secondItem="rb9-j4-yIz" secondAttribute="top" id="Ym0-ZB-Vau"/>
+                            <constraint firstAttribute="bottom" secondItem="sMk-s4-1TW" secondAttribute="bottom" id="wE4-p6-hY1"/>
+                            <constraint firstAttribute="trailing" secondItem="sMk-s4-1TW" secondAttribute="trailing" id="yM4-Uu-a3L"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="monthlyHoursGoalField" destination="CBy-PQ-RVY" id="aH3-g3-aNr"/>
+                        <outlet property="monthlyHoursGoalFormatter" destination="Mc7-ow-3HZ" id="LlJ-68-FpM"/>
+                        <outlet property="weekWorkDaysControl" destination="xET-i9-eZV" id="PTn-vG-Jd5"/>
+                    </connections>
+                </viewController>
+                <customObject id="2PQ-kn-80x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1707" y="1239"/>
         </scene>
         <!--Selection Detail View Controller-->
         <scene sceneID="uIT-hn-0X3">

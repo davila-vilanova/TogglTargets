@@ -7,17 +7,26 @@
 //
 
 import Cocoa
+import PureLayout
 
-class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining {
+let GoalViewControllerContainmentId = "GoalVCContainment"
 
-    @IBOutlet weak var monthlyHoursGoalField: NSTextField!
-    @IBOutlet weak var monthlyHoursGoalFormatter: NumberFormatter!
-    @IBOutlet weak var weekWorkDaysControl: NSSegmentedControl!
+class ProjectDetailsViewController: NSViewController, ViewControllerContaining, ModelCoordinatorContaining {
 
     @IBOutlet weak var projectName: NSTextField!
     @IBOutlet weak var createGoalButton: NSButton!
     @IBOutlet weak var deleteGoalButton: NSButton!
-
+    
+    @IBOutlet weak var goalView: NSView!
+    var goalViewController: GoalViewController? {
+        didSet {
+            if let vc = goalViewController {
+                vc.calendar = self.calendar
+                goalView.substituteSubviews(with: vc.view)
+                vc.view.autoPinEdgesToSuperviewEdges()
+            }
+        }
+    }
     
     @IBOutlet weak var monthNameLabel: NSTextField!
     @IBOutlet weak var totalWorkdaysLabel: NSTextField!
@@ -40,7 +49,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @IBOutlet weak var todayProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var timeWorkedTodayLabel: NSTextField!
     @IBOutlet weak var timeRemainingToWorkTodayLabel: NSTextField!
-
+    
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
         f.allowedUnits = [.hour, .minute]
@@ -66,8 +75,6 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         return calendar
     }()
 
-    private var segmentsToWeekdays = Dictionary<Int, Weekday>()
-    private var weekdaysToSegments = Dictionary<Weekday, Int>()
     private var strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601))
 
     var now: Date! // Set as the most current date when a project is selected
@@ -75,8 +82,10 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        populateWeekWorkDaysControl()
-
+        for identifier in [GoalViewControllerContainmentId] {
+            performSegue(withIdentifier: identifier, sender: self)
+        }
+        
         displayRepresentedProject()
 
         // TODO: save and restore state of computeStrategyFromButton / decide on whether state is global or project specific
@@ -84,37 +93,6 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
         computeStrategyFromToday(fromTodayItem)
     }
     
-    private func populateWeekWorkDaysControl() {
-        let weekdaySymbols = calendar.veryShortWeekdaySymbols
-        weekWorkDaysControl.segmentCount = weekdaySymbols.count
-
-        let startFrom = Weekday.monday
-        var dayIndex = startFrom.rawValue
-        var segmentIndex = 0
-
-        segmentsToWeekdays.removeAll()
-        weekdaysToSegments.removeAll()
-
-        func addSegment(_ day: Weekday) {
-            let daySymbol = weekdaySymbols[day.rawValue]
-            weekWorkDaysControl.setLabel(daySymbol, forSegment: segmentIndex)
-            segmentsToWeekdays[segmentIndex] = day
-            weekdaysToSegments[day] = segmentIndex
-            segmentIndex += 1
-        }
-
-        while let day = Weekday(rawValue: dayIndex) {
-            addSegment(day)
-            dayIndex += 1
-        }
-
-        dayIndex = 0
-        while let day = Weekday(rawValue: dayIndex), dayIndex < startFrom.rawValue {
-            addSegment(day)
-            dayIndex += 1
-        }
-    }
-
     internal func onProjectSelected(project: Project) {
         self.representedProject = project
         displayRepresentedProject()
@@ -136,6 +114,7 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
 
         let goalProperty = mc.goalProperty(for: project.id)
         observeGoalProperty(goalProperty).reportImmediately()
+        goalViewController?.goalProperty = goalProperty
         
         let reportProperty = mc.reportProperty(for: project.id)
         observedReportProperty?.unobserve()
@@ -146,76 +125,33 @@ class ProjectDetailsViewController: NSViewController, ModelCoordinatorContaining
     @discardableResult
     private func observeGoalProperty(_ goalProperty: Property<TimeGoal>) -> ObservedProperty<TimeGoal> {
         observedGoalProperty?.unobserve()
-        let observed = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: { [weak self] (op) in
-            self?.handleGoalValue(op.original?.value)
-            }, invalidationObserver: {
-                print("[details] goal invalidated")
-        })
+        let observed = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: goalDidChange, invalidationObserver: goalWasInvalidated)
         observedGoalProperty = observed
         return observed
     }
     
-    @IBAction func monthlyHoursGoalEdited(_ sender: NSTextField) {
-        if let parsedHours = monthlyHoursGoalFormatter.number(from: sender.stringValue) {
-            let hoursPerMonth = parsedHours.intValue
-            observedGoalProperty?.original?.value?.hoursPerMonth = hoursPerMonth
-        } else {
-            sender.stringValue = ""
-        }
-    }
-
-    @IBAction func weekWorkDaysEdited(_ sender: NSSegmentedControl) {
-        var newSelection = WeekdaySelection()
-
-        for (day, segmentIndex) in weekdaysToSegments {
-            assert(segmentIndex < sender.segmentCount)
-            if sender.isSelected(forSegment: segmentIndex) {
-                newSelection.select(day)
-            }
-        }
-
-        observedGoalProperty?.original?.value?.workWeekdays = newSelection
-    }
-
-    private func handleGoalValue(_ goal: TimeGoal?) {
-        displayGoal(goal: goal)
+    private func goalDidChange(_ observedGoal: ObservedProperty<TimeGoal>?) {
+        let goalExists = (observedGoal?.original?.value != nil)
+        createGoalButton.isHidden = goalExists
+        deleteGoalButton.isHidden = !goalExists
+        
         updateStrategy()
+    }
+    
+    private func goalWasInvalidated() {
+        goalDidChange(nil)
     }
 
     private func handleReportValue(_ report: TimeReport?) {
         updateStrategy()
     }
 
-    private func displayGoal(goal optionalGoal: TimeGoal?) {
-        func setEnabledState(_ goalExists: Bool) {
-            createGoalButton.isHidden = goalExists
-            deleteGoalButton.isHidden = !goalExists
-            monthlyHoursGoalField.isEnabled = goalExists
-            weekWorkDaysControl.isEnabled = goalExists
-        }
-
-        if let goal = optionalGoal {
-            setEnabledState(true)
-
-            if let hoursString = monthlyHoursGoalFormatter.string(from: NSNumber(value: goal.hoursPerMonth)) {
-                monthlyHoursGoalField.stringValue = hoursString
-            } else {
-                monthlyHoursGoalField.stringValue = ""
-            }
-
-            for (day, segmentIndex) in weekdaysToSegments {
-                weekWorkDaysControl.setSelected(goal.workWeekdays.isSelected(day), forSegment: segmentIndex)
-            }
-        } else {
-            setEnabledState(false)
-
-            monthlyHoursGoalField.stringValue = ""
-            for (_, segmentIndex) in weekdaysToSegments {
-                weekWorkDaysControl.setSelected(false, forSegment: segmentIndex)
-            }
+    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
+        if let goalVC = controller as? GoalViewController {
+            goalViewController = goalVC
         }
     }
-
+    
     @IBAction func computeStrategyFromToday(_ sender: NSMenuItem) {
         let now = Date()
         timeRemainingToWorkTodayLabel.isHidden = false
