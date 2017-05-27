@@ -9,13 +9,13 @@
 import Cocoa
 
 class GoalViewController: NSViewController {
-    private var observedGoal: ObservedProperty<TimeGoal>?
-
     private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
 
     var calendar: Calendar?
-    
+
+    private var observedGoal: ObservedProperty<TimeGoal>?
+
     var goalProperty: Property<TimeGoal>? {
         willSet {
             if let observedGoal = self.observedGoal {

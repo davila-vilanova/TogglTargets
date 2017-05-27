@@ -9,46 +9,58 @@
 import Cocoa
 import PureLayout
 
-let GoalViewControllerContainmentId = "GoalVCContainment"
+let GoalViewControllerContainmentSegueId = "GoalVCContainment"
+let GoalProgressViewControllerContainmentSegueId = "GoalProgressVCContainment"
+let NoGoalProgressViewControllerContainmentSegueId = "NoGoalProgressVCContainment"
+
 
 class ProjectDetailsViewController: NSViewController, ViewControllerContaining, ModelCoordinatorContaining {
-
+    // MARK: - Outlets
+    
     @IBOutlet weak var projectName: NSTextField!
     @IBOutlet weak var createGoalButton: NSButton!
     @IBOutlet weak var deleteGoalButton: NSButton!
     
-    @IBOutlet weak var goalView: NSView!
-    var goalViewController: GoalViewController? {
-        didSet {
-            if let vc = goalViewController {
-                vc.calendar = self.calendar
-                goalView.substituteSubviews(with: vc.view)
-                vc.view.autoPinEdgesToSuperviewEdges()
-            }
-        }
-    }
-    
     @IBOutlet weak var monthNameLabel: NSTextField!
-    @IBOutlet weak var totalWorkdaysLabel: NSTextField!
-    @IBOutlet weak var remainingFullWorkdaysLabel: NSTextField!
-    @IBOutlet weak var hoursWorkedLabel: NSTextField!
-    @IBOutlet weak var hoursLeftLabel: NSTextField!
-
-    @IBOutlet weak var workDaysProgressIndicator: NSProgressIndicator!
-    @IBOutlet weak var workHoursProgressIndicator: NSProgressIndicator!
+    
     @IBOutlet weak var totalHoursStrategyLabel: NSTextField!
-
+    
     @IBOutlet weak var computeStrategyFromButton: NSPopUpButton!
     @IBOutlet weak var fromTodayItem: NSMenuItem!
     @IBOutlet weak var fromNextWorkDayItem: NSMenuItem!
-
+    
     @IBOutlet weak var hoursPerDayLabel: NSTextField!
     @IBOutlet weak var baselineDifferentialLabel: NSTextField!
-
+    
     @IBOutlet weak var dayProgressBox: NSBox!
     @IBOutlet weak var todayProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var timeWorkedTodayLabel: NSTextField!
     @IBOutlet weak var timeRemainingToWorkTodayLabel: NSTextField!
+
+    // MARK: - Contained view controllers
+    
+    @IBOutlet weak var goalView: NSView!
+    var goalViewController: GoalViewController! {
+        didSet {
+            goalViewController.calendar = self.calendar
+            displayController(goalViewController, in: goalView)
+        }
+    }
+    
+    @IBOutlet weak var goalProgressView: NSView!
+    var goalProgressViewController: GoalProgressViewController! {
+        didSet {
+            goalProgressViewController.timeFormatter = timeFormatter
+        }
+    }
+    var noGoalProgressViewController: NoGoalProgressViewController!
+    
+    private func displayController(_ controller: NSViewController, in parentView: NSView) {
+        parentView.substituteSubviews(with: controller.view)
+        controller.view.autoPinEdgesToSuperviewEdges()
+    }
+
+    // MARK: - Value formatters
     
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
@@ -64,11 +76,16 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         return f
     }()
 
-    var modelCoordinator: ModelCoordinator?
+    // MARK: - Represented data
+    
     private var representedProject: Project?
     private var observedGoalProperty: ObservedProperty<TimeGoal>?
     private var observedReportProperty: ObservedProperty<TwoPartTimeReport>?
 
+    //  MARK: - Infrastructure
+    
+    var modelCoordinator: ModelCoordinator?
+    var now: Date! // Set as the most current date when a project is selected
     private lazy var calendar: Calendar = {
         var calendar = Calendar(identifier: .iso8601)
         calendar.locale = Locale.autoupdatingCurrent
@@ -77,16 +94,18 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
 
     private var strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601))
 
-    var now: Date! // Set as the most current date when a project is selected
+    //  MARK: -
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        for identifier in [GoalViewControllerContainmentId] {
+        for identifier in [GoalViewControllerContainmentSegueId,
+                           GoalProgressViewControllerContainmentSegueId,
+                           NoGoalProgressViewControllerContainmentSegueId] {
             performSegue(withIdentifier: identifier, sender: self)
         }
         
-        displayRepresentedProject()
+        displayRepresentedData()
 
         // TODO: save and restore state of computeStrategyFromButton / decide on whether state is global or project specific
         computeStrategyFromButton.select(fromTodayItem)
@@ -95,11 +114,11 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     
     internal func onProjectSelected(project: Project) {
         self.representedProject = project
-        displayRepresentedProject()
+        displayRepresentedData()
         now = Date()
     }
 
-    internal func displayRepresentedProject() {
+    internal func displayRepresentedData() {
         guard isViewLoaded == true,
             let project = self.representedProject,
             let mc = modelCoordinator else {
@@ -109,7 +128,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         if let name = project.name {
             projectName.stringValue = name
         } else {
-            projectName.stringValue = "No name"
+            projectName.stringValue = "(no name)"
         }
 
         let goalProperty = mc.goalProperty(for: project.id)
@@ -147,8 +166,18 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     }
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
+        // TODO: use switch
         if let goalVC = controller as? GoalViewController {
             goalViewController = goalVC
+            return
+        }
+        if let goalProgressVC = controller as? GoalProgressViewController {
+            goalProgressViewController = goalProgressVC
+            return
+        }
+        if let noGoalProgressVC = controller as? NoGoalProgressViewController {
+            noGoalProgressViewController = noGoalProgressVC
+            return
         }
     }
     
@@ -174,9 +203,12 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     private func updateStrategy() {
         guard let goal = observedGoalProperty?.original?.value,
             let report = observedReportProperty?.original?.value else {
+                displayController(noGoalProgressViewController!, in: goalProgressView)
                 return
         }
-
+        displayController(goalProgressViewController, in: goalProgressView)
+        goalProgressViewController.goalProgress = strategyComputer.goalProgress
+        
         strategyComputer.startPeriodDay = calendar.firstDayOfMonth(for: now)
         strategyComputer.endPeriodDay = calendar.lastDayOfMonth(for: now)
         strategyComputer.now = now
@@ -188,16 +220,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         let monthName = calendar.monthSymbols[comps.month! - 1]
         monthNameLabel.stringValue = monthName
 
-        totalWorkdaysLabel.integerValue = strategyComputer.totalWorkdays
-        remainingFullWorkdaysLabel.integerValue = strategyComputer.remainingWorkdays
-
-        workDaysProgressIndicator.maxValue = Double(strategyComputer.totalWorkdays)
-        workDaysProgressIndicator.doubleValue = Double(strategyComputer.totalWorkdays - strategyComputer.remainingWorkdays)
-        workHoursProgressIndicator.maxValue = strategyComputer.timeGoal
-        workHoursProgressIndicator.doubleValue = strategyComputer.workedTime
-
-        hoursWorkedLabel.stringValue = timeFormatter.string(from: strategyComputer.workedTime)!
-        hoursLeftLabel.stringValue = timeFormatter.string(from: strategyComputer.remainingTimeToGoal)!
         totalHoursStrategyLabel.stringValue = timeFormatter.string(from: strategyComputer.timeGoal)!
         hoursPerDayLabel.stringValue = timeFormatter.string(from: strategyComputer.dayBaselineAdjustedToProgress)!
 

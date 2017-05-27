@@ -44,7 +44,7 @@ class StrategyComputer {
         return report?.projectId
     }
 
-    var totalWorkdays: Int {
+    private var totalWorkdays: Int {
         guard let goal = self.goal,
             let start = self.startPeriodDay,
             let end = self.endPeriodDay
@@ -60,7 +60,7 @@ class StrategyComputer {
         }
     }
 
-    var remainingWorkdays: Int {
+    private var remainingWorkdays: Int {
         guard let goal = self.goal,
             let start = self.startStrategyDay,
             let end = self.endPeriodDay else {
@@ -89,7 +89,7 @@ class StrategyComputer {
         return startStrategyDay == calendar.dayComponents(from: Date())
     }
 
-    var workedTime: TimeInterval {
+    private var workedTime: TimeInterval {
         guard let report = self.report else {
             return 0
         }
@@ -136,10 +136,14 @@ class StrategyComputer {
         return now.timeIntervalSince(runningEntry.start)
     }
 
-    var remainingTimeToGoal: TimeInterval {
+    private var remainingTimeToGoal: TimeInterval {
         return Double.maximum(timeGoal - workedTime, 0)
     }
 
+    var goalProgress: GoalProgress {
+        return GoalProgress(totalWorkdays: totalWorkdays, remainingWorkdays: remainingWorkdays, timeGoal: timeGoal, workedTime: workedTime, remainingTimeToGoal: remainingTimeToGoal)
+    }
+    
     var dayBaseline: TimeInterval {
         let totalWorkdays = Double(self.totalWorkdays)
         guard totalWorkdays > 0 else {
@@ -162,6 +166,14 @@ class StrategyComputer {
         }
         return (dayBaselineAdjustedToProgress - dayBaseline) / dayBaseline
     }
+}
+
+struct GoalProgress {
+    let totalWorkdays: Int
+    let remainingWorkdays: Int
+    let timeGoal: TimeInterval
+    let workedTime: TimeInterval
+    let remainingTimeToGoal: TimeInterval
 }
 
 extension Weekday {

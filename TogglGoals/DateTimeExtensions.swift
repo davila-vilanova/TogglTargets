@@ -82,9 +82,13 @@ extension Calendar {
         return dayComponents(from: adjustedDate)
     }
 
-    private func lastDayInMonth(for date: Date) -> Int {
+    func countOfDaysInMonth(for date: Date) -> Int {
         let daysRange = range(of: .day, in: .month, for: date)!
-        return daysRange.upperBound - 1
+        return daysRange.upperBound
+    }
+    
+    private func lastDayInMonth(for date: Date) -> Int {
+        return countOfDaysInMonth(for: date)  - 1
     }
 }
 
