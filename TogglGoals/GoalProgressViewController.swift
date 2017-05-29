@@ -43,7 +43,3 @@ class GoalProgressViewController: NSViewController {
         hoursLeftLabel.stringValue = timeFormatter.string(from: progress.remainingTimeToGoal)!
     }
 }
-
-class NoGoalProgressViewController: NSViewController {
-
-}

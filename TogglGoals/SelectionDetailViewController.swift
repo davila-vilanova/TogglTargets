@@ -24,7 +24,7 @@ class SelectionDetailViewController: NSTabViewController, ModelCoordinatorContai
         didSet {
             if let project = selection {
                 let projectDetailsController = display(.projectDetails) as! ProjectDetailsViewController
-                projectDetailsController.onProjectSelected(project: project)
+                projectDetailsController.representedProject = project
             } else {
                 display(.emptySelection)
             }

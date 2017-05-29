@@ -24,6 +24,12 @@ internal class ModelCoordinator: NSObject {
 
     private let apiCredential = TogglAPICredential()
 
+    private let now = Date()
+    private let startOfPeriod: DayComponents
+    private let yesterday: DayComponents?
+    private let today: DayComponents
+
+    
     // TODO: inject these three?
     private lazy var mainQueue: DispatchQueue = {
         return DispatchQueue.main
@@ -35,15 +41,21 @@ internal class ModelCoordinator: NSObject {
         return q
     }()
 
-    private lazy var calendar: Calendar = {
-        var cal = Calendar(identifier: .iso8601)
-        cal.locale = Locale.current // TODO: get from user profile
-        return cal
-    }()
+    private var calendar: Calendar
 
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.goalsStore = goalsStore
+        
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.locale = Locale.current // TODO: get from user profile
+        self.calendar = calendar
+
+        startOfPeriod = calendar.firstDayOfMonth(for: now)
+        yesterday = try? calendar.previousDay(for: now, notBefore: startOfPeriod)
+        today = calendar.dayComponents(from: now)
+        
         super.init()
+        
         retrieveUserDataFromToggl()
     }
 
@@ -56,7 +68,7 @@ internal class ModelCoordinator: NSObject {
         let retrieveWorkspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
 
         let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential)
-        let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, calendar: calendar)
+        let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, startOfPeriod: startOfPeriod, yesterday: yesterday, today: today)
 
         retrieveProjectsOp.outputCollectionOperation.completionBlock = { [weak self] in
             if let projects = retrieveProjectsOp.outputCollectionOperation.collectedOutput {
@@ -120,7 +132,8 @@ internal class ModelCoordinator: NSObject {
         if let property = reportProperties[projectId] {
             return property
         } else {
-            let property = Property<TwoPartTimeReport>(value: nil)
+            let zeroTimeReport = TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today, workedTimeUntilYesterday: 0, workedTimeToday: 0)
+            let property = Property<TwoPartTimeReport>(value: zeroTimeReport)
             reportProperties[projectId] = property
             return property
         }

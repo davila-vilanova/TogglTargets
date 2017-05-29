@@ -78,13 +78,11 @@ internal class NetworkRetrieveReportsSpawningOperation: SpawningOperation<Worksp
     let yesterday: DayComponents?
     let today: DayComponents
     
-    init(retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation, credential: TogglAPICredential, calendar: Calendar) {
+    init(retrieveWorkspacesOperation: NetworkRetrieveWorkspacesOperation, credential: TogglAPICredential, startOfPeriod: DayComponents, yesterday: DayComponents?, today: DayComponents) {
         self.credential = credential
-        let now = Date()
-        startOfPeriod = calendar.firstDayOfMonth(for: now)
-        yesterday = try? calendar.previousDay(for: now, notBefore: startOfPeriod)
-        today = calendar.dayComponents(from: now)
-     
+        self.startOfPeriod = startOfPeriod
+        self.yesterday = yesterday
+        self.today = today
         super.init(inputRetrievalOperation: retrieveWorkspacesOperation)
     }
     

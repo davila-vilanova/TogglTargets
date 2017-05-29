@@ -100,16 +100,16 @@ class StrategyComputer {
         }
     }
 
-    var workedTimeToday: TimeInterval {
+    private var workedTimeToday: TimeInterval {
         guard let report = self.report else {
             return 0
         }
         return report.workedTimeToday + runningTime
     }
 
-    var remainingTimeToDayBaselineToday: TimeInterval {
+    private var remainingTimeToDayBaselineToday: TimeInterval? {
         if !isComputingStrategyFromToday {
-            return 0
+            return nil
         }
         let remaining = dayBaselineAdjustedToProgress - workedTimeToday
         if remaining < 0 {
@@ -118,8 +118,8 @@ class StrategyComputer {
             return remaining
         }
     }
-
-    var runningEntryBelongsToProject: Bool {
+    
+    private var runningEntryBelongsToProject: Bool {
         guard let runningEntry = self.runningEntry,
             let projectId = self.projectId else {
             return false
@@ -127,13 +127,17 @@ class StrategyComputer {
         return runningEntry.projectId == projectId
     }
 
-    var runningTime: TimeInterval {
+    private var runningTime: TimeInterval {
         guard let runningEntry = self.runningEntry,
             runningEntryBelongsToProject,
             let now = self.now else {
                 return 0
         }
         return now.timeIntervalSince(runningEntry.start)
+    }
+    
+    var dayProgress: DayProgress {
+        return DayProgress(workedTimeToday: workedTimeToday, remainingTimeToDayBaselineToday: remainingTimeToDayBaselineToday)
     }
 
     private var remainingTimeToGoal: TimeInterval {
@@ -144,7 +148,7 @@ class StrategyComputer {
         return GoalProgress(totalWorkdays: totalWorkdays, remainingWorkdays: remainingWorkdays, timeGoal: timeGoal, workedTime: workedTime, remainingTimeToGoal: remainingTimeToGoal)
     }
     
-    var dayBaseline: TimeInterval {
+    private var dayBaseline: TimeInterval {
         let totalWorkdays = Double(self.totalWorkdays)
         guard totalWorkdays > 0 else {
             return 0
@@ -152,7 +156,7 @@ class StrategyComputer {
         return timeGoal / totalWorkdays
     }
 
-    var dayBaselineAdjustedToProgress: Double {
+    private var dayBaselineAdjustedToProgress: Double {
         let remainingFullWorkdays = Double(self.remainingWorkdays)
         guard remainingFullWorkdays > 0 else {
             return 0
@@ -160,11 +164,15 @@ class StrategyComputer {
         return remainingTimeToGoal / remainingFullWorkdays
     }
 
-    var dayBaselineDifferential: Double {
+    private var dayBaselineDifferential: Double {
         guard dayBaseline > 0 else {
             return 0
         }
         return (dayBaselineAdjustedToProgress - dayBaseline) / dayBaseline
+    }
+    
+    var goalStrategy: GoalStrategy {
+        return GoalStrategy(timeGoal: timeGoal, dayBaseline: dayBaseline, dayBaselineAdjustedToProgress: dayBaselineAdjustedToProgress, dayBaselineDifferential: dayBaselineDifferential)
     }
 }
 
@@ -174,6 +182,18 @@ struct GoalProgress {
     let timeGoal: TimeInterval
     let workedTime: TimeInterval
     let remainingTimeToGoal: TimeInterval
+}
+
+struct GoalStrategy {
+    let timeGoal: TimeInterval
+    let dayBaseline: TimeInterval
+    let dayBaselineAdjustedToProgress: Double
+    let dayBaselineDifferential: Double
+}
+
+struct DayProgress {
+    let workedTimeToday: TimeInterval
+    var remainingTimeToDayBaselineToday: TimeInterval?
 }
 
 extension Weekday {

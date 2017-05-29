@@ -11,7 +11,7 @@ protocol ViewControllerContaining {
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?)
 }
 
-extension NSView {
+fileprivate extension NSView {
     func substituteSubviews(with newSubview: NSView) {
         for subview in subviews {
             subview.removeFromSuperview()
@@ -30,4 +30,9 @@ class ContainmentSegue: NSStoryboardSegue {
             print("Cannot perform containment segue between \(sourceController) and \(destinationController)")
         }
     }
+}
+
+func displayController(_ controller: NSViewController, in parentView: NSView) {
+    parentView.substituteSubviews(with: controller.view)
+    controller.view.autoPinEdgesToSuperviewEdges()
 }

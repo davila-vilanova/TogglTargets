@@ -71,6 +71,12 @@
 		63B772161ED9DFFD005739CF /* PureLayout.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63B772131ED9DFF5005739CF /* PureLayout.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		63B772181ED9E3A4005739CF /* GoalProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B772171ED9E3A4005739CF /* GoalProgressViewController.swift */; };
 		63B772191ED9E3A4005739CF /* GoalProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B772171ED9E3A4005739CF /* GoalProgressViewController.swift */; };
+		63B7721B1EDA79D3005739CF /* GoalReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B7721A1EDA79D3005739CF /* GoalReportViewController.swift */; };
+		63B7721C1EDA79D3005739CF /* GoalReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B7721A1EDA79D3005739CF /* GoalReportViewController.swift */; };
+		63B7721E1EDA7A3B005739CF /* GoalStrategyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B7721D1EDA7A3B005739CF /* GoalStrategyViewController.swift */; };
+		63B7721F1EDA7A3B005739CF /* GoalStrategyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B7721D1EDA7A3B005739CF /* GoalStrategyViewController.swift */; };
+		63B772211EDA7A62005739CF /* DayProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B772201EDA7A62005739CF /* DayProgressViewController.swift */; };
+		63B772221EDA7A62005739CF /* DayProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B772201EDA7A62005739CF /* DayProgressViewController.swift */; };
 		63CE9A1E1E3AA12200176AB4 /* APIAccessError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */; };
 		63CE9A201E3AA2F800176AB4 /* TogglAPICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */; };
 		63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A211E3B4B7300176AB4 /* ModelCache.swift */; };
@@ -169,6 +175,9 @@
 		63B772101ED8C2BB005739CF /* GoalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalViewController.swift; sourceTree = "<group>"; };
 		63B772131ED9DFF5005739CF /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/Mac/PureLayout.framework; sourceTree = "<group>"; };
 		63B772171ED9E3A4005739CF /* GoalProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalProgressViewController.swift; sourceTree = "<group>"; };
+		63B7721A1EDA79D3005739CF /* GoalReportViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalReportViewController.swift; sourceTree = "<group>"; };
+		63B7721D1EDA7A3B005739CF /* GoalStrategyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalStrategyViewController.swift; sourceTree = "<group>"; };
+		63B772201EDA7A62005739CF /* DayProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayProgressViewController.swift; sourceTree = "<group>"; };
 		63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIAccessError.swift; sourceTree = "<group>"; };
 		63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63CE9A211E3B4B7300176AB4 /* ModelCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCache.swift; sourceTree = "<group>"; };
@@ -262,6 +271,9 @@
 				63B7719E1ED365A1005739CF /* ProjectsByGoals.swift */,
 				63B772101ED8C2BB005739CF /* GoalViewController.swift */,
 				63B772171ED9E3A4005739CF /* GoalProgressViewController.swift */,
+				63B7721A1EDA79D3005739CF /* GoalReportViewController.swift */,
+				63B7721D1EDA7A3B005739CF /* GoalStrategyViewController.swift */,
+				63B772201EDA7A62005739CF /* DayProgressViewController.swift */,
 			);
 			path = TogglGoals;
 			sourceTree = "<group>";
@@ -467,6 +479,7 @@
 				639434E71E3D2F410055A5B7 /* Property.swift in Sources */,
 				63B5D8AE1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */,
 				63593AE61E511AD0000473CC /* CollectionOperation.swift in Sources */,
+				63B772211EDA7A62005739CF /* DayProgressViewController.swift in Sources */,
 				636A784B1DBBECAA00751A51 /* ColoredView.swift in Sources */,
 				63B7720E1ED8C02D005739CF /* ContainmentSegue.swift in Sources */,
 				63B5D8AB1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */,
@@ -475,6 +488,7 @@
 				63817A011DFD7CB6003F6295 /* ProjectsMasterDetailWindowController.swift in Sources */,
 				63B772111ED8C2BB005739CF /* GoalViewController.swift in Sources */,
 				639FD05F1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */,
+				63B7721B1EDA79D3005739CF /* GoalReportViewController.swift in Sources */,
 				633392171E5F5CFB00427F50 /* StrategyComputer.swift in Sources */,
 				63D2E8A71E928AF4001DA2E1 /* SelectionDetailViewController.swift in Sources */,
 				63B7719F1ED365A1005739CF /* ProjectsByGoals.swift in Sources */,
@@ -482,6 +496,7 @@
 				63B5D8B71E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */,
 				63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */,
 				63593AEC1E511BD6000473CC /* SpawningOperation.swift in Sources */,
+				63B7721E1EDA7A3B005739CF /* GoalStrategyViewController.swift in Sources */,
 				63FA1F981DBB796D00612A09 /* ProjectCollectionViewItem.swift in Sources */,
 				63D4EB961E79D15B00D55033 /* DateTimeExtensions.swift in Sources */,
 				632EEBF41E427A3700608D01 /* GoalsStore.swift in Sources */,
@@ -526,12 +541,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				632957781DBA9D9600E11A10 /* ProjectDetailsViewController.swift in Sources */,
+				63B7721F1EDA7A3B005739CF /* GoalStrategyViewController.swift in Sources */,
 				632957741DBA9D8500E11A10 /* ProjectsListViewController.swift in Sources */,
 				63B772191ED9E3A4005739CF /* GoalProgressViewController.swift in Sources */,
+				63B772221EDA7A62005739CF /* DayProgressViewController.swift in Sources */,
 				632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */,
 				63B772121ED8C2BB005739CF /* GoalViewController.swift in Sources */,
 				63B771A11ED365A1005739CF /* ProjectsByGoals.swift in Sources */,
 				63B7720F1ED8C02D005739CF /* ContainmentSegue.swift in Sources */,
+				63B7721C1EDA79D3005739CF /* GoalReportViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

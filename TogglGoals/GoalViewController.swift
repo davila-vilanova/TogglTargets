@@ -12,8 +12,10 @@ class GoalViewController: NSViewController {
     private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
 
-    var calendar: Calendar?
+    var calendar: Calendar!
 
+    var strategyComputer: StrategyComputer!
+    
     private var observedGoal: ObservedProperty<TimeGoal>?
 
     var goalProperty: Property<TimeGoal>? {
@@ -124,4 +126,8 @@ class GoalViewController: NSViewController {
         
         observedGoal?.original?.value?.workWeekdays = newSelection
     }
+}
+
+class NoGoalViewController: NSViewController {
+    
 }
