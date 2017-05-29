@@ -37,11 +37,13 @@ class DayProgressViewController: NSViewController {
                 return
         }
         
-        timeWorkedTodayLabel.stringValue = timeFormatter.string(from: dayProgress.workedTimeToday)!
+        let formattedTimeWorkedToday = timeFormatter.string(from: dayProgress.workedTimeToday)!
+        timeWorkedTodayLabel.stringValue = "\(formattedTimeWorkedToday) worked today"
         
         if let remaining = dayProgress.remainingTimeToDayBaselineToday {
             timeRemainingToWorkTodayLabel.isHidden = false
-            timeRemainingToWorkTodayLabel.stringValue = timeFormatter.string(from: remaining)!
+            let formattedTimeRemainingToWorkToday = timeFormatter.string(from: remaining)!
+            timeRemainingToWorkTodayLabel.stringValue = "\(formattedTimeRemainingToWorkToday) left to meet your goal today"
             todayProgressIndicator.isIndeterminate = false
             todayProgressIndicator.maxValue = dayProgress.workedTimeToday + remaining
             todayProgressIndicator.doubleValue = dayProgress.workedTimeToday
