@@ -26,29 +26,7 @@ class GoalStrategyViewController: NSViewController {
     
     var goalStrategy: GoalStrategy? {
         didSet {
-            if let strategy = goalStrategy {
-                totalHoursStrategyLabel.stringValue = timeFormatter.string(from: strategy.timeGoal)!
-                hoursPerDayLabel.stringValue = timeFormatter.string(from: strategy.dayBaselineAdjustedToProgress)!
-
-                let dayBaseline = timeFormatter.string(from: strategy.dayBaseline)!
-                let dayBaselineDifferential = strategy.dayBaselineDifferential
-                let absoluteBaselineDifferential = abs(dayBaselineDifferential)
-                
-                let baselineDifferentialText: String
-                
-                if absoluteBaselineDifferential < 0.01 {
-                    baselineDifferentialText = "That prety much matches your baseline of \(dayBaseline)"
-                } else {
-                    let formattedBaselineDifferential = percentFormatter.string(from: NSNumber(value: abs(dayBaselineDifferential)))!
-                    if dayBaselineDifferential > 0 {
-                        baselineDifferentialText = "That is \(formattedBaselineDifferential) more than your baseline of \(dayBaseline)"
-                    } else {
-                        baselineDifferentialText = "That is \(formattedBaselineDifferential) less than your baseline of \(dayBaseline)"
-                    }
-                }
-                
-                baselineDifferentialLabel.stringValue = baselineDifferentialText
-            }
+            displayStrategy()
         }
     }
     
@@ -56,5 +34,35 @@ class GoalStrategyViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        displayStrategy()
+    }
+    
+    func displayStrategy() {
+        guard isViewLoaded,
+            let strategy = goalStrategy else {
+            return
+        }
+        
+        totalHoursStrategyLabel.stringValue = timeFormatter.string(from: strategy.timeGoal)!
+        hoursPerDayLabel.stringValue = timeFormatter.string(from: strategy.dayBaselineAdjustedToProgress)!
+        
+        let dayBaseline = timeFormatter.string(from: strategy.dayBaseline)!
+        let dayBaselineDifferential = strategy.dayBaselineDifferential
+        let absoluteBaselineDifferential = abs(dayBaselineDifferential)
+        
+        let baselineDifferentialText: String
+        
+        if absoluteBaselineDifferential < 0.01 {
+            baselineDifferentialText = "That prety much matches your baseline of \(dayBaseline)"
+        } else {
+            let formattedBaselineDifferential = percentFormatter.string(from: NSNumber(value: abs(dayBaselineDifferential)))!
+            if dayBaselineDifferential > 0 {
+                baselineDifferentialText = "That is \(formattedBaselineDifferential) more than your baseline of \(dayBaseline)"
+            } else {
+                baselineDifferentialText = "That is \(formattedBaselineDifferential) less than your baseline of \(dayBaseline)"
+            }
+        }
+        
+        baselineDifferentialLabel.stringValue = baselineDifferentialText
     }
 }
