@@ -781,23 +781,13 @@
                                 <rect key="frame" x="20" y="343" width="482" height="5"/>
                             </box>
                             <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AOp-rt-zH6">
-                                <rect key="frame" x="294" y="386" width="171" height="18"/>
+                                <rect key="frame" x="369" y="383" width="96" height="21"/>
                                 <subviews>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6JD-Q6-8St">
-                                        <rect key="frame" x="0.0" y="-1" width="82" height="19"/>
-                                        <buttonCell key="cell" type="recessed" title="create goal" bezelStyle="recessed" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KeB-mo-fh2">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                            <font key="font" metaFont="systemBold" size="12"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="createGoal:" target="zvs-ll-aji" id="Meu-Uc-j6U"/>
-                                        </connections>
-                                    </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O7w-Ao-X9F">
-                                        <rect key="frame" x="90" y="-1" width="81" height="19"/>
-                                        <buttonCell key="cell" type="recessed" title="delete goal" bezelStyle="recessed" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QnR-dT-cnD">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
-                                            <font key="font" metaFont="systemBold" size="12"/>
+                                        <rect key="frame" x="-6" y="-7" width="108" height="32"/>
+                                        <buttonCell key="cell" type="push" title="delete goal" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QnR-dT-cnD">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
                                             <action selector="deleteGoal:" target="zvs-ll-aji" id="tCu-lc-4Zb"/>
@@ -806,10 +796,8 @@
                                 </subviews>
                                 <visibilityPriorities>
                                     <integer value="1000"/>
-                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
@@ -844,7 +832,6 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="createGoalButton" destination="6JD-Q6-8St" id="g9L-Oc-fQe"/>
                         <outlet property="deleteGoalButton" destination="O7w-Ao-X9F" id="63F-vd-BVu"/>
                         <outlet property="goalReportView" destination="OOB-9P-pYC" id="69Z-CY-Vgu"/>
                         <outlet property="goalView" destination="6Nr-Rc-1SN" id="2bI-i1-7x2"/>
@@ -1356,18 +1343,41 @@
                         <rect key="frame" x="0.0" y="0.0" width="477" height="350"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="asI-eB-ORh">
-                                <rect key="frame" x="71" y="167" width="336" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="when you create a goal you will see its progress here" id="QYP-lQ-gLI">
-                                    <font key="font" metaFont="systemSemibold" size="13"/>
-                                    <color key="textColor" white="0.48844866071428572" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                            <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="spt-9H-RBY">
+                                <rect key="frame" x="106.5" y="164.5" width="264" height="21"/>
+                                <subviews>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KJB-2f-ZKw">
+                                        <rect key="frame" x="-6" y="-7" width="119" height="32"/>
+                                        <buttonCell key="cell" type="push" title="create a goal" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sHt-AE-o6F">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="createGoal:" target="uCS-Tc-pwg" id="rJY-xn-Ixb"/>
+                                        </connections>
+                                    </button>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="asI-eB-ORh">
+                                        <rect key="frame" x="113" y="3" width="153" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="to see its progress here" id="QYP-lQ-gLI">
+                                            <font key="font" metaFont="systemSemibold" size="13"/>
+                                            <color key="textColor" white="0.48844866071428572" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="asI-eB-ORh" firstAttribute="centerX" secondItem="1mY-6H-Sas" secondAttribute="centerX" id="MLS-Wf-1hr"/>
-                            <constraint firstItem="asI-eB-ORh" firstAttribute="centerY" secondItem="1mY-6H-Sas" secondAttribute="centerY" id="WOh-Uf-B8F"/>
+                            <constraint firstItem="spt-9H-RBY" firstAttribute="centerX" secondItem="1mY-6H-Sas" secondAttribute="centerX" id="IaF-0t-WLh"/>
+                            <constraint firstItem="spt-9H-RBY" firstAttribute="centerY" secondItem="1mY-6H-Sas" secondAttribute="centerY" id="YwG-K9-6jw"/>
                         </constraints>
                     </view>
                 </viewController>

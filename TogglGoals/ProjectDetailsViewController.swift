@@ -13,12 +13,11 @@ fileprivate let GoalVCContainment = "GoalVCContainment"
 fileprivate let GoalReportVCContainment = "GoalReportVCContainment"
 fileprivate let NoGoalVCContainment = "NoGoalVCContainment"
 
-class ProjectDetailsViewController: NSViewController, ViewControllerContaining, ModelCoordinatorContaining {
+class ProjectDetailsViewController: NSViewController, ViewControllerContaining, ModelCoordinatorContaining, NoGoalViewControllerDelegate {
     
     // MARK: - Outlets
     
     @IBOutlet weak var projectName: NSTextField!
-    @IBOutlet weak var createGoalButton: NSButton!
     @IBOutlet weak var deleteGoalButton: NSButton!
     @IBOutlet weak var goalView: NSView!
     @IBOutlet weak var goalReportView: NSView!
@@ -42,7 +41,11 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
             goalReportViewController.runningEntryProperty = modelCoordinator!.runningEntry
         }
     }
-    var noGoalViewController: NoGoalViewController!
+    var noGoalViewController: NoGoalViewController! {
+        didSet {
+            noGoalViewController.delegate = self
+        }
+    }
 
     
     // MARK: - Represented data
@@ -107,7 +110,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     private func observeGoalProperty(_ goalProperty: Property<TimeGoal>) -> ObservedProperty<TimeGoal> {
         func goalDidChange(_ observedGoal: ObservedProperty<TimeGoal>?) {
             let goalExists = (observedGoal?.original?.value != nil)
-            createGoalButton.isHidden = goalExists
             deleteGoalButton.isHidden = !goalExists
             
             let controller = goalExists ? goalReportViewController : noGoalViewController
@@ -136,7 +138,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         }
     }
     
-    @IBAction func createGoal(_ sender: Any) {
+    func onCreateGoalAction() {
         guard observedGoalProperty?.original?.value == nil,
             let modelCoordinator = self.modelCoordinator,
             let projectId = representedProject?.id else {
@@ -145,7 +147,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         let goal = TimeGoal(forProjectId: projectId, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend)
         modelCoordinator.setNewGoal(goal)
     }
-
+    
     @IBAction func deleteGoal(_ sender: Any) {
         guard let goal = observedGoalProperty?.original?.value,
             let modelCoordinator = self.modelCoordinator else {

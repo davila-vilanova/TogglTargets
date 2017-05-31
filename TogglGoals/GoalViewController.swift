@@ -129,5 +129,15 @@ class GoalViewController: NSViewController {
 }
 
 class NoGoalViewController: NSViewController {
+    weak var delegate: NoGoalViewControllerDelegate?
     
+    @IBAction func createGoal(_ sender: Any) {
+        if let d = delegate {
+            d.onCreateGoalAction()
+        }
+    }
+}
+
+protocol NoGoalViewControllerDelegate: NSObjectProtocol {
+    func onCreateGoalAction()
 }
