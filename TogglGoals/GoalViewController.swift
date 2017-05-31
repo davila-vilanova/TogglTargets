@@ -9,6 +9,8 @@
 import Cocoa
 
 class GoalViewController: NSViewController {
+    weak var delegate: GoalViewControllerDelegate?
+    
     private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
 
@@ -37,6 +39,7 @@ class GoalViewController: NSViewController {
     @IBOutlet weak var monthlyHoursGoalField: NSTextField!
     @IBOutlet weak var monthlyHoursGoalFormatter: NumberFormatter!
     @IBOutlet weak var weekWorkDaysControl: NSSegmentedControl!
+    @IBOutlet weak var deleteGoalButton: NSButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,6 +87,7 @@ class GoalViewController: NSViewController {
         }
         monthlyHoursGoalField.isEnabled = true
         weekWorkDaysControl.isEnabled = true
+        deleteGoalButton.isHidden = false
         
         if let hoursString = monthlyHoursGoalFormatter.string(from: NSNumber(value: goal.hoursPerMonth)) {
             monthlyHoursGoalField.stringValue = hoursString
@@ -103,6 +107,7 @@ class GoalViewController: NSViewController {
         for (_, segmentIndex) in weekdaysToSegments {
             weekWorkDaysControl.setSelected(false, forSegment: segmentIndex)
         }
+        deleteGoalButton.isHidden = true
     }
     
     @IBAction func monthlyHoursGoalEdited(_ sender: NSTextField) {
@@ -126,6 +131,12 @@ class GoalViewController: NSViewController {
         
         observedGoal?.original?.value?.workWeekdays = newSelection
     }
+    
+    @IBAction func deleteGoal(_ sender: Any) {
+        if let d = delegate {
+            d.onDeleteGoalAction()
+        }
+    }
 }
 
 class NoGoalViewController: NSViewController {
@@ -140,4 +151,8 @@ class NoGoalViewController: NSViewController {
 
 protocol NoGoalViewControllerDelegate: NSObjectProtocol {
     func onCreateGoalAction()
+}
+
+protocol GoalViewControllerDelegate: NSObjectProtocol {
+    func onDeleteGoalAction()
 }

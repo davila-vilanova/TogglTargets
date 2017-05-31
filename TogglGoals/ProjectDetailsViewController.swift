@@ -13,12 +13,11 @@ fileprivate let GoalVCContainment = "GoalVCContainment"
 fileprivate let GoalReportVCContainment = "GoalReportVCContainment"
 fileprivate let NoGoalVCContainment = "NoGoalVCContainment"
 
-class ProjectDetailsViewController: NSViewController, ViewControllerContaining, ModelCoordinatorContaining, NoGoalViewControllerDelegate {
+class ProjectDetailsViewController: NSViewController, ViewControllerContaining, ModelCoordinatorContaining, GoalViewControllerDelegate, NoGoalViewControllerDelegate {
     
     // MARK: - Outlets
     
     @IBOutlet weak var projectName: NSTextField!
-    @IBOutlet weak var deleteGoalButton: NSButton!
     @IBOutlet weak var goalView: NSView!
     @IBOutlet weak var goalReportView: NSView!
 
@@ -29,6 +28,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         didSet {
             goalViewController.calendar = calendar
             goalViewController.strategyComputer = strategyComputer
+            goalViewController.delegate = self
             displayController(goalViewController, in: goalView)
         }
     }
@@ -110,8 +110,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     private func observeGoalProperty(_ goalProperty: Property<TimeGoal>) -> ObservedProperty<TimeGoal> {
         func goalDidChange(_ observedGoal: ObservedProperty<TimeGoal>?) {
             let goalExists = (observedGoal?.original?.value != nil)
-            deleteGoalButton.isHidden = !goalExists
-            
             let controller = goalExists ? goalReportViewController : noGoalViewController
             displayController(controller, in: goalReportView)
         }
@@ -148,7 +146,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         modelCoordinator.setNewGoal(goal)
     }
     
-    @IBAction func deleteGoal(_ sender: Any) {
+    func onDeleteGoalAction() {
         guard let goal = observedGoalProperty?.original?.value,
             let modelCoordinator = self.modelCoordinator else {
                 return
