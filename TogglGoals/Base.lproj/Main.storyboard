@@ -983,7 +983,7 @@
                 </viewController>
                 <customObject id="2PQ-kn-80x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1702" y="1180"/>
+            <point key="canvasLocation" x="1702" y="1137"/>
         </scene>
         <!--Goal Progress View Controller-->
         <scene sceneID="j3N-S5-RVt">
@@ -1181,14 +1181,14 @@
             <objects>
                 <viewController id="izu-wK-mXn" customClass="GoalStrategyViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="CWe-Ok-q92">
-                        <rect key="frame" x="0.0" y="0.0" width="482" height="46"/>
+                        <rect key="frame" x="0.0" y="0.0" width="482" height="53"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="58W-aJ-6ZP" userLabel="Stack View: Total Hours Strategy">
-                                <rect key="frame" x="0.0" y="25" width="252" height="21"/>
+                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="58W-aJ-6ZP" userLabel="Total Hours Strategy StackView">
+                                <rect key="frame" x="0.0" y="35" width="252" height="18"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RlO-77-SMy">
-                                        <rect key="frame" x="-2" y="3" width="202" height="18"/>
+                                        <rect key="frame" x="-2" y="0.0" width="202" height="18"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="to reach your monthly goal of" id="5Q1-s1-b2n">
                                             <font key="font" size="14" name=".AppleSystemUIFontDemi"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1196,7 +1196,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="asW-Ix-68T">
-                                        <rect key="frame" x="198" y="3" width="56" height="18"/>
+                                        <rect key="frame" x="198" y="0.0" width="56" height="18"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="t1Z-dP-nwZ">
                                             <font key="font" size="14" name=".AppleSystemUIFontDemi"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1213,8 +1213,8 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
-                            <stackView wantsLayer="YES" distribution="fill" orientation="horizontal" alignment="firstBaseline" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="h9S-pH-zK2" userLabel="Stack View: Baseline">
-                                <rect key="frame" x="0.0" y="0.0" width="482" height="17"/>
+                            <stackView wantsLayer="YES" distribution="equalSpacing" orientation="horizontal" alignment="firstBaseline" spacing="4" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" translatesAutoresizingMaskIntoConstraints="NO" id="h9S-pH-zK2" userLabel="Baseline Stack View">
+                                <rect key="frame" x="0.0" y="16" width="132" height="17"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Ur-vz-0XP">
                                         <rect key="frame" x="-2" y="0.0" width="34" height="17"/>
@@ -1225,7 +1225,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IGs-UO-M3l" userLabel="Hours Per Day Label">
-                                        <rect key="frame" x="30" y="0.0" width="52" height="17"/>
+                                        <rect key="frame" x="32" y="0.0" width="52" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="Tz8-am-0HF">
                                             <font key="font" metaFont="systemSemibold" size="13"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1233,17 +1233,9 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p2a-xe-l3c">
-                                        <rect key="frame" x="80" y="0.0" width="159" height="17"/>
-                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="per day" id="S29-HH-pb8">
+                                        <rect key="frame" x="84" y="0.0" width="50" height="17"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="per day" usesSingleLineMode="YES" id="S29-HH-pb8">
                                             <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DEQ-gQ-Scc">
-                                        <rect key="frame" x="237" y="0.0" width="247" height="14"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="That's 10% more than your baseline of 4 hours" id="b21-yJ-EQn">
-                                            <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -1253,23 +1245,30 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
-                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DEQ-gQ-Scc">
+                                <rect key="frame" x="-2" y="0.0" width="247" height="14"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="That's 10% more than your baseline of 4 hours" id="b21-yJ-EQn">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="h9S-pH-zK2" firstAttribute="leading" secondItem="CWe-Ok-q92" secondAttribute="leading" id="H5d-Ek-CVd"/>
-                            <constraint firstItem="h9S-pH-zK2" firstAttribute="top" secondItem="58W-aJ-6ZP" secondAttribute="bottom" constant="8" symbolic="YES" id="TEL-cD-chM"/>
-                            <constraint firstItem="58W-aJ-6ZP" firstAttribute="leading" secondItem="CWe-Ok-q92" secondAttribute="leading" id="fy7-Vh-tJ3"/>
-                            <constraint firstAttribute="bottom" secondItem="h9S-pH-zK2" secondAttribute="bottom" id="ky2-gg-GYk"/>
-                            <constraint firstAttribute="trailing" secondItem="h9S-pH-zK2" secondAttribute="trailing" id="tn0-8V-cDh"/>
-                            <constraint firstItem="58W-aJ-6ZP" firstAttribute="top" secondItem="CWe-Ok-q92" secondAttribute="top" id="wYV-bb-AIt"/>
+                            <constraint firstItem="58W-aJ-6ZP" firstAttribute="top" secondItem="CWe-Ok-q92" secondAttribute="top" id="3BL-tu-5fv"/>
+                            <constraint firstItem="h9S-pH-zK2" firstAttribute="leading" secondItem="CWe-Ok-q92" secondAttribute="leading" id="5eO-V2-foS"/>
+                            <constraint firstItem="DEQ-gQ-Scc" firstAttribute="top" secondItem="h9S-pH-zK2" secondAttribute="bottom" constant="2" id="B7J-xt-Px3"/>
+                            <constraint firstAttribute="bottom" secondItem="DEQ-gQ-Scc" secondAttribute="bottom" id="ZlR-j6-tSD"/>
+                            <constraint firstItem="58W-aJ-6ZP" firstAttribute="leading" secondItem="CWe-Ok-q92" secondAttribute="leading" id="cPP-eQ-NNm"/>
+                            <constraint firstItem="DEQ-gQ-Scc" firstAttribute="leading" secondItem="CWe-Ok-q92" secondAttribute="leading" id="hXi-j8-oqQ"/>
+                            <constraint firstItem="h9S-pH-zK2" firstAttribute="top" secondItem="58W-aJ-6ZP" secondAttribute="bottom" constant="2" id="qeJ-Ob-svC"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1280,7 +1279,7 @@
                 </viewController>
                 <customObject id="OpA-Hm-EXQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2366" y="1432"/>
+            <point key="canvasLocation" x="2366" y="1418"/>
         </scene>
         <!--Day Progress View Controller-->
         <scene sceneID="uoF-Pf-sPn">
@@ -1347,7 +1346,7 @@
                 </viewController>
                 <customObject id="MKp-Ev-lcr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2366" y="1521"/>
+            <point key="canvasLocation" x="2366" y="1535"/>
         </scene>
         <!--No Goal View Controller-->
         <scene sceneID="PGj-gw-9GS">
@@ -1419,8 +1418,8 @@
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="x0L-tp-DvU">
                                 <rect key="frame" x="0.0" y="258" width="477" height="5"/>
                             </box>
-                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="46" translatesAutoresizingMaskIntoConstraints="NO" id="oap-Fn-wNg">
-                                <rect key="frame" x="0.0" y="206" width="477" height="46"/>
+                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="59" translatesAutoresizingMaskIntoConstraints="NO" id="oap-Fn-wNg">
+                                <rect key="frame" x="0.0" y="193" width="477" height="59"/>
                             </customView>
                             <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="IDR-Hi-ehm">
                                 <rect key="frame" x="0.0" y="20" width="477" height="45"/>
@@ -1491,7 +1490,7 @@
                 </viewController>
                 <customObject id="HEr-Yv-904" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1702" y="1432"/>
+            <point key="canvasLocation" x="1702" y="1402"/>
         </scene>
         <!--Selection Detail View Controller-->
         <scene sceneID="uIT-hn-0X3">
