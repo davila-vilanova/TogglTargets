@@ -12,17 +12,18 @@ class ListLayout: NSCollectionViewLayout {
     private var itemRects = Dictionary<IndexPath, CGRect>()
     private var headerRects = Dictionary<IndexPath, CGRect>()
     
-    var itemSize = CGSize(width: 150, height: 80)
-    var itemMargin = EdgeInsets(top: -4, left: -2, bottom: -4, right: -2)
-    var headerSize = CGSize(width: 150, height: 25)
-    var headerMargin = EdgeInsets(top: -8, left: -2, bottom: -4, right: -2)
-    
     var contentSize = NSZeroSize
     
     override func prepare() {
         guard let collectionView = collectionView else {
             return
         }
+        
+        let width = collectionView.bounds.size.width
+        let itemSize = CGSize(width: width, height: 80)
+        let itemMargin = EdgeInsets(top: -4, left: -2, bottom: -4, right: -2)
+        let headerSize = CGSize(width: width, height: 25)
+        let headerMargin = EdgeInsets(top: -8, left: -2, bottom: -4, right: -2)
         
         itemRects.removeAll()
         headerRects.removeAll()
@@ -61,23 +62,35 @@ class ListLayout: NSCollectionViewLayout {
         return contentSize
     }
     
+    private func indexPathsOfItems(from dictionary: Dictionary<IndexPath, CGRect>, in rect: NSRect) -> Set<IndexPath> {
+        var collected = Set<IndexPath>()
+        for (indexPath, itemRect) in dictionary {
+            if itemRect.intersects(rect) {
+                collected.insert(indexPath)
+            }
+        }
+        return collected
+    }
+    
     override func layoutAttributesForElements(in rect: NSRect) -> [NSCollectionViewLayoutAttributes] {
         var allAttributes = [NSCollectionViewLayoutAttributes]()
         
-        for (indexPath, headerRect) in headerRects {
-            if headerRect.intersects(rect) {
-                let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, with: indexPath)
-                attributes.frame = headerRect
-                allAttributes.append(attributes)
-            }
+        let headerIndexPaths = indexPathsOfItems(from: headerRects, in: rect)
+
+        for indexPath in headerIndexPaths {
+            let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, with: indexPath)
+            let headerRect = headerRects[indexPath]
+            attributes.frame = headerRect!
+            allAttributes.append(attributes)
         }
         
-        for (indexPath, itemRect) in itemRects {
-            if itemRect.intersects(rect) {
-                let attributes = NSCollectionViewLayoutAttributes(forItemWith: indexPath)
-                attributes.frame = itemRect
-                allAttributes.append(attributes)
-            }
+        let itemIndexPaths = indexPathsOfItems(from: itemRects, in: rect)
+        
+        for indexPath in itemIndexPaths {
+            let attributes = NSCollectionViewLayoutAttributes(forItemWith: indexPath)
+            let itemRect = itemRects[indexPath]
+            attributes.frame = itemRect!
+            allAttributes.append(attributes)
         }
         
         return allAttributes
@@ -102,5 +115,28 @@ class ListLayout: NSCollectionViewLayout {
         let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, with: indexPath)
         attributes.frame = headerRect
         return attributes
+    }
+    
+    override func shouldInvalidateLayout(forBoundsChange newBounds: NSRect) -> Bool {
+        if abs(newBounds.width - contentSize.width) > 0.1 {
+            return true
+        }
+        return false
+    }
+    
+    override func invalidationContext(forBoundsChange newBounds: NSRect) -> NSCollectionViewLayoutInvalidationContext {
+        let context = super.invalidationContext(forBoundsChange: newBounds)
+        context.contentSizeAdjustment.width = newBounds.width - contentSize.width
+        guard let collectionView = self.collectionView else {
+            return context
+        }
+        context.invalidateItems(at: collectionView.indexPathsForVisibleItems())
+        context.invalidateSupplementaryElements(ofKind: NSCollectionElementKindSectionHeader, at: collectionView.indexPathsForVisibleSupplementaryElements(ofKind: NSCollectionElementKindSectionHeader))
+        return context
+    }
+    
+    override func invalidateLayout(with context: NSCollectionViewLayoutInvalidationContext) {
+        self.contentSize.width += context.contentSizeAdjustment.width
+        super.invalidateLayout(with: context)
     }
 }
