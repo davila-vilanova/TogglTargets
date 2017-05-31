@@ -33,6 +33,17 @@ class ContainmentSegue: NSStoryboardSegue {
 }
 
 func displayController(_ controller: NSViewController, in parentView: NSView) {
+    guard parentView.subviews.first != controller.view else {
+        return
+    }
     parentView.substituteSubviews(with: controller.view)
     controller.view.autoPinEdgesToSuperviewEdges()
+}
+
+extension NSViewController {
+    func initializeControllerContainment(containmentIdentifiers: [String]) {
+        for identifier in containmentIdentifiers {
+            performSegue(withIdentifier: identifier, sender: self)
+        }
+    }
 }

@@ -668,7 +668,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" customClass="ProjectsMasterDetailWindowController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                    <window key="window" title="TogglGoals" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
@@ -688,7 +688,7 @@
                 <splitViewController id="ak2-zI-3MP" customClass="ProjectsMasterDetailController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <splitViewItems>
                         <splitViewItem id="UZA-Se-y7j"/>
-                        <splitViewItem id="b6j-cj-9Lk"/>
+                        <splitViewItem id="rd1-o7-1As"/>
                     </splitViewItems>
                     <splitView key="splitView" dividerStyle="thin" vertical="YES" id="Tyn-3W-UrQ">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
@@ -696,7 +696,7 @@
                     </splitView>
                     <connections>
                         <segue destination="uJx-25-i9K" kind="relationship" relationship="splitItems" id="saQ-Co-8OQ"/>
-                        <segue destination="wbJ-Y1-IIV" kind="relationship" relationship="splitItems" id="GoA-O6-MJr"/>
+                        <segue destination="6zN-45-ObM" kind="relationship" relationship="splitItems" id="iTG-aM-h6s"/>
                     </connections>
                 </splitViewController>
                 <customObject id="qEG-eu-hIH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -1493,31 +1493,21 @@
             <point key="canvasLocation" x="1702" y="1402"/>
         </scene>
         <!--Selection Detail View Controller-->
-        <scene sceneID="uIT-hn-0X3">
+        <scene sceneID="sNa-IS-Xca">
             <objects>
-                <customObject id="lI5-8m-Rnk" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <tabViewController tabStyle="unspecified" id="wbJ-Y1-IIV" customClass="SelectionDetailViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabViewItems>
-                        <tabViewItem id="LmC-pS-23n"/>
-                        <tabViewItem id="w0E-yV-RVl"/>
-                    </tabViewItems>
-                    <viewControllerTransitionOptions key="transitionOptions" crossfade="YES"/>
-                    <tabView key="tabView" misplaced="YES" type="noTabsNoBorder" id="vca-o2-3aw">
+                <viewController id="6zN-45-ObM" customClass="SelectionDetailViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="fco-wI-Yfi">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <font key="font" metaFont="message"/>
-                        <tabViewItems/>
-                        <connections>
-                            <outlet property="delegate" destination="wbJ-Y1-IIV" id="3CO-cf-MyW"/>
-                        </connections>
-                    </tabView>
+                    </view>
                     <connections>
-                        <segue destination="iZ6-o4-gFV" kind="relationship" relationship="tabItems" id="sJZ-lq-CC2"/>
-                        <segue destination="zvs-ll-aji" kind="relationship" relationship="tabItems" id="sC3-iP-OYr"/>
+                        <segue destination="iZ6-o4-gFV" kind="custom" identifier="EmtpySelectionVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="SM2-xp-Ptf"/>
+                        <segue destination="zvs-ll-aji" kind="custom" identifier="ProjectDetailsVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="DJy-su-Cmm"/>
                     </connections>
-                </tabViewController>
+                </viewController>
+                <customObject id="eZB-tw-d60" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="279" y="1137"/>
+            <point key="canvasLocation" x="256" y="1137"/>
         </scene>
         <!--Empty Selection View Controller-->
         <scene sceneID="hIu-gf-ZQy">

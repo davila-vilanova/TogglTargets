@@ -8,45 +8,55 @@
 
 import Cocoa
 
-class SelectionDetailViewController: NSTabViewController, ModelCoordinatorContaining {
-    private enum TabViewItemIndex: Int {
-        case emptySelection
-        case projectDetails
-    }
+fileprivate let ProjectDetailsVCContainment = "ProjectDetailsVCContainment"
+fileprivate let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
 
+class SelectionDetailViewController: NSViewController, ViewControllerContaining, ModelCoordinatorContaining {
+    
+    // MARK: - Child view controllers containment
+    
+    var projectDetailsViewController: ProjectDetailsViewController! {
+        didSet {
+            projectDetailsViewController.modelCoordinator = self.modelCoordinator
+        }
+    }
+    var emptySelectionViewController: EmptySelectionViewController!
+    
+    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
+        switch controller {
+        case _ where (controller as? ProjectDetailsViewController) != nil:
+            projectDetailsViewController = controller as! ProjectDetailsViewController
+        case _ where (controller as? EmptySelectionViewController) != nil:
+            emptySelectionViewController = controller as! EmptySelectionViewController
+        default: break
+        }
+
+    }
+    
+    
+    // MARK : -
+    
     internal var modelCoordinator: ModelCoordinator? {
         didSet {
-            setupModelCoordinatorInChildControllers()
+            if let detailsController = projectDetailsViewController {
+                detailsController.modelCoordinator = modelCoordinator
+            }
         }
     }
 
     internal var selection: Project? {
         didSet {
             if let project = selection {
-                let projectDetailsController = display(.projectDetails) as! ProjectDetailsViewController
-                projectDetailsController.representedProject = project
+                projectDetailsViewController.representedProject = project
+                displayController(projectDetailsViewController, in: view)
             } else {
-                display(.emptySelection)
+                displayController(emptySelectionViewController, in: view)
             }
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupModelCoordinatorInChildControllers()
-    }
-
-    @discardableResult
-    private func display(_ index: TabViewItemIndex) -> NSViewController {
-        selectedTabViewItemIndex = index.rawValue
-        return tabViewItems[selectedTabViewItemIndex].viewController!
-    }
-
-    private func setupModelCoordinatorInChildControllers() {
-        for item in tabViewItems {
-            if var modelCoordinatorContainer = item.viewController as? ModelCoordinatorContaining {
-                modelCoordinatorContainer.modelCoordinator = self.modelCoordinator
-            }
-        }
+        initializeControllerContainment(containmentIdentifiers: [ProjectDetailsVCContainment, EmtpySelectionVCContainment])
     }
 }
