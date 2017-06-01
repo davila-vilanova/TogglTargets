@@ -707,18 +707,18 @@
         <scene sceneID="yrl-iP-dwh">
             <objects>
                 <viewController id="uJx-25-i9K" customClass="ProjectsListViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" id="0s5-6J-xQn">
-                        <rect key="frame" x="0.0" y="0.0" width="161" height="300"/>
+                    <view key="view" wantsLayer="YES" misplaced="YES" id="0s5-6J-xQn">
+                        <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kat-8d-Ff9">
-                                <rect key="frame" x="0.0" y="0.0" width="161" height="300"/>
+                                <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
                                 <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="V9W-AF-Ttj">
-                                    <rect key="frame" x="0.0" y="0.0" width="161" height="300"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb">
-                                            <rect key="frame" x="0.0" y="0.0" width="161" height="300"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <collectionViewLayout key="collectionViewLayout" id="tRH-Rt-gTE" customClass="ListLayout" customModule="TogglGoals" customModuleProvider="target"/>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -728,7 +728,7 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </clipView>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="eXF-ou-lGI"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="eXF-ou-lGI"/>
                                 </constraints>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="EPZ-py-eHf">
                                     <rect key="frame" x="2" y="282" width="157" height="16"/>
@@ -1285,6 +1285,8 @@
                                         <constraint firstAttribute="bottom" secondItem="jlV-Qy-Q9C" secondAttribute="bottom" constant="6" id="NB0-ac-K0D"/>
                                         <constraint firstItem="mOU-vK-gkk" firstAttribute="trailing" secondItem="2C1-IY-1Q6" secondAttribute="trailing" id="Pwd-Bk-tmN"/>
                                         <constraint firstItem="2C1-IY-1Q6" firstAttribute="top" secondItem="EI2-Ya-YqH" secondAttribute="top" constant="6" id="cUZ-n9-Huw"/>
+                                        <constraint firstItem="mOU-vK-gkk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="jlV-Qy-Q9C" secondAttribute="trailing" constant="8" symbolic="YES" id="gRh-uS-xUz"/>
+                                        <constraint firstItem="mOU-vK-gkk" firstAttribute="baseline" secondItem="jlV-Qy-Q9C" secondAttribute="baseline" id="rXF-0M-kj5"/>
                                         <constraint firstItem="mOU-vK-gkk" firstAttribute="bottom" secondItem="jlV-Qy-Q9C" secondAttribute="bottom" id="sQx-AQ-mah"/>
                                         <constraint firstAttribute="trailing" secondItem="mOU-vK-gkk" secondAttribute="trailing" constant="6" id="yiC-Ba-F1t"/>
                                     </constraints>
@@ -1409,7 +1411,7 @@
                                 <rect key="frame" x="0.0" y="193" width="477" height="59"/>
                             </customView>
                             <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="IDR-Hi-ehm">
-                                <rect key="frame" x="0.0" y="20" width="477" height="45"/>
+                                <rect key="frame" x="0.0" y="8" width="477" height="45"/>
                             </customView>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mFI-rM-DT6">
                                 <rect key="frame" x="327" y="342" width="153" height="26"/>
@@ -1449,7 +1451,8 @@
                             <constraint firstItem="0Yd-FG-N7Y" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="LL0-5w-Vgy"/>
                             <constraint firstItem="oap-Fn-wNg" firstAttribute="top" secondItem="x0L-tp-DvU" secondAttribute="bottom" constant="8" symbolic="YES" id="Mh4-BV-apX"/>
                             <constraint firstItem="mFI-rM-DT6" firstAttribute="top" secondItem="AwW-7C-Ykd" secondAttribute="top" id="RyJ-rD-FR5"/>
-                            <constraint firstAttribute="bottom" secondItem="IDR-Hi-ehm" secondAttribute="bottom" constant="20" symbolic="YES" id="Tqr-S9-Fkd"/>
+                            <constraint firstAttribute="bottom" secondItem="IDR-Hi-ehm" secondAttribute="bottom" constant="8" id="Tqr-S9-Fkd"/>
+                            <constraint firstItem="IDR-Hi-ehm" firstAttribute="top" relation="greaterThanOrEqual" secondItem="oap-Fn-wNg" secondAttribute="bottom" constant="16" id="VPN-9L-u9d"/>
                             <constraint firstItem="hE0-PS-Rau" firstAttribute="baseline" secondItem="0Yd-FG-N7Y" secondAttribute="baseline" id="eG5-kZ-0Tn"/>
                             <constraint firstAttribute="trailing" secondItem="oap-Fn-wNg" secondAttribute="trailing" id="fTd-Xb-sex"/>
                             <constraint firstItem="mFI-rM-DT6" firstAttribute="leading" secondItem="hE0-PS-Rau" secondAttribute="trailing" constant="8" symbolic="YES" id="fi5-2a-AvS"/>
