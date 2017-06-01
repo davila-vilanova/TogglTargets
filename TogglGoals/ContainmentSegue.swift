@@ -14,9 +14,9 @@ protocol ViewControllerContaining {
 fileprivate extension NSView {
     func substituteSubviews(with newSubview: NSView) {
         for subview in subviews {
-            subview.removeFromSuperview()
+            subview.animator().removeFromSuperview()
         }
-        addSubview(newSubview)
+        animator().addSubview(newSubview)
     }
 }
 
