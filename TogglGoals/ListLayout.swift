@@ -24,7 +24,7 @@ class ListLayout: NSCollectionViewLayout {
         let itemMargin = EdgeInsets(top: -4, left: -2, bottom: -4, right: -2)
         let headerSize = CGSize(width: width, height: 25)
         let headerMargin = EdgeInsets(top: -8, left: -2, bottom: -4, right: -2)
-        
+
         itemRects.removeAll()
         headerRects.removeAll()
         

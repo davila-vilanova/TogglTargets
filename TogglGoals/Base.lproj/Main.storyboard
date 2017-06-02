@@ -707,7 +707,7 @@
         <scene sceneID="yrl-iP-dwh">
             <objects>
                 <viewController id="uJx-25-i9K" customClass="ProjectsListViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" misplaced="YES" id="0s5-6J-xQn">
+                    <view key="view" wantsLayer="YES" id="0s5-6J-xQn">
                         <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
