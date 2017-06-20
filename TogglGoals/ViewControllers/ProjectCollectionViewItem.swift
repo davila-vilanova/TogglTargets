@@ -31,6 +31,8 @@ class ProjectCollectionViewItem: NSCollectionViewItem
     private var observedGoalProperty: ObservedProperty<TimeGoal>?
     internal var goalProperty: Property<TimeGoal>? {
         set {
+            observedGoalProperty?.unobserve()
+
             if let p = newValue {
                 observedGoalProperty =
                     ObservedProperty(original: p,
@@ -40,10 +42,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem
                     },
                                      invalidationObserver: {
 
-                    })
-                updateGoalLabel(goal:p.value)
-            } else {
-                observedGoalProperty?.unobserve()
+                    }).reportImmediately()
             }
         }
         get {
@@ -54,6 +53,8 @@ class ProjectCollectionViewItem: NSCollectionViewItem
     private var observedReportProperty: ObservedProperty<TwoPartTimeReport>?
     internal var reportProperty: Property<TwoPartTimeReport>? {
         set {
+            observedReportProperty?.unobserve()
+            
             if let p = newValue {
                 observedReportProperty =
                     ObservedProperty(original: p,
@@ -63,10 +64,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem
                     },
                                      invalidationObserver: {
 
-                    })
-                updateReportLabel(report: p.value)
-            } else {
-                observedReportProperty?.unobserve()
+                    }).reportImmediately()
             }
         }
         get {
