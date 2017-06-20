@@ -312,6 +312,18 @@ struct TwoPartTimeReport: TimeReport {
     let workedTimeToday: TimeInterval
 }
 
+extension SingleTimeReport: CustomDebugStringConvertible {
+    var debugDescription: String {
+        return "SingleTimeReport(workedTime: \(workedTime))";
+    }
+}
+
+extension TwoPartTimeReport: CustomDebugStringConvertible {
+    var debugDescription: String {
+        return "TwoPartTimeReport(workedTime: \(workedTime))";
+    }
+}
+
 struct RunningEntry {
     let id: Int64
     let projectId: Int64

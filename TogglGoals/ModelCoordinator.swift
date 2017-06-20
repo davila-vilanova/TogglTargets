@@ -82,7 +82,7 @@ internal class ModelCoordinator: NSObject {
         retrieveReportsOp.outputCollectionOperation.completionBlock = { [weak self] in
             if let reports = retrieveReportsOp.outputCollectionOperation.collectedOutput {
                 for (projectId, report) in reports {
-                    self?.reportProperties[projectId] = Property(value: report)
+                    self?.reportProperty(for: projectId).value = report
                 }
             }
         }
