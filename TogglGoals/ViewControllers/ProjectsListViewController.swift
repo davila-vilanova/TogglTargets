@@ -37,11 +37,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         projectsCollectionView.dataSource = self
         projectsCollectionView.delegate = self
 
-        let itemNib = NSNib(nibNamed: "ProjectCollectionViewItem", bundle: nil)!
+        let itemNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewItem"), bundle: nil)!
         projectsCollectionView.register(itemNib, forItemWithIdentifier: projectItemIdentifier)
 
-        let headerNib = NSNib(nibNamed: "ProjectCollectionViewHeader", bundle: nil)!
-        projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, withIdentifier: sectionHeaderIdentifier)
+        let headerNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewHeader"), bundle: nil)!
+        projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: sectionHeaderIdentifier)
         
         bindToProjects()
     }
@@ -123,7 +123,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
+        let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: projectItemIdentifier), for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
         
         if let project = observedProjects?.original?.value?.project(for: indexPath) {
@@ -135,8 +135,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         return projectItem
     }
 
-    func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> NSView {
-        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionElementKindSectionHeader, withIdentifier: sectionHeaderIdentifier, for: indexPath)
+    func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
+        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: NSUserInterfaceItemIdentifier(rawValue: sectionHeaderIdentifier), for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
             switch SectionIndex(rawValue: indexPath.section)! {
             case .projectsWithGoals: header.title = "projects with goals"

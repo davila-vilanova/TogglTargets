@@ -23,7 +23,7 @@ class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorCon
             if let coordinator = _modelCoordinator {
                 return coordinator
             }
-            let coordinator = (NSApplication.shared().delegate as! ModelCoordinatorContaining).modelCoordinator
+            let coordinator = (NSApplication.shared.delegate as! ModelCoordinatorContaining).modelCoordinator
             _modelCoordinator = coordinator
             return coordinator
         }

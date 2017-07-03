@@ -78,7 +78,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         super.viewDidLoad()
 
         for identifier in [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment] {
-            performSegue(withIdentifier: identifier, sender: self)
+            performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
         }
         
         displayProjectAndBindGoalAndReport()

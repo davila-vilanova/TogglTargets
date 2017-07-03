@@ -25,7 +25,7 @@ class ContainmentSegue: NSStoryboardSegue {
         if let controller = sourceController as? NSViewController,
             let container = controller as? ViewControllerContaining,
             let contained = destinationController as? NSViewController {
-            container.setContainedViewController(contained, containmentIdentifier: self.identifier)
+            container.setContainedViewController(contained, containmentIdentifier: self.identifier.map { $0.rawValue })
         } else {
             print("Cannot perform containment segue between \(sourceController) and \(destinationController)")
         }
@@ -43,7 +43,7 @@ func displayController(_ controller: NSViewController, in parentView: NSView) {
 extension NSViewController {
     func initializeControllerContainment(containmentIdentifiers: [String]) {
         for identifier in containmentIdentifiers {
-            performSegue(withIdentifier: identifier, sender: self)
+            performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
         }
     }
 }

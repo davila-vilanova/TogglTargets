@@ -132,7 +132,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         super.viewDidLoad()
         
         for identifier in [GoalProgressVCContainment, GoalStrategyVCContainment, DayProgressVCContainment] {
-            performSegue(withIdentifier: identifier, sender: self)
+            performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
         }
         
         displayMonthName()

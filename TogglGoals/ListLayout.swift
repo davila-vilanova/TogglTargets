@@ -21,9 +21,9 @@ class ListLayout: NSCollectionViewLayout {
         
         let width = collectionView.bounds.size.width
         let itemSize = CGSize(width: width, height: 80)
-        let itemMargin = EdgeInsets(top: -4, left: -2, bottom: -4, right: -2)
+        let itemMargin = NSEdgeInsets(top: -4, left: -2, bottom: -4, right: -2)
         let headerSize = CGSize(width: width, height: 25)
-        let headerMargin = EdgeInsets(top: -8, left: -2, bottom: -4, right: -2)
+        let headerMargin = NSEdgeInsets(top: -8, left: -2, bottom: -4, right: -2)
 
         itemRects.removeAll()
         headerRects.removeAll()
@@ -49,7 +49,7 @@ class ListLayout: NSCollectionViewLayout {
             }
         }
         
-        func widthWithMargin(size: CGSize, margin: EdgeInsets) -> CGFloat {
+        func widthWithMargin(size: CGSize, margin: NSEdgeInsets) -> CGFloat {
             return size.width - margin.left - margin.right
         }
         let fullItemWidth = widthWithMargin(size: itemSize, margin: itemMargin)
@@ -78,7 +78,7 @@ class ListLayout: NSCollectionViewLayout {
         let headerIndexPaths = indexPathsOfItems(from: headerRects, in: rect)
 
         for indexPath in headerIndexPaths {
-            let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, with: indexPath)
+            let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader, with: indexPath)
             let headerRect = headerRects[indexPath]
             attributes.frame = headerRect!
             allAttributes.append(attributes)
@@ -105,14 +105,14 @@ class ListLayout: NSCollectionViewLayout {
         return attributes
     }
     
-    override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
-        guard elementKind == NSCollectionElementKindSectionHeader else {
+    override func layoutAttributesForSupplementaryView(ofKind elementKind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
+        guard elementKind == NSCollectionView.SupplementaryElementKind.sectionHeader else {
             return nil
         }
         guard let headerRect = headerRects[indexPath] else {
             return nil
         }
-        let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: NSCollectionElementKindSectionHeader, with: indexPath)
+        let attributes = NSCollectionViewLayoutAttributes(forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader, with: indexPath)
         attributes.frame = headerRect
         return attributes
     }
@@ -131,7 +131,7 @@ class ListLayout: NSCollectionViewLayout {
             return context
         }
         context.invalidateItems(at: collectionView.indexPathsForVisibleItems())
-        context.invalidateSupplementaryElements(ofKind: NSCollectionElementKindSectionHeader, at: collectionView.indexPathsForVisibleSupplementaryElements(ofKind: NSCollectionElementKindSectionHeader))
+        context.invalidateSupplementaryElements(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader, at: collectionView.indexPathsForVisibleSupplementaryElements(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader))
         return context
     }
     
