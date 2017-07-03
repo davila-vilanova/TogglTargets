@@ -1,2 +1,2 @@
 github "PureLayout/PureLayout" "v3.0.2"
-github "stephencelis/SQLite.swift" "0.11.3"
+github "stephencelis/SQLite.swift" "6463eb13c021cba6de2ed4e8a76a5c03301de200"
