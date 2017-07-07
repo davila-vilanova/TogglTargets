@@ -138,19 +138,18 @@ internal class ModelCoordinator: NSObject {
             return property
         }
     }
-    
-    func refreshRunningTimeEntry() {
-        retrieveRunningTimeEntry()
-        if let oldTimer = runningEntryRefreshTimer,
-            oldTimer.isValid {
-            oldTimer.invalidate()
+
+    internal func startRefreshingRunningTimeEntry() {
+        guard runningEntryRefreshTimer == nil || runningEntryRefreshTimer?.isValid == false else {
+            return;
         }
-        runningEntryRefreshTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true, block: { [weak self] (timer) in
+        runningEntryRefreshTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true, block: { [weak self] (timer) in
             guard let s = self else {
                 return
             }
             s.retrieveRunningTimeEntry()
         })
+        retrieveRunningTimeEntry()
     }
 
     internal func stopRefreshingRunningTimeEntry() {
