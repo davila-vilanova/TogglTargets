@@ -16,8 +16,8 @@ enum SectionIndex: Int {
 fileprivate let NumberOfSections = 2
 
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, ModelCoordinatorContaining {
-    private let projectItemIdentifier = "ProjectItemIdentifier"
-    private let sectionHeaderIdentifier = "SectionHeaderIdentifier"
+    private let projectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
+    private let sectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
     
     internal var didSelectProject: ( (Project?) -> () )?
 
@@ -123,7 +123,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: projectItemIdentifier), for: indexPath)
+        let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
         
         if let project = observedProjects?.original?.value?.project(for: indexPath) {
@@ -136,7 +136,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
-        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: NSUserInterfaceItemIdentifier(rawValue: sectionHeaderIdentifier), for: indexPath)
+        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: sectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
             switch SectionIndex(rawValue: indexPath.section)! {
             case .projectsWithGoals: header.title = "projects with goals"
