@@ -28,8 +28,8 @@ class ProjectCollectionViewItem: NSCollectionViewItem
         }
     }
 
-    private var observedGoalProperty: ObservedProperty<TimeGoal>?
-    internal var goalProperty: Property<TimeGoal>? {
+    private var observedGoalProperty: ObservedProperty<TimeGoal?>?
+    internal var goalProperty: Property<TimeGoal?>? {
         set {
             observedGoalProperty?.unobserve()
 
@@ -50,8 +50,8 @@ class ProjectCollectionViewItem: NSCollectionViewItem
         }
     }
 
-    private var observedReportProperty: ObservedProperty<TwoPartTimeReport>?
-    internal var reportProperty: Property<TwoPartTimeReport>? {
+    private var observedReportProperty: ObservedProperty<TwoPartTimeReport?>?
+    internal var reportProperty: Property<TwoPartTimeReport?>? {
         set {
             observedReportProperty?.unobserve()
             

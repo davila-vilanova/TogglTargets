@@ -13,8 +13,8 @@ internal class Property<T> {
     fileprivate typealias UpdateObserver = ((Property<T>) -> ())
     fileprivate typealias ObserverToken = UUID
 
-    private var _value: T?
-    internal var value: T? {
+    private var _value: T
+    internal var value: T {
         set (newValue) {
             _value = newValue
             notifyOfUpdate()
@@ -35,7 +35,7 @@ internal class Property<T> {
 
     private var updateObservers = Dictionary<ObserverToken, UpdateObserver>()
 
-    internal init(value: T?) {
+    internal init(value: T) {
         self._value = value
     }
 
@@ -61,7 +61,7 @@ internal class Property<T> {
         updateObservers[token] = nil
     }
 
-    fileprivate func setValue(_ value: T?, skipUpdateNotification skipToken: ObserverToken) {
+    fileprivate func setValue(_ value: T, skipUpdateNotification skipToken: ObserverToken) {
         self._value = value
         var s = Set<ObserverToken>()
         s.insert(skipToken)

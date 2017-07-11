@@ -56,7 +56,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         }
     }
     
-    private var observedGoalProperty: ObservedProperty<TimeGoal>?
+    private var observedGoalProperty: ObservedProperty<TimeGoal?>?
 
     
     //  MARK: - Infrastructure
@@ -107,8 +107,8 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     }
     
     @discardableResult
-    private func observeGoalProperty(_ goalProperty: Property<TimeGoal>) -> ObservedProperty<TimeGoal> {
-        func goalDidChange(_ observedGoal: ObservedProperty<TimeGoal>?) {
+    private func observeGoalProperty(_ goalProperty: Property<TimeGoal?>) -> ObservedProperty<TimeGoal?> {
+        func goalDidChange(_ observedGoal: ObservedProperty<TimeGoal?>?) {
             let goalExists = (observedGoal?.original?.value != nil)
             let controller = goalExists ? goalReportViewController : noGoalViewController
             displayController(controller, in: goalReportView)
@@ -119,7 +119,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         }
         
         observedGoalProperty?.unobserve()
-        let observed = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: goalDidChange, invalidationObserver: goalWasInvalidated)
+        let observed = ObservedProperty<TimeGoal?>(original: goalProperty, valueObserver: goalDidChange, invalidationObserver: goalWasInvalidated)
         observedGoalProperty = observed
         return observed
     }

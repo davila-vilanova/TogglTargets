@@ -18,8 +18,8 @@ class GoalsStore {
     private let hoursPerMonthExpression = Expression<Int>("hours_per_month")
     private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
 
-    private var goalProperties = Dictionary<Int64, Property<TimeGoal>>()
-    private var observedGoals = Dictionary<Int64, ObservedProperty<TimeGoal>>()
+    private var goalProperties = Dictionary<Int64, Property<TimeGoal?>>()
+    private var observedGoals = Dictionary<Int64, ObservedProperty<TimeGoal?>>()
     
     init?(baseDirectory: URL?) {
         do {
@@ -32,12 +32,12 @@ class GoalsStore {
         }
     }
 
-    func goalProperty(for projectId: Int64) -> Property<TimeGoal> {
+    func goalProperty(for projectId: Int64) -> Property<TimeGoal?> {
         if let property = goalProperties[projectId] {
             return property
         } else {
-            let property = Property<TimeGoal>(value: nil) // promise to call if one is created later
-            let observed = ObservedProperty<TimeGoal>(original: property, valueObserver: { [weak self] (op) in
+            let property = Property<TimeGoal?>(value: nil) // promise to call if one is created later
+            let observed = ObservedProperty<TimeGoal?>(original: property, valueObserver: { [weak self] (op) in
                 guard let modifiedGoal = op.original?.value else {
                     return
                 }
@@ -58,7 +58,7 @@ class GoalsStore {
     }
     
     @discardableResult
-    func storeNew(goal: TimeGoal) -> Property<TimeGoal> {
+    func storeNew(goal: TimeGoal) -> Property<TimeGoal?> {
         let property = goalProperty(for: goal.projectId)
         property.value = goal
         return property

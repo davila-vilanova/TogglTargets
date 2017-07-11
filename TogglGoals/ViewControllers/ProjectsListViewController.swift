@@ -46,7 +46,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         bindToProjects()
     }
 
-    private var observedProjects: ObservedProperty<ProjectsByGoals>?
+    private var observedProjects: ObservedProperty<ProjectsByGoals?>?
     
     private func bindToProjects() {
         guard observedProjects == nil,
@@ -54,7 +54,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             return
         }
         
-        let valueObserver = { [weak self] (op: ObservedProperty<ProjectsByGoals>) in
+        let valueObserver = { [weak self] (op: ObservedProperty<ProjectsByGoals?>) in
             if let clue = op.original?.collectionUpdateClue {
                 self?.refresh(with: clue)
                 op.original?.collectionUpdateClue = nil // TODO
@@ -64,7 +64,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
         
         observedProjects =
-            ObservedProperty<ProjectsByGoals>(original: projectsProperty,
+            ObservedProperty<ProjectsByGoals?>(original: projectsProperty,
                                               valueObserver: valueObserver,
                                               invalidationObserver: { [weak self] in
                                                 self?.observedProjects = nil

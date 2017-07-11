@@ -68,55 +68,55 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     // MARK: - Represented data
     
-    private var goalProperty: Property<TimeGoal>? {
+    private var goalProperty: Property<TimeGoal?>? {
         didSet {
             if let observed = observedGoalProperty {
                 observed.unobserve()
             }
             if let gp = goalProperty {
-                func goalDidChange(_ observedGoalProperty: ObservedProperty<TimeGoal>) {
+                func goalDidChange(_ observedGoalProperty: ObservedProperty<TimeGoal?>) {
                     recomputeAndPropagate()
                 }
-                observedGoalProperty = ObservedProperty<TimeGoal>(original: gp, valueObserver: goalDidChange)
+                observedGoalProperty = ObservedProperty<TimeGoal?>(original: gp, valueObserver: goalDidChange)
             }
         }
     }
     
-    private var reportProperty: Property<TwoPartTimeReport>? {
+    private var reportProperty: Property<TwoPartTimeReport?>? {
         didSet {
             if let observed = observedReportProperty {
                 observed.unobserve()
             }
             if let rp = reportProperty {
-                func reportDidChange(_ observedReportProperty: ObservedProperty<TwoPartTimeReport>) {
+                func reportDidChange(_ observedReportProperty: ObservedProperty<TwoPartTimeReport?>) {
                     recomputeAndPropagate()
                 }
-                observedReportProperty = ObservedProperty<TwoPartTimeReport>(original: rp, valueObserver: reportDidChange)
+                observedReportProperty = ObservedProperty<TwoPartTimeReport?>(original: rp, valueObserver: reportDidChange)
             }
         }
     }
     
-    private var observedGoalProperty: ObservedProperty<TimeGoal>?
-    private var observedReportProperty: ObservedProperty<TwoPartTimeReport>?
+    private var observedGoalProperty: ObservedProperty<TimeGoal?>?
+    private var observedReportProperty: ObservedProperty<TwoPartTimeReport?>?
 
-    func setGoalProperty(_ goalProperty: Property<TimeGoal>, reportProperty: Property<TwoPartTimeReport>) {
+    func setGoalProperty(_ goalProperty: Property<TimeGoal?>, reportProperty: Property<TwoPartTimeReport?>) {
         self.goalProperty = goalProperty
         self.reportProperty = reportProperty
         recomputeAndPropagate()
     }
     
-    var runningEntryProperty: Property<RunningEntry>! {
+    var runningEntryProperty: Property<RunningEntry?>! {
         didSet {
             if let observed = observedRunningEntryProperty {
                 observedRunningEntryProperty.unobserve()
             }
-            func runningEntryDidChange(observedRunningEntry: ObservedProperty<RunningEntry>) {
+            func runningEntryDidChange(observedRunningEntry: ObservedProperty<RunningEntry?>) {
                 recomputeAndPropagate()
             }
-            observedRunningEntryProperty = ObservedProperty<RunningEntry>(original: runningEntryProperty, valueObserver: runningEntryDidChange)
+            observedRunningEntryProperty = ObservedProperty<RunningEntry?>(original: runningEntryProperty, valueObserver: runningEntryDidChange)
         }
     }
-    var observedRunningEntryProperty: ObservedProperty<RunningEntry>!
+    var observedRunningEntryProperty: ObservedProperty<RunningEntry?>!
     
     
     // MARK: - Infrastructure
