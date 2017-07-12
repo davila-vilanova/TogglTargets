@@ -18,9 +18,9 @@ class GoalViewController: NSViewController {
 
     var strategyComputer: StrategyComputer!
     
-    private var observedGoal: ObservedProperty<TimeGoal?>?
+    private var observedGoal: ObservedProperty<TimeGoal>?
 
-    var goalProperty: Property<TimeGoal?>? {
+    var goalProperty: Property<TimeGoal>? {
         willSet {
             if let observedGoal = self.observedGoal {
                 observedGoal.unobserve()
@@ -32,7 +32,7 @@ class GoalViewController: NSViewController {
                 resetAndDisable()
                 return
             }
-            observedGoal = ObservedProperty<TimeGoal?>(original: goalProperty, valueObserver: goalDidChange, invalidationObserver: resetAndDisable).reportImmediately()
+            observedGoal = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: goalDidChange, invalidationObserver: resetAndDisable).reportImmediately()
         }
     }
 
@@ -80,7 +80,7 @@ class GoalViewController: NSViewController {
         }
     }
 
-    private func goalDidChange(observedGoal: ObservedProperty<TimeGoal?>) {
+    private func goalDidChange(observedGoal: ObservedProperty<TimeGoal>) {
         guard let goal = observedGoal.original?.value else {
             resetAndDisable()
             return

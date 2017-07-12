@@ -12,14 +12,14 @@ import Foundation
 internal class ModelCoordinator: NSObject {
     private let goalsStore: GoalsStore
 
-    internal var profileProperty = Property<Profile?>(value: nil)
-    internal var projects = Property<ProjectsByGoals?>(value: nil)
+    internal var profileProperty = Property<Profile>(value: nil)
+    internal var projects = Property<ProjectsByGoals>(value: nil)
     
-    private var observedGoals = Dictionary<Int64, ObservedProperty<TimeGoal?>>()
+    private var observedGoals = Dictionary<Int64, ObservedProperty<TimeGoal>>()
     
-    private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport?>>()
+    private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport>>()
     
-    internal let runningEntry = Property<RunningEntry?>(value: nil)
+    internal let runningEntry = Property<RunningEntry>(value: nil)
     internal var runningEntryRefreshTimer: Timer?
 
     private let apiCredential = TogglAPICredential()
@@ -95,10 +95,10 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Goals
     
-    internal func goalProperty(for projectId: Int64) -> Property<TimeGoal?> {
+    internal func goalProperty(for projectId: Int64) -> Property<TimeGoal> {
         let goalProperty = goalsStore.goalProperty(for: projectId)
         observedGoals[projectId] =
-            ObservedProperty<TimeGoal?>(original: goalProperty,
+            ObservedProperty<TimeGoal>(original: goalProperty,
                                        valueObserver: { [weak self] observedGoal in
                                         self?.goalChanged(for: projectId)
                 },
@@ -128,12 +128,12 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: -
     
-    internal func reportProperty(for projectId: Int64) -> Property<TwoPartTimeReport?> {
+    internal func reportProperty(for projectId: Int64) -> Property<TwoPartTimeReport> {
         if let property = reportProperties[projectId] {
             return property
         } else {
             let zeroTimeReport = TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today, workedTimeUntilYesterday: 0, workedTimeToday: 0)
-            let property = Property<TwoPartTimeReport?>(value: zeroTimeReport)
+            let property = Property<TwoPartTimeReport>(value: zeroTimeReport)
             reportProperties[projectId] = property
             return property
         }
