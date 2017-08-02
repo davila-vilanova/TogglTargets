@@ -291,20 +291,20 @@
 		637A32331EE16E7600667FC3 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
-				637A32351EE16FD600667FC3 /* EmptySelectionViewController.swift */,
-				637A32361EE16FD600667FC3 /* GoalProgressViewController.swift */,
-				637A32371EE16FD600667FC3 /* GoalReportViewController.swift */,
-				637A32381EE16FD600667FC3 /* GoalStrategyViewController.swift */,
-				637A32391EE16FD600667FC3 /* GoalViewController.swift */,
-				637A323A1EE16FD600667FC3 /* ProjectDetailsViewController.swift */,
-				637A323B1EE16FD600667FC3 /* ProjectsListViewController.swift */,
 				637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */,
-				637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */,
-				637A32521EE1727600667FC3 /* ProjectCollectionViewHeader.swift */,
+				637A323B1EE16FD600667FC3 /* ProjectsListViewController.swift */,
 				637A32531EE1727600667FC3 /* ProjectCollectionViewHeader.xib */,
-				637A32541EE1727600667FC3 /* ProjectCollectionViewItem.swift */,
+				637A32521EE1727600667FC3 /* ProjectCollectionViewHeader.swift */,
 				637A32551EE1727600667FC3 /* ProjectCollectionViewItem.xib */,
+				637A32541EE1727600667FC3 /* ProjectCollectionViewItem.swift */,
+				637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */,
+				637A32351EE16FD600667FC3 /* EmptySelectionViewController.swift */,
+				637A323A1EE16FD600667FC3 /* ProjectDetailsViewController.swift */,
+				637A32391EE16FD600667FC3 /* GoalViewController.swift */,
+				637A32371EE16FD600667FC3 /* GoalReportViewController.swift */,
+				637A32361EE16FD600667FC3 /* GoalProgressViewController.swift */,
+				637A32381EE16FD600667FC3 /* GoalStrategyViewController.swift */,
+				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
 				637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */,
 			);
 			name = "View Controllers";
