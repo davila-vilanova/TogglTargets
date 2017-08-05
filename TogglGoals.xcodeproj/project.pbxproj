@@ -84,6 +84,10 @@
 		63B771A11ED365A1005739CF /* ProjectsByGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B7719E1ED365A1005739CF /* ProjectsByGoals.swift */; };
 		63B772151ED9DFFD005739CF /* PureLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63B772131ED9DFF5005739CF /* PureLayout.framework */; };
 		63B772161ED9DFFD005739CF /* PureLayout.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63B772131ED9DFF5005739CF /* PureLayout.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		63BBBA8F1F35E7DA00A8A174 /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8D1F35E7DA00A8A174 /* ReactiveSwift.framework */; };
+		63BBBA901F35E7DA00A8A174 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8E1F35E7DA00A8A174 /* Result.framework */; };
+		63BBBA911F35E81100A8A174 /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8D1F35E7DA00A8A174 /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		63BBBA921F35E81100A8A174 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8E1F35E7DA00A8A174 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		63CE9A1E1E3AA12200176AB4 /* APIAccessError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */; };
 		63CE9A201E3AA2F800176AB4 /* TogglAPICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */; };
 		63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A211E3B4B7300176AB4 /* ModelCache.swift */; };
@@ -118,6 +122,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				63BBBA911F35E81100A8A174 /* ReactiveSwift.framework in Embed Frameworks */,
+				63BBBA921F35E81100A8A174 /* Result.framework in Embed Frameworks */,
 				63B772161ED9DFFD005739CF /* PureLayout.framework in Embed Frameworks */,
 				632EEBEE1E42789100608D01 /* SQLite.framework in Embed Frameworks */,
 			);
@@ -184,6 +190,8 @@
 		63B5D8B61E4901D000042897 /* TogglAPIAccessOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPIAccessOperation.swift; sourceTree = "<group>"; };
 		63B7719E1ED365A1005739CF /* ProjectsByGoals.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsByGoals.swift; sourceTree = "<group>"; };
 		63B772131ED9DFF5005739CF /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/Mac/PureLayout.framework; sourceTree = "<group>"; };
+		63BBBA8D1F35E7DA00A8A174 /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = Carthage/Build/Mac/ReactiveSwift.framework; sourceTree = "<group>"; };
+		63BBBA8E1F35E7DA00A8A174 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/Mac/Result.framework; sourceTree = "<group>"; };
 		63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIAccessError.swift; sourceTree = "<group>"; };
 		63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63CE9A211E3B4B7300176AB4 /* ModelCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCache.swift; sourceTree = "<group>"; };
@@ -197,6 +205,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63BBBA8F1F35E7DA00A8A174 /* ReactiveSwift.framework in Frameworks */,
+				63BBBA901F35E7DA00A8A174 /* Result.framework in Frameworks */,
 				63B772151ED9DFFD005739CF /* PureLayout.framework in Frameworks */,
 				632EEBED1E42789100608D01 /* SQLite.framework in Frameworks */,
 			);
@@ -336,6 +346,8 @@
 		63EAD8DA1DC6A97C001E7889 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				63BBBA8D1F35E7DA00A8A174 /* ReactiveSwift.framework */,
+				63BBBA8E1F35E7DA00A8A174 /* Result.framework */,
 				63B772131ED9DFF5005739CF /* PureLayout.framework */,
 				632EEBE81E42786100608D01 /* SQLite.framework */,
 				632EEBF11E4278F300608D01 /* SQLite.framework.dSYM */,

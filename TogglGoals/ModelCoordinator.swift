@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ReactiveSwift
 
 // ModelCoordinator is not thread safe
 internal class ModelCoordinator: NSObject {
