@@ -88,6 +88,7 @@
 		63BBBA901F35E7DA00A8A174 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8E1F35E7DA00A8A174 /* Result.framework */; };
 		63BBBA911F35E81100A8A174 /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8D1F35E7DA00A8A174 /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		63BBBA921F35E81100A8A174 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8E1F35E7DA00A8A174 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		63BBBA941F37ACF600A8A174 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BBBA931F37ACF600A8A174 /* NSViewControllerExtensions.swift */; };
 		63CE9A1E1E3AA12200176AB4 /* APIAccessError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */; };
 		63CE9A201E3AA2F800176AB4 /* TogglAPICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */; };
 		63CE9A221E3B4B7300176AB4 /* ModelCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE9A211E3B4B7300176AB4 /* ModelCache.swift */; };
@@ -192,6 +193,7 @@
 		63B772131ED9DFF5005739CF /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/Mac/PureLayout.framework; sourceTree = "<group>"; };
 		63BBBA8D1F35E7DA00A8A174 /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = Carthage/Build/Mac/ReactiveSwift.framework; sourceTree = "<group>"; };
 		63BBBA8E1F35E7DA00A8A174 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/Mac/Result.framework; sourceTree = "<group>"; };
+		63BBBA931F37ACF600A8A174 /* NSViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NSViewControllerExtensions.swift; path = ViewControllers/NSViewControllerExtensions.swift; sourceTree = "<group>"; };
 		63CE9A1D1E3AA12200176AB4 /* APIAccessError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIAccessError.swift; sourceTree = "<group>"; };
 		63CE9A1F1E3AA2F800176AB4 /* TogglAPICredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63CE9A211E3B4B7300176AB4 /* ModelCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelCache.swift; sourceTree = "<group>"; };
@@ -316,6 +318,7 @@
 				637A32381EE16FD600667FC3 /* GoalStrategyViewController.swift */,
 				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
 				637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */,
+				63BBBA931F37ACF600A8A174 /* NSViewControllerExtensions.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -513,6 +516,7 @@
 				63593AE61E511AD0000473CC /* CollectionOperation.swift in Sources */,
 				63B5D8AB1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */,
 				637A32441EE16FD600667FC3 /* GoalReportViewController.swift in Sources */,
+				63BBBA941F37ACF600A8A174 /* NSViewControllerExtensions.swift in Sources */,
 				636ABD4D1DBE3162002C42BE /* Model.swift in Sources */,
 				637A32421EE16FD600667FC3 /* GoalProgressViewController.swift in Sources */,
 				639FD05F1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */,

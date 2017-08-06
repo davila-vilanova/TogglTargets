@@ -53,7 +53,11 @@ extension ProjectsByGoals {
         case withoutGoal = 1
     }
     
-    func project(for indexPath: IndexPath) -> Project? {
+    func project(for indexPath: IndexPath?) -> Project? {
+        guard let indexPath = indexPath else {
+            return nil
+        }
+
         let projectIds: ArraySlice<Int64>
         switch indexPath.section {
         case 0: projectIds = idsOfProjectsWithGoals

@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ReactiveSwift
 
 fileprivate let ProjectDetailsVCContainment = "ProjectDetailsVCContainment"
 fileprivate let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
@@ -44,14 +45,27 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining,
         }
     }
 
-    internal var selection: Project? {
+    private var selectedProjectObservationDisposable: Disposable?
+    internal var selectedProject: MutableProperty<Project?>? {
         didSet {
-            if let project = selection {
-                projectDetailsViewController.representedProject = project
-                displayController(projectDetailsViewController, in: view)
-            } else {
-                displayController(emptySelectionViewController, in: view)
+            // Propagate
+            projectDetailsViewController.selectedProject = selectedProject
+
+            // Process
+            if let disposable = selectedProjectObservationDisposable {
+                disposable.dispose()
             }
+            guard let project = selectedProject else {
+                selectedProjectObservationDisposable = nil
+                return
+            }
+            selectedProjectObservationDisposable = project.producer.observe(on: UIScheduler()).startWithValues({ [weak self] (project) in
+                guard let s = self else {
+                    return
+                }
+                let viewController = (project == nil) ? s.emptySelectionViewController : s.projectDetailsViewController
+                displayController(viewController, in: s.view)
+            })
         }
     }
 

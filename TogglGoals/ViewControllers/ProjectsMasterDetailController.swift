@@ -48,7 +48,7 @@ class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorCon
     override func viewDidLoad() {
         super.viewDidLoad()
         setupModelCoordinatorInChildControllers()
-        setupProjectSelectionClosure()
+        setupSelectedProjectProperty()
     }
 
     private func setupModelCoordinatorInChildControllers() {
@@ -59,10 +59,7 @@ class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorCon
         }
     }
 
-    private func setupProjectSelectionClosure() {
-        projectsListViewController.didSelectProject = { [weak self] project in
-            guard let s = self else { return }
-            s.selectionDetailViewController.selection = project
-        }
+    private func setupSelectedProjectProperty() {
+        selectionDetailViewController.selectedProject = projectsListViewController.selectedProject
     }
 }

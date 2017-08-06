@@ -22,8 +22,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     private let uiScheduler = UIScheduler()
 
-    internal var didSelectProject: ( (Project?) -> () )?
-
     private var modelCoordinatorObservationDisposables = [Disposable]()
     var modelCoordinator: ModelCoordinator? {
         didSet {
@@ -50,6 +48,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             }
         }
     }
+
+    internal var selectedProject = MutableProperty<Project?>(nil)
 
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
     
@@ -89,19 +89,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
      }
 
     private func updateSelection() {
-        guard let didSelectProject = self.didSelectProject else {
-            return
-        }
-        
-        guard let indexPath = projectsCollectionView.selectionIndexPaths.first else {
-            didSelectProject(nil)
-            return
-        }
-
-        didSelectProject(modelCoordinator?.projects.project(for: indexPath))
+        let indexPath = projectsCollectionView.selectionIndexPaths.first
+        selectedProject.value = modelCoordinator?.projects.project(for: indexPath)
     }
-    
-    
+
     // MARK: - NSCollectionViewDataSource
     
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
