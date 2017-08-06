@@ -7,7 +7,7 @@
 //
 
 import Cocoa
-
+import ReactiveSwift
 
 enum SectionIndex: Int {
     case projectsWithGoals = 0
@@ -18,7 +18,9 @@ fileprivate let NumberOfSections = 2
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, ModelCoordinatorContaining {
     private let projectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
     private let sectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
-    
+
+    private let uiScheduler = UIScheduler()
+
     internal var didSelectProject: ( (Project?) -> () )?
 
     var modelCoordinator: ModelCoordinator? {
@@ -46,29 +48,18 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         bindToProjects()
     }
 
-    private var observedProjects: ObservedProperty<ProjectsByGoals>?
-    
     private func bindToProjects() {
-        guard observedProjects == nil,
-            let projectsProperty = modelCoordinator?.projects else {
+        guard let modelCoordinator = modelCoordinator else {
             return
         }
-        
-        let valueObserver = { [weak self] (op: ObservedProperty<ProjectsByGoals>) in
-            if let clue = op.original?.collectionUpdateClue {
-                self?.refresh(with: clue)
-                op.original?.collectionUpdateClue = nil // TODO
-            } else {
-                self?.refresh()
-            }
+
+        modelCoordinator.fullProjectsUpdateSignal.observe(on: uiScheduler).observeValues { [weak self] _ in
+            self?.refresh()
         }
-        
-        observedProjects =
-            ObservedProperty<ProjectsByGoals>(original: projectsProperty,
-                                              valueObserver: valueObserver,
-                                              invalidationObserver: { [weak self] in
-                                                self?.observedProjects = nil
-            })
+
+        modelCoordinator.cluedProjectsUpdateSignal.observe(on: uiScheduler).observeValues { [weak self] (clue) in
+            self?.refresh(with: clue)
+        }
     }
 
     fileprivate func refresh(with providedClue: CollectionUpdateClue? = nil) {
@@ -101,8 +92,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             didSelectProject(nil)
             return
         }
-        
-        didSelectProject(observedProjects?.original?.value?.project(for: indexPath))
+
+        didSelectProject(modelCoordinator?.projects.project(for: indexPath))
     }
     
     
@@ -113,7 +104,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let projectsByGoals = observedProjects?.original?.value else {
+        guard let projectsByGoals = modelCoordinator?.projects else {
             return 0
         }
         switch SectionIndex(rawValue: section)! {
@@ -126,7 +117,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
         
-        if let project = observedProjects?.original?.value?.project(for: indexPath) {
+        if let project = modelCoordinator?.projects.project(for: indexPath) {
             projectItem.projectName = project.name
             projectItem.goalProperty = modelCoordinator?.goalProperty(for: project.id)
             projectItem.reportProperty = modelCoordinator?.reportProperty(for: project.id)

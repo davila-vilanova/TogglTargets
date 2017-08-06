@@ -9,7 +9,7 @@
 import Foundation
 
 struct ProjectsByGoals {
-    var projects: Dictionary<Int64, Project>! {
+    var projects: [Int64 : Project] {
         didSet {
             sortProjectIds()
         }
@@ -29,15 +29,17 @@ struct ProjectsByGoals {
             idsOfProjectsWithoutGoals = sortedProjectIds.suffix(sortedProjectIds.count - indexOfFirstProjectWithoutGoal)
         }
     }
-    var idsOfProjectsWithGoals: ArraySlice<Int64>!
-    var idsOfProjectsWithoutGoals: ArraySlice<Int64>!
+    var idsOfProjectsWithGoals = ArraySlice<Int64>()
+    var idsOfProjectsWithoutGoals = ArraySlice<Int64>()
     
     typealias ProjectIdHasGoalFunction = (Int64) -> Bool
     let hasGoal: ProjectIdHasGoalFunction
     typealias ProjectIdsGoalsAreInIncreasingOrderFunction = (Int64, Int64) -> Bool
     let areGoalsInIncreasingOrder: ProjectIdsGoalsAreInIncreasingOrderFunction
     
-    init(projects: Dictionary<Int64, Project>, hasGoal: @escaping ProjectIdHasGoalFunction,         areGoalsInIncreasingOrder: @escaping ProjectIdsGoalsAreInIncreasingOrderFunction) {
+    init(projects: [Int64 : Project] = [Int64 : Project](),
+         hasGoal: @escaping ProjectIdHasGoalFunction = { _ in false },
+         areGoalsInIncreasingOrder: @escaping ProjectIdsGoalsAreInIncreasingOrderFunction = { _, _ in false }) {
         self.hasGoal = hasGoal
         self.areGoalsInIncreasingOrder = areGoalsInIncreasingOrder
         self.projects = projects

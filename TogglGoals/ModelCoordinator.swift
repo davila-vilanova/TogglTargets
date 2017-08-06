@@ -8,14 +8,29 @@
 
 import Foundation
 import ReactiveSwift
+import Result
 
 // ModelCoordinator is not thread safe
 internal class ModelCoordinator: NSObject {
     private let goalsStore: GoalsStore
 
     internal var profileProperty = Property<Profile>(value: nil)
-    internal var projects = Property<ProjectsByGoals>(value: nil)
-    
+
+    // MARK: - Projects and updates
+    internal private(set) var projects = ProjectsByGoals()
+
+    private var fullProjectsUpdate = Signal<ProjectsByGoals, NoError>.pipe()
+    internal var fullProjectsUpdateSignal: Signal<ProjectsByGoals, NoError> {
+        return fullProjectsUpdate.output
+    }
+
+    private var cluedProjectsUpdate = Signal<CollectionUpdateClue, NoError>.pipe()
+    internal var cluedProjectsUpdateSignal: Signal<CollectionUpdateClue, NoError> {
+        return cluedProjectsUpdate.output
+    }
+    // MARK : -
+
+
     private var observedGoals = Dictionary<Int64, ObservedProperty<TimeGoal>>()
     
     private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport>>()
@@ -76,7 +91,8 @@ internal class ModelCoordinator: NSObject {
                 guard let s = self else {
                     return
                 }
-                s.projects.value = ProjectsByGoals(projects: projects, goalsStore: s.goalsStore)
+                s.projects = ProjectsByGoals(projects: projects, goalsStore: s.goalsStore)
+                s.fullProjectsUpdate.input.send(value: s.projects)
             }
         }
 
@@ -118,13 +134,9 @@ internal class ModelCoordinator: NSObject {
     }
 
     private func goalChanged(for projectId: Int64) {
-        guard var projects = self.projects.value else {
-            return
-        }
         let indexPaths = projects.moveProjectAfterGoalChange(projectId: projectId)!
         let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
-        self.projects.collectionUpdateClue = clue
-        self.projects.value = projects
+        cluedProjectsUpdate.input.send(value: clue)
     }
 
     // MARK: -
