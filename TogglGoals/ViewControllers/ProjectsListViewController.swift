@@ -8,6 +8,7 @@
 
 import Cocoa
 import ReactiveSwift
+import Result
 
 enum SectionIndex: Int {
     case projectsWithGoals = 0
@@ -23,10 +24,29 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     internal var didSelectProject: ( (Project?) -> () )?
 
+    private var modelCoordinatorObservationDisposables = [Disposable]()
     var modelCoordinator: ModelCoordinator? {
         didSet {
-            if (isViewLoaded) {
-                bindToProjects()
+            modelCoordinatorObservationDisposables.forEach { disposable in
+                disposable.dispose()
+            }
+            modelCoordinatorObservationDisposables.removeAll()
+
+            guard let mc = modelCoordinator else {
+                return
+            }
+
+            func observeValues<T>(from signal: Signal<T, NoError>, _ action: @escaping (T) -> ()) {
+                if let disposable = signal.observe(on: uiScheduler).observeValues(action) {
+                    modelCoordinatorObservationDisposables.append(disposable)
+                }
+            }
+
+            observeValues(from: mc.fullProjectsUpdateSignal) { [weak self] _ in
+                self?.reloadList()
+            }
+            observeValues(from: mc.cluedProjectsUpdateSignal) { [weak self] clue in
+                self?.updateList(with: clue)
             }
         }
     }
@@ -44,37 +64,22 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         let headerNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewHeader"), bundle: nil)!
         projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: sectionHeaderIdentifier)
-        
-        bindToProjects()
+
+        reloadList()
     }
 
-    private func bindToProjects() {
-        guard let modelCoordinator = modelCoordinator else {
-            return
-        }
-
-        modelCoordinator.fullProjectsUpdateSignal.observe(on: uiScheduler).observeValues { [weak self] _ in
-            self?.refresh()
-        }
-
-        modelCoordinator.cluedProjectsUpdateSignal.observe(on: uiScheduler).observeValues { [weak self] (clue) in
-            self?.refresh(with: clue)
-        }
+    private func reloadList() {
+        projectsCollectionView.reloadData()
+        updateSelection()
     }
 
-    fileprivate func refresh(with providedClue: CollectionUpdateClue? = nil) {
-        guard let clue = providedClue else {
-            projectsCollectionView.reloadData()
-            updateSelection()
-            return
-        }
+    private func updateList(with clue: CollectionUpdateClue) {
+        // First move items that have moved, then delete items at old index paths, finally add items at new index paths
         if let moved = clue.movedItems {
             for (oldIndexPath, newIndexPath) in moved {
                 projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
             }
         }
-
-        // First delete items at old index paths, then add items at new index paths
         if let removed = clue.removedItems {
             projectsCollectionView.animator().deleteItems(at: removed)
         }
@@ -82,7 +87,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             projectsCollectionView.animator().insertItems(at: added)
         }
      }
-    
+
     private func updateSelection() {
         guard let didSelectProject = self.didSelectProject else {
             return
