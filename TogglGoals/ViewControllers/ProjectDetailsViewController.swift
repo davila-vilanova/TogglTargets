@@ -51,52 +51,24 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     
     // MARK: - Represented data
 
-    private var selectedProjectObservationDisposable: Disposable?
-    var selectedProject: MutableProperty<Project?>? {
-        didSet {
-            // TODO: Propagate
-
-            // Process
-            if let disposable = selectedProjectObservationDisposable {
-                disposable.dispose()
-            }
-            guard let project = selectedProject else {
-                selectedProjectObservationDisposable = nil
-                return
-            }
-            selectedProjectObservationDisposable = project.producer.observe(on: UIScheduler()).startWithValues({ [weak self] (project) in
-                guard let project = project,
-                    let s = self else {
-                        return
-                }
-
-                s.onViewLoaded {
-                    guard let mc = s.modelCoordinator else {
-                            return
-                    }
-                    if let name = project.name {
-                        s.projectName.stringValue = name
-                    } else {
-                        s.projectName.stringValue = "(no name)"
-                    }
-
-                    let goalProperty = mc.goalProperty(for: project.id)
-                    s.observeGoalProperty(goalProperty).reportImmediately()
-                    s.goalViewController.goalProperty = goalProperty
-
-                    let reportProperty = mc.reportProperty(for: project.id)
-                    s.goalReportViewController.setGoalProperty(goalProperty, reportProperty: reportProperty)
-                }
-            })
-        }
+    internal func setSelectedProject(_ project: MutableProperty<Project?>) {
+        selectedProject <~ project
     }
-    
+
+    private var selectedProject = MutableProperty<Project?>(nil)
+
     private var observedGoalProperty: ObservedProperty<TimeGoal>?
 
     
     //  MARK: - Infrastructure
     
-    var modelCoordinator: ModelCoordinator?
+    var modelCoordinator: ModelCoordinator? {
+        didSet {
+            modelCoordinatorP.value = modelCoordinator
+        }
+    }
+    var modelCoordinatorP = MutableProperty<ModelCoordinator?>(nil)
+
     var now = Date()
     private lazy var calendar: Calendar = {
         var calendar = Calendar(identifier: .iso8601)
@@ -105,7 +77,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     }()
 
     let strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601))
-    
+
     
     //  MARK: -
     
@@ -115,7 +87,21 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         for identifier in [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment] {
             performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
         }
+
+        selectedProject.producer.observe(on: UIScheduler()).startWithValues { [weak self] projectOrNil in
+            self?.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
+        }
+
+        let modelCoordinatorAndProjectAvailable = SignalProducer.combineLatest(modelCoordinatorP.producer.filter { $0 != nil }, selectedProject.producer.filter { $0 != nil })
+        modelCoordinatorAndProjectAvailable.startWithValues { [weak self] (modelCoordinator, project) in
+            let goalProperty = modelCoordinator!.goalProperty(for: project!.id)
+            self?.observeGoalProperty(goalProperty).reportImmediately()
+            self?.goalViewController.goalProperty = goalProperty
+            let reportProperty = modelCoordinator!.reportProperty(for: project!.id)
+            self?.goalReportViewController.setGoalProperty(goalProperty, reportProperty: reportProperty)
+        }
     }
+
 
     @discardableResult
     private func observeGoalProperty(_ goalProperty: Property<TimeGoal>) -> ObservedProperty<TimeGoal> {
@@ -150,7 +136,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     func onCreateGoalAction() {
         guard observedGoalProperty?.original?.value == nil,
             let modelCoordinator = self.modelCoordinator,
-            let projectId = selectedProject?.value?.id else {
+            let projectId = selectedProject.value?.id else {
                 return
         }
         let goal = TimeGoal(forProjectId: projectId, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend)

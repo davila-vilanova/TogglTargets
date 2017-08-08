@@ -45,32 +45,23 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining,
         }
     }
 
-    private var selectedProjectObservationDisposable: Disposable?
-    internal var selectedProject: MutableProperty<Project?>? {
-        didSet {
-            // Propagate
-            projectDetailsViewController.selectedProject = selectedProject
-
-            // Process
-            if let disposable = selectedProjectObservationDisposable {
-                disposable.dispose()
-            }
-            guard let project = selectedProject else {
-                selectedProjectObservationDisposable = nil
-                return
-            }
-            selectedProjectObservationDisposable = project.producer.observe(on: UIScheduler()).startWithValues({ [weak self] (project) in
-                guard let s = self else {
-                    return
-                }
-                let viewController = (project == nil) ? s.emptySelectionViewController : s.projectDetailsViewController
-                displayController(viewController, in: s.view)
-            })
-        }
+    internal func setSelectedProject(_ project: MutableProperty<Project?>) {
+        selectedProject <~ project
     }
+    private var selectedProject = MutableProperty<Project?>(nil)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeControllerContainment(containmentIdentifiers: [ProjectDetailsVCContainment, EmtpySelectionVCContainment])
+
+        projectDetailsViewController.setSelectedProject(selectedProject)
+
+        selectedProject.producer.observe(on: UIScheduler()).startWithValues { [weak self] projectOrNil in
+            guard let s = self else {
+                return
+            }
+            let viewController = (projectOrNil == nil) ? s.emptySelectionViewController : s.projectDetailsViewController
+            displayController(viewController, in: s.view)
+        }
     }
 }

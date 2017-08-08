@@ -60,6 +60,6 @@ class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorCon
     }
 
     private func setupSelectedProjectProperty() {
-        selectionDetailViewController.selectedProject = projectsListViewController.selectedProject
+        selectionDetailViewController.setSelectedProject(projectsListViewController.selectedProject)
     }
 }
