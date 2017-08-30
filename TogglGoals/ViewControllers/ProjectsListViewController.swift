@@ -16,7 +16,7 @@ enum SectionIndex: Int {
 }
 fileprivate let NumberOfSections = 2
 
-class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, ModelCoordinatorContaining {
+class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate {
     private let projectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
     private let sectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
 
@@ -40,10 +40,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                 }
             }
 
-            observeValues(from: mc.fullProjectsUpdateSignal) { [weak self] _ in
+            observeValues(from: mc.fullProjectsUpdate) { [weak self] _ in
                 self?.reloadList()
             }
-            observeValues(from: mc.cluedProjectsUpdateSignal) { [weak self] clue in
+            observeValues(from: mc.cluedProjectsUpdate) { [weak self] clue in
                 self?.updateList(with: clue)
             }
         }
@@ -90,7 +90,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     private func updateSelection() {
         let indexPath = projectsCollectionView.selectionIndexPaths.first
-        selectedProject.value = modelCoordinator?.projects.project(for: indexPath)
+        selectedProject.value = modelCoordinator?.projectsByGoals.project(for: indexPath)
     }
 
     // MARK: - NSCollectionViewDataSource
@@ -100,7 +100,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let projectsByGoals = modelCoordinator?.projects else {
+        guard let projectsByGoals = modelCoordinator?.projectsByGoals else {
             return 0
         }
         switch SectionIndex(rawValue: section)! {
@@ -112,13 +112,13 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
-        
-        if let project = modelCoordinator?.projects.project(for: indexPath) {
-            projectItem.projectName = project.name
-            projectItem.goalProperty = modelCoordinator?.goalProperty(for: project.id)
-            projectItem.reportProperty = modelCoordinator?.reportProperty(for: project.id)
-        }
-        
+
+        let modelCoordinator = self.modelCoordinator!
+        let project = modelCoordinator.projectsByGoals.project(for: indexPath)!
+        projectItem.bindExclusivelyTo(project: project,
+                                      goal: modelCoordinator.goalProperty(for: project.id),
+                                      report: modelCoordinator.reportProperty(for: project.id))
+
         return projectItem
     }
 

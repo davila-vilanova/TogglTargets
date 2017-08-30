@@ -9,13 +9,15 @@
 import Cocoa
 import PureLayout
 import ReactiveSwift
+import ReactiveCocoa
+import Result
 
 fileprivate let GoalVCContainment = "GoalVCContainment"
 fileprivate let GoalReportVCContainment = "GoalReportVCContainment"
 fileprivate let NoGoalVCContainment = "NoGoalVCContainment"
 
-class ProjectDetailsViewController: NSViewController, ViewControllerContaining, ModelCoordinatorContaining, GoalViewControllerDelegate, NoGoalViewControllerDelegate {
-    
+class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
+
     // MARK: - Outlets
     
     @IBOutlet weak var projectName: NSTextField!
@@ -24,103 +26,13 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
 
     
     // MARK: - Contained view controllers
-    
-    var goalViewController: GoalViewController! {
-        didSet {
-            goalViewController.calendar = calendar
-            goalViewController.strategyComputer = strategyComputer
-            goalViewController.delegate = self
-            displayController(goalViewController, in: goalView)
-        }
-    }
-    
-    var goalReportViewController: GoalReportViewController! {
-        didSet {
-            goalReportViewController.calendar = calendar
-            goalReportViewController.strategyComputer = strategyComputer
-            goalReportViewController.now = now
-            goalReportViewController.runningEntryProperty = modelCoordinator!.runningEntry
-        }
-    }
-    var noGoalViewController: NoGoalViewController! {
-        didSet {
-            noGoalViewController.delegate = self
-        }
-    }
 
-    
-    // MARK: - Represented data
+    var goalViewController: GoalViewController!
 
-    internal func setSelectedProject(_ project: MutableProperty<Project?>) {
-        selectedProject <~ project
-    }
+    var goalReportViewController: GoalReportViewController!
 
-    private var selectedProject = MutableProperty<Project?>(nil)
+    var noGoalViewController: NoGoalViewController!
 
-    private var observedGoalProperty: ObservedProperty<TimeGoal>?
-
-    
-    //  MARK: - Infrastructure
-    
-    var modelCoordinator: ModelCoordinator? {
-        didSet {
-            modelCoordinatorP.value = modelCoordinator
-        }
-    }
-    var modelCoordinatorP = MutableProperty<ModelCoordinator?>(nil)
-
-    var now = Date()
-    private lazy var calendar: Calendar = {
-        var calendar = Calendar(identifier: .iso8601)
-        calendar.locale = Locale.autoupdatingCurrent
-        return calendar
-    }()
-
-    let strategyComputer = StrategyComputer(calendar: Calendar(identifier: .iso8601))
-
-    
-    //  MARK: -
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        for identifier in [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment] {
-            performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
-        }
-
-        selectedProject.producer.observe(on: UIScheduler()).startWithValues { [weak self] projectOrNil in
-            self?.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
-        }
-
-        let modelCoordinatorAndProjectAvailable = SignalProducer.combineLatest(modelCoordinatorP.producer.filter { $0 != nil }, selectedProject.producer.filter { $0 != nil })
-        modelCoordinatorAndProjectAvailable.startWithValues { [weak self] (modelCoordinator, project) in
-            let goalProperty = modelCoordinator!.goalProperty(for: project!.id)
-            self?.observeGoalProperty(goalProperty).reportImmediately()
-            self?.goalViewController.goalProperty = goalProperty
-            let reportProperty = modelCoordinator!.reportProperty(for: project!.id)
-            self?.goalReportViewController.setGoalProperty(goalProperty, reportProperty: reportProperty)
-        }
-    }
-
-
-    @discardableResult
-    private func observeGoalProperty(_ goalProperty: Property<TimeGoal>) -> ObservedProperty<TimeGoal> {
-        func goalDidChange(_ observedGoal: ObservedProperty<TimeGoal>?) {
-            let goalExists = (observedGoal?.original?.value != nil)
-            let controller = goalExists ? goalReportViewController : noGoalViewController
-            displayController(controller, in: goalReportView)
-        }
-        
-        func goalWasInvalidated() {
-            goalDidChange(nil)
-        }
-        
-        observedGoalProperty?.unobserve()
-        let observed = ObservedProperty<TimeGoal>(original: goalProperty, valueObserver: goalDidChange, invalidationObserver: goalWasInvalidated)
-        observedGoalProperty = observed
-        return observed
-    }
-    
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
         switch controller {
         case _ where (controller as? GoalViewController) != nil:
@@ -132,23 +44,109 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         default: break
         }
     }
-    
-    func onCreateGoalAction() {
-        guard observedGoalProperty?.original?.value == nil,
-            let modelCoordinator = self.modelCoordinator,
-            let projectId = selectedProject.value?.id else {
-                return
-        }
-        let goal = TimeGoal(forProjectId: projectId, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend)
-        modelCoordinator.setNewGoal(goal)
+
+    private func setupConnectionsToContainedViewControllers() {
+        goalViewController.goal <~ goal
+        goalViewController.userUpdates.observe(goalUserUpdatesPipe.input)
+
+        goalReportViewController.goal <~ goal
+        goalReportViewController.report <~ report
+        goalReportViewController.calendar <~ calendar
+        goalReportViewController.now <~ now
+        goalReportViewController.runningEntry <~ runningEntry
+
+        noGoalViewController.projectId <~ _project.map { $0?.id }
+        noGoalViewController.goalCreated.map { Optional($0) }.observe(goalUserUpdatesPipe.input)
     }
-    
-    func onDeleteGoalAction() {
-        guard let goal = observedGoalProperty?.original?.value,
-            let modelCoordinator = self.modelCoordinator else {
-                return
+
+    private func setupContainedViewControllerVisibility() {
+        displayController(goalViewController, in: goalView) // Displays always
+
+        goal.producer.filter { $0 == nil }.observe(on: UIScheduler()).startWithValues { [weak self] _ in
+            guard let vc = self else { return }
+            displayController(vc.noGoalViewController, in: vc.goalReportView)
         }
-        modelCoordinator.deleteGoal(goal)
+
+        goal.producer.filter { $0 != nil }.observe(on: UIScheduler()).startWithValues { [weak self] _ in
+            guard let vc = self else { return }
+            displayController(vc.goalReportViewController, in: vc.goalReportView)
+        }
+    }
+
+    // MARK: - Data flow from parent view controller
+
+    var project: BindingTarget<Project?> { return _project.bindingTarget }
+
+
+    // MARK: - Data flow to contained view controllers
+
+    private let goal = MutableProperty<TimeGoal?>(nil)
+    private let report = MutableProperty<TwoPartTimeReport?>(nil)
+    private let goalProgress = MutableProperty<GoalProgress?>(nil)
+    private let goalStrategy = MutableProperty<GoalStrategy?>(nil)
+    private let dayProgress = MutableProperty<DayProgress?>(nil)
+    private let _project = MutableProperty<Project?>(nil)
+    private let calendar = MutableProperty<Calendar?>(nil)
+    private let now = MutableProperty<Date?>(nil)
+    private let runningEntry = MutableProperty<RunningEntry?>(nil)
+
+
+    // MARK: - Data flow from contained view controllers
+
+    private let goalUserUpdatesPipe = Signal<TimeGoal?, NoError>.pipe()
+
+
+    // MARK: - ModelCoordinator
+
+    var modelCoordinator: ModelCoordinator? {
+        didSet {
+            setupDataFlowWithModelCoordinator()
+        }
+    }
+
+    private var exclusiveBindingDisposables = DisposableBag()
+    private func setupDataFlowWithModelCoordinator() {
+        guard let modelCoordinator = modelCoordinator else {
+            return
+        }
+        calendar <~ modelCoordinator.calendar
+        now <~ modelCoordinator.now
+        runningEntry <~ modelCoordinator.runningEntry
+
+        _project.producer.skipNil().startWithValues { [weak self] projectValue in
+            guard let projectDetailsVC = self else {
+                return
+            }
+            let goalForThisProject = modelCoordinator.goalProperty(for: projectValue.id)
+            let reportForThisProject = modelCoordinator.reportProperty(for: projectValue.id)
+
+            projectDetailsVC.exclusiveBindingDisposables.disposeAll()
+
+            // Bindings from MC
+            projectDetailsVC.exclusiveBindingDisposables.put(projectDetailsVC.goal <~ goalForThisProject)
+            projectDetailsVC.exclusiveBindingDisposables.put(projectDetailsVC.report <~ reportForThisProject)
+
+            // Bindings to MC
+            projectDetailsVC.exclusiveBindingDisposables.put(goalForThisProject.bindingTarget <~ projectDetailsVC.goalUserUpdatesPipe.output)
+        }
+    }
+
+
+    //  MARK: -
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        initializeControllerContainment(containmentIdentifiers: [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment])
+        setupLocalProjectDisplay()
+        setupConnectionsToContainedViewControllers()
+        setupContainedViewControllerVisibility()
+    }
+
+    private func setupLocalProjectDisplay() {
+        _project.producer.observe(on: UIScheduler()).startWithValues { [weak self] projectOrNil in
+            self?.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
+        }
     }
 }
 

@@ -7,70 +7,29 @@
 //
 
 import Cocoa
+import ReactiveSwift
+import ReactiveCocoa
 
-class ProjectCollectionViewItem: NSCollectionViewItem
-{
+class ProjectCollectionViewItem: NSCollectionViewItem {
+
+    private var goal = MutableProperty<TimeGoal?>(nil)
+    private var report = MutableProperty<TwoPartTimeReport?>(nil)
+
+    internal func bindExclusivelyTo(project: Project?,
+                                    goal: MutableProperty<TimeGoal?>,
+                                    report: MutableProperty<TwoPartTimeReport?>) {
+        bindingDisposables.disposeAll()
+
+        projectNameLabel.stringValue = project?.name ?? "(no name)"
+        bindingDisposables.put(self.goal <~ goal)
+        bindingDisposables.put(self.report <~ report)
+    }
+
+    private var bindingDisposables = DisposableBag()
+
     @IBOutlet weak var projectNameLabel: NSTextField!
     @IBOutlet weak var goalLabel: NSTextField!
     @IBOutlet weak var reportLabel: NSTextField!
-
-    var projectName: String? {
-        didSet {
-            if isViewLoaded {
-                let value: String
-                if let name = projectName {
-                    value = name
-                } else {
-                    value = "---"
-                }
-                projectNameLabel.stringValue = value
-            }
-        }
-    }
-
-    private var observedGoalProperty: ObservedProperty<TimeGoal>?
-    internal var goalProperty: Property<TimeGoal>? {
-        set {
-            observedGoalProperty?.unobserve()
-
-            if let p = newValue {
-                observedGoalProperty =
-                    ObservedProperty(original: p,
-                                     valueObserver: {[weak self] (op) in
-                                        let goal = op.original?.value
-                                        self?.updateGoalLabel(goal: goal)
-                    },
-                                     invalidationObserver: {
-
-                    }).reportImmediately()
-            }
-        }
-        get {
-            return observedGoalProperty?.original
-        }
-    }
-
-    private var observedReportProperty: ObservedProperty<TwoPartTimeReport>?
-    internal var reportProperty: Property<TwoPartTimeReport>? {
-        set {
-            observedReportProperty?.unobserve()
-            
-            if let p = newValue {
-                observedReportProperty =
-                    ObservedProperty(original: p,
-                                     valueObserver: {[weak self] (op) in
-                                        let report = op.original?.value
-                                        self?.updateReportLabel(report: report)
-                    },
-                                     invalidationObserver: {
-
-                    }).reportImmediately()
-            }
-        }
-        get {
-            return observedReportProperty?.original
-        }
-    }
 
     override var textField: NSTextField? {
         get {
@@ -93,44 +52,30 @@ class ProjectCollectionViewItem: NSCollectionViewItem
         }
     }
 
+    private lazy var timeFormatter: DateComponentsFormatter = {
+        let f = DateComponentsFormatter()
+        f.allowedUnits = [.hour, .minute]
+        f.zeroFormattingBehavior = .dropAll
+        f.unitsStyle = .full
+        return f
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let name = projectName {
-            projectNameLabel.stringValue = name
-        }
-        updateGoalLabel(goal: goalProperty?.value)
-    }
 
-    private func updateGoalLabel(goal: TimeGoal?) {
-        guard isViewLoaded else {
-            return
+        goalLabel.reactive.text <~ goal.map { goal -> String in
+            if let goal = goal {
+                return "\(goal.hoursPerMonth) hours per month"
+            } else {
+                return "(no goal)"
+            }
         }
-        let newStringValue: String
-        if let g = goal {
-            newStringValue = "\(g.hoursPerMonth) hours per month"
-        } else {
-            newStringValue = "(no goal)"
-        }
-
-        DispatchQueue.main.async { [weak self, newStringValue] in
-            self?.goalLabel.stringValue = newStringValue
-        }
-    }
-
-    private func updateReportLabel(report: TimeReport?) {
-        guard isViewLoaded else {
-            return
-        }
-        let newStringValue: String
-        if let r = report {
-            let hours = r.workedTime / 3600
-            newStringValue = String.init(format: "%.2f hours worked", hours)
-        } else {
-            newStringValue = "Zero hours worked"
-        }
-
-        DispatchQueue.main.async { [weak self, newStringValue] in
-            self?.reportLabel.stringValue = newStringValue
+        reportLabel.reactive.text <~ report.map { [timeFormatter] report -> String in
+            if let report = report {
+                return "\(timeFormatter.string(from: report.workedTime) ?? "[unknown]") worked"
+            } else {
+                return "Zero hours worked"
+            }
         }
     }
 }

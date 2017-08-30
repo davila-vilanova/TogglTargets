@@ -279,6 +279,14 @@ struct TimeGoal {
     }
 }
 
+extension TimeGoal: Equatable {
+    static func ==(lhs: TimeGoal, rhs: TimeGoal) -> Bool {
+        return lhs.projectId == rhs.projectId
+        && lhs.hoursPerMonth == rhs.hoursPerMonth
+        && lhs.workWeekdays == rhs.workWeekdays
+    }
+}
+
 extension TimeGoal: CustomDebugStringConvertible {
     var debugDescription: String {
         get {

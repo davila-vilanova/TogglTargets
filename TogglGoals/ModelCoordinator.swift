@@ -14,33 +14,33 @@ import Result
 internal class ModelCoordinator: NSObject {
     private let goalsStore: GoalsStore
 
-    internal var profileProperty = Property<Profile>(value: nil)
+    internal var profile = MutableProperty<Profile?>(nil)
+
 
     // MARK: - Projects and updates
-    internal private(set) var projects = ProjectsByGoals()
 
-    private var fullProjectsUpdate = Signal<ProjectsByGoals, NoError>.pipe()
-    internal var fullProjectsUpdateSignal: Signal<ProjectsByGoals, NoError> {
-        return fullProjectsUpdate.output
+    internal private(set) var projectsByGoals = ProjectsByGoals() // Could be a mutable property even if list VCs would rather listen to full update and clued update separately
+
+    private var fullProjectsUpdatePipe = Signal<ProjectsByGoals, NoError>.pipe()
+    internal var fullProjectsUpdate: Signal<ProjectsByGoals, NoError> {
+        return fullProjectsUpdatePipe.output
     }
 
-    private var cluedProjectsUpdate = Signal<CollectionUpdateClue, NoError>.pipe()
-    internal var cluedProjectsUpdateSignal: Signal<CollectionUpdateClue, NoError> {
-        return cluedProjectsUpdate.output
+    private var cluedProjectsUpdatePipe = Signal<CollectionUpdateClue, NoError>.pipe()
+    internal var cluedProjectsUpdate: Signal<CollectionUpdateClue, NoError> {
+        return cluedProjectsUpdatePipe.output
     }
+
+
     // MARK : -
 
-
-    private var observedGoals = Dictionary<Int64, ObservedProperty<TimeGoal>>()
+    private var reportProperties = Dictionary<Int64, MutableProperty<TwoPartTimeReport?>>()
     
-    private var reportProperties = Dictionary<Int64, Property<TwoPartTimeReport>>()
-    
-    internal let runningEntry = Property<RunningEntry>(value: nil)
+    internal let runningEntry = MutableProperty<RunningEntry?>(nil)
     internal var runningEntryRefreshTimer: Timer?
 
     private let apiCredential = TogglAPICredential()
 
-    private let now = Date()
     private let startOfPeriod: DayComponents
     private let yesterday: DayComponents?
     private let today: DayComponents
@@ -57,19 +57,21 @@ internal class ModelCoordinator: NSObject {
         return q
     }()
 
-    private var calendar: Calendar
+    let now = MutableProperty<Date>(Date())
+    let calendar: MutableProperty<Calendar>
 
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.goalsStore = goalsStore
-        
-        var calendar = Calendar(identifier: .iso8601)
-        calendar.locale = Locale.current // TODO: get from user profile
-        self.calendar = calendar
 
-        startOfPeriod = calendar.firstDayOfMonth(for: now)
-        yesterday = try? calendar.previousDay(for: now, notBefore: startOfPeriod)
-        today = calendar.dayComponents(from: now)
-        
+        var calendarValue = Calendar(identifier: .iso8601)
+        calendarValue.locale = Locale.current // TODO: get from user profile
+
+        calendar = MutableProperty<Calendar>(calendarValue)
+
+        startOfPeriod = calendar.value.firstDayOfMonth(for: now.value)
+        yesterday = try? calendar.value.previousDay(for: now.value, notBefore: startOfPeriod)
+        today = calendar.value.dayComponents(from: now.value)
+
         super.init()
         
         retrieveUserDataFromToggl()
@@ -78,7 +80,7 @@ internal class ModelCoordinator: NSObject {
     private func retrieveUserDataFromToggl() {
         let retrieveProfileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
         retrieveProfileOp.onSuccess = { profile in
-            self.profileProperty.value = profile
+            self.profile.value = profile
         }
 
         let retrieveWorkspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
@@ -91,8 +93,8 @@ internal class ModelCoordinator: NSObject {
                 guard let s = self else {
                     return
                 }
-                s.projects = ProjectsByGoals(projects: projects, goalsStore: s.goalsStore)
-                s.fullProjectsUpdate.input.send(value: s.projects)
+                s.projectsByGoals = ProjectsByGoals(projects: projects, goalsStore: s.goalsStore)
+                s.fullProjectsUpdatePipe.input.send(value: s.projectsByGoals)
             }
         }
 
@@ -112,41 +114,27 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Goals
     
-    internal func goalProperty(for projectId: Int64) -> Property<TimeGoal> {
+    internal func goalProperty(for projectId: Int64) -> MutableProperty<TimeGoal?> {
         let goalProperty = goalsStore.goalProperty(for: projectId)
-        observedGoals[projectId] =
-            ObservedProperty<TimeGoal>(original: goalProperty,
-                                       valueObserver: { [weak self] observedGoal in
-                                        self?.goalChanged(for: projectId)
-                },
-                                       invalidationObserver: { [weak self] in
-                                        self?.observedGoals.removeValue(forKey: projectId)
-            })
+        goalProperty.skipRepeats{ $0 == $1 }.signal.observeValues { [weak self] timeGoalOrNil in
+            self?.goalChanged(for: projectId)
+        }
         return goalProperty
-    }
-    
-    internal func setNewGoal(_ goal: TimeGoal) {
-        goalsStore.storeNew(goal: goal)
-    }
-
-    internal func deleteGoal(_ goal: TimeGoal) {
-        goalsStore.deleteGoal(goal)
     }
 
     private func goalChanged(for projectId: Int64) {
-        let indexPaths = projects.moveProjectAfterGoalChange(projectId: projectId)!
+        let indexPaths = projectsByGoals.moveProjectAfterGoalChange(projectId: projectId)!
         let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
-        cluedProjectsUpdate.input.send(value: clue)
+        cluedProjectsUpdatePipe.input.send(value: clue)
     }
 
     // MARK: -
     
-    internal func reportProperty(for projectId: Int64) -> Property<TwoPartTimeReport> {
+    internal func reportProperty(for projectId: Int64) -> MutableProperty<TwoPartTimeReport?> {
         if let property = reportProperties[projectId] {
             return property
         } else {
-            let zeroTimeReport = TwoPartTimeReport(projectId: projectId, since: startOfPeriod, until: today, workedTimeUntilYesterday: 0, workedTimeToday: 0)
-            let property = Property<TwoPartTimeReport>(value: zeroTimeReport)
+            let property = MutableProperty<TwoPartTimeReport?>(nil)
             reportProperties[projectId] = property
             return property
         }
@@ -182,10 +170,6 @@ internal class ModelCoordinator: NSObject {
         }
         networkQueue.addOperation(op)
     }
-}
-
-protocol ModelCoordinatorContaining {
-    var modelCoordinator: ModelCoordinator? { get set }
 }
 
 extension ProjectsByGoals {

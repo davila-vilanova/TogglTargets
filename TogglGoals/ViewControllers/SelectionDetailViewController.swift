@@ -12,15 +12,11 @@ import ReactiveSwift
 fileprivate let ProjectDetailsVCContainment = "ProjectDetailsVCContainment"
 fileprivate let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
 
-class SelectionDetailViewController: NSViewController, ViewControllerContaining, ModelCoordinatorContaining {
+class SelectionDetailViewController: NSViewController, ViewControllerContaining {
     
-    // MARK: - Child view controllers containment
+    // MARK: - Contained view controllers
     
-    var projectDetailsViewController: ProjectDetailsViewController! {
-        didSet {
-            projectDetailsViewController.modelCoordinator = self.modelCoordinator
-        }
-    }
+    var projectDetailsViewController: ProjectDetailsViewController!
     var emptySelectionViewController: EmptySelectionViewController!
     
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
@@ -31,37 +27,62 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining,
             emptySelectionViewController = controller as! EmptySelectionViewController
         default: break
         }
-
     }
-    
-    
-    // MARK : -
-    
-    internal var modelCoordinator: ModelCoordinator? {
-        didSet {
-            if let detailsController = projectDetailsViewController {
-                detailsController.modelCoordinator = modelCoordinator
+
+    private func setupConnectionsToContainedViewControllers() {
+        guard isViewLoaded else {
+            return
+        }
+        projectDetailsViewController.project <~ _project
+    }
+
+    private func setupContainedViewControllerVisibility() {
+        _project.map { $0 != nil }.producer.observe(on: UIScheduler()).startWithValues { [projectDetailsViewController, emptySelectionViewController, view] projectAvailable in
+            guard let projectDetailsViewController = projectDetailsViewController,
+                let emptySelectionViewController = emptySelectionViewController else {
+                    return
             }
+            let containedVC = projectAvailable ? projectDetailsViewController : emptySelectionViewController
+            displayController(containedVC, in: view)
         }
     }
 
-    internal func setSelectedProject(_ project: MutableProperty<Project?>) {
-        selectedProject <~ project
+
+    // MARK: - Data flow from parent view controller
+
+    var project: BindingTarget<Project?> { return _project.bindingTarget }
+
+
+
+    // MARK: - Data flow to contained view controllers
+
+    private let _project = MutableProperty<Project?>(nil)
+
+
+    // MARK: - ModelCoordinator
+
+    var modelCoordinator: ModelCoordinator? {
+        didSet {
+            setupModelCoordinatorInContainedViewControllers()
+        }
     }
-    private var selectedProject = MutableProperty<Project?>(nil)
+
+    private func setupModelCoordinatorInContainedViewControllers() {
+        guard isViewLoaded, let modelCoordinator = modelCoordinator else {
+            return
+        }
+        projectDetailsViewController.modelCoordinator = modelCoordinator
+    }
+
+
+    // MARK : -
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         initializeControllerContainment(containmentIdentifiers: [ProjectDetailsVCContainment, EmtpySelectionVCContainment])
-
-        projectDetailsViewController.setSelectedProject(selectedProject)
-
-        selectedProject.producer.observe(on: UIScheduler()).startWithValues { [weak self] projectOrNil in
-            guard let s = self else {
-                return
-            }
-            let viewController = (projectOrNil == nil) ? s.emptySelectionViewController : s.projectDetailsViewController
-            displayController(viewController, in: s.view)
-        }
+        setupModelCoordinatorInContainedViewControllers()
+        setupConnectionsToContainedViewControllers()
+        setupContainedViewControllerVisibility()
     }
 }

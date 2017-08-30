@@ -7,49 +7,70 @@
 //
 
 import Cocoa
+import ReactiveSwift
+import ReactiveCocoa
 
 class DayProgressViewController: NSViewController {
+
+    // MARK: Interface
+
+    internal var dayProgress = MutableProperty<DayProgress?>(nil)
+
+
+    // MARK: - Private
+
+    //    private var dayProgressProperties = DayProgressProperties()
+
+    private lazy var timeFormatter: DateComponentsFormatter = {
+        let f = DateComponentsFormatter()
+        f.allowedUnits = [.hour, .minute]
+        f.zeroFormattingBehavior = .dropAll
+        f.unitsStyle = .full
+        return f
+    }()
+
+
     // MARK: - Outlets
-    
+
     @IBOutlet weak var dayProgressBox: NSBox!
     @IBOutlet weak var todayProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var timeWorkedTodayLabel: NSTextField!
     @IBOutlet weak var timeRemainingToWorkTodayLabel: NSTextField!
-    
-    // MARK: - 
-    
-    var timeFormatter: DateComponentsFormatter!
-    
-    var dayProgress: DayProgress? {
-        didSet {
-            displayDayProgress()
-        }
-    }
-    
+
+
+    // MARK: - Wiring
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        displayDayProgress()
-    }
-    
-    func displayDayProgress() {
-        guard isViewLoaded,
-            let dayProgress = self.dayProgress else {
-                return
+
+
+        // Update worked and remaining time today with the values of the corresponding signals formatted to a time string
+        // TODO: do not include English text directly in inline constant strings
+
+        let progress = dayProgress.producer.skipNil()
+        let workedTimeToday = progress.map { $0.workedTimeToday }
+        let remainingTimeToday = progress.map { $0.remainingTimeToDayBaselineToday }
+        let isTimeRemainingMissing = remainingTimeToday.map { $0 == nil }
+
+
+        timeWorkedTodayLabel.reactive.text <~ workedTimeToday.map { [timeFormatter] time in
+            "\(timeFormatter.string(from: time) ?? "-") worked today"
         }
-        
-        let formattedTimeWorkedToday = timeFormatter.string(from: dayProgress.workedTimeToday)!
-        timeWorkedTodayLabel.stringValue = "\(formattedTimeWorkedToday) worked today"
-        
-        if let remaining = dayProgress.remainingTimeToDayBaselineToday {
-            timeRemainingToWorkTodayLabel.isHidden = false
-            let formattedTimeRemainingToWorkToday = timeFormatter.string(from: remaining)!
-            timeRemainingToWorkTodayLabel.stringValue = "\(formattedTimeRemainingToWorkToday) left to meet your goal today"
-            todayProgressIndicator.isIndeterminate = false
-            todayProgressIndicator.maxValue = dayProgress.workedTimeToday + remaining
-            todayProgressIndicator.doubleValue = dayProgress.workedTimeToday
-        } else {
-            timeRemainingToWorkTodayLabel.isHidden = true
-            todayProgressIndicator.isIndeterminate = true
+        timeRemainingToWorkTodayLabel.reactive.text <~ remainingTimeToday.skipNil().map { [timeFormatter] time in
+            "\(timeFormatter.string(from: time) ?? "-") left to meet your goal today"
+        }
+
+        // Show or hide time remaining and progress indicator
+        isTimeRemainingMissing.observe(on: UIScheduler()).startWithValues { [timeRemainingToWorkTodayLabel, todayProgressIndicator] isTimeRemainingMissing in
+            timeRemainingToWorkTodayLabel?.isHidden = isTimeRemainingMissing
+            todayProgressIndicator?.isIndeterminate = isTimeRemainingMissing
+        }
+
+        // Update progress indicator
+        SignalProducer.combineLatest(workedTimeToday, remainingTimeToday.skipNil()).observe(on: UIScheduler()).startWithValues { [todayProgressIndicator] (worked, remaining) in
+            todayProgressIndicator?.maxValue = worked + remaining
+            todayProgressIndicator?.doubleValue = worked
         }
     }
 }

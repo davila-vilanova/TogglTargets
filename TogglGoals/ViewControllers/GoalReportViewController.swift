@@ -7,13 +7,37 @@
 //
 
 import Cocoa
+import ReactiveSwift
+import ReactiveCocoa
+import Result
 
 fileprivate let GoalProgressVCContainment = "GoalProgressVCContainment"
 fileprivate let GoalStrategyVCContainment = "GoalStrategyVCContainment"
 fileprivate let DayProgressVCContainment = "DayProgressVCContainment"
 
 class GoalReportViewController: NSViewController, ViewControllerContaining {
-    
+
+    // MARK: - Interface
+
+    var goal: BindingTarget<TimeGoal?> { return _goal.bindingTarget }
+    var report: BindingTarget<TwoPartTimeReport?> { return _report.bindingTarget }
+    var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
+    var calendar: BindingTarget<Calendar?> { return _calendar.bindingTarget }
+    var now: BindingTarget<Date?> { return _now.bindingTarget }
+
+    private let _goal = MutableProperty<TimeGoal?>(nil)
+    private let _report = MutableProperty<TwoPartTimeReport?>(nil)
+    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
+    private let _calendar = MutableProperty<Calendar?>(nil)
+    private let _now = MutableProperty<Date?>(nil)
+
+    // MARK: - Outputs computed for children VCs
+
+    private let goalProgress = MutableProperty<GoalProgress?>(nil)
+    private let goalStrategy = MutableProperty<GoalStrategy?>(nil)
+    private let dayProgress = MutableProperty<DayProgress?>(nil)
+
+
     // MARK: - Outlets
     
     @IBOutlet weak var monthNameLabel: NSTextField!
@@ -24,26 +48,26 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     @IBOutlet weak var fromTodayItem: NSMenuItem!
     @IBOutlet weak var fromNextWorkDayItem: NSMenuItem!
 
+
     // MARK: - Contained view controllers
     
     var goalProgressViewController: GoalProgressViewController! {
         didSet {
-            goalProgressViewController.timeFormatter = timeFormatter
+            goalProgressViewController.goalProgress <~ goalProgress
             displayController(goalProgressViewController, in: goalProgressView)
         }
     }
     
     var goalStrategyViewController: GoalStrategyViewController! {
         didSet {
-            goalStrategyViewController.timeFormatter = timeFormatter
-            goalStrategyViewController.percentFormatter = percentFormatter
+            goalStrategyViewController.goalStrategy <~ goalStrategy
             displayController(goalStrategyViewController, in : goalStrategyView)
         }
     }
     
     var dayProgressViewController: DayProgressViewController! {
         didSet {
-            dayProgressViewController.timeFormatter = timeFormatter
+            dayProgressViewController.dayProgress <~ dayProgress
             displayController(dayProgressViewController, in: dayProgressView)
         }
     }
@@ -64,67 +88,12 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         f.numberStyle = .percent
         return f
     }()
-    
-    
-    // MARK: - Represented data
-    
-    private var goalProperty: Property<TimeGoal>? {
-        didSet {
-            if let observed = observedGoalProperty {
-                observed.unobserve()
-            }
-            if let gp = goalProperty {
-                func goalDidChange(_ observedGoalProperty: ObservedProperty<TimeGoal>) {
-                    recomputeAndPropagate()
-                }
-                observedGoalProperty = ObservedProperty<TimeGoal>(original: gp, valueObserver: goalDidChange)
-            }
-        }
-    }
-    
-    private var reportProperty: Property<TwoPartTimeReport>? {
-        didSet {
-            if let observed = observedReportProperty {
-                observed.unobserve()
-            }
-            if let rp = reportProperty {
-                func reportDidChange(_ observedReportProperty: ObservedProperty<TwoPartTimeReport>) {
-                    recomputeAndPropagate()
-                }
-                observedReportProperty = ObservedProperty<TwoPartTimeReport>(original: rp, valueObserver: reportDidChange)
-            }
-        }
-    }
-    
-    private var observedGoalProperty: ObservedProperty<TimeGoal>?
-    private var observedReportProperty: ObservedProperty<TwoPartTimeReport>?
 
-    func setGoalProperty(_ goalProperty: Property<TimeGoal>, reportProperty: Property<TwoPartTimeReport>) {
-        self.goalProperty = goalProperty
-        self.reportProperty = reportProperty
-        recomputeAndPropagate()
-    }
-    
-    var runningEntryProperty: Property<RunningEntry>! {
-        didSet {
-            if let observed = observedRunningEntryProperty {
-                observedRunningEntryProperty.unobserve()
-            }
-            func runningEntryDidChange(observedRunningEntry: ObservedProperty<RunningEntry>) {
-                recomputeAndPropagate()
-            }
-            observedRunningEntryProperty = ObservedProperty<RunningEntry>(original: runningEntryProperty, valueObserver: runningEntryDidChange)
-        }
-    }
-    var observedRunningEntryProperty: ObservedProperty<RunningEntry>!
-    
-    
+
     // MARK: - Infrastructure
     
     var strategyComputer: StrategyComputer!
-    var calendar: Calendar!
-    var now: Date!
-    
+
     
     // MARK: -
     
@@ -135,12 +104,12 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
             performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
         }
         
-        displayMonthName()
+        wireMonthName()
         
         // TODO: save and restore state of computeStrategyFromButton / decide on whether state is global or project specific
         computeStrategyFromButton.select(fromTodayItem)
         
-        recomputeAndPropagate()
+        wireStrategyComputation()
     }
     
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
@@ -158,43 +127,36 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     // MARK: -
 
-    private func displayMonthName() {
-        let comps = calendar.dateComponents([.month], from: now)
-        let monthName = calendar.monthSymbols[comps.month! - 1]
-        monthNameLabel.stringValue = monthName
+    private func wireMonthName() {
+        monthNameLabel.reactive.text <~ SignalProducer.combineLatest(_calendar.producer.skipNil(), _now.producer.skipNil()).map({ (calendar, now) -> String in
+            let comps = calendar.dateComponents([.month], from: now)
+            let monthName = calendar.monthSymbols[comps.month! - 1]
+            return monthName
+        })
     }
     
-    private func recomputeAndPropagate() {
-        guard isViewLoaded else {
-            return
-        }
-        guard let goal = observedGoalProperty?.original?.value,
-            let report = observedReportProperty?.original?.value else {
-                return;
-        }
-        
-        // populate inputs
-        strategyComputer.goal = goal
-        strategyComputer.report = report
-        strategyComputer.runningEntry = observedRunningEntryProperty.original?.value
+    private func wireStrategyComputation() {
+        let computation = SignalProducer.combineLatest(_goal.producer.skipNil(), _report.producer.skipNil(), _calendar.producer.skipNil(), _now.producer.skipNil(), _runningEntry.producer).map { [strategyComputer] (goal, report, calendar, now, runningEntry) -> (GoalProgress, GoalStrategy, DayProgress) in
+            let strategyComputer = strategyComputer!
+            strategyComputer.goal = goal
+            strategyComputer.report = report
+            strategyComputer.runningEntry = runningEntry
+            strategyComputer.now = now
+            strategyComputer.startPeriodDay = calendar.firstDayOfMonth(for: now)
+            strategyComputer.endPeriodDay = calendar.lastDayOfMonth(for: now)
 
-        strategyComputer.now = now
-        strategyComputer.startPeriodDay = calendar.firstDayOfMonth(for: now)
-        strategyComputer.endPeriodDay = calendar.lastDayOfMonth(for: now)
-
-        if computeStrategyFromButton.selectedItem! === fromTodayItem {
             strategyComputer.startStrategyDay = calendar.dayComponents(from: now)
-        } else {
-            strategyComputer.startStrategyDay = try! calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now)) // TODO
+//            strategyComputer.startStrategyDay = try! calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now)) // TODO
+            return (strategyComputer.goalProgress, strategyComputer.goalStrategy, strategyComputer.dayProgress)
         }
 
-        // assign outputs
-        goalProgressViewController.goalProgress = strategyComputer.goalProgress
-        goalStrategyViewController.goalStrategy = strategyComputer.goalStrategy
-        dayProgressViewController.dayProgress = strategyComputer.dayProgress
+
+        goalProgressViewController.goalProgress <~ computation.map { $0.0 }
+        goalStrategyViewController.goalStrategy <~ computation.map { $0.1 }
+        dayProgressViewController.dayProgress <~ computation.map { $0.2 }
     }
     
     @IBAction func computeStrategyFromUpdated(_ sender: NSMenuItem) {
-        recomputeAndPropagate()
+//        wireStrategyComputation()
     }
 }

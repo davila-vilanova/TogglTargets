@@ -7,31 +7,16 @@
 //
 
 import Cocoa
+import ReactiveSwift
 
-class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorContaining {
+class ProjectsMasterDetailController: NSSplitViewController {
     private enum SplitItemIndex: Int {
         case projectsList = 0
         case selectionDetail
     }
 
-    private var _modelCoordinator: ModelCoordinator?
-    internal var modelCoordinator: ModelCoordinator? {
-        get {
-            // As the topmost controller, it will retrieve the ModelCoordinator from the app delegate
-            // and propagate it to the contained controllers
 
-            if let coordinator = _modelCoordinator {
-                return coordinator
-            }
-            let coordinator = (NSApplication.shared.delegate as! ModelCoordinatorContaining).modelCoordinator
-            _modelCoordinator = coordinator
-            return coordinator
-        }
-
-        set {
-            _modelCoordinator = newValue
-        }
-    }
+    // MARK: - Contained view controllers
 
     private var projectsListViewController: ProjectsListViewController {
         return splitViewItem(.projectsList).viewController as! ProjectsListViewController
@@ -45,21 +30,34 @@ class ProjectsMasterDetailController: NSSplitViewController, ModelCoordinatorCon
         return splitViewItems[index.rawValue]
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupModelCoordinatorInChildControllers()
-        setupSelectedProjectProperty()
+    private func setupConnectionsBetweenContainedViewControllers() {
+        selectionDetailViewController.project <~ projectsListViewController.selectedProject
     }
 
-    private func setupModelCoordinatorInChildControllers() {
-        for item in splitViewItems {
-            if var modelCoordinatorContainer = item.viewController as? ModelCoordinatorContaining {
-                modelCoordinatorContainer.modelCoordinator = self.modelCoordinator
-            }
+
+    // MARK: - ModelCoordinator
+
+    private func setupModelCoordinatorInContainedControllers() {
+        guard isViewLoaded, let modelCoordinator = modelCoordinator else {
+            return
+        }
+        projectsListViewController.modelCoordinator = modelCoordinator
+        selectionDetailViewController.modelCoordinator = modelCoordinator
+    }
+
+    internal var modelCoordinator: ModelCoordinator? {
+        didSet {
+            setupModelCoordinatorInContainedControllers()
         }
     }
 
-    private func setupSelectedProjectProperty() {
-        selectionDetailViewController.setSelectedProject(projectsListViewController.selectedProject)
+
+    // MARK: -
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupModelCoordinatorInContainedControllers()
+        setupConnectionsBetweenContainedViewControllers()
     }
 }
+

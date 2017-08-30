@@ -7,14 +7,13 @@
 //
 
 import Cocoa
+import ReactiveSwift
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, ModelCoordinatorContaining {
-    var modelCoordinator: ModelCoordinator?
+class AppDelegate: NSObject, NSApplicationDelegate {
+    var modelCoordinator: ModelCoordinator
 
     override init() {
-        super.init()
-
         let supportDir: URL
 
         do {
@@ -29,10 +28,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ModelCoordinatorContaining {
         } else {
             fatalError("Goals store failed to initialize")
         }
+
+        super.init()
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        modelCoordinator?.startRefreshingRunningTimeEntry()
+        modelCoordinator.startRefreshingRunningTimeEntry()
     }
 
     func applicationDidBecomeActive(_ notification: Notification) {

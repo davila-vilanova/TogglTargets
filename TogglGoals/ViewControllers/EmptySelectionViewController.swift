@@ -9,10 +9,5 @@
 import Cocoa
 
 class EmptySelectionViewController: NSViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do view setup here.
-    }
     
 }

@@ -7,9 +7,33 @@
 //
 
 import Cocoa
+import ReactiveSwift
+import ReactiveCocoa
 
 class GoalStrategyViewController: NSViewController {
-    
+
+    // MARK: Interface
+
+    internal var goalStrategy = MutableProperty<GoalStrategy?>(nil)
+
+
+    // MARK: - Private
+
+    private lazy var timeFormatter: DateComponentsFormatter = {
+        let f = DateComponentsFormatter()
+        f.allowedUnits = [.hour, .minute]
+        f.zeroFormattingBehavior = .dropAll
+        f.unitsStyle = .full
+        return f
+    }()
+
+    private lazy var percentFormatter: NumberFormatter = {
+        var f = NumberFormatter()
+        f.numberStyle = .percent
+        return f
+    }()
+
+
     // MARK: - Outlets
 
     @IBOutlet weak var totalHoursStrategyLabel: NSTextField!
@@ -17,52 +41,37 @@ class GoalStrategyViewController: NSViewController {
     @IBOutlet weak var baselineDifferentialLabel: NSTextField!
 
 
-    // MARK: - Value formatters
-    
-    var timeFormatter: DateComponentsFormatter!
-    var percentFormatter: NumberFormatter!
-    
-    // MARK: - Represented data
-    
-    var goalStrategy: GoalStrategy? {
-        didSet {
-            displayStrategy()
-        }
-    }
-    
-    // MARK : -
-    
+    // MARK: - Wiring
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        displayStrategy()
-    }
-    
-    func displayStrategy() {
-        guard isViewLoaded,
-            let strategy = goalStrategy else {
-            return
+
+        // Update total hours and hours per day with the values of the corresponding signals, formatted to a time string
+        // TODO: Extension on TimeFormatter
+        let formatTime = { [timeFormatter] (time: TimeInterval) -> String in
+            return timeFormatter.string(from: time) ?? "-"
         }
-        
-        totalHoursStrategyLabel.stringValue = timeFormatter.string(from: strategy.timeGoal)!
-        hoursPerDayLabel.stringValue = timeFormatter.string(from: strategy.dayBaselineAdjustedToProgress)!
-        
-        let dayBaseline = timeFormatter.string(from: strategy.dayBaseline)!
-        let dayBaselineDifferential = strategy.dayBaselineDifferential
-        let absoluteBaselineDifferential = abs(dayBaselineDifferential)
-        
-        let baselineDifferentialText: String
-        
-        if absoluteBaselineDifferential < 0.01 {
-            baselineDifferentialText = "That prety much matches your baseline of \(dayBaseline)"
-        } else {
-            let formattedBaselineDifferential = percentFormatter.string(from: NSNumber(value: abs(dayBaselineDifferential)))!
-            if dayBaselineDifferential > 0 {
-                baselineDifferentialText = "That is \(formattedBaselineDifferential) more than your baseline of \(dayBaseline)"
+
+        let strategies = goalStrategy.producer.skipNil()
+        let timeGoals = strategies.map { $0.timeGoal }
+        let adjustedBaselines = strategies.map { $0.dayBaselineAdjustedToProgress }
+        let baselineDifferentials = strategies.map { $0.dayBaselineDifferential }
+        let baselines = strategies.map { $0.dayBaseline }
+
+        totalHoursStrategyLabel.reactive.text <~ timeGoals.map(formatTime)
+        hoursPerDayLabel.reactive.text <~ adjustedBaselines.map(formatTime)
+
+        baselineDifferentialLabel.reactive.text <~ SignalProducer.combineLatest(baselineDifferentials, baselines).skipRepeats { $1 == $0 }.map { [percentFormatter, timeFormatter] (differential, baseline) -> String in
+            let formattedBaseline = timeFormatter.string(from: baseline) ?? "-"
+            let absoluteDifferential = abs(differential)
+
+            if absoluteDifferential < 0.01 {
+                return "That prety much matches your baseline of \(formattedBaseline)"
             } else {
-                baselineDifferentialText = "That is \(formattedBaselineDifferential) less than your baseline of \(dayBaseline)"
+                let formattedDifferential = percentFormatter.string(from: NSNumber(value: absoluteDifferential)) ?? "-"
+                let adverb = differential > 0 ? "more" : "less"
+                return "That is \(formattedDifferential) \(adverb) than your baseline of \(formattedBaseline)"
             }
         }
-        
-        baselineDifferentialLabel.stringValue = baselineDifferentialText
     }
 }
