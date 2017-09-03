@@ -11,6 +11,10 @@ import ReactiveSwift
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
+    
+    var mainStoryboard: NSStoryboard?
+    var mainWindow: NSWindow?
+    
     var modelCoordinator: ModelCoordinator
 
     override init() {
@@ -33,6 +37,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        mainStoryboard = NSStoryboard(name: .init("Main"), bundle: nil)
+        let windowController = mainStoryboard?.instantiateInitialController() as! NSWindowController
+        mainWindow = windowController.window
+        mainWindow!.makeKeyAndOrderFront(nil)
+        
+        if let projectsMasterDetailController = windowController.window?.contentViewController as? ProjectsMasterDetailController {
+            projectsMasterDetailController.modelCoordinator = modelCoordinator;
+        }
+        
         modelCoordinator.startRefreshingRunningTimeEntry()
     }
 
@@ -46,6 +59,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
+    }
+    
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return true
     }
 }
 

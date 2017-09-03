@@ -56,7 +56,7 @@ class GoalViewController: NSViewController {
         monthlyHoursGoalField.reactive.isEnabled <~ goalExists
         weekWorkDaysControl.reactive.isEnabled <~ goalExists
         deleteGoalButton.reactive.isEnabled <~ goalExists
-        goalExists.logEvents().filter { $0 == false }.producer.observe(on: UIScheduler()).startWithValues { [weak self] _ in
+        goalExists.filter { $0 == false }.producer.observe(on: UIScheduler()).startWithValues { [weak self] _ in
             self?.setSelectedWeekDays(nil)
         }
 
@@ -163,9 +163,12 @@ class NoGoalViewController: NSViewController {
         createGoalAction = Action<Void, TimeGoal, NoError>(unwrapping: _projectId, execute: { (projectIdValue: Int64) -> SignalProducer<TimeGoal, NoError> in
             return SignalProducer<TimeGoal, NoError> { (sink: Signal<TimeGoal, NoError>.Observer, disposable: Lifetime) in
                 sink.send(value: TimeGoal(forProjectId: projectIdValue, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend))
+                sink.sendCompleted()
             }
         })
 
         self.createGoalButton.reactive.pressed = CocoaAction<NSButton>(createGoalAction)
+        
+        createGoalAction.values.observe(_goalCreated.input)
     }
 }

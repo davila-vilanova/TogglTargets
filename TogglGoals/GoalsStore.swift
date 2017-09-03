@@ -35,18 +35,22 @@ class GoalsStore {
         if let property = goalProperties[projectId] {
             return property
         } else {
-            let property = MutableProperty<TimeGoal?>(retrieveGoal(for: projectId))
+            let goal = retrieveGoal(for: projectId)
+            let property = MutableProperty<TimeGoal?>(goal)
             property.skipRepeats{ $0 == $1 }.signal.observeValues { [weak self] timeGoalOrNil in
                 self?.goalChanged(timeGoalOrNil, for: projectId)
             }
+            goalProperties[projectId] = property
             return property
         }
     }
 
     private func goalChanged(_ timeGoalOrNil: TimeGoal?, for projectId: Int64) {
         if let modifiedGoal = timeGoalOrNil {
+            print("will store goal=\(modifiedGoal)")
             storeGoal(modifiedGoal)
         } else {
+            print("will delete goal for projectId=\(projectId)")
             // delete goal for captured projectId when goal is set to nil
             deleteGoal(for: projectId)
         }
@@ -79,7 +83,7 @@ class GoalsStore {
     }
 
     private func retrieveGoal(for projectId: Int64) -> TimeGoal? {
-        let q = goalsTable.filter(idExpression == projectId).limit(1)
+        let q = goalsTable.filter(projectIdExpression == projectId).limit(1)
         if let row = try! db.pluck(q) {
             let projectIdValue = row[projectIdExpression]
             let hoursPerMonthValue = row[hoursPerMonthExpression]

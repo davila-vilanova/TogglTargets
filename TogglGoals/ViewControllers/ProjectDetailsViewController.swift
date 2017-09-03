@@ -114,20 +114,20 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         runningEntry <~ modelCoordinator.runningEntry
 
         _project.producer.skipNil().startWithValues { [weak self] projectValue in
-            guard let projectDetailsVC = self else {
+            guard let s = self else {
                 return
             }
             let goalForThisProject = modelCoordinator.goalProperty(for: projectValue.id)
             let reportForThisProject = modelCoordinator.reportProperty(for: projectValue.id)
 
-            projectDetailsVC.exclusiveBindingDisposables.disposeAll()
+            s.exclusiveBindingDisposables.disposeAll()
 
             // Bindings from MC
-            projectDetailsVC.exclusiveBindingDisposables.put(projectDetailsVC.goal <~ goalForThisProject)
-            projectDetailsVC.exclusiveBindingDisposables.put(projectDetailsVC.report <~ reportForThisProject)
+            s.exclusiveBindingDisposables.put(s.goal <~ goalForThisProject)
+            s.exclusiveBindingDisposables.put(s.report <~ reportForThisProject)
 
             // Bindings to MC
-            projectDetailsVC.exclusiveBindingDisposables.put(goalForThisProject.bindingTarget <~ projectDetailsVC.goalUserUpdatesPipe.output)
+            s.exclusiveBindingDisposables.put(goalForThisProject.bindingTarget <~ s.goalUserUpdatesPipe.output)
         }
     }
 
