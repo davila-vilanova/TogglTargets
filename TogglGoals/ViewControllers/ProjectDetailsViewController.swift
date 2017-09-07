@@ -82,9 +82,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     private let goal = MutableProperty<TimeGoal?>(nil)
     private let report = MutableProperty<TwoPartTimeReport?>(nil)
-    private let goalProgress = MutableProperty<GoalProgress?>(nil)
-    private let goalStrategy = MutableProperty<GoalStrategy?>(nil)
-    private let dayProgress = MutableProperty<DayProgress?>(nil)
     private let _project = MutableProperty<Project?>(nil)
     private let calendar = MutableProperty<Calendar?>(nil)
     private let now = MutableProperty<Date?>(nil)
@@ -95,7 +92,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     private let goalUserUpdatesPipe = Signal<TimeGoal?, NoError>.pipe()
 
-
+    
     // MARK: - ModelCoordinator
 
     var modelCoordinator: ModelCoordinator? {

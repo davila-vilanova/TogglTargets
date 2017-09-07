@@ -90,11 +90,6 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     }()
 
 
-    // MARK: - Infrastructure
-    
-    var strategyComputer: StrategyComputer!
-
-    
     // MARK: -
     
     override func viewDidLoad() {
@@ -136,8 +131,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     }
     
     private func wireStrategyComputation() {
-        let computation = SignalProducer.combineLatest(_goal.producer.skipNil(), _report.producer.skipNil(), _calendar.producer.skipNil(), _now.producer.skipNil(), _runningEntry.producer).map { [strategyComputer] (goal, report, calendar, now, runningEntry) -> (GoalProgress, GoalStrategy, DayProgress) in
-            let strategyComputer = strategyComputer!
+        let computation = SignalProducer.combineLatest(_goal.producer.skipNil(), _report.producer.skipNil(), _calendar.producer.skipNil(), _now.producer.skipNil(), _runningEntry.producer).map { (goal, report, calendar, now, runningEntry) -> (GoalProgress, GoalStrategy, DayProgress) in
+            let strategyComputer = StrategyComputer(calendar: calendar)
             strategyComputer.goal = goal
             strategyComputer.report = report
             strategyComputer.runningEntry = runningEntry
