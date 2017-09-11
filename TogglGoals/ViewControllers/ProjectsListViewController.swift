@@ -40,11 +40,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                 }
             }
 
-            observeValues(from: mc.fullProjectsUpdate) { [weak self] _ in
-                self?.reloadList()
+            observeValues(from: mc.fullProjectsUpdate) { [unowned self] _ in
+                self.reloadList()
             }
-            observeValues(from: mc.cluedProjectsUpdate) { [weak self] clue in
-                self?.updateList(with: clue)
+            observeValues(from: mc.cluedProjectsUpdate) { [unowned self] clue in
+                self.updateList(with: clue)
             }
         }
     }

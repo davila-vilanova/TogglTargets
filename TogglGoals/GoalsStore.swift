@@ -37,8 +37,8 @@ class GoalsStore {
         } else {
             let goal = retrieveGoal(for: projectId)
             let property = MutableProperty<TimeGoal?>(goal)
-            property.skipRepeats{ $0 == $1 }.signal.observeValues { [weak self] timeGoalOrNil in
-                self?.goalChanged(timeGoalOrNil, for: projectId)
+            property.skipRepeats{ $0 == $1 }.signal.observeValues { [unowned self] timeGoalOrNil in
+                self.goalChanged(timeGoalOrNil, for: projectId)
             }
             goalProperties[projectId] = property
             return property

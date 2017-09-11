@@ -56,12 +56,12 @@ class GoalViewController: NSViewController {
         monthlyHoursGoalField.reactive.isEnabled <~ goalExists
         weekWorkDaysControl.reactive.isEnabled <~ goalExists
         deleteGoalButton.reactive.isEnabled <~ goalExists
-        goalExists.filter { $0 == false }.producer.observe(on: UIScheduler()).startWithValues { [weak self] _ in
-            self?.setSelectedWeekDays(nil)
+        goalExists.filter { $0 == false }.producer.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
+            self.setSelectedWeekDays(nil)
         }
 
-        _goal.producer.skipNil().skipRepeats { $0 == $1 }.observe(on: UIScheduler()).startWithValues { [weak self] goal in
-            self?.setSelectedWeekDays(goal.workWeekdays)
+        _goal.producer.skipNil().skipRepeats { $0 == $1 }.observe(on: UIScheduler()).startWithValues { [unowned self] goal in
+            self.setSelectedWeekDays(goal.workWeekdays)
         }
 
         monthlyHoursGoalField.reactive.text <~ _goal.map { [monthlyHoursGoalFormatter] goal in
@@ -75,27 +75,24 @@ class GoalViewController: NSViewController {
         }
 
         // Bind UI to output (and to internal state)
-        weekWorkDaysControl.reactive.selectedSegmentIndexes.observeValues { [weak self] _ in
-            guard let vc = self else { return }
+        weekWorkDaysControl.reactive.selectedSegmentIndexes.observeValues { [unowned self] _ in
             var newSelection = WeekdaySelection()
 
-            for (day, segmentIndex) in vc.weekdaysToSegments {
-                assert(segmentIndex < vc.weekWorkDaysControl.segmentCount)
-                if vc.weekWorkDaysControl.isSelected(forSegment: segmentIndex) {
+            for (day, segmentIndex) in self.weekdaysToSegments {
+                assert(segmentIndex < self.weekWorkDaysControl.segmentCount)
+                if self.weekWorkDaysControl.isSelected(forSegment: segmentIndex) {
                     newSelection.select(day)
                 }
             }
-            vc._goal.value?.workWeekdays = newSelection
-            vc._userUpdates.input.send(value: vc._goal.value)
+            self._goal.value?.workWeekdays = newSelection
+            self._userUpdates.input.send(value: self._goal.value)
         }
 
 
-        monthlyHoursGoalField.reactive.stringValues.observeValues { [weak self] (text) in
-            guard let vc = self else { return }
-
-            if let parsedHours = vc.monthlyHoursGoalFormatter.number(from: text) {
-                vc._goal.value?.hoursPerMonth = parsedHours.intValue
-                vc._userUpdates.input.send(value: vc._goal.value)
+        monthlyHoursGoalField.reactive.stringValues.observeValues { [unowned self] (text) in
+            if let parsedHours = self.monthlyHoursGoalFormatter.number(from: text) {
+                self._goal.value?.hoursPerMonth = parsedHours.intValue
+                self._userUpdates.input.send(value: self._goal.value)
             }
         }
     }

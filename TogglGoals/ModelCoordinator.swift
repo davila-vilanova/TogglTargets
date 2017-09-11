@@ -114,20 +114,17 @@ internal class ModelCoordinator: NSObject {
         let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential)
         let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, startOfPeriod: startOfPeriod, yesterday: yesterday, today: today)
 
-        retrieveProjectsOp.outputCollectionOperation.completionBlock = { [weak self] in
+        retrieveProjectsOp.outputCollectionOperation.completionBlock = { [unowned self] in
             if let projects = retrieveProjectsOp.outputCollectionOperation.collectedOutput {
-                guard let s = self else {
-                    return
-                }
-                s.projectsByGoals = ProjectsByGoals(projects: projects, goalsStore: s.goalsStore)
-                s.fullProjectsUpdatePipe.input.send(value: s.projectsByGoals)
+                self.projectsByGoals = ProjectsByGoals(projects: projects, goalsStore: self.goalsStore)
+                self.fullProjectsUpdatePipe.input.send(value: self.projectsByGoals)
             }
         }
 
-        retrieveReportsOp.outputCollectionOperation.completionBlock = { [weak self] in
+        retrieveReportsOp.outputCollectionOperation.completionBlock = { [unowned self] in
             if let reports = retrieveReportsOp.outputCollectionOperation.collectedOutput {
                 for (projectId, report) in reports {
-                    self?.reportProperty(for: projectId).value = report
+                    self.reportProperty(for: projectId).value = report
                 }
             }
         }
@@ -142,8 +139,8 @@ internal class ModelCoordinator: NSObject {
     
     internal func goalProperty(for projectId: Int64) -> MutableProperty<TimeGoal?> {
         let goalProperty = goalsStore.goalProperty(for: projectId)
-        goalProperty.skipRepeats{ $0 == $1 }.signal.observeValues { [weak self] timeGoalOrNil in
-            self?.goalChanged(for: projectId)
+        goalProperty.skipRepeats{ $0 == $1 }.signal.observeValues { [unowned self] timeGoalOrNil in
+            self.goalChanged(for: projectId)
         }
         return goalProperty
     }
@@ -170,11 +167,8 @@ internal class ModelCoordinator: NSObject {
         guard runningEntryRefreshTimer == nil || runningEntryRefreshTimer?.isValid == false else {
             return
         }
-        runningEntryRefreshTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true, block: { [weak self] (timer) in
-            guard let s = self else {
-                return
-            }
-            s.retrieveRunningTimeEntry()
+        runningEntryRefreshTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true, block: { [unowned self] (timer) in
+            self.retrieveRunningTimeEntry()
         })
         retrieveRunningTimeEntry()
     }

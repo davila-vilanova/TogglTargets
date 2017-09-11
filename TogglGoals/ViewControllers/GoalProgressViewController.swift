@@ -64,16 +64,17 @@ class GoalProgressViewController: NSViewController {
 
         // Progress indicators
         let intToDouble = { (integer: Int) -> Double in return Double(integer) }
-        SignalProducer.combineLatest(totalWorkDays.map(intToDouble), remainingWorkDays.map(intToDouble)).skipRepeats { $0 == $1 }.producer.observe(on: UIScheduler()).startWithValues { [weak self] (total, remaining) in
-            self?.workDaysProgressIndicator.maxValue = total
+        SignalProducer.combineLatest(totalWorkDays.map(intToDouble), remainingWorkDays.map(intToDouble)).skipRepeats { $0 == $1 }.producer.observe(on: UIScheduler()).startWithValues {
+            [unowned self] (total, remaining) in
+            self.workDaysProgressIndicator.maxValue = total
             // Has a hard limit (the end of the time period for which the goal is being calculated)
-            self?.workDaysProgressIndicator.doubleValue = total - remaining
+            self.workDaysProgressIndicator.doubleValue = total - remaining
         }
 
-        SignalProducer.combineLatest(timeGoal, workedTime).skipRepeats { $0 == $1 }.producer.observe(on: UIScheduler()).startWithValues { [weak self] (timeGoal, workedTime) in
-            self?.workHoursProgressIndicator.maxValue = timeGoal
+        SignalProducer.combineLatest(timeGoal, workedTime).skipRepeats { $0 == $1 }.producer.observe(on: UIScheduler()).startWithValues { [unowned self] (timeGoal, workedTime) in
+            self.workHoursProgressIndicator.maxValue = timeGoal
             // No hard limit (nothing prevents one from exceeding their time goal)
-            self?.workHoursProgressIndicator.doubleValue = workedTime
+            self.workHoursProgressIndicator.doubleValue = workedTime
         }
     }
 }

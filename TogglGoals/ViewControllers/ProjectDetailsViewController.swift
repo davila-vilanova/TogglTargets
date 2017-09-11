@@ -62,14 +62,12 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     private func setupContainedViewControllerVisibility() {
         displayController(goalViewController, in: goalView) // Displays always
 
-        goal.producer.filter { $0 == nil }.observe(on: UIScheduler()).startWithValues { [weak self] _ in
-            guard let vc = self else { return }
-            displayController(vc.noGoalViewController, in: vc.goalReportView)
+        goal.producer.filter { $0 == nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
+            displayController(self.noGoalViewController, in: self.goalReportView)
         }
 
-        goal.producer.filter { $0 != nil }.observe(on: UIScheduler()).startWithValues { [weak self] _ in
-            guard let vc = self else { return }
-            displayController(vc.goalReportViewController, in: vc.goalReportView)
+        goal.producer.filter { $0 != nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
+            displayController(self.goalReportViewController, in: self.goalReportView)
         }
     }
 
@@ -110,21 +108,18 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         now <~ modelCoordinator.now
         runningEntry <~ modelCoordinator.runningEntry
 
-        _project.producer.skipNil().startWithValues { [weak self] projectValue in
-            guard let s = self else {
-                return
-            }
+        _project.producer.skipNil().startWithValues { [unowned self] projectValue in
             let goalForThisProject = modelCoordinator.goalProperty(for: projectValue.id)
             let reportForThisProject = modelCoordinator.reportProperty(for: projectValue.id)
 
-            s.exclusiveBindingDisposables.disposeAll()
+            self.exclusiveBindingDisposables.disposeAll()
 
-            // Bindings from MC
-            s.exclusiveBindingDisposables.put(s.goal <~ goalForThisProject)
-            s.exclusiveBindingDisposables.put(s.report <~ reportForThisProject)
+            // Bindings from modelCoordinator
+            self.exclusiveBindingDisposables.put(self.goal <~ goalForThisProject)
+            self.exclusiveBindingDisposables.put(self.report <~ reportForThisProject)
 
-            // Bindings to MC
-            s.exclusiveBindingDisposables.put(goalForThisProject.bindingTarget <~ s.goalUserUpdatesPipe.output)
+            // Bindings to modelCoordinator
+            self.exclusiveBindingDisposables.put(goalForThisProject.bindingTarget <~ self.goalUserUpdatesPipe.output)
         }
     }
 
@@ -141,8 +136,8 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     }
 
     private func setupLocalProjectDisplay() {
-        _project.producer.observe(on: UIScheduler()).startWithValues { [weak self] projectOrNil in
-            self?.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
+        _project.producer.observe(on: UIScheduler()).startWithValues { [unowned self] projectOrNil in
+            self.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
         }
     }
 }
