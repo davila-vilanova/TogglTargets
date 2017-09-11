@@ -40,9 +40,7 @@ class StrategyComputer {
         self.calendar = calendar
     }
 
-    var projectId: Int64? {
-        return report?.projectId
-    }
+    var projectId: Int64?
 
     private var totalWorkdays: Int {
         guard let goal = self.goal,

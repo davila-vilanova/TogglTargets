@@ -19,18 +19,19 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Interface
 
+    var projectId: BindingTarget<Int64?> { return _projectId.bindingTarget }
     var goal: BindingTarget<TimeGoal?> { return _goal.bindingTarget }
     var report: BindingTarget<TwoPartTimeReport?> { return _report.bindingTarget }
     var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
     var calendar: BindingTarget<Calendar?> { return _calendar.bindingTarget }
     var now: BindingTarget<Date?> { return _now.bindingTarget }
 
+    private let _projectId = MutableProperty<Int64?>(nil)
     private let _goal = MutableProperty<TimeGoal?>(nil)
     private let _report = MutableProperty<TwoPartTimeReport?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _now = MutableProperty<Date?>(nil)
-
 
     // MARK: - Outputs computed for children VCs
 
@@ -167,14 +168,16 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     }
     
     private func wireStrategyComputation() {
-        let computation = SignalProducer.combineLatest(_goal.producer.skipNil(),
-                                                       _report.producer.skipNil(),
+        let computation = SignalProducer.combineLatest(_projectId.producer.skipNil(), // TODO: skip and use binding target / pipe, non optional values
+                                                       _goal.producer.skipNil(),
+                                                       _report.producer,
                                                        _calendar.producer.skipNil(),
                                                        _now.producer.skipNil(),
                                                        _runningEntry.producer,
                                                        computeStrategyFrom.producer.skipNil())
-            .map { (goal, report, calendar, now, runningEntry, computeFrom) -> (GoalProgress, GoalStrategy, DayProgress) in
+            .map { (projectId, goal, report, calendar, now, runningEntry, computeFrom) -> (GoalProgress, GoalStrategy, DayProgress) in
                 let strategyComputer = StrategyComputer(calendar: calendar)
+                strategyComputer.projectId = projectId
                 strategyComputer.goal = goal
                 strategyComputer.report = report
                 strategyComputer.runningEntry = runningEntry

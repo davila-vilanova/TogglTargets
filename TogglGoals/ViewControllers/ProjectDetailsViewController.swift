@@ -49,6 +49,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         goalViewController.goal <~ goal
         goalViewController.userUpdates.observe(goalUserUpdatesPipe.input)
 
+        goalReportViewController.projectId <~ _project.map { return $0?.id }
         goalReportViewController.goal <~ goal
         goalReportViewController.report <~ report
         goalReportViewController.calendar <~ calendar
