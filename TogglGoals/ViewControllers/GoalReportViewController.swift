@@ -31,6 +31,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _now = MutableProperty<Date?>(nil)
 
+
     // MARK: - Outputs computed for children VCs
 
     private let goalProgress = MutableProperty<GoalProgress?>(nil)
@@ -38,6 +39,12 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     private let dayProgress = MutableProperty<DayProgress?>(nil)
 
 
+    // MARK: - Private properties
+
+    private let computeStrategyFrom = MutableProperty<DayComponents?>(nil)
+    private let selectedComputeStrategyFrom = MutableProperty<NSMenuItem?>(nil)
+
+    
     // MARK: - Outlets
     
     @IBOutlet weak var monthNameLabel: NSTextField!
@@ -130,7 +137,24 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     private func setupComputeStrategyFromButton() {
         // TODO: save and restore state of computeStrategyFromButton / decide on whether state is global or project specific
         computeStrategyFromButton.select(fromTodayItem)
-        
+
+        selectedComputeStrategyFrom.value = computeStrategyFromButton.selectedItem
+        selectedComputeStrategyFrom <~ computeStrategyFromButton.reactive.selectedItems.logEvents()
+
+        computeStrategyFrom <~ SignalProducer.combineLatest(selectedComputeStrategyFrom.producer.skipNil(),
+                                                            _now.producer.skipNil(),
+                                                            _calendar.producer.skipNil())
+            .map { [fromTodayItem, fromNextWorkDayItem] (menuItem, now, calendar) -> DayComponents? in
+                guard let fromTodayItem = fromTodayItem, let fromNextWorkDayItem = fromNextWorkDayItem else {
+                    return nil
+                }
+                switch menuItem {
+                case fromTodayItem: return calendar.dayComponents(from: now)
+                case fromNextWorkDayItem: return try! calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now))
+                default: return nil
+                }
+        }
+
         let enabledTarget = fromNextWorkDayItem.reactive.makeBindingTarget(on: UIScheduler()) { (menuItem, isLastDayOfMonth) in
             menuItem.isEnabled = !isLastDayOfMonth
         }
@@ -148,7 +172,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
                                                        _calendar.producer.skipNil(),
                                                        _now.producer.skipNil(),
                                                        _runningEntry.producer,
-                                                       computeStrategyFromButton.reactive.selectedItems.logEvents())
+                                                       computeStrategyFrom.producer.skipNil())
             .map { (goal, report, calendar, now, runningEntry, computeFrom) -> (GoalProgress, GoalStrategy, DayProgress) in
                 let strategyComputer = StrategyComputer(calendar: calendar)
                 strategyComputer.goal = goal
@@ -157,28 +181,13 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
                 strategyComputer.now = now
                 strategyComputer.startPeriodDay = calendar.firstDayOfMonth(for: now)
                 strategyComputer.endPeriodDay = calendar.lastDayOfMonth(for: now)
-                
-                strategyComputer.startStrategyDay = {
-                    if computeFrom === self.fromTodayItem {
-                        return calendar.dayComponents(from: now)
-                    } else {
-                        // now and computeFrom must be in sync
-                        return try! calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now))
-                    }
-                }()
+                strategyComputer.startStrategyDay = computeFrom
 
-            strategyComputer.startStrategyDay = calendar.dayComponents(from: now)
-//            strategyComputer.startStrategyDay = try! calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now)) // TODO
             return (strategyComputer.goalProgress, strategyComputer.goalStrategy, strategyComputer.dayProgress)
         }
-
 
         goalProgressViewController.goalProgress <~ computation.map { $0.0 }
         goalStrategyViewController.goalStrategy <~ computation.map { $0.1 }
         dayProgressViewController.dayProgress <~ computation.map { $0.2 }
-    }
-    
-    @IBAction func computeStrategyFromUpdated(_ sender: NSMenuItem) {
-//        wireStrategyComputation()
     }
 }

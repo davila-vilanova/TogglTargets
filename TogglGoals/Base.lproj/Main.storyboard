@@ -767,16 +767,8 @@
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="YRW-dN-Bbs">
                                         <items>
-                                            <menuItem title="from today" state="on" id="CSh-kF-rVJ">
-                                                <connections>
-                                                    <action selector="computeStrategyFromUpdated:" target="xQT-IJ-aTE" id="vei-91-C56"/>
-                                                </connections>
-                                            </menuItem>
-                                            <menuItem title="from next work day" id="UN6-Eu-Zua">
-                                                <connections>
-                                                    <action selector="computeStrategyFromUpdated:" target="xQT-IJ-aTE" id="jPk-RO-tV9"/>
-                                                </connections>
-                                            </menuItem>
+                                            <menuItem title="from today" state="on" id="CSh-kF-rVJ"/>
+                                            <menuItem title="from next work day" id="UN6-Eu-Zua"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
