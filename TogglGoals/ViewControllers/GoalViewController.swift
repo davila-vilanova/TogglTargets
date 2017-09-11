@@ -90,7 +90,7 @@ class GoalViewController: NSViewController {
         }
 
 
-        monthlyHoursGoalField.reactive.continuousStringValues.observeValues { [weak self] (text) in
+        monthlyHoursGoalField.reactive.stringValues.observeValues { [weak self] (text) in
             guard let vc = self else { return }
 
             if let parsedHours = vc.monthlyHoursGoalFormatter.number(from: text) {
