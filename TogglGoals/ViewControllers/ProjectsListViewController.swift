@@ -71,6 +71,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private func reloadList() {
         projectsCollectionView.reloadData()
         updateSelection()
+        scrollToSelection()
     }
 
     private func updateList(with clue: CollectionUpdateClue) {
@@ -86,11 +87,18 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         if let added = clue.addedItems {
             projectsCollectionView.animator().insertItems(at: added)
         }
+
+        scrollToSelection()
      }
 
     private func updateSelection() {
         let indexPath = projectsCollectionView.selectionIndexPaths.first
         selectedProject.value = modelCoordinator?.projectsByGoals.project(for: indexPath)
+    }
+
+    private func scrollToSelection() {
+        assert(Thread.current.isMainThread)
+        projectsCollectionView.animator().scrollToItems(at: projectsCollectionView.selectionIndexPaths, scrollPosition: .nearestHorizontalEdge)
     }
 
     // MARK: - NSCollectionViewDataSource
