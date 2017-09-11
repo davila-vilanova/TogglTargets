@@ -100,10 +100,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         }
         
         wireMonthName()
-        
-        // TODO: save and restore state of computeStrategyFromButton / decide on whether state is global or project specific
-        computeStrategyFromButton.select(fromTodayItem)
-        
+        setupComputeStrategyFromButton()
         wireStrategyComputation()
     }
     
@@ -130,15 +127,45 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         })
     }
     
+    private func setupComputeStrategyFromButton() {
+        // TODO: save and restore state of computeStrategyFromButton / decide on whether state is global or project specific
+        computeStrategyFromButton.select(fromTodayItem)
+        
+        let enabledTarget = fromNextWorkDayItem.reactive.makeBindingTarget(on: UIScheduler()) { (menuItem, isLastDayOfMonth) in
+            menuItem.isEnabled = !isLastDayOfMonth
+        }
+        
+        let isLastDayOfMonth = SignalProducer.combineLatest(_now.producer.skipNil(), _calendar.producer.skipNil()).map { (now, calendar) -> Bool in
+            return calendar.dayComponents(from: now) == calendar.lastDayOfMonth(for: now)
+        }
+        
+        enabledTarget <~ isLastDayOfMonth
+    }
+    
     private func wireStrategyComputation() {
-        let computation = SignalProducer.combineLatest(_goal.producer.skipNil(), _report.producer.skipNil(), _calendar.producer.skipNil(), _now.producer.skipNil(), _runningEntry.producer).map { (goal, report, calendar, now, runningEntry) -> (GoalProgress, GoalStrategy, DayProgress) in
-            let strategyComputer = StrategyComputer(calendar: calendar)
-            strategyComputer.goal = goal
-            strategyComputer.report = report
-            strategyComputer.runningEntry = runningEntry
-            strategyComputer.now = now
-            strategyComputer.startPeriodDay = calendar.firstDayOfMonth(for: now)
-            strategyComputer.endPeriodDay = calendar.lastDayOfMonth(for: now)
+        let computation = SignalProducer.combineLatest(_goal.producer.skipNil(),
+                                                       _report.producer.skipNil(),
+                                                       _calendar.producer.skipNil(),
+                                                       _now.producer.skipNil(),
+                                                       _runningEntry.producer,
+                                                       computeStrategyFromButton.reactive.selectedItems.logEvents())
+            .map { (goal, report, calendar, now, runningEntry, computeFrom) -> (GoalProgress, GoalStrategy, DayProgress) in
+                let strategyComputer = StrategyComputer(calendar: calendar)
+                strategyComputer.goal = goal
+                strategyComputer.report = report
+                strategyComputer.runningEntry = runningEntry
+                strategyComputer.now = now
+                strategyComputer.startPeriodDay = calendar.firstDayOfMonth(for: now)
+                strategyComputer.endPeriodDay = calendar.lastDayOfMonth(for: now)
+                
+                strategyComputer.startStrategyDay = {
+                    if computeFrom === self.fromTodayItem {
+                        return calendar.dayComponents(from: now)
+                    } else {
+                        // now and computeFrom must be in sync
+                        return try! calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now))
+                    }
+                }()
 
             strategyComputer.startStrategyDay = calendar.dayComponents(from: now)
 //            strategyComputer.startStrategyDay = try! calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now)) // TODO
