@@ -46,15 +46,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             projectsMasterDetailController.modelCoordinator = modelCoordinator;
         }
         
-        modelCoordinator.startRefreshingRunningTimeEntry()
     }
 
     func applicationDidBecomeActive(_ notification: Notification) {
-//        modelCoordinator?.refreshRunningTimeEntry()
+        modelCoordinator.startRefreshingRunningTimeEntry()
     }
 
     func applicationWillResignActive(_ notification: Notification) {
-//        modelCoordinator?.stopRefreshingRunningTimeEntry()
+
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

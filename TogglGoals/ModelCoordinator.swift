@@ -81,6 +81,7 @@ internal class ModelCoordinator: NSObject {
         super.init()
 
         // Update the now signal as seldom as possible and as precisely as required to match minute increments in the accumulated running time entry
+        // TODO: extract and test this logic
         Property.combineLatest(runningEntry, calendar).producer
             .startWithValues { [unowned self] (runningEntry, calendar) in
                 // Keep at most one regular update of the now signal related to the current time entry
