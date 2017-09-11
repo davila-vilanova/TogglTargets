@@ -57,28 +57,48 @@ internal class ModelCoordinator: NSObject {
         return q
     }()
 
-    let now: SignalProducer<Date, NoError>
+    var now: Signal<Date, NoError> { return _now.signal }
+    let _now: MutableProperty<Date>
     let calendar: MutableProperty<Calendar>
 
     private let dateScheduler = QueueScheduler.init(name: "ModelCoordinator date scheduler")
+    private var updateNowOnRunningEntryTickDisposable: Disposable?
 
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.goalsStore = goalsStore
 
         var calendarValue = Calendar(identifier: .iso8601)
         calendarValue.locale = Locale.current // TODO: get from user profile
-
         calendar = MutableProperty<Calendar>(calendarValue)
 
         let currentDate = dateScheduler.currentDate
+        _now = MutableProperty(currentDate)
+
         startOfPeriod = calendar.value.firstDayOfMonth(for: currentDate)
         yesterday = try? calendar.value.previousDay(for: currentDate, notBefore: startOfPeriod)
         today = calendar.value.dayComponents(from: currentDate)
 
-        now = SignalProducer.timer(interval: .seconds(60), on: dateScheduler)
-
         super.init()
-        
+
+        // Update the now signal as seldom as possible and as precisely as required to match minute increments in the accumulated running time entry
+        Property.combineLatest(runningEntry, calendar).producer
+            .startWithValues { [unowned self] (runningEntry, calendar) in
+                // Keep at most one regular update of the now signal related to the current time entry
+                if let disposable = self.updateNowOnRunningEntryTickDisposable {
+                    disposable.dispose()
+                    self.updateNowOnRunningEntryTickDisposable = nil
+                }
+
+                guard let runningEntry = runningEntry else {
+                    return
+                }
+
+                let nextRefresh = calendar.date(byAdding: DateComponents(minute: 1), to: runningEntry.start)! // it is a sound calculation, force result unwrapping
+                self.updateNowOnRunningEntryTickDisposable = self.dateScheduler.schedule(after: nextRefresh, interval: .seconds(60), action: {
+                    self._now.value = self.dateScheduler.currentDate
+                })
+        }
+
         retrieveUserDataFromToggl()
     }
 
@@ -147,7 +167,7 @@ internal class ModelCoordinator: NSObject {
 
     internal func startRefreshingRunningTimeEntry() {
         guard runningEntryRefreshTimer == nil || runningEntryRefreshTimer?.isValid == false else {
-            return;
+            return
         }
         runningEntryRefreshTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true, block: { [weak self] (timer) in
             guard let s = self else {
