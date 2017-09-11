@@ -57,8 +57,10 @@ internal class ModelCoordinator: NSObject {
         return q
     }()
 
-    let now = MutableProperty<Date>(Date())
+    let now: SignalProducer<Date, NoError>
     let calendar: MutableProperty<Calendar>
+
+    private let dateScheduler = QueueScheduler.init(name: "ModelCoordinator date scheduler")
 
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.goalsStore = goalsStore
@@ -68,9 +70,12 @@ internal class ModelCoordinator: NSObject {
 
         calendar = MutableProperty<Calendar>(calendarValue)
 
-        startOfPeriod = calendar.value.firstDayOfMonth(for: now.value)
-        yesterday = try? calendar.value.previousDay(for: now.value, notBefore: startOfPeriod)
-        today = calendar.value.dayComponents(from: now.value)
+        let currentDate = dateScheduler.currentDate
+        startOfPeriod = calendar.value.firstDayOfMonth(for: currentDate)
+        yesterday = try? calendar.value.previousDay(for: currentDate, notBefore: startOfPeriod)
+        today = calendar.value.dayComponents(from: currentDate)
+
+        now = SignalProducer.timer(interval: .seconds(60), on: dateScheduler)
 
         super.init()
         
