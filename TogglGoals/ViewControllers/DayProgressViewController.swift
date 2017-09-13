@@ -14,7 +14,8 @@ class DayProgressViewController: NSViewController {
 
     // MARK: Interface
 
-    internal var dayProgress = MutableProperty<DayProgress?>(nil)
+    internal var timeWorkedToday = MutableProperty<TimeInterval?>(nil)
+    internal var remainingTimeToDayBaseline = MutableProperty<TimeInterval?>(nil)
 
 
     // MARK: - Private
@@ -48,16 +49,12 @@ class DayProgressViewController: NSViewController {
         // Update worked and remaining time today with the values of the corresponding signals formatted to a time string
         // TODO: do not include English text directly in inline constant strings
 
-        let progress = dayProgress.producer.skipNil()
-        let workedTimeToday = progress.map { $0.workedTimeToday }
-        let remainingTimeToday = progress.map { $0.remainingTimeToDayBaselineToday }
-        let isTimeRemainingMissing = remainingTimeToday.map { $0 == nil }
+        let isTimeRemainingMissing = remainingTimeToDayBaseline.producer.map { $0 == nil }
 
-
-        timeWorkedTodayLabel.reactive.text <~ workedTimeToday.map { [timeFormatter] time in
+        timeWorkedTodayLabel.reactive.text <~ timeWorkedToday.producer.skipNil().map { [timeFormatter] time in
             "\(timeFormatter.string(from: time) ?? "-") worked today"
         }
-        timeRemainingToWorkTodayLabel.reactive.text <~ remainingTimeToday.skipNil().map { [timeFormatter] time in
+        timeRemainingToWorkTodayLabel.reactive.text <~ remainingTimeToDayBaseline.producer.skipNil().map { [timeFormatter] time in
             "\(timeFormatter.string(from: time) ?? "-") left to meet your goal today"
         }
 
@@ -68,9 +65,11 @@ class DayProgressViewController: NSViewController {
         }
 
         // Update progress indicator
-        SignalProducer.combineLatest(workedTimeToday, remainingTimeToday.skipNil()).observe(on: UIScheduler()).startWithValues { [todayProgressIndicator] (worked, remaining) in
-            todayProgressIndicator?.maxValue = worked + remaining
-            todayProgressIndicator?.doubleValue = worked
+        SignalProducer.combineLatest(timeWorkedToday.producer.skipNil(),
+                                     remainingTimeToDayBaseline.producer.skipNil())
+            .observe(on: UIScheduler()).startWithValues { [todayProgressIndicator] (worked, remaining) in
+                todayProgressIndicator?.maxValue = worked + remaining
+                todayProgressIndicator?.doubleValue = worked
         }
     }
 }

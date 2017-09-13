@@ -12,11 +12,11 @@ import ReactiveCocoa
 
 class ProjectCollectionViewItem: NSCollectionViewItem {
 
-    private var goal = MutableProperty<TimeGoal?>(nil)
+    private var goal = MutableProperty<Goal?>(nil)
     private var report = MutableProperty<TwoPartTimeReport?>(nil)
 
     internal func bindExclusivelyTo(project: Project?,
-                                    goal: MutableProperty<TimeGoal?>,
+                                    goal: MutableProperty<Goal?>,
                                     report: MutableProperty<TwoPartTimeReport?>) {
         bindingDisposables.disposeAll()
 

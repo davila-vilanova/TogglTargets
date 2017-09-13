@@ -15,14 +15,14 @@ class GoalViewController: NSViewController {
 
     // MARK: Interface
 
-    internal var goal: BindingTarget<TimeGoal?> { return _goal.bindingTarget }
-    internal var userUpdates: Signal<TimeGoal?, NoError> { return _userUpdates.output }
+    internal var goal: BindingTarget<Goal?> { return _goal.bindingTarget }
+    internal var userUpdates: Signal<Goal?, NoError> { return _userUpdates.output }
 
 
     // MARK: Private
 
-    private let _goal = MutableProperty<TimeGoal?>(nil)
-    private var _userUpdates = Signal<TimeGoal?, NoError>.pipe()
+    private let _goal = MutableProperty<Goal?>(nil)
+    private var _userUpdates = Signal<Goal?, NoError>.pipe()
 
     private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
@@ -144,11 +144,11 @@ class GoalViewController: NSViewController {
 class NoGoalViewController: NSViewController {
     @IBOutlet weak var createGoalButton: NSButton!
 
-    var goalCreated: Signal<TimeGoal, NoError> { return _goalCreated.output }
+    var goalCreated: Signal<Goal, NoError> { return _goalCreated.output }
 
-    private let _goalCreated = Signal<TimeGoal, NoError>.pipe()
+    private let _goalCreated = Signal<Goal, NoError>.pipe()
 
-    private var createGoalAction: Action<Void, TimeGoal, NoError>!
+    private var createGoalAction: Action<Void, Goal, NoError>!
 
     var projectId: BindingTarget<Int64?> { return _projectId.bindingTarget }
 
@@ -157,9 +157,9 @@ class NoGoalViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        createGoalAction = Action<Void, TimeGoal, NoError>(unwrapping: _projectId, execute: { (projectIdValue: Int64) -> SignalProducer<TimeGoal, NoError> in
-            return SignalProducer<TimeGoal, NoError> { (sink: Signal<TimeGoal, NoError>.Observer, disposable: Lifetime) in
-                sink.send(value: TimeGoal(forProjectId: projectIdValue, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend))
+        createGoalAction = Action<Void, Goal, NoError>(unwrapping: _projectId, execute: { (projectIdValue: Int64) -> SignalProducer<Goal, NoError> in
+            return SignalProducer<Goal, NoError> { (sink: Signal<Goal, NoError>.Observer, disposable: Lifetime) in
+                sink.send(value: Goal(forProjectId: projectIdValue, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend))
                 sink.sendCompleted()
             }
         })

@@ -137,7 +137,7 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Goals
     
-    internal func goalProperty(for projectId: Int64) -> MutableProperty<TimeGoal?> {
+    internal func goalProperty(for projectId: Int64) -> MutableProperty<Goal?> {
         let goalProperty = goalsStore.goalProperty(for: projectId)
         goalProperty.skipRepeats{ $0 == $1 }.signal.observeValues { [unowned self] timeGoalOrNil in
             self.goalChanged(for: projectId)

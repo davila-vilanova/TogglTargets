@@ -296,10 +296,10 @@
             </objects>
             <point key="canvasLocation" x="1701.5" y="1114.5"/>
         </scene>
-        <!--Goal Progress View Controller-->
+        <!--Time Progress View Controller-->
         <scene sceneID="j3N-S5-RVt">
             <objects>
-                <viewController id="7US-0q-kKJ" customClass="GoalProgressViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="7US-0q-kKJ" customClass="TimeProgressViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="RdO-bs-OdZ">
                         <rect key="frame" x="0.0" y="0.0" width="482" height="68"/>
                         <autoresizingMask key="autoresizingMask"/>

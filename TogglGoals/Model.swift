@@ -267,7 +267,8 @@ extension WeekdaySelection {
     }
 }
 
-struct TimeGoal {
+struct Goal {
+    // TODO: move here the start and end days
     let projectId: Int64
     var hoursPerMonth: Int
     var workWeekdays: WeekdaySelection
@@ -279,15 +280,15 @@ struct TimeGoal {
     }
 }
 
-extension TimeGoal: Equatable {
-    static func ==(lhs: TimeGoal, rhs: TimeGoal) -> Bool {
+extension Goal: Equatable {
+    static func ==(lhs: Goal, rhs: Goal) -> Bool {
         return lhs.projectId == rhs.projectId
         && lhs.hoursPerMonth == rhs.hoursPerMonth
         && lhs.workWeekdays == rhs.workWeekdays
     }
 }
 
-extension TimeGoal: CustomDebugStringConvertible {
+extension Goal: CustomDebugStringConvertible {
     var debugDescription: String {
         get {
             return "Goal(forProjectId: \(projectId), hoursPerMonth: \(hoursPerMonth), workWeekdays: \(workWeekdays))"

@@ -79,7 +79,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Data flow to contained view controllers
 
-    private let goal = MutableProperty<TimeGoal?>(nil)
+    private let goal = MutableProperty<Goal?>(nil)
     private let report = MutableProperty<TwoPartTimeReport?>(nil)
     private let _project = MutableProperty<Project?>(nil)
     private let calendar = MutableProperty<Calendar?>(nil)
@@ -89,7 +89,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Data flow from contained view controllers
 
-    private let goalUserUpdatesPipe = Signal<TimeGoal?, NoError>.pipe()
+    private let goalUserUpdatesPipe = Signal<Goal?, NoError>.pipe()
 
     
     // MARK: - ModelCoordinator
