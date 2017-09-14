@@ -45,7 +45,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let projectsMasterDetailController = windowController.window?.contentViewController as? ProjectsMasterDetailController {
             projectsMasterDetailController.modelCoordinator = modelCoordinator;
         }
-        
     }
 
     func applicationDidBecomeActive(_ notification: Notification) {

@@ -19,10 +19,10 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Projects and updates
 
-    internal private(set) var projectsByGoals = ProjectsByGoals() // Could be a mutable property even if list VCs would rather listen to full update and clued update separately
+    internal var projectsByGoals = MutableProperty<ProjectsByGoals>(ProjectsByGoals())
 
-    private var fullProjectsUpdatePipe = Signal<ProjectsByGoals, NoError>.pipe()
-    internal var fullProjectsUpdate: Signal<ProjectsByGoals, NoError> {
+    private var fullProjectsUpdatePipe = Signal<Bool, NoError>.pipe()
+    internal var fullProjectsUpdate: Signal<Bool, NoError> {
         return fullProjectsUpdatePipe.output
     }
 
@@ -116,8 +116,8 @@ internal class ModelCoordinator: NSObject {
 
         retrieveProjectsOp.outputCollectionOperation.completionBlock = { [unowned self] in
             if let projects = retrieveProjectsOp.outputCollectionOperation.collectedOutput {
-                self.projectsByGoals = ProjectsByGoals(projects: projects, goalsStore: self.goalsStore)
-                self.fullProjectsUpdatePipe.input.send(value: self.projectsByGoals)
+                self.projectsByGoals.value = ProjectsByGoals(projects: projects, goalsStore: self.goalsStore)
+                self.fullProjectsUpdatePipe.input.send(value: true)
             }
         }
 
@@ -146,7 +146,7 @@ internal class ModelCoordinator: NSObject {
     }
 
     private func goalChanged(for projectId: Int64) {
-        let indexPaths = projectsByGoals.moveProjectAfterGoalChange(projectId: projectId)!
+        let indexPaths = projectsByGoals.value.moveProjectAfterGoalChange(projectId: projectId)!
         let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
         cluedProjectsUpdatePipe.input.send(value: clue)
     }

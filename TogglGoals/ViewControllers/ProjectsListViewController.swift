@@ -20,26 +20,26 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private let projectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
     private let sectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
 
-    private let uiScheduler = UIScheduler()
+    /// Keeps track of the latest known ProjectsByGoals value to fulfill the DataSource responsibilities
+    private var latestProjectByGoalsValue: ProjectsByGoals?
 
-    private var modelCoordinatorObservationDisposables = [Disposable]()
+    private var modelCoordinatorObservationDisposables = DisposableBag()
     var modelCoordinator: ModelCoordinator? {
         didSet {
-            modelCoordinatorObservationDisposables.forEach { disposable in
-                disposable.dispose()
-            }
-            modelCoordinatorObservationDisposables.removeAll()
+            modelCoordinatorObservationDisposables.disposeAll()
 
             guard let mc = modelCoordinator else {
                 return
             }
 
+            let uiScheduler = UIScheduler()
             func observeValues<T>(from signal: Signal<T, NoError>, _ action: @escaping (T) -> ()) {
-                if let disposable = signal.observe(on: uiScheduler).observeValues(action) {
-                    modelCoordinatorObservationDisposables.append(disposable)
-                }
+                modelCoordinatorObservationDisposables.put(signal.observe(on: uiScheduler).observeValues(action))
             }
 
+            observeValues(from: mc.projectsByGoals.signal) { [unowned self] (v: ProjectsByGoals?) in
+                self.latestProjectByGoalsValue = v
+            }
             observeValues(from: mc.fullProjectsUpdate) { [unowned self] _ in
                 self.reloadList()
             }
@@ -93,7 +93,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     private func updateSelection() {
         let indexPath = projectsCollectionView.selectionIndexPaths.first
-        selectedProject.value = modelCoordinator?.projectsByGoals.project(for: indexPath)
+        selectedProject.value = latestProjectByGoalsValue?.project(for: indexPath)
     }
 
     private func scrollToSelection() {
@@ -108,12 +108,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
     
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let projectsByGoals = modelCoordinator?.projectsByGoals else {
+        guard let projectsByGoalsValue = latestProjectByGoalsValue else {
             return 0
         }
         switch SectionIndex(rawValue: section)! {
-        case .projectsWithGoals: return projectsByGoals.idsOfProjectsWithGoals.count
-        case .projectsWithoutGoals: return projectsByGoals.idsOfProjectsWithoutGoals.count
+        case .projectsWithGoals: return projectsByGoalsValue.idsOfProjectsWithGoals.count
+        case .projectsWithoutGoals: return projectsByGoalsValue.idsOfProjectsWithoutGoals.count
         }
     }
 
@@ -122,7 +122,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectItem = item as! ProjectCollectionViewItem
 
         let modelCoordinator = self.modelCoordinator!
-        let project = modelCoordinator.projectsByGoals.project(for: indexPath)!
+        let project = latestProjectByGoalsValue!.project(for: indexPath)! // TODO: this could blow up if the value of projectsByGoals changes while the CollectionView is updating its contents
         projectItem.bindExclusivelyTo(project: project,
                                       goal: modelCoordinator.goalProperty(for: project.id),
                                       report: modelCoordinator.reportProperty(for: project.id))
