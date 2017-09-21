@@ -74,6 +74,8 @@
 		639FD05D1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639FD05B1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift */; };
 		639FD05F1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639FD05E1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift */; };
 		639FD0601E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639FD05E1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift */; };
+		63A206B41F73F5B30064FAAC /* Relay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A206B31F73F5B30064FAAC /* Relay.swift */; };
+		63A206B51F73F5B30064FAAC /* Relay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A206B31F73F5B30064FAAC /* Relay.swift */; };
 		63B5D8AB1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8AA1E49011F00042897 /* NetworkRetrieveProfileOperation.swift */; };
 		63B5D8AC1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8AA1E49011F00042897 /* NetworkRetrieveProfileOperation.swift */; };
 		63B5D8AE1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8AD1E49014000042897 /* NetworkRetrieveReportsOperation.swift */; };
@@ -198,6 +200,7 @@
 		6393B73F1F3A5BF300FC1EAC /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/Mac/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		639FD05B1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveWorkspacesOperation.swift; sourceTree = "<group>"; };
 		639FD05E1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveProjectsOperation.swift; sourceTree = "<group>"; };
+		63A206B31F73F5B30064FAAC /* Relay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relay.swift; sourceTree = "<group>"; };
 		63B5D8AA1E49011F00042897 /* NetworkRetrieveProfileOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveProfileOperation.swift; sourceTree = "<group>"; };
 		63B5D8AD1E49014000042897 /* NetworkRetrieveReportsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveReportsOperation.swift; sourceTree = "<group>"; };
 		63B5D8B61E4901D000042897 /* TogglAPIAccessOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPIAccessOperation.swift; sourceTree = "<group>"; };
@@ -291,6 +294,7 @@
 				63B7719E1ED365A1005739CF /* ProjectsByGoals.swift */,
 				63E6FC821F69CE7B00C5CEB8 /* GoalProgress.swift */,
 				63D4FF2E1F5AD839006368A3 /* MainMenu.xib */,
+				63A206B31F73F5B30064FAAC /* Relay.swift */,
 			);
 			path = TogglGoals;
 			sourceTree = "<group>";
@@ -543,6 +547,7 @@
 				63BBBA941F37ACF600A8A174 /* NSViewControllerExtensions.swift in Sources */,
 				636ABD4D1DBE3162002C42BE /* Model.swift in Sources */,
 				637A32421EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
+				63A206B41F73F5B30064FAAC /* Relay.swift in Sources */,
 				639FD05F1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */,
 				637A32481EE16FD600667FC3 /* GoalViewController.swift in Sources */,
 				63B7719F1ED365A1005739CF /* ProjectsByGoals.swift in Sources */,
@@ -593,6 +598,7 @@
 				63E6FC841F69CE9F00C5CEB8 /* GoalProgress.swift in Sources */,
 				63C26A851F50C3C300F21943 /* DisposableBag.swift in Sources */,
 				636ABD4E1DBE3162002C42BE /* Model.swift in Sources */,
+				63A206B51F73F5B30064FAAC /* Relay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
