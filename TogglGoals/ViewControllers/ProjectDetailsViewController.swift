@@ -51,7 +51,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Goal and report providing
 
-
     /// Each start invocation of this producer and its siblings (goalWriteProviderProducer and reportReadProviderProducer)
     /// must deliver one and only one value which is an action taking a project ID as its input
     internal var goalReadProviderProducer: SignalProducer<Action<Int64, Property<Goal?>, NoError>, NoError>! {

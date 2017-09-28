@@ -71,7 +71,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     // MARK: - Contained view controllers
 
-    /// Represents the two split items this controller has
+    /// Represents the two split items this controller contains
     private enum SplitItemIndex: Int {
         case projectsList = 0
         case selectionDetail
