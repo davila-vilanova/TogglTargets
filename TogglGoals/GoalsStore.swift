@@ -31,20 +31,28 @@ class GoalsStore {
         }
     }
 
-    func goalProperty(for projectId: Int64) -> MutableProperty<Goal?> {
-        if let property = goalProperties[projectId] {
-            return property
-        } else {
-            let goal = retrieveGoal(for: projectId)
-            let property = MutableProperty<Goal?>(goal)
-            property.skipRepeats{ $0 == $1 }.signal.observeValues { [unowned self] timeGoalOrNil in
-                self.goalChanged(timeGoalOrNil, for: projectId)
-            }
-            goalProperties[projectId] = property
-            return property
-        }
+    func goalProperty(for projectId: Int64) -> Property<Goal?> {
+        return Property<Goal?>(goalMutableProperty(for: projectId))
     }
 
+    func goalBindingTarget(for projectId: Int64) -> BindingTarget<Goal?> {
+        return goalMutableProperty(for: projectId).bindingTarget
+    }
+    
+    // Third parties don't access these mutable properties directly
+    private func goalMutableProperty(for projectId: Int64) -> MutableProperty<Goal?> {
+        if let existing = goalProperties[projectId] {
+            return existing
+        }
+        let goal = retrieveGoal(for: projectId)
+        let new = MutableProperty<Goal?>(goal)
+        new.skipRepeats{ $0 == $1 }.signal.observeValues { [unowned self] timeGoalOrNil in
+            self.goalChanged(timeGoalOrNil, for: projectId)
+        }
+        goalProperties[projectId] = new
+        return new
+    }
+    
     private func goalChanged(_ timeGoalOrNil: Goal?, for projectId: Int64) {
         if let modifiedGoal = timeGoalOrNil {
             print("will store goal=\(modifiedGoal)")

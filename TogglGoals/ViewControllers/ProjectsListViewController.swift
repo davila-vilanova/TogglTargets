@@ -10,49 +10,62 @@ import Cocoa
 import ReactiveSwift
 import Result
 
-enum SectionIndex: Int {
-    case projectsWithGoals = 0
-    case projectsWithoutGoals
-}
-fileprivate let NumberOfSections = 2
+fileprivate let ProjectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
+fileprivate let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
+
 
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate {
-    private let projectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
-    private let sectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
 
-    /// Keeps track of the latest known ProjectsByGoals value to fulfill the DataSource responsibilities
-    private var latestProjectByGoalsValue: ProjectsByGoals?
+    // MARK: - Exposed targets and source
 
-    private var modelCoordinatorObservationDisposables = DisposableBag()
-    var modelCoordinator: ModelCoordinator? {
+    internal var projectsByGoals: BindingTarget<ProjectsByGoals> { return _projectsByGoals.deoptionalizedBindingTarget }
+    internal var fullProjectsUpdate: BindingTarget<Bool> { return _fullProjectsUpdate.deoptionalizedBindingTarget }
+    internal var cluedProjectsUpdate: BindingTarget<CollectionUpdateClue> { return _cluedProjectsUpdate.deoptionalizedBindingTarget }
+
+    internal lazy var selectedProject = Property<Project?>(_selectedProject)
+
+
+    // MARK: - Backing properties
+
+    private let _projectsByGoals = MutableProperty<ProjectsByGoals?>(nil)
+    private let _fullProjectsUpdate = MutableProperty<Bool?>(nil)
+    private let _cluedProjectsUpdate = MutableProperty<CollectionUpdateClue?>(nil)
+    private let _selectedProject = MutableProperty<Project?>(nil)
+
+
+    // MARK: - Goal and report providing
+
+    // TODO: Generalize and encapsulate?
+    internal var goalReadProviderProducer: SignalProducer<Action<Int64, Property<Goal?>, NoError>, NoError>! {
         didSet {
-            modelCoordinatorObservationDisposables.disposeAll()
-
-            guard let mc = modelCoordinator else {
-                return
-            }
-
-            let uiScheduler = UIScheduler()
-            func observeValues<T>(from signal: Signal<T, NoError>, _ action: @escaping (T) -> ()) {
-                modelCoordinatorObservationDisposables.put(signal.observe(on: uiScheduler).observeValues(action))
-            }
-
-            observeValues(from: mc.projectsByGoals.signal) { [unowned self] (v: ProjectsByGoals?) in
-                self.latestProjectByGoalsValue = v
-            }
-            observeValues(from: mc.fullProjectsUpdate) { [unowned self] _ in
-                self.reloadList()
-            }
-            observeValues(from: mc.cluedProjectsUpdate) { [unowned self] clue in
-                self.updateList(with: clue)
+            assert(goalReadProviderProducer != nil)
+            assert(oldValue == nil)
+            if let producer = goalReadProviderProducer {
+                goalReadProvider <~ producer.take(first: 1)
             }
         }
     }
+    private let goalReadProvider = MutableProperty<Action<Int64, Property<Goal?>, NoError>?>(nil)
 
-    internal var selectedProject = MutableProperty<Project?>(nil)
+    internal var reportReadProviderProducer: SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError>! {
+        didSet {
+            assert(reportReadProviderProducer != nil)
+            assert(oldValue == nil)
+            if let producer = reportReadProviderProducer {
+                reportReadProvider <~ producer.take(first: 1)
+            }
+        }
+    }
+    private let reportReadProvider = MutableProperty<Action<Int64, Property<TwoPartTimeReport?>, NoError>?>(nil)
+
+
+    // MARK: Outlets
 
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
-    
+
+
+    // MARK: -
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -60,12 +73,23 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         projectsCollectionView.delegate = self
 
         let itemNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewItem"), bundle: nil)!
-        projectsCollectionView.register(itemNib, forItemWithIdentifier: projectItemIdentifier)
+        projectsCollectionView.register(itemNib, forItemWithIdentifier: ProjectItemIdentifier)
 
         let headerNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewHeader"), bundle: nil)!
-        projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: sectionHeaderIdentifier)
+        projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: SectionHeaderIdentifier)
 
-        reloadList()
+        let providersProducer = SignalProducer.combineLatest(goalReadProvider.producer.skipNil().take(first: 1),
+                                                             reportReadProvider.producer.skipNil().take(first: 1))
+        providersProducer.combineLatest(with: _fullProjectsUpdate.producer.skipNil().filter { $0 })
+            .observe(on: UIScheduler())
+            .startWithValues { [unowned self] (_) in
+                self.reloadList()
+        }
+        providersProducer.combineLatest(with: _cluedProjectsUpdate.producer.skipNil())
+            .observe(on: UIScheduler())
+            .startWithValues { [unowned self] (_, clue) in
+                self.updateList(with: clue)
+        }
     }
 
     private func reloadList() {
@@ -89,11 +113,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
 
         scrollToSelection()
-     }
+    }
 
     private func updateSelection() {
         let indexPath = projectsCollectionView.selectionIndexPaths.first
-        selectedProject.value = latestProjectByGoalsValue?.project(for: indexPath)
+        _selectedProject.value = _projectsByGoals.value?.project(for: indexPath)
     }
 
     private func scrollToSelection() {
@@ -102,46 +126,46 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     // MARK: - NSCollectionViewDataSource
-    
+
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
-        return NumberOfSections
+        return ProjectsByGoals.Section.count
     }
-    
+
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let projectsByGoalsValue = latestProjectByGoalsValue else {
-            return 0
-        }
-        switch SectionIndex(rawValue: section)! {
-        case .projectsWithGoals: return projectsByGoalsValue.idsOfProjectsWithGoals.count
-        case .projectsWithoutGoals: return projectsByGoalsValue.idsOfProjectsWithoutGoals.count
+        let projectsByGoalsValue = _projectsByGoals.value
+
+        switch ProjectsByGoals.Section(rawValue: section)! {
+        case .withGoal: return projectsByGoalsValue?.idsOfProjectsWithGoals.count ?? 0
+        case .withoutGoal: return projectsByGoalsValue?.idsOfProjectsWithoutGoals.count ?? 0
         }
     }
 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
+        let item = collectionView.makeItem(withIdentifier: ProjectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
 
-        let modelCoordinator = self.modelCoordinator!
-        let project = latestProjectByGoalsValue!.project(for: indexPath)! // TODO: this could blow up if the value of projectsByGoals changes while the CollectionView is updating its contents
-        projectItem.bindExclusivelyTo(project: project,
-                                      goal: modelCoordinator.goalProperty(for: project.id),
-                                      report: modelCoordinator.reportProperty(for: project.id))
+        // TODO: what would happen if the value of projectsByGoals changed while the CollectionView is updating its contents?
+        let project = _projectsByGoals.value!.project(for: indexPath)!
+        projectItem.currentProject = project
+        projectItem.goals <~ goalReadProvider.value!.apply(project.id).mapToNoError()
+        projectItem.reports <~ reportReadProvider.value!.apply(project.id).mapToNoError()
 
         return projectItem
     }
 
     func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
-        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: sectionHeaderIdentifier, for: indexPath)
+        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: SectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
-            switch SectionIndex(rawValue: indexPath.section)! {
-            case .projectsWithGoals: header.title = "projects with goals"
-            case .projectsWithoutGoals: header.title = "projects without goals"
+            switch ProjectsByGoals.Section(rawValue: indexPath.section)! {
+            case .withGoal: header.title = "projects with goals"
+            case .withoutGoal: header.title = "projects without goals"
             }
 
         }
         return view
     }
-    
+
+
     // MARK: - NSCollectionViewDelegate
 
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {

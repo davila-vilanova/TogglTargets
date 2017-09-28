@@ -19,7 +19,8 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Projects and updates
 
-    internal var projectsByGoals = MutableProperty<ProjectsByGoals>(ProjectsByGoals())
+    private var mutableProjectsByGoals: MutableProperty<ProjectsByGoals>
+    internal var projectsByGoals: Property<ProjectsByGoals>
 
     private var fullProjectsUpdatePipe = Signal<Bool, NoError>.pipe()
     internal var fullProjectsUpdate: Signal<Bool, NoError> {
@@ -35,8 +36,9 @@ internal class ModelCoordinator: NSObject {
     // MARK : -
 
     private var reportProperties = Dictionary<Int64, MutableProperty<TwoPartTimeReport?>>()
-    
-    internal let runningEntry = MutableProperty<RunningEntry?>(nil)
+
+    internal let runningEntry: Property<RunningEntry?>
+    private let mutableRunningEntry: MutableProperty<RunningEntry?>
     internal var runningEntryRefreshTimer: Timer?
 
     private let apiCredential = TogglAPICredential()
@@ -57,34 +59,45 @@ internal class ModelCoordinator: NSObject {
         return q
     }()
 
-    var now: Signal<Date, NoError> { return _now.signal }
-    let _now: MutableProperty<Date>
-    let calendar: MutableProperty<Calendar>
+    internal var now: SignalProducer<Date, NoError> { return _now.producer }
+    private let _now: MutableProperty<Date>
+    internal let calendar: Property<Calendar>
+    private let mutableCalendar: MutableProperty<Calendar>
 
-    private let dateScheduler = QueueScheduler.init(name: "ModelCoordinator date scheduler")
+    private let scheduler = QueueScheduler.init(name: "ModelCoordinator scheduler")
     private var updateNowOnRunningEntryTickDisposable: Disposable?
 
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.goalsStore = goalsStore
 
+        let mutableProjectsByGoals = MutableProperty<ProjectsByGoals>(ProjectsByGoals())
+        self.mutableProjectsByGoals = mutableProjectsByGoals
+        self.projectsByGoals = Property<ProjectsByGoals>(mutableProjectsByGoals)
+
+        let mutableRunningEntry = MutableProperty<RunningEntry?>(nil)
+        self.mutableRunningEntry = mutableRunningEntry
+        self.runningEntry = Property<RunningEntry?>(mutableRunningEntry)
+
         var calendarValue = Calendar(identifier: .iso8601)
         calendarValue.locale = Locale.current // TODO: get from user profile
-        calendar = MutableProperty<Calendar>(calendarValue)
+        let mutableCalendar = MutableProperty<Calendar>(calendarValue)
+        self.mutableCalendar = mutableCalendar
+        self.calendar = Property<Calendar>(mutableCalendar)
 
-        let currentDate = dateScheduler.currentDate
+        let currentDate = scheduler.currentDate
         _now = MutableProperty(currentDate)
 
-        startOfPeriod = calendar.value.firstDayOfMonth(for: currentDate)
-        yesterday = try? calendar.value.previousDay(for: currentDate, notBefore: startOfPeriod)
-        today = calendar.value.dayComponents(from: currentDate)
+        startOfPeriod = mutableCalendar.value.firstDayOfMonth(for: currentDate)
+        yesterday = try? mutableCalendar.value.previousDay(for: currentDate, notBefore: startOfPeriod)
+        today = mutableCalendar.value.dayComponents(from: currentDate)
 
         super.init()
 
-        // Update the now signal as seldom as possible and as precisely as required to match minute increments in the accumulated running time entry
+        // Update the now property as seldom as possible and as precisely as required to match minute increments in the accumulated running time entry
         // TODO: extract and test this logic
-        Property.combineLatest(runningEntry, calendar).producer
+        Property.combineLatest(mutableRunningEntry, mutableCalendar).producer
             .startWithValues { [unowned self] (runningEntry, calendar) in
-                // Keep at most one regular update of the now signal related to the current time entry
+                // Keep at most one regular update of the now property related to the current time entry
                 if let disposable = self.updateNowOnRunningEntryTickDisposable {
                     disposable.dispose()
                     self.updateNowOnRunningEntryTickDisposable = nil
@@ -95,8 +108,8 @@ internal class ModelCoordinator: NSObject {
                 }
 
                 let nextRefresh = calendar.date(byAdding: DateComponents(minute: 1), to: runningEntry.start)! // it is a sound calculation, force result unwrapping
-                self.updateNowOnRunningEntryTickDisposable = self.dateScheduler.schedule(after: nextRefresh, interval: .seconds(60), action: {
-                    self._now.value = self.dateScheduler.currentDate
+                self.updateNowOnRunningEntryTickDisposable = self.scheduler.schedule(after: nextRefresh, interval: .seconds(60), action: {
+                    self._now.value = self.scheduler.currentDate
                 })
         }
 
@@ -116,7 +129,7 @@ internal class ModelCoordinator: NSObject {
 
         retrieveProjectsOp.outputCollectionOperation.completionBlock = { [unowned self] in
             if let projects = retrieveProjectsOp.outputCollectionOperation.collectedOutput {
-                self.projectsByGoals.value = ProjectsByGoals(projects: projects, goalsStore: self.goalsStore)
+                self.mutableProjectsByGoals.value = ProjectsByGoals(projects: projects, goalsStore: self.goalsStore)
                 self.fullProjectsUpdatePipe.input.send(value: true)
             }
         }
@@ -124,7 +137,7 @@ internal class ModelCoordinator: NSObject {
         retrieveReportsOp.outputCollectionOperation.completionBlock = { [unowned self] in
             if let reports = retrieveReportsOp.outputCollectionOperation.collectedOutput {
                 for (projectId, report) in reports {
-                    self.reportProperty(for: projectId).value = report
+                    self.reportMutableProperty(for: projectId).value = report
                 }
             }
         }
@@ -136,8 +149,34 @@ internal class ModelCoordinator: NSObject {
     }
 
     // MARK: - Goals
-    
-    internal func goalProperty(for projectId: Int64) -> MutableProperty<Goal?> {
+
+    /// Each invocation of this Producer will deliver a single value and then complete.
+    /// The value is an Action which takes a project ID as input and returns a Property
+    /// that conveys the values of the goal associated with the provided project ID.
+    internal lazy var goalReadProviderProducer = SignalProducer<Action<Int64, Property<Goal?>, NoError>, NoError> { [unowned self] observer, lifetime in
+        let action = Action<Int64, Property<Goal?>, NoError>() { projectId in
+            let goalProperty = self.goalProperty(for: projectId)
+            return SignalProducer<Property<Goal?>, NoError>(value: goalProperty)
+        }
+        observer.send(value: action)
+        observer.sendCompleted()
+    }
+
+
+    /// Each invocation of this Producer will deliver a single value and then complete.
+    /// The value is an Action which takes a project ID as input and returns a BindingTarget
+    /// that accepts new (or edited) values for the goal associated with the provided project ID.
+    internal lazy var goalWriteProviderProducer = SignalProducer<Action<Int64, BindingTarget<Goal?>, NoError>, NoError> { [unowned self] observer, lifetime in
+        let action = Action<Int64, BindingTarget<Goal?>, NoError> { projectId in
+            let goalBindingTarget = self.goalBindingTarget(for: projectId)
+            return SignalProducer<BindingTarget<Goal?>, NoError>(value: goalBindingTarget)
+        }
+        observer.send(value: action)
+        observer.sendCompleted()
+    }
+
+
+    private func goalProperty(for projectId: Int64) -> Property<Goal?> {
         let goalProperty = goalsStore.goalProperty(for: projectId)
         goalProperty.skipRepeats{ $0 == $1 }.signal.observeValues { [unowned self] timeGoalOrNil in
             self.goalChanged(for: projectId)
@@ -145,23 +184,42 @@ internal class ModelCoordinator: NSObject {
         return goalProperty
     }
 
+    private func goalBindingTarget(for projectId: Int64) -> BindingTarget<Goal?> {
+        return goalsStore.goalBindingTarget(for: projectId)
+    }
+
     private func goalChanged(for projectId: Int64) {
-        let indexPaths = projectsByGoals.value.moveProjectAfterGoalChange(projectId: projectId)!
+        let indexPaths = mutableProjectsByGoals.value.moveProjectAfterGoalChange(projectId: projectId)!
         let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
         cluedProjectsUpdatePipe.input.send(value: clue)
     }
 
-    // MARK: -
-    
-    internal func reportProperty(for projectId: Int64) -> MutableProperty<TwoPartTimeReport?> {
-        if let property = reportProperties[projectId] {
-            return property
+    // MARK: - Reports
+
+    /// Each invocation of this Producer will deliver a single value and then complete.
+    /// The value is an Action which takes a project ID as input and returns a Property
+    /// that conveys the values of the time report associated with the provided project ID.
+    internal lazy var reportReadProviderProducer = SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError> { [unowned self] observer, lifetime in
+        let action = Action<Int64, Property<TwoPartTimeReport?>, NoError>() { projectId in
+            let mutable = self.reportMutableProperty(for: projectId)
+            let immutable = Property<TwoPartTimeReport?>(mutable)
+            return SignalProducer<Property<TwoPartTimeReport?>, NoError>(value: immutable)
+        }
+        observer.send(value: action)
+        observer.sendCompleted()
+    }
+
+    private func reportMutableProperty(for projectId: Int64) -> MutableProperty<TwoPartTimeReport?> {
+        if let existing = reportProperties[projectId] {
+            return existing
         } else {
-            let property = MutableProperty<TwoPartTimeReport?>(nil)
-            reportProperties[projectId] = property
-            return property
+            let new = MutableProperty<TwoPartTimeReport?>(nil)
+            reportProperties[projectId] = new
+            return new
         }
     }
+
+    // MARK: - Running Entry
 
     internal func startRefreshingRunningTimeEntry() {
         guard runningEntryRefreshTimer == nil || runningEntryRefreshTimer?.isValid == false else {
@@ -186,7 +244,7 @@ internal class ModelCoordinator: NSObject {
     private func retrieveRunningTimeEntry() {
         let op = NetworkRetrieveRunningEntryOperation(credential: apiCredential)
         op.onSuccess = { runningEntry in
-            self.runningEntry.value = runningEntry
+            self.mutableRunningEntry.value = runningEntry
         }
         networkQueue.addOperation(op)
     }

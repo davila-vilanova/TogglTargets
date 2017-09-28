@@ -12,10 +12,16 @@ import ReactiveCocoa
 
 class DayProgressViewController: NSViewController {
 
-    // MARK: Interface
+    // MARK: Exposed targets
 
-    internal var timeWorkedToday = MutableProperty<TimeInterval?>(nil)
-    internal var remainingTimeToDayBaseline = MutableProperty<TimeInterval?>(nil)
+    internal var timeWorkedToday: BindingTarget<TimeInterval> { return _timeWorkedToday.bindingTarget }
+    internal var remainingTimeToDayBaseline: BindingTarget<TimeInterval?> { return _remainingTimeToDayBaseline.bindingTarget }
+
+
+    // MARK: - Properties
+
+    private let _timeWorkedToday = MutableProperty<TimeInterval>(0)
+    private let _remainingTimeToDayBaseline = MutableProperty<TimeInterval?>(nil)
 
 
     // MARK: - Private
@@ -39,8 +45,7 @@ class DayProgressViewController: NSViewController {
     @IBOutlet weak var timeRemainingToWorkTodayLabel: NSTextField!
 
 
-    // MARK: - Wiring
-
+    // MARK: -
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,12 +54,12 @@ class DayProgressViewController: NSViewController {
         // Update worked and remaining time today with the values of the corresponding signals formatted to a time string
         // TODO: do not include English text directly in inline constant strings
 
-        let isTimeRemainingMissing = remainingTimeToDayBaseline.producer.map { $0 == nil }
+        let isTimeRemainingMissing = _remainingTimeToDayBaseline.producer.map { $0 == nil }
 
-        timeWorkedTodayLabel.reactive.text <~ timeWorkedToday.producer.skipNil().map { [timeFormatter] time in
+        timeWorkedTodayLabel.reactive.text <~ _timeWorkedToday.producer.map { [timeFormatter] time in
             "\(timeFormatter.string(from: time) ?? "-") worked today"
         }
-        timeRemainingToWorkTodayLabel.reactive.text <~ remainingTimeToDayBaseline.producer.skipNil().map { [timeFormatter] time in
+        timeRemainingToWorkTodayLabel.reactive.text <~ _remainingTimeToDayBaseline.producer.skipNil().map { [timeFormatter] time in
             "\(timeFormatter.string(from: time) ?? "-") left to meet your goal today"
         }
 
@@ -65,8 +70,8 @@ class DayProgressViewController: NSViewController {
         }
 
         // Update progress indicator
-        SignalProducer.combineLatest(timeWorkedToday.producer.skipNil(),
-                                     remainingTimeToDayBaseline.producer.skipNil())
+        SignalProducer.combineLatest(_timeWorkedToday.producer,
+                                     _remainingTimeToDayBaseline.producer.skipNil())
             .observe(on: UIScheduler()).startWithValues { [todayProgressIndicator] (worked, remaining) in
                 todayProgressIndicator?.maxValue = worked + remaining
                 todayProgressIndicator?.doubleValue = worked

@@ -17,21 +17,23 @@ fileprivate let DayProgressVCContainment = "DayProgressVCContainment"
 
 class GoalReportViewController: NSViewController, ViewControllerContaining {
 
-    // MARK: - Interface
+    // MARK: Exposed targets
 
-    var projectId: BindingTarget<Int64?> { return _projectId.bindingTarget }
-    var goal: BindingTarget<Goal?> { return _goal.bindingTarget }
-    var report: BindingTarget<TwoPartTimeReport?> { return _report.bindingTarget }
-    var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
-    var calendar: BindingTarget<Calendar?> { return _calendar.bindingTarget }
-    var now: BindingTarget<Date?> { return _now.bindingTarget }
+    var projectId: BindingTarget<Int64> { return goalProgress.projectId.deoptionalizedBindingTarget }
+    var goal: BindingTarget<Goal> { return goalProgress.goal.deoptionalizedBindingTarget }
+    var report: BindingTarget<TwoPartTimeReport?> { return goalProgress.report.bindingTarget }
+    var runningEntry: BindingTarget<RunningEntry?> { return goalProgress.runningEntry.bindingTarget }
+    var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
+    var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
 
-    private let _projectId = MutableProperty<Int64?>(nil)
-    private let _goal = MutableProperty<Goal?>(nil)
-    private let _report = MutableProperty<TwoPartTimeReport?>(nil)
-    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
+
+    // MARK: - Properties
+
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _now = MutableProperty<Date?>(nil)
+
+    private let computeStrategyFrom = MutableProperty<DayComponents?>(nil)
+    private let selectedComputeStrategyFrom = MutableProperty<NSMenuItem?>(nil)
 
 
     // MARK: - Computation
@@ -39,12 +41,6 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     private let goalProgress = GoalProgress()
 
 
-    // MARK: - Private properties
-
-    private let computeStrategyFrom = MutableProperty<DayComponents?>(nil)
-    private let selectedComputeStrategyFrom = MutableProperty<NSMenuItem?>(nil)
-
-    
     // MARK: - Outlets
     
     @IBOutlet weak var monthNameLabel: NSTextField!
@@ -61,10 +57,10 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     var timeProgressViewController: TimeProgressViewController! {
         didSet {
             timeProgressViewController.timeGoal <~ goalProgress.timeGoal
-            timeProgressViewController.totalWorkDays <~ goalProgress.totalWorkDays
-            timeProgressViewController.remainingWorkDays <~ goalProgress.remainingWorkDays
-            timeProgressViewController.workedTime <~ goalProgress.workedTime
-            timeProgressViewController.remainingTimeToGoal <~ goalProgress.remainingTimeToGoal
+            timeProgressViewController.totalWorkDays <~ goalProgress.totalWorkDays.producer.skipNil()
+            timeProgressViewController.remainingWorkDays <~ goalProgress.remainingWorkDays.producer.skipNil()
+            timeProgressViewController.workedTime <~ goalProgress.workedTime.producer.skipNil()
+            timeProgressViewController.remainingTimeToGoal <~ goalProgress.remainingTimeToGoal.producer.skipNil()
 
             displayController(timeProgressViewController, in: goalProgressView)
         }
@@ -73,9 +69,9 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     var goalStrategyViewController: GoalStrategyViewController! {
         didSet {
             goalStrategyViewController.timeGoal <~ goalProgress.timeGoal
-            goalStrategyViewController.dayBaseline <~ goalProgress.dayBaseline
-            goalStrategyViewController.dayBaselineAdjustedToProgress <~ goalProgress.dayBaselineAdjustedToProgress
-            goalStrategyViewController.dayBaselineDifferential <~ goalProgress.dayBaselineDifferential
+            goalStrategyViewController.dayBaseline <~ goalProgress.dayBaseline.producer.skipNil()
+            goalStrategyViewController.dayBaselineAdjustedToProgress <~ goalProgress.dayBaselineAdjustedToProgress.producer.skipNil()
+            goalStrategyViewController.dayBaselineDifferential <~ goalProgress.dayBaselineDifferential.producer.skipNil()
 
             displayController(goalStrategyViewController, in: goalStrategyView)
         }
@@ -83,7 +79,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     var dayProgressViewController: DayProgressViewController! {
         didSet {
-            dayProgressViewController.timeWorkedToday <~ goalProgress.timeWorkedToday
+            dayProgressViewController.timeWorkedToday <~ goalProgress.timeWorkedToday.producer.skipNil()
             dayProgressViewController.remainingTimeToDayBaseline <~ goalProgress.remainingTimeToDayBaseline
 
             displayController(dayProgressViewController, in: dayProgressView)
@@ -119,7 +115,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         
         wireMonthName()
         setupComputeStrategyFromButton()
-        connectInputsToGoalProgress()
+        connectPropertiesToGoalProgress()
     }
     
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
@@ -150,7 +146,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         computeStrategyFromButton.select(fromTodayItem)
 
         selectedComputeStrategyFrom.value = computeStrategyFromButton.selectedItem
-        selectedComputeStrategyFrom <~ computeStrategyFromButton.reactive.selectedItems.logEvents()
+        selectedComputeStrategyFrom <~ computeStrategyFromButton.reactive.selectedItems
 
         computeStrategyFrom <~ SignalProducer.combineLatest(selectedComputeStrategyFrom.producer.skipNil(),
                                                             _now.producer.skipNil(),
@@ -177,11 +173,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         enabledTarget <~ isLastDayOfMonth
     }
     
-    private func connectInputsToGoalProgress() {
-        goalProgress.projectId <~ _projectId
-        goalProgress.goal <~ _goal
-        goalProgress.report <~ _report
-        goalProgress.runningEntry <~ _runningEntry
+    private func connectPropertiesToGoalProgress() {
         goalProgress.startGoalDay <~ SignalProducer.combineLatest(_now.producer.skipNil(),
                                                                   _calendar.producer.skipNil())
             .map { (now, calendar) in

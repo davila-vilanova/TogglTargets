@@ -41,9 +41,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let windowController = mainStoryboard?.instantiateInitialController() as! NSWindowController
         mainWindow = windowController.window
         mainWindow!.makeKeyAndOrderFront(nil)
-        
-        if let projectsMasterDetailController = windowController.window?.contentViewController as? ProjectsMasterDetailController {
-            projectsMasterDetailController.modelCoordinator = modelCoordinator;
+
+        if let masterDetailController = windowController.window?.contentViewController as? ProjectsMasterDetailController {
+            masterDetailController.now <~ modelCoordinator.now
+            masterDetailController.calendar <~ modelCoordinator.calendar
+            
+            masterDetailController.projectsByGoals <~ modelCoordinator.projectsByGoals
+            masterDetailController.fullProjectsUpdate <~ modelCoordinator.fullProjectsUpdate
+            masterDetailController.cluedProjectsUpdate <~ modelCoordinator.cluedProjectsUpdate
+            
+            masterDetailController.goalReadProviderProducer = modelCoordinator.goalReadProviderProducer
+            masterDetailController.goalWriteProviderProducer = modelCoordinator.goalWriteProviderProducer
+            masterDetailController.reportReadProviderProducer = modelCoordinator.reportReadProviderProducer
+            
+            masterDetailController.runningEntry <~ modelCoordinator.runningEntry
         }
     }
 

@@ -18,20 +18,149 @@ fileprivate let NoGoalVCContainment = "NoGoalVCContainment"
 
 class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
-    // MARK: - Outlets
-    
-    @IBOutlet weak var projectName: NSTextField!
-    @IBOutlet weak var goalView: NSView!
-    @IBOutlet weak var goalReportView: NSView!
+    // MARK: - Exposed targets
 
-    
+    internal var project: BindingTarget<Project> { return _project.deoptionalizedBindingTarget }
+    internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
+    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
+    internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
+
+
+    // MARK: - Private properties
+
+    private let _project = MutableProperty<Project?>(nil)
+    private let _now = MutableProperty<Date?>(nil)
+    private let _calendar = MutableProperty<Calendar?>(nil)
+    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
+
+    private var currentUpstreamGoalBindingDisposable: Disposable?
+
+    /// goalDownstream holds and propagates the values read by this controller and subcontrollers
+    /// of the currently selected goal, if any.
+    private let goalDownstream = MutableProperty<Goal?>(nil)
+
+    /// goalUpstream relays the edits on the goal and goal deletion outputted by goalViewController
+    /// and the freshly created goal outputted by noGoalViewController
+    private let goalUpstream = MutableProperty<Goal?>(nil)
+
+
+    // MARK: - Derived input
+
+    private lazy var projectId: SignalProducer<Int64, NoError> = _project.producer.skipNil().map { $0.id }
+
+
+    // MARK: - Goal and report providing
+
+
+    /// Each start invocation of this producer and its siblings (goalWriteProviderProducer and reportReadProviderProducer)
+    /// must deliver one and only one value which is an action taking a project ID as its input
+    internal var goalReadProviderProducer: SignalProducer<Action<Int64, Property<Goal?>, NoError>, NoError>! {
+        didSet {
+            assert(goalReadProviderProducer != nil)
+            assert(oldValue == nil)
+            if let producer = goalReadProviderProducer {
+                goalReadProvider <~ producer.take(first: 1)
+            }
+        }
+    }
+    private let goalReadProvider = MutableProperty<Action<Int64, Property<Goal?>, NoError>?>(nil)
+
+    internal var goalWriteProviderProducer: SignalProducer<Action<Int64, BindingTarget<Goal?>, NoError>, NoError>! {
+        didSet {
+            assert(goalWriteProviderProducer != nil)
+            assert(oldValue == nil)
+            if let producer = goalWriteProviderProducer {
+                goalWriteProvider <~ producer.take(first: 1)
+            }
+        }
+    }
+    private let goalWriteProvider = MutableProperty<Action<Int64, BindingTarget<Goal?>, NoError>?>(nil)
+
+    internal var reportReadProviderProducer: SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError>! {
+        didSet {
+            assert(reportReadProviderProducer != nil)
+            assert(oldValue == nil)
+            if let producer = reportReadProviderProducer {
+                reportReadProvider <~ producer.take(first: 1)
+            }
+        }
+    }
+    private let reportReadProvider = MutableProperty<Action<Int64, Property<TwoPartTimeReport?>, NoError>?>(nil)
+
+    private func setupConnectionsWithProviders() {
+        goalReadProvider.producer.skipNil().take(first: 1) // A single, non-nil provider is expected during the controller lifecycle
+            .startWithValues { [unowned self] (action) in
+                // This ensures that goalDownstream will listen to changes of only the current project
+                self.goalDownstream <~ action.values.flatten(.latest)
+                action <~ self.projectId // Each time there is a change in project ID a different project is displayed
+        }
+
+        goalWriteProvider.producer.skipNil().take(first: 1).startWithValues { [unowned self] (action) in
+            action.values.observeValues { (upstream) in
+                // Propagate updated upstream values of goal to only the latest provided, current-goal pointing target
+                if let previousDisposable = self.currentUpstreamGoalBindingDisposable {
+                    previousDisposable.dispose()
+                }
+                // Important, if subtle: connect the signal of goalUpstream to the provided target, not the producer.
+                // The producer will relay the last known value and that will be nil if this is the first time a goal is connected
+                // or the value of the previously connected goal otherwise. Connecting the signal ensures that only subsequent
+                // updates will be relayed upstream.
+                self.currentUpstreamGoalBindingDisposable = upstream <~ self.goalUpstream.signal
+            }
+            action <~ self.projectId
+        }
+
+        reportReadProvider.producer.skipNil().take(first: 1).startWithValues { [unowned self] (action) in
+            self.goalReportViewController.report <~ action.values.flatten(.latest)
+            action <~ self.projectId
+        }
+    }
+
+
+    // MARK: - Local use of project
+
+    private func setupLocalProjectDisplay() {
+        _project.producer.observe(on: UIScheduler()).startWithValues { [unowned self] projectOrNil in
+            self.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
+        }
+    }
+
+
     // MARK: - Contained view controllers
 
-    var goalViewController: GoalViewController!
+    var goalViewController: GoalViewController! {
+        didSet {
+            if let controller = goalViewController {
+                controller.goal <~ goalDownstream
+                goalUpstream <~ controller.userUpdates
+                controller.calendar <~ _calendar.producer.skipNil()
+            }
+        }
+    }
 
-    var goalReportViewController: GoalReportViewController!
+    var goalReportViewController: GoalReportViewController! {
+        didSet {
+            if let controller = goalReportViewController {
+                controller.projectId <~ projectId
+                controller.now <~ _now.producer.skipNil()
+                controller.goal <~ goalDownstream.producer.skipNil()
+                controller.calendar <~ _calendar.producer.skipNil()
+                controller.runningEntry <~ _runningEntry.producer.skipNil()
+            }
+        }
+    }
 
-    var noGoalViewController: NoGoalViewController!
+    var noGoalViewController: NoGoalViewController! {
+        didSet {
+            if let controller = noGoalViewController {
+                controller.projectId <~ projectId
+                // NoGoalViewController can output only non-optional goals as its output job is to send a freshly created
+                // goal through the channel or to not send anything. However, goalUpstream accepts an optional Goal because
+                // a nil value signals goal deletion.
+                goalUpstream <~ controller.goalCreated.map { Optional($0) }
+            }
+        }
+    }
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
         switch controller {
@@ -45,84 +174,24 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         }
     }
 
-    private func setupConnectionsToContainedViewControllers() {
-        goalViewController.goal <~ goal
-        goalViewController.userUpdates.observe(goalUserUpdatesPipe.input)
-
-        goalReportViewController.projectId <~ _project.map { return $0?.id }
-        goalReportViewController.goal <~ goal
-        goalReportViewController.report <~ report
-        goalReportViewController.calendar <~ calendar
-        goalReportViewController.now <~ now
-        goalReportViewController.runningEntry <~ runningEntry
-
-        noGoalViewController.projectId <~ _project.map { $0?.id }
-        noGoalViewController.goalCreated.map { Optional($0) }.observe(goalUserUpdatesPipe.input)
-    }
-
     private func setupContainedViewControllerVisibility() {
         displayController(goalViewController, in: goalView) // Displays always
 
-        goal.producer.filter { $0 == nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
+        goalDownstream.producer.filter { $0 == nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
             displayController(self.noGoalViewController, in: self.goalReportView)
         }
 
-        goal.producer.filter { $0 != nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
+        goalDownstream.producer.filter { $0 != nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
             displayController(self.goalReportViewController, in: self.goalReportView)
         }
     }
 
-    // MARK: - Data flow from parent view controller
 
-    var project: BindingTarget<Project?> { return _project.bindingTarget }
+    // MARK: - Outlets
 
-
-    // MARK: - Data flow to contained view controllers
-
-    private let goal = MutableProperty<Goal?>(nil)
-    private let report = MutableProperty<TwoPartTimeReport?>(nil)
-    private let _project = MutableProperty<Project?>(nil)
-    private let calendar = MutableProperty<Calendar?>(nil)
-    private let now = MutableProperty<Date?>(nil)
-    private let runningEntry = MutableProperty<RunningEntry?>(nil)
-
-
-    // MARK: - Data flow from contained view controllers
-
-    private let goalUserUpdatesPipe = Signal<Goal?, NoError>.pipe()
-
-    
-    // MARK: - ModelCoordinator
-
-    var modelCoordinator: ModelCoordinator? {
-        didSet {
-            setupDataFlowWithModelCoordinator()
-        }
-    }
-
-    private var exclusiveBindingDisposables = DisposableBag()
-    private func setupDataFlowWithModelCoordinator() {
-        guard let modelCoordinator = modelCoordinator else {
-            return
-        }
-        calendar <~ modelCoordinator.calendar
-        now <~ modelCoordinator.now
-        runningEntry <~ modelCoordinator.runningEntry
-
-        _project.producer.skipNil().startWithValues { [unowned self] projectValue in
-            let goalForThisProject = modelCoordinator.goalProperty(for: projectValue.id)
-            let reportForThisProject = modelCoordinator.reportProperty(for: projectValue.id)
-
-            self.exclusiveBindingDisposables.disposeAll()
-
-            // Bindings from modelCoordinator
-            self.exclusiveBindingDisposables.put(self.goal <~ goalForThisProject)
-            self.exclusiveBindingDisposables.put(self.report <~ reportForThisProject)
-
-            // Bindings to modelCoordinator
-            self.exclusiveBindingDisposables.put(goalForThisProject.bindingTarget <~ self.goalUserUpdatesPipe.output)
-        }
-    }
+    @IBOutlet weak var projectName: NSTextField!
+    @IBOutlet weak var goalView: NSView!
+    @IBOutlet weak var goalReportView: NSView!
 
 
     //  MARK: -
@@ -131,15 +200,9 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         super.viewDidLoad()
 
         initializeControllerContainment(containmentIdentifiers: [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment])
+        setupConnectionsWithProviders()
         setupLocalProjectDisplay()
-        setupConnectionsToContainedViewControllers()
         setupContainedViewControllerVisibility()
-    }
-
-    private func setupLocalProjectDisplay() {
-        _project.producer.observe(on: UIScheduler()).startWithValues { [unowned self] projectOrNil in
-            self.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
-        }
     }
 }
 

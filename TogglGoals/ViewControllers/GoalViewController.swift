@@ -13,25 +13,19 @@ import Result
 
 class GoalViewController: NSViewController {
 
-    // MARK: Interface
+    // MARK: Exposed targets and source
 
     internal var goal: BindingTarget<Goal?> { return _goal.bindingTarget }
     internal var userUpdates: Signal<Goal?, NoError> { return _userUpdates.output }
 
+    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
 
-    // MARK: Private
+
+    // MARK: - Backing properties
 
     private let _goal = MutableProperty<Goal?>(nil)
     private var _userUpdates = Signal<Goal?, NoError>.pipe()
-
-    private var segmentsToWeekdays = Dictionary<Int, Weekday>()
-    private var weekdaysToSegments = Dictionary<Weekday, Int>()
-
-    private lazy var calendar: Calendar = {
-        var calendar = Calendar(identifier: .iso8601)
-        calendar.locale = Locale.autoupdatingCurrent
-        return calendar
-    }()
+    private var _calendar = MutableProperty<Calendar?>(nil)
 
 
     // MARK: - Outlets
@@ -42,14 +36,18 @@ class GoalViewController: NSViewController {
     @IBOutlet weak var deleteGoalButton: NSButton!
 
 
-    // MARK: - Wiring
+    // MARK: -
+
+    private var segmentsToWeekdays = Dictionary<Int, Weekday>()
+    private var weekdaysToSegments = Dictionary<Weekday, Int>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Set up view
-        populateWeekWorkDaysControl()
-
+        _calendar.producer.skipNil().startWithValues { [unowned self] (cal) in
+            self.populateWeekWorkDaysControl(calendar: cal)
+        }
 
         // Bind input to UI
         let goalExists = _goal.producer.map { $0 != nil }.skipRepeats()
@@ -84,20 +82,29 @@ class GoalViewController: NSViewController {
                     newSelection.select(day)
                 }
             }
-            self._goal.value?.workWeekdays = newSelection
-            self._userUpdates.input.send(value: self._goal.value)
+            guard var goalValue = self._goal.value else {
+                return
+            }
+            goalValue.workWeekdays = newSelection
+            self._goal.value = goalValue
+            self._userUpdates.input.send(value: goalValue)
         }
 
 
         monthlyHoursGoalField.reactive.stringValues.observeValues { [unowned self] (text) in
             if let parsedHours = self.monthlyHoursGoalFormatter.number(from: text) {
-                self._goal.value?.hoursPerMonth = parsedHours.intValue
-                self._userUpdates.input.send(value: self._goal.value)
+
+                guard var goalValue = self._goal.value else {
+                    return
+                }
+                goalValue.hoursPerMonth = parsedHours.intValue
+                self._goal.value = goalValue
+                self._userUpdates.input.send(value: goalValue)
             }
         }
     }
 
-    private func populateWeekWorkDaysControl() {
+    private func populateWeekWorkDaysControl(calendar: Calendar) {
         let weekdaySymbols = calendar.veryShortWeekdaySymbols
         weekWorkDaysControl.segmentCount = weekdaySymbols.count
 
@@ -134,25 +141,36 @@ class GoalViewController: NSViewController {
         }
     }
 
-
     @IBAction func deleteGoal(_ sender: Any) {
         _goal.value = nil
         _userUpdates.input.send(value: _goal.value)
     }
 }
 
-class NoGoalViewController: NSViewController {
-    @IBOutlet weak var createGoalButton: NSButton!
+// MARK: -
 
+class NoGoalViewController: NSViewController {
+
+    // MARK: Exposed target and source
+
+    var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
     var goalCreated: Signal<Goal, NoError> { return _goalCreated.output }
 
+
+    // MARK: - Private
+
+    private let _projectId = MutableProperty<Int64?>(nil)
     private let _goalCreated = Signal<Goal, NoError>.pipe()
 
     private var createGoalAction: Action<Void, Goal, NoError>!
 
-    var projectId: BindingTarget<Int64?> { return _projectId.bindingTarget }
 
-    private let _projectId = MutableProperty<Int64?>(nil)
+    // MARK: - Outlet
+
+    @IBOutlet weak var createGoalButton: NSButton!
+
+
+    // MARK: -
 
     override func viewDidLoad() {
         super.viewDidLoad()

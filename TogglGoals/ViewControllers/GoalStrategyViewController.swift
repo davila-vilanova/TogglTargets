@@ -12,14 +12,23 @@ import ReactiveCocoa
 
 class GoalStrategyViewController: NSViewController {
 
-    // MARK: Interface
+    // MARK: Exposed targets
 
-    internal var timeGoal = MutableProperty<TimeInterval?>(nil)
-    internal var dayBaseline = MutableProperty<TimeInterval?>(nil)
-    internal var dayBaselineAdjustedToProgress = MutableProperty<TimeInterval?>(nil)
-    internal var dayBaselineDifferential = MutableProperty<Double?>(nil)
+    internal var timeGoal: BindingTarget<TimeInterval> { return _timeGoal.bindingTarget }
+    internal var dayBaseline: BindingTarget<TimeInterval> { return _dayBaseline.bindingTarget }
+    internal var dayBaselineAdjustedToProgress: BindingTarget<TimeInterval> { return _dayBaselineAdjustedToProgress.bindingTarget }
+    internal var dayBaselineDifferential: BindingTarget<Double> { return _dayBaselineDifferential.bindingTarget }
 
-    // MARK: - Private
+
+    // MARK: - Properties
+
+    private let _timeGoal = MutableProperty<TimeInterval>(0)
+    private let _dayBaseline = MutableProperty<TimeInterval>(0)
+    private let _dayBaselineAdjustedToProgress = MutableProperty<TimeInterval>(0)
+    private let _dayBaselineDifferential = MutableProperty<Double>(0)
+
+
+    // MARK: - Formatters
 
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
@@ -54,11 +63,11 @@ class GoalStrategyViewController: NSViewController {
             return timeFormatter.string(from: time) ?? "-"
         }
 
-        totalHoursStrategyLabel.reactive.text <~ timeGoal.producer.skipNil().map(formatTime)
-        hoursPerDayLabel.reactive.text <~ dayBaselineAdjustedToProgress.producer.skipNil().map(formatTime)
+        totalHoursStrategyLabel.reactive.text <~ _timeGoal.producer.map(formatTime)
+        hoursPerDayLabel.reactive.text <~ _dayBaselineAdjustedToProgress.producer.map(formatTime)
 
-        baselineDifferentialLabel.reactive.text <~ SignalProducer.combineLatest(dayBaselineDifferential.producer.skipNil(),
-                                                                                dayBaseline.producer.skipNil())
+        baselineDifferentialLabel.reactive.text <~ SignalProducer.combineLatest(_dayBaselineDifferential.producer,
+                                                                                _dayBaseline.producer)
             .skipRepeats { $1 == $0 }
             .map { [percentFormatter, timeFormatter] (differential, baseline) -> String in
                 let formattedBaseline = timeFormatter.string(from: baseline) ?? "-"
@@ -74,4 +83,3 @@ class GoalStrategyViewController: NSViewController {
         }
     }
 }
-

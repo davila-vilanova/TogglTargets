@@ -51,8 +51,10 @@ extension ProjectsByGoals {
     enum Section: Int {
         case withGoal = 0
         case withoutGoal = 1
+
+        static var count = 2
     }
-    
+
     func project(for indexPath: IndexPath?) -> Project? {
         guard let indexPath = indexPath else {
             return nil
@@ -75,10 +77,10 @@ extension ProjectsByGoals {
         }
         let section: Int, slice: ArraySlice<Int64>
         if indexInSortedProjects < idsOfProjectsWithGoals.endIndex {
-            section = SectionIndex.projectsWithGoals.rawValue
+            section = Section.withGoal.rawValue
             slice = idsOfProjectsWithGoals
         } else {
-            section = SectionIndex.projectsWithoutGoals.rawValue
+            section = Section.withoutGoal.rawValue
             slice = idsOfProjectsWithoutGoals
         }
         let item = indexInSortedProjects - slice.startIndex

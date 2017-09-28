@@ -12,16 +12,25 @@ import ReactiveCocoa
 
 class TimeProgressViewController: NSViewController {
 
-    // MARK: Interface
+    // MARK: Exposed targets
 
-    internal let timeGoal = MutableProperty<TimeInterval?>(nil)
-    internal let totalWorkDays = MutableProperty<Int?>(nil)
-    internal let remainingWorkDays = MutableProperty<Int?>(nil)
-    internal let workedTime = MutableProperty<TimeInterval?>(nil)
-    internal let remainingTimeToGoal = MutableProperty<TimeInterval?>(nil)
+    internal var timeGoal: BindingTarget<TimeInterval> { return _timeGoal.bindingTarget }
+    internal var totalWorkDays: BindingTarget<Int> { return _totalWorkDays.bindingTarget }
+    internal var remainingWorkDays: BindingTarget<Int> { return _remainingWorkDays.bindingTarget }
+    internal var workedTime: BindingTarget<TimeInterval> { return _workedTime.bindingTarget }
+    internal var remainingTimeToGoal: BindingTarget<TimeInterval> { return _remainingTimeToGoal.bindingTarget }
 
 
-    // MARK: - Private
+    // MARK: - Backing properties
+
+    private let _timeGoal = MutableProperty<TimeInterval>(0)
+    private let _totalWorkDays = MutableProperty<Int>(0)
+    private let _remainingWorkDays = MutableProperty<Int>(0)
+    private let _workedTime = MutableProperty<TimeInterval>(0)
+    private let _remainingTimeToGoal = MutableProperty<TimeInterval>(0)
+
+
+    // MARK: - Formatter
 
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
@@ -49,20 +58,20 @@ class TimeProgressViewController: NSViewController {
         super.viewDidLoad()
 
         // Update total and remaining work days with the unconverted value of the corresponding signals
-        totalWorkdaysLabel.reactive.integerValue <~ totalWorkDays.producer.skipNil()
-        remainingFullWorkdaysLabel.reactive.integerValue <~ remainingWorkDays.producer.skipNil()
+        totalWorkdaysLabel.reactive.integerValue <~ _totalWorkDays.producer
+        remainingFullWorkdaysLabel.reactive.integerValue <~ _remainingWorkDays.producer
 
         // Update hours worked and left with the value of the corresponding signals, formatted to a time string
         let formatTime = { [timeFormatter] (time: TimeInterval) -> String in
             return timeFormatter.string(from: time) ?? "-"
         }
-        hoursWorkedLabel.reactive.text <~ workedTime.producer.skipNil().map(formatTime)
-        hoursLeftLabel.reactive.text <~ remainingTimeToGoal.producer.skipNil().map(formatTime)
+        hoursWorkedLabel.reactive.text <~ _workedTime.producer.map(formatTime)
+        hoursLeftLabel.reactive.text <~ _remainingTimeToGoal.producer.map(formatTime)
 
         // Progress indicators
         let intToDouble = { (integer: Int) -> Double in return Double(integer) }
-        SignalProducer.combineLatest(totalWorkDays.producer.skipNil().map(intToDouble),
-                                     remainingWorkDays.producer.skipNil().map(intToDouble))
+        SignalProducer.combineLatest(_totalWorkDays.producer.map(intToDouble),
+                                     _remainingWorkDays.producer.map(intToDouble))
             .skipRepeats { $0 == $1 }
             .observe(on: UIScheduler())
             .startWithValues {
@@ -72,8 +81,7 @@ class TimeProgressViewController: NSViewController {
                 self.workDaysProgressIndicator.doubleValue = total - remaining
         }
 
-        SignalProducer.combineLatest(timeGoal.producer.skipNil(),
-                                     workedTime.producer.skipNil())
+        SignalProducer.combineLatest(_timeGoal.producer, _workedTime.producer)
             .skipRepeats { $0 == $1 }
             .observe(on: UIScheduler())
             .startWithValues { [unowned self] (timeGoal, workedTime) in
