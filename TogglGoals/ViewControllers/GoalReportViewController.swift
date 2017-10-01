@@ -19,8 +19,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
 
     // MARK: Exposed targets
 
-    var projectId: BindingTarget<Int64> { return goalProgress.projectId.deoptionalizedBindingTarget }
-    var goal: BindingTarget<Goal> { return goalProgress.goal.deoptionalizedBindingTarget }
+    var projectId: BindingTarget<Int64> { return goalProgress.projectId }
+    var goal: BindingTarget<Goal> { return goalProgress.goal }
     var report: BindingTarget<TwoPartTimeReport?> { return goalProgress.report.bindingTarget }
     var runningEntry: BindingTarget<RunningEntry?> { return goalProgress.runningEntry.bindingTarget }
     var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
@@ -57,10 +57,10 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     var timeProgressViewController: TimeProgressViewController! {
         didSet {
             timeProgressViewController.timeGoal <~ goalProgress.timeGoal
-            timeProgressViewController.totalWorkDays <~ goalProgress.totalWorkDays.producer.skipNil()
-            timeProgressViewController.remainingWorkDays <~ goalProgress.remainingWorkDays.producer.skipNil()
-            timeProgressViewController.workedTime <~ goalProgress.workedTime.producer.skipNil()
-            timeProgressViewController.remainingTimeToGoal <~ goalProgress.remainingTimeToGoal.producer.skipNil()
+            timeProgressViewController.totalWorkDays <~ goalProgress.totalWorkDays
+            timeProgressViewController.remainingWorkDays <~ goalProgress.remainingWorkDays
+            timeProgressViewController.workedTime <~ goalProgress.workedTime
+            timeProgressViewController.remainingTimeToGoal <~ goalProgress.remainingTimeToGoal
 
             displayController(timeProgressViewController, in: goalProgressView)
         }
@@ -69,9 +69,9 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     var goalStrategyViewController: GoalStrategyViewController! {
         didSet {
             goalStrategyViewController.timeGoal <~ goalProgress.timeGoal
-            goalStrategyViewController.dayBaseline <~ goalProgress.dayBaseline.producer.skipNil()
-            goalStrategyViewController.dayBaselineAdjustedToProgress <~ goalProgress.dayBaselineAdjustedToProgress.producer.skipNil()
-            goalStrategyViewController.dayBaselineDifferential <~ goalProgress.dayBaselineDifferential.producer.skipNil()
+            goalStrategyViewController.dayBaseline <~ goalProgress.dayBaseline
+            goalStrategyViewController.dayBaselineAdjustedToProgress <~ goalProgress.dayBaselineAdjustedToProgress
+            goalStrategyViewController.dayBaselineDifferential <~ goalProgress.dayBaselineDifferential
 
             displayController(goalStrategyViewController, in: goalStrategyView)
         }
@@ -79,7 +79,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     var dayProgressViewController: DayProgressViewController! {
         didSet {
-            dayProgressViewController.timeWorkedToday <~ goalProgress.timeWorkedToday.producer.skipNil()
+            dayProgressViewController.timeWorkedToday <~ goalProgress.timeWorkedToday
             dayProgressViewController.remainingTimeToDayBaseline <~ goalProgress.remainingTimeToDayBaseline
 
             displayController(dayProgressViewController, in: dayProgressView)
@@ -184,8 +184,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
             .map { (now, calendar) in
                 calendar.lastDayOfMonth(for: now)
         }
-        goalProgress.startStrategyDay <~ computeStrategyFrom
-        goalProgress.now <~ _now
-        goalProgress.calendar <~ _calendar
+        goalProgress.startStrategyDay <~ computeStrategyFrom.producer.skipNil()
+        goalProgress.now <~ _now.producer.skipNil()
+        goalProgress.calendar <~ _calendar.producer.skipNil()
     }
 }

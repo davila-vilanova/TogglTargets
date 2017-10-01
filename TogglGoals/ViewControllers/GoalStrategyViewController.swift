@@ -15,17 +15,17 @@ class GoalStrategyViewController: NSViewController {
     // MARK: Exposed targets
 
     internal var timeGoal: BindingTarget<TimeInterval> { return _timeGoal.bindingTarget }
-    internal var dayBaseline: BindingTarget<TimeInterval> { return _dayBaseline.bindingTarget }
-    internal var dayBaselineAdjustedToProgress: BindingTarget<TimeInterval> { return _dayBaselineAdjustedToProgress.bindingTarget }
-    internal var dayBaselineDifferential: BindingTarget<Double> { return _dayBaselineDifferential.bindingTarget }
+    internal var dayBaseline: BindingTarget<TimeInterval?> { return _dayBaseline.bindingTarget }
+    internal var dayBaselineAdjustedToProgress: BindingTarget<TimeInterval?> { return _dayBaselineAdjustedToProgress.bindingTarget }
+    internal var dayBaselineDifferential: BindingTarget<Double?> { return _dayBaselineDifferential.bindingTarget }
 
 
     // MARK: - Properties
 
     private let _timeGoal = MutableProperty<TimeInterval>(0)
-    private let _dayBaseline = MutableProperty<TimeInterval>(0)
-    private let _dayBaselineAdjustedToProgress = MutableProperty<TimeInterval>(0)
-    private let _dayBaselineDifferential = MutableProperty<Double>(0)
+    private let _dayBaseline = MutableProperty<TimeInterval?>(nil)
+    private let _dayBaselineAdjustedToProgress = MutableProperty<TimeInterval?>(nil)
+    private let _dayBaselineDifferential = MutableProperty<Double?>(nil)
 
 
     // MARK: - Formatters
@@ -58,28 +58,33 @@ class GoalStrategyViewController: NSViewController {
         super.viewDidLoad()
 
         // Update total hours and hours per day with the values of the corresponding signals, formatted to a time string
-        // TODO: Extension on TimeFormatter
-        let formatTime = { [timeFormatter] (time: TimeInterval) -> String in
-            return timeFormatter.string(from: time) ?? "-"
-        }
+        totalHoursStrategyLabel.reactive.text <~ _timeGoal.producer.mapToString(timeFormatter: timeFormatter)
+        hoursPerDayLabel.reactive.text <~ _dayBaselineAdjustedToProgress.producer.mapToString(timeFormatter: timeFormatter)
 
-        totalHoursStrategyLabel.reactive.text <~ _timeGoal.producer.map(formatTime)
-        hoursPerDayLabel.reactive.text <~ _dayBaselineAdjustedToProgress.producer.map(formatTime)
+        let formattedDifferential = _dayBaselineDifferential.producer.map { (differential) -> NSNumber? in
+            guard let differential = differential else { return nil }
+            return NSNumber(value: differential)
+            }.mapToNumberFormattedString(numberFormatter: percentFormatter)
 
-        baselineDifferentialLabel.reactive.text <~ SignalProducer.combineLatest(_dayBaselineDifferential.producer,
-                                                                                _dayBaseline.producer)
-            .skipRepeats { $1 == $0 }
-            .map { [percentFormatter, timeFormatter] (differential, baseline) -> String in
-                let formattedBaseline = timeFormatter.string(from: baseline) ?? "-"
-                let absoluteDifferential = abs(differential)
+        baselineDifferentialLabel.reactive.text <~
+            SignalProducer.combineLatest(_dayBaselineDifferential.producer,
+                                         formattedDifferential,
+                                         _dayBaseline.producer,
+                                         _dayBaseline.producer.mapToString(timeFormatter: timeFormatter))
+                .map { (differential, formattedDifferential, baseline, formattedBaseline) -> String in
+                    guard let differential = differential,
+                        baseline != nil else {
+                            return "The day baseline could not be calculated"
+                    }
+                    let absoluteDifferential = abs(differential)
 
-                if absoluteDifferential < 0.01 {
-                    return "That prety much matches your baseline of \(formattedBaseline)"
-                } else {
-                    let formattedDifferential = percentFormatter.string(from: NSNumber(value: absoluteDifferential)) ?? "-"
-                    let adverb = differential > 0 ? "more" : "less"
-                    return "That is \(formattedDifferential) \(adverb) than your baseline of \(formattedBaseline)"
-                }
+                    if absoluteDifferential < 0.01 {
+                        return "That prety much matches your baseline of \(formattedBaseline)"
+                    } else {
+                        let adverb = differential > 0 ? "more" : "less"
+                        return "That is \(formattedDifferential) \(adverb) than your baseline of \(formattedBaseline)"
+                    }
         }
     }
 }
+

@@ -74,7 +74,7 @@ class GoalViewController: NSViewController {
 
         // Bind UI to output (and to internal state)
         weekWorkDaysControl.reactive.selectedSegmentIndexes.observeValues { [unowned self] _ in
-            var newSelection = WeekdaySelection()
+            var newSelection = WeekdaySelection.empty
 
             for (day, segmentIndex) in self.weekdaysToSegments {
                 assert(segmentIndex < self.weekWorkDaysControl.segmentCount)

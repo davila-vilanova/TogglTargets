@@ -175,6 +175,12 @@ struct WeekdaySelection {
         }
         return count
     }
+
+    init(selectedDays: Set<Weekday>) {
+        for day in selectedDays {
+            select(day)
+        }
+    }
 }
 
 extension WeekdaySelection: CustomDebugStringConvertible {
@@ -198,28 +204,20 @@ extension WeekdaySelection: CustomDebugStringConvertible {
 
 extension WeekdaySelection {
     static var exceptWeekend: WeekdaySelection {
-        get {
-            var s = wholeWeek
-            s.deselect(.saturday)
-            s.deselect(.sunday)
-            return s
-        }
+        return WeekdaySelection(selectedDays: [.monday,
+            .tuesday, .wednesday, .thursday, .friday])
     }
 
     static var wholeWeek: WeekdaySelection {
-        get {
-            var s = WeekdaySelection()
-            for day in Weekday.allDays {
-                s.select(day)
-            }
-            return s
-        }
+        return WeekdaySelection(selectedDays: Weekday.allDays)
+    }
+
+    static var empty: WeekdaySelection {
+        return WeekdaySelection(selectedDays: [])
     }
 
     static func singleDay(_ day: Weekday) -> WeekdaySelection {
-        var s = WeekdaySelection()
-        s.select(day)
-        return s
+        return WeekdaySelection(selectedDays: [day])
     }
 }
 
@@ -285,6 +283,12 @@ extension Goal: Equatable {
         return lhs.projectId == rhs.projectId
         && lhs.hoursPerMonth == rhs.hoursPerMonth
         && lhs.workWeekdays == rhs.workWeekdays
+    }
+}
+
+extension Goal {
+    static var empty: Goal {
+        return Goal(forProjectId: 0, hoursPerMonth: 0, workWeekdays: WeekdaySelection.empty)
     }
 }
 

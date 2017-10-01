@@ -7,7 +7,7 @@
 //
 
 import Cocoa
-import ReactiveSwift
+import ReactiveCocoa
 
 extension NSViewController {
     func doAfterViewIsLoaded(_ closure: @escaping () -> Void) {

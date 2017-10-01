@@ -10,139 +10,182 @@ import Foundation
 import ReactiveSwift
 import Result
 
-// TODO: deal with inconsistency errors, calculation errors and out-of-sync values when an input is nil
+/// GoalProgress 
 class GoalProgress {
-
     // MARK: - Inputs
 
-    public let projectId = MutableProperty<Int64?>(nil)
-    public let goal = MutableProperty<Goal?>(nil)
-    public let report = MutableProperty<TwoPartTimeReport?>(nil)
-    public let runningEntry = MutableProperty<RunningEntry?>(nil)
-    public var startGoalDay = MutableProperty<DayComponents?>(nil)
-    public var endGoalDay = MutableProperty<DayComponents?>(nil)
-    public var startStrategyDay = MutableProperty<DayComponents?>(nil)
-    public let now = MutableProperty<Date?>(nil)
-    public let calendar = MutableProperty<Calendar?>(nil)
-
-
-    // MARK: - Intermediates
-
-    private let strategyStartsToday = MutableProperty<Bool?>(nil)
-    private let runningTime = MutableProperty<TimeInterval>(0.0)
+    public var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
+    public var goal: BindingTarget<Goal>{ return _goal.deoptionalizedBindingTarget }
+    public var report: BindingTarget<TwoPartTimeReport?>{ return _report.bindingTarget }
+    public var runningEntry: BindingTarget<RunningEntry?>{ return _runningEntry.bindingTarget }
+    public var startGoalDay: BindingTarget<DayComponents>{ return _startGoalDay.deoptionalizedBindingTarget }
+    public var endGoalDay: BindingTarget<DayComponents>{ return _endGoalDay.deoptionalizedBindingTarget }
+    public var startStrategyDay: BindingTarget<DayComponents>{ return _startStrategyDay.deoptionalizedBindingTarget }
+    public var now: BindingTarget<Date>{ return _now.deoptionalizedBindingTarget }
+    public var calendar: BindingTarget<Calendar>{ return _calendar.deoptionalizedBindingTarget }
 
     // MARK: - Outputs
 
-    public let timeGoal = MutableProperty<TimeInterval>(0.0)
-    public let totalWorkDays = MutableProperty<Int?>(nil)
-    public let remainingWorkDays = MutableProperty<Int?>(nil)
-    public let workedTime = MutableProperty<TimeInterval?>(nil)
-    public let remainingTimeToGoal = MutableProperty<TimeInterval?>(nil)
-    public let dayBaseline = MutableProperty<TimeInterval?>(nil)
-    public let dayBaselineAdjustedToProgress = MutableProperty<TimeInterval?>(nil)
-    public let dayBaselineDifferential = MutableProperty<Double?>(nil)
-    public let timeWorkedToday = MutableProperty<TimeInterval?>(nil)
-    public let remainingTimeToDayBaseline = MutableProperty<TimeInterval?>(nil)
+    public lazy var timeGoal: SignalProducer<TimeInterval, NoError> = {
+        return _goal.producer.skipNil().map { TimeInterval.from(hours: $0.hoursPerMonth) }
+    }()
 
-
-    // MARK: - Calculations
-
-    init() {
-        setupSignals()
-    }
-
-    private func setupSignals() {
-        strategyStartsToday <~ SignalProducer.combineLatest(startStrategyDay.producer.skipNil(),
-                                                            now.producer.skipNil(),
-                                                            calendar.producer.skipNil())
-            .map { (startStrategyDay, now, calendar) in
-                return calendar.dayComponents(from: now) == startStrategyDay
-        }
-
-        runningTime <~ SignalProducer.combineLatest(projectId.producer.skipNil(),
-                                                    runningEntry.producer.skipNil(),
-                                                    now.producer.skipNil())
-            .map { (projectId, runningEntry, now) in
-                guard projectId == runningEntry.projectId else {
-                    return 0
-                }
-                return now.timeIntervalSince(runningEntry.start)
-        }
-
-        timeGoal <~ goal.producer.skipNil().map { TimeInterval($0.hoursPerMonth) * TimeInterval(3600) }
-
-        totalWorkDays <~ SignalProducer.combineLatest(goal.producer.skipNil(),
-                                                      startGoalDay.producer.skipNil(),
-                                                      endGoalDay.producer.skipNil(),
-                                                      calendar.producer.skipNil())
-            .map { (goal, startGoalDay, endGoalDay, calendar) -> Int? in
+    // Will be nil if start or end are invalid dates
+    public lazy var totalWorkDays: SignalProducer<Int?, NoError> = {
+        return SignalProducer.combineLatest(_goal.producer.skipNil(),
+                                            _startGoalDay.producer.skipNil(),
+                                            _endGoalDay.producer.skipNil(),
+                                            _calendar.producer.skipNil())
+            .map { (goal, startGoalDay, endGoalDay, calendar) in
                 return try? calendar.countWeekdaysMatching(goal.workWeekdays, from: startGoalDay, to: endGoalDay)
         }
+    }()
 
-        remainingWorkDays <~ SignalProducer.combineLatest(goal.producer.skipNil(),
-                                                          startStrategyDay.producer.skipNil(),
-                                                          endGoalDay.producer.skipNil(),
-                                                          calendar.producer.skipNil())
-            .map { (goal, startStrategyDay, endGoalDay, calendar) -> Int? in
+    // Will be nil if start or end are invalid dates
+    public lazy var remainingWorkDays: SignalProducer<Int?, NoError> = {
+        return SignalProducer.combineLatest(_goal.producer.skipNil(),
+                                            _startStrategyDay.producer.skipNil(),
+                                            _endGoalDay.producer.skipNil(),
+                                            _calendar.producer.skipNil())
+            .map { (goal, startStrategyDay, endGoalDay, calendar) in
                 return try? calendar.countWeekdaysMatching(goal.workWeekdays, from: startStrategyDay, to: endGoalDay)
         }
+    }()
 
-        workedTime <~ SignalProducer.combineLatest(report.producer.skipNil(),
-                                                   strategyStartsToday.producer.skipNil(),
-                                                   runningTime.producer)
-            .map { (report, strategyStartsToday, runningTime) -> TimeInterval in
-                return strategyStartsToday ? report.workedTimeUntilYesterday : report.workedTime + runningTime
-        }
+    public lazy var workedTime: SignalProducer<TimeInterval, NoError> = {
+        return SignalProducer.combineLatest(_report.producer,
+                                            strategyStartsToday,
+                                            runningEntryTime)
+            .map { (reportOrNil, strategyStartsToday, runningEntryTime) -> TimeInterval in
+                if strategyStartsToday {
+                    return reportOrNil?.workedTimeUntilYesterday ?? 0
+                } else {
+                    return (reportOrNil?.workedTime ?? 0) + runningEntryTime
+                }
+            }
+    }()
 
-        remainingTimeToGoal <~ SignalProducer.combineLatest(timeGoal,
-                                                            workedTime.producer.skipNil())
+    public lazy var remainingTimeToGoal: SignalProducer<TimeInterval, NoError>  = {
+        return SignalProducer.combineLatest(timeGoal,
+                                            workedTime)
             .map { (timeGoal, workedTime) in
                 return Double.maximum(timeGoal - workedTime, 0.0)
         }
+    }()
 
-        dayBaseline <~ SignalProducer.combineLatest(timeGoal,
-                                                    totalWorkDays.producer.skipNil())
-            .map { (timeGoal, totalWorkDays) -> Double in
+    // dayBaseline will publish nil values when totalWorkDays itself returns nil
+    public lazy var dayBaseline: SignalProducer<TimeInterval?, NoError> = {
+        return SignalProducer.combineLatest(timeGoal,
+                                            totalWorkDays)
+            .map { (timeGoal, totalWorkDays) -> TimeInterval? in
+                guard let totalWorkDays = totalWorkDays else {
+                    return nil
+                }
                 guard totalWorkDays > 0 else {
                     return 0
                 }
-                return timeGoal / Double(totalWorkDays)
+                return timeGoal / TimeInterval(totalWorkDays)
         }
+    }()
 
-        dayBaselineAdjustedToProgress <~ SignalProducer.combineLatest(remainingWorkDays.producer.skipNil(),
-                                                                      remainingTimeToGoal.producer.skipNil())
-            .map { (remainingWorkDays, remainingTimeToGoal) -> Double in
+
+    // dayBaselineAdjustedToProgress will publish nil values when remainingWorkDays itself returns nil
+    public lazy var dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError> = {
+        return SignalProducer.combineLatest(remainingWorkDays,
+                                            remainingTimeToGoal)
+            .map { (remainingWorkDays, remainingTimeToGoal) -> TimeInterval? in
+                guard let remainingWorkDays = remainingWorkDays else {
+                    return nil
+                }
                 guard remainingWorkDays > 0 else {
                     return 0
                 }
                 return remainingTimeToGoal / Double(remainingWorkDays)
         }
+    }()
 
-        dayBaselineDifferential <~ SignalProducer.combineLatest(dayBaseline.producer.skipNil(),
-                                                                dayBaselineAdjustedToProgress.producer.skipNil())
-            .map { (dayBaseline, dayBaselineAdjustedToProgress) -> Double in
-                guard dayBaseline > 0 else {
-                    return 0
+    // dayBaselineDifferential will publish nil values if either dayBaseline or dayBaselineAdjustedToProgress are nil
+    public lazy var dayBaselineDifferential: SignalProducer<Double?, NoError>  = {
+        return SignalProducer.combineLatest(dayBaseline,
+                                            dayBaselineAdjustedToProgress)
+            .map { (dayBaseline, dayBaselineAdjustedToProgress) -> Double? in
+                guard let dayBaseline = dayBaseline else {
+                    return nil
                 }
+                guard let dayBaselineAdjustedToProgress = dayBaselineAdjustedToProgress else {
+                    return nil
+                }
+                assert(dayBaseline >= 0)
                 return (dayBaselineAdjustedToProgress - dayBaseline) / dayBaseline
         }
+    }()
 
-        timeWorkedToday <~ SignalProducer.combineLatest(report.producer.skipNil(),
-                                                        runningTime.producer)
-            .map { (report, runningTime) in
-                return report.workedTimeToday + runningTime
+    public lazy var timeWorkedToday: SignalProducer<TimeInterval, NoError>  = {
+        return SignalProducer.combineLatest(_report,
+                                            runningEntryTime)
+            .map { (report, runningEntryTime) in
+                let workedTimeToday = report?.workedTimeToday ?? 0
+                return workedTimeToday + runningEntryTime
         }
+    }()
 
-        remainingTimeToDayBaseline <~ SignalProducer.combineLatest(strategyStartsToday.producer.skipNil(),
-                                                                   dayBaselineAdjustedToProgress.producer.skipNil(),
-                                                                   timeWorkedToday.producer.skipNil())
+    // remainingTimeToDayBaseline will publish nil values when either of this is true:
+    // * today's date is not included in the period for which the goal-accomplishing strategy is being calculated (there is no day baseline),
+    // * dayBaselineAdjustedToProgress itself returns nil
+    public lazy var remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError> = {
+        return SignalProducer.combineLatest(strategyStartsToday,
+                                            dayBaselineAdjustedToProgress,
+                                            timeWorkedToday)
             .map { (strategyStartsToday, dayBaselineAdjustedToProgress, timeWorkedToday) -> TimeInterval? in
                 guard strategyStartsToday else {
                     return nil
                 }
+                guard let dayBaselineAdjustedToProgress = dayBaselineAdjustedToProgress else {
+                    return nil
+                }
                 return Double.maximum(dayBaselineAdjustedToProgress - timeWorkedToday, 0.0)
         }
-    }
+    }()
+
+
+    // MARK: - Backing input properties
+
+    private let _projectId = MutableProperty<Int64?>(nil)
+    private let _goal = MutableProperty<Goal?>(nil)
+    private let _report = MutableProperty<TwoPartTimeReport?>(nil)
+    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
+    private let _startGoalDay = MutableProperty<DayComponents?>(nil)
+    private let _endGoalDay = MutableProperty<DayComponents?>(nil)
+    private let _startStrategyDay = MutableProperty<DayComponents?>(nil)
+    private let _now = MutableProperty<Date?>(nil)
+    private let _calendar = MutableProperty<Calendar?>(nil)
+
+
+    // MARK: - Intermediates
+
+    private lazy var strategyStartsToday: SignalProducer<Bool, NoError> = {
+        return SignalProducer.combineLatest(_startStrategyDay.producer.skipNil(),
+                                            _now.producer.skipNil(),
+                                            _calendar.producer.skipNil())
+            .map { (startStrategyDay, now, calendar) in
+                return calendar.dayComponents(from: now) == startStrategyDay
+        }
+    }()
+
+    private lazy var runningEntryTime: SignalProducer<TimeInterval, NoError> = {
+        return SignalProducer.combineLatest(_projectId.producer.skipNil(),
+                                            _runningEntry,
+                                            _now.producer.skipNil())
+            .map { (projectId, runningEntry, now) in
+                guard let runningEntry = runningEntry else {
+                    return 0
+                }
+                guard projectId == runningEntry.projectId else {
+                    return 0
+                }
+                return now.timeIntervalSince(runningEntry.start)
+        }
+    }()
 }
 
 extension Weekday {
