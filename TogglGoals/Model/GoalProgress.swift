@@ -183,7 +183,7 @@ class GoalProgress {
                 guard projectId == runningEntry.projectId else {
                     return 0
                 }
-                return now.timeIntervalSince(runningEntry.start)
+                return runningEntry.runningTime(at: now)
         }
     }()
 }

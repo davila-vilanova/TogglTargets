@@ -99,6 +99,8 @@ class ProjectsMasterDetailController: NSSplitViewController {
         listController.projectsByGoals <~ _projectsByGoals.producer.skipNil()
         listController.fullProjectsUpdate <~ _fullProjectsUpdate.producer.skipNil()
         listController.cluedProjectsUpdate <~ _cluedProjectsUpdate.producer.skipNil()
+        listController.runningEntry <~ _runningEntry
+        listController.now <~ _now.producer.skipNil()
 
         detailController.now <~ _now.producer.skipNil()
         detailController.calendar <~ _calendar.producer.skipNil()

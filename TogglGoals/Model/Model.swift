@@ -343,3 +343,9 @@ struct RunningEntry {
     let start: Date
     let retrieved: Date
 }
+
+extension RunningEntry {
+    func runningTime(at pointInTime: Date) -> TimeInterval {
+        return pointInTime.timeIntervalSince(start)
+    }
+}

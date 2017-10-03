@@ -22,6 +22,9 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     internal var fullProjectsUpdate: BindingTarget<Bool> { return _fullProjectsUpdate.deoptionalizedBindingTarget }
     internal var cluedProjectsUpdate: BindingTarget<CollectionUpdateClue> { return _cluedProjectsUpdate.deoptionalizedBindingTarget }
 
+    internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
+    internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
+
     internal lazy var selectedProject = Property<Project?>(_selectedProject)
 
 
@@ -30,6 +33,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private let _projectsByGoals = MutableProperty<ProjectsByGoals?>(nil)
     private let _fullProjectsUpdate = MutableProperty<Bool?>(nil)
     private let _cluedProjectsUpdate = MutableProperty<CollectionUpdateClue?>(nil)
+    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
+    private let _now = MutableProperty<Date?>(nil)
     private let _selectedProject = MutableProperty<Project?>(nil)
 
 
@@ -143,6 +148,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItem(withIdentifier: ProjectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
+        projectItem.connectOnceInLifecycle(runningEntry: _runningEntry.producer, now: _now.producer.skipNil())
 
         // TODO: what would happen if the value of projectsByGoals changed while the CollectionView is updating its contents?
         let project = _projectsByGoals.value!.project(for: indexPath)!

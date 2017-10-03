@@ -13,6 +13,26 @@ import Result
 
 class ProjectCollectionViewItem: NSCollectionViewItem {
 
+    // MARK: Connections to be established once in lifetime
+
+    private let runningEntry = MutableProperty<RunningEntry?>(nil)
+    private let now = MutableProperty<Date?>(nil)
+
+    func connectOnceInLifecycle(runningEntry: SignalProducer<RunningEntry?, NoError>,
+                                now: SignalProducer<Date, NoError>) {
+        guard Thread.current.isMainThread else {
+            assert(false)
+            return
+        }
+        guard areOnceConnectionsPerformed == false else {
+            return
+        }
+        self.runningEntry <~ runningEntry
+        self.now <~ now
+        areOnceConnectionsPerformed = true
+    }
+    private var areOnceConnectionsPerformed = false
+
     // MARK: - Outlets
 
     @IBOutlet weak var projectNameLabel: NSTextField!
@@ -36,7 +56,6 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
 
     internal var goals: BindingTarget<Property<Goal?>?> { return _goals.bindingTarget }
     internal var reports: BindingTarget<Property<TwoPartTimeReport?>?> { return _reports.bindingTarget }
-
 
     // MARK: - Backing properties
 
@@ -96,12 +115,25 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
                 return "(no goal)"
             }
         }
-        reportLabel.reactive.text <~ report.map { [timeFormatter] report -> String in
-            if let report = report {
-                return "\(timeFormatter.string(from: report.workedTime) ?? "[unknown]") worked"
-            } else {
-                return "Zero hours worked"
-            }
+        let workedTimeFromReport = report.map { (reportValueOrNil) -> TimeInterval in
+            return reportValueOrNil?.workedTime ?? 0.0
         }
+        let workedTimeFromRunningEntry = SignalProducer.combineLatest(project.producer.skipNil(),
+                                                                      runningEntry.producer,
+                                                                      now.producer.skipNil())
+            .map { (project, runningEntryOrNil, now) -> TimeInterval in
+                guard let runningEntry = runningEntryOrNil else {
+                    return 0.0
+                }
+                guard runningEntry.projectId == project.id else {
+                    return 0.0
+                }
+                return runningEntry.runningTime(at: now)
+        }
+        let totalWorkedTime = SignalProducer.combineLatest(workedTimeFromReport, workedTimeFromRunningEntry)
+            .map { (t0, t1) in return t0 + t1 }
+
+        let formattedTime = totalWorkedTime.mapToString(timeFormatter: timeFormatter)
+        reportLabel.reactive.text <~ formattedTime.map { "\($0) worked" }
     }
 }
