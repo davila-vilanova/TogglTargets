@@ -52,6 +52,15 @@ class GoalProgress {
         }
     }()
 
+    public lazy var strategyStartsToday: SignalProducer<Bool, NoError> = {
+        return SignalProducer.combineLatest(_startStrategyDay.producer.skipNil(),
+                                            _now.producer.skipNil(),
+                                            _calendar.producer.skipNil())
+            .map { (startStrategyDay, now, calendar) in
+                return calendar.dayComponents(from: now) == startStrategyDay
+        }
+    }()
+
     public lazy var workedTime: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(_report.producer,
                                             strategyStartsToday,
@@ -162,15 +171,6 @@ class GoalProgress {
 
 
     // MARK: - Intermediates
-
-    private lazy var strategyStartsToday: SignalProducer<Bool, NoError> = {
-        return SignalProducer.combineLatest(_startStrategyDay.producer.skipNil(),
-                                            _now.producer.skipNil(),
-                                            _calendar.producer.skipNil())
-            .map { (startStrategyDay, now, calendar) in
-                return calendar.dayComponents(from: now) == startStrategyDay
-        }
-    }()
 
     private lazy var runningEntryTime: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(_projectId.producer.skipNil(),

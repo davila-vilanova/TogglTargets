@@ -62,6 +62,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
             timeProgressViewController.remainingWorkDays <~ goalProgress.remainingWorkDays
             timeProgressViewController.workedTime <~ goalProgress.workedTime
             timeProgressViewController.remainingTimeToGoal <~ goalProgress.remainingTimeToGoal
+            timeProgressViewController.strategyStartsToday <~ goalProgress.strategyStartsToday
         }
     }
     
