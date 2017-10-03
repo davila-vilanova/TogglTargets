@@ -20,7 +20,7 @@ class GoalStrategyViewController: NSViewController {
     internal var dayBaselineDifferential: BindingTarget<Double?> { return _dayBaselineDifferential.bindingTarget }
 
 
-    // MARK: - Properties
+    // MARK: - Backing properties
 
     private let _timeGoal = MutableProperty<TimeInterval>(0)
     private let _dayBaseline = MutableProperty<TimeInterval?>(nil)
@@ -61,10 +61,13 @@ class GoalStrategyViewController: NSViewController {
         totalHoursStrategyLabel.reactive.text <~ _timeGoal.producer.mapToString(timeFormatter: timeFormatter)
         hoursPerDayLabel.reactive.text <~ _dayBaselineAdjustedToProgress.producer.mapToString(timeFormatter: timeFormatter)
 
-        let formattedDifferential = _dayBaselineDifferential.producer.map { (differential) -> NSNumber? in
+        let formattedDifferential = _dayBaselineDifferential.producer
+            .map { $0?.magnitude }
+            .map { (differential) -> NSNumber? in
             guard let differential = differential else { return nil }
             return NSNumber(value: differential)
-            }.mapToNumberFormattedString(numberFormatter: percentFormatter)
+            }
+            .mapToNumberFormattedString(numberFormatter: percentFormatter)
 
         baselineDifferentialLabel.reactive.text <~
             SignalProducer.combineLatest(_dayBaselineDifferential.producer,
@@ -88,3 +91,22 @@ class GoalStrategyViewController: NSViewController {
     }
 }
 
+class GoalReachedViewController: NSViewController {
+    internal var timeGoal: BindingTarget<TimeInterval> { return _timeGoal.bindingTarget }
+
+    private let _timeGoal = MutableProperty<TimeInterval>(0)
+
+    private lazy var timeFormatter: DateComponentsFormatter = {
+        let f = DateComponentsFormatter()
+        f.allowedUnits = [.hour, .minute]
+        f.zeroFormattingBehavior = .dropAll
+        f.unitsStyle = .full
+        return f
+    }()
+
+    @IBOutlet weak var totalHoursLabel: NSTextField!
+
+    override func viewDidLoad() {
+        totalHoursLabel.reactive.text <~ _timeGoal.producer.mapToString(timeFormatter: timeFormatter)
+    }
+}

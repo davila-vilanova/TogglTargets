@@ -13,6 +13,7 @@ import Result
 
 fileprivate let GoalProgressVCContainment = "GoalProgressVCContainment"
 fileprivate let GoalStrategyVCContainment = "GoalStrategyVCContainment"
+fileprivate let GoalReachedVCContainment = "GoalReachedVCContainment"
 fileprivate let DayProgressVCContainment = "DayProgressVCContainment"
 
 class GoalReportViewController: NSViewController, ViewControllerContaining {
@@ -61,8 +62,6 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
             timeProgressViewController.remainingWorkDays <~ goalProgress.remainingWorkDays
             timeProgressViewController.workedTime <~ goalProgress.workedTime
             timeProgressViewController.remainingTimeToGoal <~ goalProgress.remainingTimeToGoal
-
-            displayController(timeProgressViewController, in: goalProgressView)
         }
     }
     
@@ -72,17 +71,19 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
             goalStrategyViewController.dayBaseline <~ goalProgress.dayBaseline
             goalStrategyViewController.dayBaselineAdjustedToProgress <~ goalProgress.dayBaselineAdjustedToProgress
             goalStrategyViewController.dayBaselineDifferential <~ goalProgress.dayBaselineDifferential
-
-            displayController(goalStrategyViewController, in: goalStrategyView)
         }
     }
-    
+
+    var goalReachedViewController: GoalReachedViewController! {
+        didSet {
+            goalReachedViewController.timeGoal <~ goalProgress.timeGoal
+        }
+    }
+
     var dayProgressViewController: DayProgressViewController! {
         didSet {
             dayProgressViewController.timeWorkedToday <~ goalProgress.timeWorkedToday
             dayProgressViewController.remainingTimeToDayBaseline <~ goalProgress.remainingTimeToDayBaseline
-
-            displayController(dayProgressViewController, in: dayProgressView)
         }
     }
     
@@ -109,13 +110,14 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        for identifier in [GoalProgressVCContainment, GoalStrategyVCContainment, DayProgressVCContainment] {
+        for identifier in [GoalProgressVCContainment, GoalStrategyVCContainment, GoalReachedVCContainment, DayProgressVCContainment] {
             performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
         }
         
         wireMonthName()
         setupComputeStrategyFromButton()
         connectPropertiesToGoalProgress()
+        setupContainedViewControllerVisibility()
     }
     
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
@@ -124,12 +126,29 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
             timeProgressViewController = controller as! TimeProgressViewController
         case _ where (controller as? GoalStrategyViewController) != nil:
             goalStrategyViewController = controller as! GoalStrategyViewController
+        case _ where (controller as? GoalReachedViewController) != nil:
+            goalReachedViewController = controller as! GoalReachedViewController
         case _ where (controller as? DayProgressViewController) != nil:
             dayProgressViewController = controller as! DayProgressViewController
         default: break
         }
     }
 
+    private func setupContainedViewControllerVisibility() {
+        displayController(timeProgressViewController, in: goalProgressView) // Display always
+        displayController(dayProgressViewController, in: dayProgressView) // Display always
+
+        goalProgress.remainingTimeToGoal
+            .map { (remainingTime: TimeInterval) -> Bool in
+                remainingTime == 0.0
+            }
+            .map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
+                return isGoalReached ? goalReachedViewController! : goalStrategyViewController!
+            }
+            .observe(on: UIScheduler()).startWithValues { [unowned self] (controller) in
+                displayController(controller, in: self.goalStrategyView)
+        }
+    }
     
     // MARK: -
 

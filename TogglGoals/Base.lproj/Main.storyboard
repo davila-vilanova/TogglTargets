@@ -485,7 +485,7 @@
                 </viewController>
                 <customObject id="cML-ha-SWx" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2366" y="1292"/>
+            <point key="canvasLocation" x="2361" y="1176"/>
         </scene>
         <!--Goal Strategy View Controller-->
         <scene sceneID="H6m-Ts-Ik0">
@@ -590,7 +590,7 @@
                 </viewController>
                 <customObject id="OpA-Hm-EXQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2366" y="1418"/>
+            <point key="canvasLocation" x="2361" y="1302"/>
         </scene>
         <!--Day Progress View Controller-->
         <scene sceneID="uoF-Pf-sPn">
@@ -659,7 +659,55 @@
                 </viewController>
                 <customObject id="MKp-Ev-lcr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2366" y="1535"/>
+            <point key="canvasLocation" x="2361" y="1534"/>
+        </scene>
+        <!--Goal Reached View Controller-->
+        <scene sceneID="6vA-eI-u7E">
+            <objects>
+                <viewController id="dwg-Fo-eQ6" customClass="GoalReachedViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="3In-vf-KdN">
+                        <rect key="frame" x="0.0" y="0.0" width="482" height="53"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BIp-TP-Df8" userLabel="StackView">
+                                <rect key="frame" x="20" y="18" width="298" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hwc-UV-UQs">
+                                        <rect key="frame" x="-2" y="0.0" width="248" height="18"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="you've reached your monthly goal of" id="Ogv-Oq-G53">
+                                            <font key="font" size="14" name=".AppleSystemUIFontDemi"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YY1-cH-juf">
+                                        <rect key="frame" x="244" y="0.0" width="56" height="18"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="4dX-c5-ofg">
+                                            <font key="font" size="14" name=".AppleSystemUIFontDemi"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
+                            </stackView>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="totalHoursLabel" destination="YY1-cH-juf" id="3ge-ME-xLR"/>
+                    </connections>
+                </viewController>
+                <customObject id="raR-zX-gAF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2361" y="1421"/>
         </scene>
         <!--No Goal View Controller-->
         <scene sceneID="PGj-gw-9GS">
@@ -815,6 +863,7 @@
                         <segue destination="7US-0q-kKJ" kind="custom" identifier="GoalProgressVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="kbd-qA-CZc"/>
                         <segue destination="izu-wK-mXn" kind="custom" identifier="GoalStrategyVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="Isy-wW-ZIj"/>
                         <segue destination="hvJ-dC-Kbs" kind="custom" identifier="DayProgressVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="8Ie-pp-gUW"/>
+                        <segue destination="dwg-Fo-eQ6" kind="custom" identifier="GoalReachedVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="AAp-vs-QCv"/>
                     </connections>
                 </viewController>
                 <customObject id="HEr-Yv-904" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

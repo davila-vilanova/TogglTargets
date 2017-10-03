@@ -174,7 +174,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     }
 
     private func setupContainedViewControllerVisibility() {
-        displayController(goalViewController, in: goalView) // Displays always
+        displayController(goalViewController, in: goalView) // Display always
 
         goalDownstream.producer.filter { $0 == nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
             displayController(self.noGoalViewController, in: self.goalReportView)

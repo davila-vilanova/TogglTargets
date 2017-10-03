@@ -286,15 +286,15 @@
 		632957441DBA99F000E11A10 /* TogglGoals */ = {
 			isa = PBXGroup;
 			children = (
+				6329574E1DBA99F000E11A10 /* Info.plist */,
+				63D4FF2E1F5AD839006368A3 /* MainMenu.xib */,
 				632957451DBA99F000E11A10 /* AppDelegate.swift */,
+				6329574B1DBA99F000E11A10 /* Main.storyboard */,
 				63D4BB951F7D7FF800B87298 /* Window Controllers */,
 				637A32331EE16E7600667FC3 /* View Controllers */,
 				63D4BB981F7D80FC00B87298 /* Model */,
 				63B5D8A41E48FF7000042897 /* Operations */,
-				63D4FF2E1F5AD839006368A3 /* MainMenu.xib */,
-				6329574B1DBA99F000E11A10 /* Main.storyboard */,
 				632957491DBA99F000E11A10 /* Assets.xcassets */,
-				6329574E1DBA99F000E11A10 /* Info.plist */,
 			);
 			path = TogglGoals;
 			sourceTree = "<group>";
