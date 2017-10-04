@@ -17,10 +17,6 @@
 		6332F51B1EADF29900CDE608 /* ProjectsByGoalsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6332F51A1EADF29900CDE608 /* ProjectsByGoalsTests.swift */; };
 		633CEADC1E6C2DB800831611 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 632EEBE81E42786100608D01 /* SQLite.framework */; };
 		6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634396891F80456200FDADE3 /* GoalProgressTests.swift */; };
-		63593AE61E511AD0000473CC /* CollectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63593AE51E511AD0000473CC /* CollectionOperation.swift */; };
-		63593AEA1E511B93000473CC /* CollectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63593AE51E511AD0000473CC /* CollectionOperation.swift */; };
-		63593AEC1E511BD6000473CC /* SpawningOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63593AEB1E511BD6000473CC /* SpawningOperation.swift */; };
-		63593AED1E511BD6000473CC /* SpawningOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63593AEB1E511BD6000473CC /* SpawningOperation.swift */; };
 		636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */; };
 		637A323E1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A32341EE16FD600667FC3 /* DayProgressViewController.swift */; };
 		637A323F1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A32341EE16FD600667FC3 /* DayProgressViewController.swift */; };
@@ -57,16 +53,6 @@
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
-		639FD05C1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639FD05B1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift */; };
-		639FD05D1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639FD05B1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift */; };
-		639FD05F1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639FD05E1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift */; };
-		639FD0601E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639FD05E1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift */; };
-		63B5D8AB1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8AA1E49011F00042897 /* NetworkRetrieveProfileOperation.swift */; };
-		63B5D8AC1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8AA1E49011F00042897 /* NetworkRetrieveProfileOperation.swift */; };
-		63B5D8AE1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8AD1E49014000042897 /* NetworkRetrieveReportsOperation.swift */; };
-		63B5D8AF1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8AD1E49014000042897 /* NetworkRetrieveReportsOperation.swift */; };
-		63B5D8B71E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8B61E4901D000042897 /* TogglAPIAccessOperation.swift */; };
-		63B5D8B81E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B5D8B61E4901D000042897 /* TogglAPIAccessOperation.swift */; };
 		63B772151ED9DFFD005739CF /* PureLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63B772131ED9DFF5005739CF /* PureLayout.framework */; };
 		63B772161ED9DFFD005739CF /* PureLayout.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63B772131ED9DFF5005739CF /* PureLayout.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		63BBBA8F1F35E7DA00A8A174 /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8D1F35E7DA00A8A174 /* ReactiveSwift.framework */; };
@@ -114,8 +100,30 @@
 		63D4FF2F1F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
 		63D4FF301F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
 		63D4FF311F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
-		63EAD8E31E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E21E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift */; };
-		63EAD8E41E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E21E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift */; };
+		63D765C51F84E33B00B82CC9 /* CollectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765BD1F84E31B00B82CC9 /* CollectionOperation.swift */; };
+		63D765C61F84E33B00B82CC9 /* NetworkRetrieveProfileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765BE1F84E31B00B82CC9 /* NetworkRetrieveProfileOperation.swift */; };
+		63D765C71F84E33B00B82CC9 /* NetworkRetrieveProjectsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765BF1F84E31B00B82CC9 /* NetworkRetrieveProjectsOperation.swift */; };
+		63D765C81F84E33B00B82CC9 /* NetworkRetrieveReportsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C01F84E31B00B82CC9 /* NetworkRetrieveReportsOperation.swift */; };
+		63D765C91F84E33B00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C11F84E31B00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift */; };
+		63D765CA1F84E33B00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C21F84E31B00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift */; };
+		63D765CB1F84E33B00B82CC9 /* SpawningOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C31F84E31B00B82CC9 /* SpawningOperation.swift */; };
+		63D765CC1F84E33B00B82CC9 /* TogglAPIAccessOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C41F84E31B00B82CC9 /* TogglAPIAccessOperation.swift */; };
+		63D765CD1F84E33C00B82CC9 /* CollectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765BD1F84E31B00B82CC9 /* CollectionOperation.swift */; };
+		63D765CE1F84E33C00B82CC9 /* NetworkRetrieveProfileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765BE1F84E31B00B82CC9 /* NetworkRetrieveProfileOperation.swift */; };
+		63D765CF1F84E33C00B82CC9 /* NetworkRetrieveProjectsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765BF1F84E31B00B82CC9 /* NetworkRetrieveProjectsOperation.swift */; };
+		63D765D01F84E33C00B82CC9 /* NetworkRetrieveReportsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C01F84E31B00B82CC9 /* NetworkRetrieveReportsOperation.swift */; };
+		63D765D11F84E33C00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C11F84E31B00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift */; };
+		63D765D21F84E33C00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C21F84E31B00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift */; };
+		63D765D31F84E33C00B82CC9 /* SpawningOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C31F84E31B00B82CC9 /* SpawningOperation.swift */; };
+		63D765D41F84E33C00B82CC9 /* TogglAPIAccessOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C41F84E31B00B82CC9 /* TogglAPIAccessOperation.swift */; };
+		63D765D51F84E33C00B82CC9 /* CollectionOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765BD1F84E31B00B82CC9 /* CollectionOperation.swift */; };
+		63D765D61F84E33C00B82CC9 /* NetworkRetrieveProfileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765BE1F84E31B00B82CC9 /* NetworkRetrieveProfileOperation.swift */; };
+		63D765D71F84E33C00B82CC9 /* NetworkRetrieveProjectsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765BF1F84E31B00B82CC9 /* NetworkRetrieveProjectsOperation.swift */; };
+		63D765D81F84E33C00B82CC9 /* NetworkRetrieveReportsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C01F84E31B00B82CC9 /* NetworkRetrieveReportsOperation.swift */; };
+		63D765D91F84E33C00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C11F84E31B00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift */; };
+		63D765DA1F84E33C00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C21F84E31B00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift */; };
+		63D765DB1F84E33C00B82CC9 /* SpawningOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C31F84E31B00B82CC9 /* SpawningOperation.swift */; };
+		63D765DC1F84E33C00B82CC9 /* TogglAPIAccessOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D765C41F84E31B00B82CC9 /* TogglAPIAccessOperation.swift */; };
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
 		63EF58181F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */; };
 		63EF58191F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */; };
@@ -182,8 +190,6 @@
 		632EEBF11E4278F300608D01 /* SQLite.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = SQLite.framework.dSYM; path = Carthage/Build/Mac/SQLite.framework.dSYM; sourceTree = "<group>"; };
 		6332F51A1EADF29900CDE608 /* ProjectsByGoalsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsByGoalsTests.swift; sourceTree = "<group>"; };
 		634396891F80456200FDADE3 /* GoalProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressTests.swift; sourceTree = "<group>"; };
-		63593AE51E511AD0000473CC /* CollectionOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CollectionOperation.swift; sourceTree = "<group>"; };
-		63593AEB1E511BD6000473CC /* SpawningOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpawningOperation.swift; sourceTree = "<group>"; };
 		636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountWeekdaysTests.swift; sourceTree = "<group>"; };
 		637A32341EE16FD600667FC3 /* DayProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DayProgressViewController.swift; path = ViewControllers/DayProgressViewController.swift; sourceTree = "<group>"; };
 		637A32351EE16FD600667FC3 /* EmptySelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmptySelectionViewController.swift; path = ViewControllers/EmptySelectionViewController.swift; sourceTree = "<group>"; };
@@ -203,11 +209,6 @@
 		6393B73D1F3A5BDB00FC1EAC /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/Mac/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		6393B73F1F3A5BF300FC1EAC /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/Mac/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
-		639FD05B1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveWorkspacesOperation.swift; sourceTree = "<group>"; };
-		639FD05E1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveProjectsOperation.swift; sourceTree = "<group>"; };
-		63B5D8AA1E49011F00042897 /* NetworkRetrieveProfileOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveProfileOperation.swift; sourceTree = "<group>"; };
-		63B5D8AD1E49014000042897 /* NetworkRetrieveReportsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveReportsOperation.swift; sourceTree = "<group>"; };
-		63B5D8B61E4901D000042897 /* TogglAPIAccessOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TogglAPIAccessOperation.swift; sourceTree = "<group>"; };
 		63B772131ED9DFF5005739CF /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/Mac/PureLayout.framework; sourceTree = "<group>"; };
 		63BBBA8D1F35E7DA00A8A174 /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = Carthage/Build/Mac/ReactiveSwift.framework; sourceTree = "<group>"; };
 		63BBBA8E1F35E7DA00A8A174 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/Mac/Result.framework; sourceTree = "<group>"; };
@@ -225,7 +226,14 @@
 		63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProducerExtensions.swift; sourceTree = "<group>"; };
 		63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63D4FF2E1F5AD839006368A3 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
-		63EAD8E21E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveRunningEntryOperation.swift; sourceTree = "<group>"; };
+		63D765BD1F84E31B00B82CC9 /* CollectionOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionOperation.swift; sourceTree = "<group>"; };
+		63D765BE1F84E31B00B82CC9 /* NetworkRetrieveProfileOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveProfileOperation.swift; sourceTree = "<group>"; };
+		63D765BF1F84E31B00B82CC9 /* NetworkRetrieveProjectsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveProjectsOperation.swift; sourceTree = "<group>"; };
+		63D765C01F84E31B00B82CC9 /* NetworkRetrieveReportsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveReportsOperation.swift; sourceTree = "<group>"; };
+		63D765C11F84E31B00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveRunningEntryOperation.swift; sourceTree = "<group>"; };
+		63D765C21F84E31B00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRetrieveWorkspacesOperation.swift; sourceTree = "<group>"; };
+		63D765C31F84E31B00B82CC9 /* SpawningOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpawningOperation.swift; sourceTree = "<group>"; };
+		63D765C41F84E31B00B82CC9 /* TogglAPIAccessOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIAccessOperation.swift; sourceTree = "<group>"; };
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
 		63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NSViewControllerExtensions.swift; path = ViewControllers/NSViewControllerExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -293,7 +301,6 @@
 				63D4BB951F7D7FF800B87298 /* Window Controllers */,
 				637A32331EE16E7600667FC3 /* View Controllers */,
 				63D4BB981F7D80FC00B87298 /* Model */,
-				63B5D8A41E48FF7000042897 /* Operations */,
 				632957491DBA99F000E11A10 /* Assets.xcassets */,
 			);
 			path = TogglGoals;
@@ -343,21 +350,6 @@
 			name = "View Controllers";
 			sourceTree = "<group>";
 		};
-		63B5D8A41E48FF7000042897 /* Operations */ = {
-			isa = PBXGroup;
-			children = (
-				63B5D8B61E4901D000042897 /* TogglAPIAccessOperation.swift */,
-				63B5D8AA1E49011F00042897 /* NetworkRetrieveProfileOperation.swift */,
-				639FD05B1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift */,
-				639FD05E1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift */,
-				63B5D8AD1E49014000042897 /* NetworkRetrieveReportsOperation.swift */,
-				63593AE51E511AD0000473CC /* CollectionOperation.swift */,
-				63593AEB1E511BD6000473CC /* SpawningOperation.swift */,
-				63EAD8E21E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift */,
-			);
-			path = Operations;
-			sourceTree = "<group>";
-		};
 		63D4BB951F7D7FF800B87298 /* Window Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -382,8 +374,24 @@
 				63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */,
 				63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */,
 				639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */,
+				63D765BC1F84E31B00B82CC9 /* Operations */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		63D765BC1F84E31B00B82CC9 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				63D765BD1F84E31B00B82CC9 /* CollectionOperation.swift */,
+				63D765BE1F84E31B00B82CC9 /* NetworkRetrieveProfileOperation.swift */,
+				63D765BF1F84E31B00B82CC9 /* NetworkRetrieveProjectsOperation.swift */,
+				63D765C01F84E31B00B82CC9 /* NetworkRetrieveReportsOperation.swift */,
+				63D765C11F84E31B00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift */,
+				63D765C21F84E31B00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift */,
+				63D765C31F84E31B00B82CC9 /* SpawningOperation.swift */,
+				63D765C41F84E31B00B82CC9 /* TogglAPIAccessOperation.swift */,
+			);
+			path = Operations;
 			sourceTree = "<group>";
 		};
 		63EAD8DA1DC6A97C001E7889 /* Frameworks */ = {
@@ -548,34 +556,34 @@
 			buildActionMask = 2147483647;
 			files = (
 				63D4BBA81F7D821800B87298 /* GoalProgress.swift in Sources */,
-				63EAD8E31E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift in Sources */,
 				637A324E1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */,
 				637A323E1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */,
-				639FD05C1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift in Sources */,
+				63D765C51F84E33B00B82CC9 /* CollectionOperation.swift in Sources */,
 				632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */,
 				63D4BBA61F7D821800B87298 /* CollectionUpdateClue.swift in Sources */,
-				63B5D8AE1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */,
+				63D765CA1F84E33B00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift in Sources */,
 				63D4BBAB1F7D821800B87298 /* ModelCache.swift in Sources */,
-				63593AE61E511AD0000473CC /* CollectionOperation.swift in Sources */,
 				63D4BBD71F7D84A500B87298 /* ProjectsMasterDetailWindowController.swift in Sources */,
-				63B5D8AB1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */,
+				63D765C81F84E33B00B82CC9 /* NetworkRetrieveReportsOperation.swift in Sources */,
 				63D4BBAD1F7D821800B87298 /* ProjectsByGoals.swift in Sources */,
 				637A32441EE16FD600667FC3 /* GoalReportViewController.swift in Sources */,
 				63D4BBA71F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				637A32421EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
+				63D765C71F84E33B00B82CC9 /* NetworkRetrieveProjectsOperation.swift in Sources */,
 				63D4BBB01F7D821800B87298 /* TogglAPICredential.swift in Sources */,
-				639FD05F1E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */,
 				637A32481EE16FD600667FC3 /* GoalViewController.swift in Sources */,
 				639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
+				63D765C61F84E33B00B82CC9 /* NetworkRetrieveProfileOperation.swift in Sources */,
 				63D4BBAE1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				637A32461EE16FD600667FC3 /* GoalStrategyViewController.swift in Sources */,
 				63D4BBAC1F7D821800B87298 /* ModelCoordinator.swift in Sources */,
+				63D765CB1F84E33B00B82CC9 /* SpawningOperation.swift in Sources */,
 				637A325A1EE1727600667FC3 /* ProjectCollectionViewItem.swift in Sources */,
 				63D4BBAF1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */,
-				63B5D8B71E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */,
-				63593AEC1E511BD6000473CC /* SpawningOperation.swift in Sources */,
 				63EF58181F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */,
 				637A325F1EE1761C00667FC3 /* ContainmentSegue.swift in Sources */,
+				63D765C91F84E33B00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift in Sources */,
+				63D765CC1F84E33B00B82CC9 /* TogglAPIAccessOperation.swift in Sources */,
 				637A32401EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
 				637A324A1EE16FD600667FC3 /* ProjectDetailsViewController.swift in Sources */,
 				637A32501EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */,
@@ -591,32 +599,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				639FD0601E49098D001D1905 /* NetworkRetrieveProjectsOperation.swift in Sources */,
-				63593AED1E511BD6000473CC /* SpawningOperation.swift in Sources */,
 				636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */,
-				63B5D8AC1E49011F00042897 /* NetworkRetrieveProfileOperation.swift in Sources */,
 				63D4BBB91F7D821800B87298 /* ProjectsByGoals.swift in Sources */,
 				63D4BBB71F7D821800B87298 /* ModelCache.swift in Sources */,
 				63D4BBB81F7D821800B87298 /* ModelCoordinator.swift in Sources */,
 				63D4BBBA1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
-				63B5D8AF1E49014000042897 /* NetworkRetrieveReportsOperation.swift in Sources */,
-				63593AEA1E511B93000473CC /* CollectionOperation.swift in Sources */,
-				63EAD8E41E7D445E0061158C /* NetworkRetrieveRunningEntryOperation.swift in Sources */,
 				6332F51B1EADF29900CDE608 /* ProjectsByGoalsTests.swift in Sources */,
 				63D4BBB41F7D821800B87298 /* GoalProgress.swift in Sources */,
 				639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
+				63D765D41F84E33C00B82CC9 /* TogglAPIAccessOperation.swift in Sources */,
+				63D765D01F84E33C00B82CC9 /* NetworkRetrieveReportsOperation.swift in Sources */,
 				63D4BBB31F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */,
 				63D4BBB11F7D821800B87298 /* APIAccessError.swift in Sources */,
 				63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */,
+				63D765D11F84E33C00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift in Sources */,
 				63D4BBBC1F7D821800B87298 /* TogglAPICredential.swift in Sources */,
 				63EF58191F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */,
+				63D765CF1F84E33C00B82CC9 /* NetworkRetrieveProjectsOperation.swift in Sources */,
 				63D4BBB61F7D821800B87298 /* Model.swift in Sources */,
+				63D765D31F84E33C00B82CC9 /* SpawningOperation.swift in Sources */,
 				63D4BBB21F7D821800B87298 /* CollectionUpdateClue.swift in Sources */,
 				63D4BBB51F7D821800B87298 /* GoalsStore.swift in Sources */,
-				63B5D8B81E4901D000042897 /* TogglAPIAccessOperation.swift in Sources */,
+				63D765CD1F84E33C00B82CC9 /* CollectionOperation.swift in Sources */,
+				63D765CE1F84E33C00B82CC9 /* NetworkRetrieveProfileOperation.swift in Sources */,
+				63D765D21F84E33C00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift in Sources */,
 				63D4BBBB1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */,
-				639FD05D1E490599001D1905 /* NetworkRetrieveWorkspacesOperation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -627,24 +635,32 @@
 				63D4BBC21F7D821900B87298 /* Model.swift in Sources */,
 				637A324F1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */,
 				637A32571EE1727600667FC3 /* ProjectCollectionViewHeader.swift in Sources */,
+				63D765D51F84E33C00B82CC9 /* CollectionOperation.swift in Sources */,
 				639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
 				63D4BBC51F7D821900B87298 /* ProjectsByGoals.swift in Sources */,
+				63D765DA1F84E33C00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift in Sources */,
 				637A32471EE16FD600667FC3 /* GoalStrategyViewController.swift in Sources */,
 				63D4BBBE1F7D821900B87298 /* CollectionUpdateClue.swift in Sources */,
+				63D765D81F84E33C00B82CC9 /* NetworkRetrieveReportsOperation.swift in Sources */,
 				63D4BBD81F7D84A600B87298 /* ProjectsMasterDetailWindowController.swift in Sources */,
 				637A323F1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */,
 				637A325B1EE1727600667FC3 /* ProjectCollectionViewItem.swift in Sources */,
 				63D4BBBF1F7D821900B87298 /* DateTimeExtensions.swift in Sources */,
+				63D765D71F84E33C00B82CC9 /* NetworkRetrieveProjectsOperation.swift in Sources */,
 				63D4BBC41F7D821900B87298 /* ModelCoordinator.swift in Sources */,
 				63D4BBBD1F7D821900B87298 /* APIAccessError.swift in Sources */,
 				632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */,
+				63D765D61F84E33C00B82CC9 /* NetworkRetrieveProfileOperation.swift in Sources */,
 				637A32411EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
 				637A32431EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
 				63D4BBC31F7D821900B87298 /* ModelCache.swift in Sources */,
+				63D765DB1F84E33C00B82CC9 /* SpawningOperation.swift in Sources */,
 				63D4BBC71F7D821900B87298 /* SignalProducerExtensions.swift in Sources */,
 				63EF581A1F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */,
 				637A32491EE16FD600667FC3 /* GoalViewController.swift in Sources */,
 				63D4BBC61F7D821900B87298 /* PropertyExtensions.swift in Sources */,
+				63D765D91F84E33C00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift in Sources */,
+				63D765DC1F84E33C00B82CC9 /* TogglAPIAccessOperation.swift in Sources */,
 				63D4BBC01F7D821900B87298 /* GoalProgress.swift in Sources */,
 				63D4BBC81F7D821900B87298 /* TogglAPICredential.swift in Sources */,
 				63D4BBC11F7D821900B87298 /* GoalsStore.swift in Sources */,
