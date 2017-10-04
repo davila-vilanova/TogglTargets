@@ -10,143 +10,42 @@ import Foundation
 import ReactiveSwift
 import Result
 
-// ModelCoordinator is not thread safe
 internal class ModelCoordinator: NSObject {
     private let goalsStore: GoalsStore
 
-    internal var profile = MutableProperty<Profile?>(nil)
+    // MARK: - Exposed properties and signals
 
+    internal lazy var profile = Property(_profile)
 
-    // MARK: - Projects and updates
-
-    private var mutableProjectsByGoals: MutableProperty<ProjectsByGoals>
-    internal var projectsByGoals: Property<ProjectsByGoals>
-
-    private var fullProjectsUpdatePipe = Signal<Bool, NoError>.pipe()
+    internal lazy var projectsByGoals = Property(_projectsByGoals)
     internal var fullProjectsUpdate: Signal<Bool, NoError> {
         return fullProjectsUpdatePipe.output
     }
-
-    private var cluedProjectsUpdatePipe = Signal<CollectionUpdateClue, NoError>.pipe()
     internal var cluedProjectsUpdate: Signal<CollectionUpdateClue, NoError> {
         return cluedProjectsUpdatePipe.output
     }
 
+    internal lazy var runningEntry = Property(_runningEntry)
+    internal lazy var now = Property(_now)
+    internal lazy var calendar = Property(_calendar)
 
-    // MARK : -
 
-    private var reportProperties = Dictionary<Int64, MutableProperty<TwoPartTimeReport?>>()
+    // MARK: - Backing of exposed properties and signals
 
-    internal let runningEntry: Property<RunningEntry?>
-    private let mutableRunningEntry: MutableProperty<RunningEntry?>
-    internal var runningEntryRefreshTimer: Timer?
+    private let _profile = MutableProperty<Profile?>(nil)
+    private let _projectsByGoals = MutableProperty(ProjectsByGoals())
 
-    private let apiCredential = TogglAPICredential()
+    private var fullProjectsUpdatePipe = Signal<Bool, NoError>.pipe()
+    private var cluedProjectsUpdatePipe = Signal<CollectionUpdateClue, NoError>.pipe()
 
-    private let startOfPeriod: DayComponents
-    private let yesterday: DayComponents?
-    private let today: DayComponents
-
-    
-    // TODO: inject these three?
-    private lazy var mainQueue: DispatchQueue = {
-        return DispatchQueue.main
+    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
+    private lazy var _now = MutableProperty(scheduler.currentDate)
+    private lazy var _calendar: MutableProperty<Calendar> = {
+        var cal = Calendar(identifier: .iso8601)
+        cal.locale = Locale.current // TODO: get from user profile
+        return MutableProperty(cal)
     }()
 
-    private lazy var networkQueue: OperationQueue = {
-        let q = OperationQueue()
-        q.name = "NetworkQueue"
-        return q
-    }()
-
-    internal var now: SignalProducer<Date, NoError> { return _now.producer }
-    private let _now: MutableProperty<Date>
-    internal let calendar: Property<Calendar>
-    private let mutableCalendar: MutableProperty<Calendar>
-
-    private let scheduler = QueueScheduler.init(name: "ModelCoordinator scheduler")
-    private var updateNowOnRunningEntryTickDisposable: Disposable?
-
-    internal init(cache: ModelCache, goalsStore: GoalsStore) {
-        self.goalsStore = goalsStore
-
-        let mutableProjectsByGoals = MutableProperty<ProjectsByGoals>(ProjectsByGoals())
-        self.mutableProjectsByGoals = mutableProjectsByGoals
-        self.projectsByGoals = Property<ProjectsByGoals>(mutableProjectsByGoals)
-
-        let mutableRunningEntry = MutableProperty<RunningEntry?>(nil)
-        self.mutableRunningEntry = mutableRunningEntry
-        self.runningEntry = Property<RunningEntry?>(mutableRunningEntry)
-
-        var calendarValue = Calendar(identifier: .iso8601)
-        calendarValue.locale = Locale.current // TODO: get from user profile
-        let mutableCalendar = MutableProperty<Calendar>(calendarValue)
-        self.mutableCalendar = mutableCalendar
-        self.calendar = Property<Calendar>(mutableCalendar)
-
-        let currentDate = scheduler.currentDate
-        _now = MutableProperty(currentDate)
-
-        startOfPeriod = mutableCalendar.value.firstDayOfMonth(for: currentDate)
-        yesterday = try? mutableCalendar.value.previousDay(for: currentDate, notBefore: startOfPeriod)
-        today = mutableCalendar.value.dayComponents(from: currentDate)
-
-        super.init()
-
-        // Update the now property as seldom as possible and as precisely as required to match minute increments in the accumulated running time entry
-        // TODO: extract and test this logic
-        Property.combineLatest(mutableRunningEntry, mutableCalendar).producer
-            .startWithValues { [unowned self] (runningEntry, calendar) in
-                // Keep at most one regular update of the now property related to the current time entry
-                if let disposable = self.updateNowOnRunningEntryTickDisposable {
-                    disposable.dispose()
-                    self.updateNowOnRunningEntryTickDisposable = nil
-                }
-
-                guard let runningEntry = runningEntry else {
-                    return
-                }
-
-                let nextRefresh = calendar.date(byAdding: DateComponents(minute: 1), to: runningEntry.start)! // it is a sound calculation, force result unwrapping
-                self.updateNowOnRunningEntryTickDisposable = self.scheduler.schedule(after: nextRefresh, interval: .seconds(60), action: {
-                    self._now.value = self.scheduler.currentDate
-                })
-        }
-
-        retrieveUserDataFromToggl()
-    }
-
-    private func retrieveUserDataFromToggl() {
-        let retrieveProfileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
-        retrieveProfileOp.onSuccess = { profile in
-            self.profile.value = profile
-        }
-
-        let retrieveWorkspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
-
-        let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential)
-        let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, startOfPeriod: startOfPeriod, yesterday: yesterday, today: today)
-
-        retrieveProjectsOp.outputCollectionOperation.completionBlock = { [unowned self] in
-            if let projects = retrieveProjectsOp.outputCollectionOperation.collectedOutput {
-                self.mutableProjectsByGoals.value = ProjectsByGoals(projects: projects, goalsStore: self.goalsStore)
-                self.fullProjectsUpdatePipe.input.send(value: true)
-            }
-        }
-
-        retrieveReportsOp.outputCollectionOperation.completionBlock = { [unowned self] in
-            if let reports = retrieveReportsOp.outputCollectionOperation.collectedOutput {
-                for (projectId, report) in reports {
-                    self.reportMutableProperty(for: projectId).value = report
-                }
-            }
-        }
-        
-        networkQueue.addOperation(retrieveProfileOp)
-        networkQueue.addOperation(retrieveWorkspacesOp)
-        networkQueue.addOperation(retrieveProjectsOp)
-        networkQueue.addOperation(retrieveReportsOp)
-    }
 
     // MARK: - Goals
 
@@ -162,7 +61,6 @@ internal class ModelCoordinator: NSObject {
         observer.sendCompleted()
     }
 
-
     /// Each invocation of this Producer will deliver a single value and then complete.
     /// The value is an Action which takes a project ID as input and returns a BindingTarget
     /// that accepts new (or edited) values for the goal associated with the provided project ID.
@@ -174,7 +72,6 @@ internal class ModelCoordinator: NSObject {
         observer.send(value: action)
         observer.sendCompleted()
     }
-
 
     private func goalProperty(for projectId: Int64) -> Property<Goal?> {
         let goalProperty = goalsStore.goalProperty(for: projectId)
@@ -189,10 +86,11 @@ internal class ModelCoordinator: NSObject {
     }
 
     private func goalChanged(for projectId: Int64) {
-        let indexPaths = mutableProjectsByGoals.value.moveProjectAfterGoalChange(projectId: projectId)!
+        let indexPaths = _projectsByGoals.value.moveProjectAfterGoalChange(projectId: projectId)!
         let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
         cluedProjectsUpdatePipe.input.send(value: clue)
     }
+
 
     // MARK: - Reports
 
@@ -221,6 +119,8 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Running Entry
 
+    private var runningEntryRefreshTimer: Timer?
+
     internal func startRefreshingRunningTimeEntry() {
         guard runningEntryRefreshTimer == nil || runningEntryRefreshTimer?.isValid == false else {
             return
@@ -244,9 +144,93 @@ internal class ModelCoordinator: NSObject {
     private func retrieveRunningTimeEntry() {
         let op = NetworkRetrieveRunningEntryOperation(credential: apiCredential)
         op.onSuccess = { runningEntry in
-            self.mutableRunningEntry.value = runningEntry
+            self._runningEntry.value = runningEntry
         }
         networkQueue.addOperation(op)
+    }
+
+
+    // MARK : -
+
+    private let apiCredential = TogglAPICredential()
+
+    private var reportProperties = Dictionary<Int64, MutableProperty<TwoPartTimeReport?>>()
+
+    private lazy var startOfPeriod: DayComponents = _calendar.value.firstDayOfMonth(for: scheduler.currentDate)
+    private lazy var yesterday: DayComponents? = try? _calendar.value.previousDay(for: scheduler.currentDate, notBefore: startOfPeriod)
+    private lazy var today: DayComponents = _calendar.value.dayComponents(from: scheduler.currentDate)
+
+    private let scheduler = QueueScheduler.init(name: "ModelCoordinator scheduler")
+
+    private lazy var mainQueue: DispatchQueue = {
+        return DispatchQueue.main
+    }()
+    private lazy var networkQueue: OperationQueue = {
+        let q = OperationQueue()
+        q.name = "NetworkQueue"
+        return q
+    }()
+
+    private var updateNowOnRunningEntryTickDisposable: Disposable?
+
+    internal init(cache: ModelCache, goalsStore: GoalsStore) {
+        self.goalsStore = goalsStore
+
+        super.init()
+
+        // Update the now property as seldom as possible and as precisely as required to match minute increments in the accumulated running time entry
+        // TODO: extract and test this logic
+        Property.combineLatest(_runningEntry, _calendar).producer
+            .startWithValues { [unowned self] (runningEntry, calendar) in
+                // Keep at most one regular update of the now property related to the current time entry
+                if let disposable = self.updateNowOnRunningEntryTickDisposable {
+                    disposable.dispose()
+                    self.updateNowOnRunningEntryTickDisposable = nil
+                }
+
+                guard let runningEntry = runningEntry else {
+                    return
+                }
+
+                let nextRefresh = calendar.date(byAdding: DateComponents(minute: 1), to: runningEntry.start)! // it is a sound calculation, force result unwrapping
+                self.updateNowOnRunningEntryTickDisposable = self.scheduler.schedule(after: nextRefresh, interval: .seconds(60), action: {
+                    self._now.value = self.scheduler.currentDate
+                })
+        }
+
+        retrieveUserDataFromToggl()
+    }
+
+    private func retrieveUserDataFromToggl() {
+        let retrieveProfileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
+        retrieveProfileOp.onSuccess = { profile in
+            self._profile.value = profile
+        }
+
+        let retrieveWorkspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
+
+        let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential)
+        let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, startOfPeriod: startOfPeriod, yesterday: yesterday, today: today)
+
+        retrieveProjectsOp.outputCollectionOperation.completionBlock = { [unowned self] in
+            if let projects = retrieveProjectsOp.outputCollectionOperation.collectedOutput {
+                self._projectsByGoals.value = ProjectsByGoals(projects: projects, goalsStore: self.goalsStore)
+                self.fullProjectsUpdatePipe.input.send(value: true)
+            }
+        }
+
+        retrieveReportsOp.outputCollectionOperation.completionBlock = { [unowned self] in
+            if let reports = retrieveReportsOp.outputCollectionOperation.collectedOutput {
+                for (projectId, report) in reports {
+                    self.reportMutableProperty(for: projectId).value = report
+                }
+            }
+        }
+        
+        networkQueue.addOperation(retrieveProfileOp)
+        networkQueue.addOperation(retrieveWorkspacesOp)
+        networkQueue.addOperation(retrieveProjectsOp)
+        networkQueue.addOperation(retrieveReportsOp)
     }
 }
 
