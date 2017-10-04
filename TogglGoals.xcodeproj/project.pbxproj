@@ -368,11 +368,11 @@
 				63D4BB9D1F7D80FC00B87298 /* GoalsStore.swift */,
 				63D4BB9F1F7D80FC00B87298 /* ModelCache.swift */,
 				63D4BB9C1F7D80FC00B87298 /* GoalProgress.swift */,
+				63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */,
 				63D4BB991F7D80FC00B87298 /* APIAccessError.swift */,
 				63D4BB9B1F7D80FC00B87298 /* DateTimeExtensions.swift */,
 				63D4BBA21F7D80FC00B87298 /* PropertyExtensions.swift */,
 				63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */,
-				63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */,
 				639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */,
 				63D765BC1F84E31B00B82CC9 /* Operations */,
 			);
@@ -382,6 +382,7 @@
 		63D765BC1F84E31B00B82CC9 /* Operations */ = {
 			isa = PBXGroup;
 			children = (
+				63D765C41F84E31B00B82CC9 /* TogglAPIAccessOperation.swift */,
 				63D765BD1F84E31B00B82CC9 /* CollectionOperation.swift */,
 				63D765BE1F84E31B00B82CC9 /* NetworkRetrieveProfileOperation.swift */,
 				63D765BF1F84E31B00B82CC9 /* NetworkRetrieveProjectsOperation.swift */,
@@ -389,7 +390,6 @@
 				63D765C11F84E31B00B82CC9 /* NetworkRetrieveRunningEntryOperation.swift */,
 				63D765C21F84E31B00B82CC9 /* NetworkRetrieveWorkspacesOperation.swift */,
 				63D765C31F84E31B00B82CC9 /* SpawningOperation.swift */,
-				63D765C41F84E31B00B82CC9 /* TogglAPIAccessOperation.swift */,
 			);
 			path = Operations;
 			sourceTree = "<group>";
