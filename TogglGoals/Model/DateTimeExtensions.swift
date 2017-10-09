@@ -28,6 +28,12 @@ struct DayComponents: Equatable {
     }
 }
 
+extension DayComponents {
+    var iso8601String: String {
+        return String(format:"%04d-%02d-%02d", year, month, day)
+    }
+}
+
 extension Calendar {
     func dayComponents(from date: Date) -> DayComponents {
         let dateComps = dateComponents([.year, .month, .day], from: date)

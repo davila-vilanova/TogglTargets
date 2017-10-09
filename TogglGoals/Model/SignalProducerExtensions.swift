@@ -20,7 +20,7 @@ extension SignalProducer {
     }
 }
 
-fileprivate let DefaultPlaceholderForNil = "---"
+fileprivate let DefaultPlaceholderForNil = "--"
 
 extension SignalProducer where Value == Int? {
     func mapToString(placeholderForNil: String = DefaultPlaceholderForNil) -> SignalProducer<String, Error> {

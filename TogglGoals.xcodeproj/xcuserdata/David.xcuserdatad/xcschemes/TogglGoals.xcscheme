@@ -29,16 +29,6 @@
       language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "632957521DBA99F000E11A10"
-               BuildableName = "TogglGoalsTests.xctest"
-               BlueprintName = "TogglGoalsTests"
-               ReferencedContainer = "container:TogglGoals.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

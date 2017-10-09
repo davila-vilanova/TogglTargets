@@ -12,6 +12,7 @@ import Result
 
 internal class ModelCoordinator: NSObject {
     private let goalsStore: GoalsStore
+    private lazy var session = URLSession(togglAPICredential: apiCredential)
 
     // MARK: - Exposed properties and signals
 
@@ -142,11 +143,7 @@ internal class ModelCoordinator: NSObject {
     }
 
     private func retrieveRunningTimeEntry() {
-        let op = NetworkRetrieveRunningEntryOperation(credential: apiCredential)
-        op.onSuccess = { runningEntry in
-            self._runningEntry.value = runningEntry
-        }
-        networkQueue.addOperation(op)
+        _runningEntry <~ session.togglAPIRequestProducer(for: RunningEntryService.endpoint, decoder: RunningEntryService.decodeRunningEntry).mapToNoError()
     }
 
 
@@ -155,21 +152,13 @@ internal class ModelCoordinator: NSObject {
     private let apiCredential = TogglAPICredential()
 
     private var reportProperties = Dictionary<Int64, MutableProperty<TwoPartTimeReport?>>()
+    private var reports = MutableProperty([Int64 : TwoPartTimeReport]())
 
     private lazy var startOfPeriod: DayComponents = _calendar.value.firstDayOfMonth(for: scheduler.currentDate)
     private lazy var yesterday: DayComponents? = try? _calendar.value.previousDay(for: scheduler.currentDate, notBefore: startOfPeriod)
     private lazy var today: DayComponents = _calendar.value.dayComponents(from: scheduler.currentDate)
 
     private let scheduler = QueueScheduler.init(name: "ModelCoordinator scheduler")
-
-    private lazy var mainQueue: DispatchQueue = {
-        return DispatchQueue.main
-    }()
-    private lazy var networkQueue: OperationQueue = {
-        let q = OperationQueue()
-        q.name = "NetworkQueue"
-        return q
-    }()
 
     private var updateNowOnRunningEntryTickDisposable: Disposable?
 
@@ -202,35 +191,77 @@ internal class ModelCoordinator: NSObject {
     }
 
     private func retrieveUserDataFromToggl() {
-        let retrieveProfileOp = NetworkRetrieveProfileOperation(credential: apiCredential)
-        retrieveProfileOp.onSuccess = { profile in
-            self._profile.value = profile
-        }
+        _profile <~ session.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
+            .start(on: scheduler)
+            .mapToNoError() // TODO: divert errors
 
-        let retrieveWorkspacesOp = NetworkRetrieveWorkspacesOperation(credential: apiCredential)
+        // workspaceIdsProducer will emit one value event per workspace ID
+        let workspaceIdsProducer: SignalProducer<Int64, NoError> = profile.producer.skipNil()
+            .take(first: 1)
+            .map { SignalProducer($0.workspaces) }
+            .flatten(.merge)
+            .map { $0.id }
 
-        let retrieveProjectsOp = NetworkRetrieveProjectsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential)
-        let retrieveReportsOp = NetworkRetrieveReportsSpawningOperation(retrieveWorkspacesOperation: retrieveWorkspacesOp, credential: apiCredential, startOfPeriod: startOfPeriod, yesterday: yesterday, today: today)
-
-        retrieveProjectsOp.outputCollectionOperation.completionBlock = { [unowned self] in
-            if let projects = retrieveProjectsOp.outputCollectionOperation.collectedOutput {
-                self._projectsByGoals.value = ProjectsByGoals(projects: projects, goalsStore: self.goalsStore)
-                self.fullProjectsUpdatePipe.input.send(value: true)
-            }
-        }
-
-        retrieveReportsOp.outputCollectionOperation.completionBlock = { [unowned self] in
-            if let reports = retrieveReportsOp.outputCollectionOperation.collectedOutput {
-                for (projectId, report) in reports {
-                    self.reportMutableProperty(for: projectId).value = report
+        _projectsByGoals <~ workspaceIdsProducer
+            .map(ProjectsService.endpoint)
+            .map { [session] in session.togglAPIRequestProducer(for: $0, decoder: ProjectsService.decodeProjects) }
+            .flatten(.merge)
+            .mapToNoError()
+            .reduce(into: [Int64 : Project](), { (indexedProjects, projects) in
+                for project in projects {
+                    indexedProjects[project.id] = project
                 }
+            })
+            .map { [goalsStore = self.goalsStore] (projects) -> ProjectsByGoals in
+                ProjectsByGoals(projects: projects, goalsStore: goalsStore)
+            }
+            .on(value: { [updateObserver = fullProjectsUpdatePipe.input] (_) in updateObserver.send(value: true) })
+
+
+        func workedTimesProducer(workspaceIdsProducer: SignalProducer<Int64, NoError>,
+                                 since: DayComponents,
+                                 until: DayComponents) -> SignalProducer<[Int64 : TimeInterval], APIAccessError> {
+            return workspaceIdsProducer
+                .map { ReportsService.endpoint(workspaceId: $0, since: since.iso8601String, until: until.iso8601String, userAgent: UserAgent) }
+                .map { [session] in session.togglAPIRequestProducer(for: $0, decoder: ReportsService.decodeReportEntries) }
+                .flatten(.merge)
+                .reduce(into: [Int64 : TimeInterval]()) { (indexedWorkedTimeEntries, reportEntries) in
+                    for entry in reportEntries {
+                        indexedWorkedTimeEntries[entry.id] = TimeInterval.from(milliseconds: entry.time)
+                    }
             }
         }
-        
-        networkQueue.addOperation(retrieveProfileOp)
-        networkQueue.addOperation(retrieveWorkspacesOp)
-        networkQueue.addOperation(retrieveProjectsOp)
-        networkQueue.addOperation(retrieveReportsOp)
+
+        let previousToTodayWorkedTimesProducer: SignalProducer<[Int64 : TimeInterval], APIAccessError> = {
+            if let yesterday = yesterday {
+                return workedTimesProducer(workspaceIdsProducer: workspaceIdsProducer, since: startOfPeriod, until: yesterday)
+            } else {
+                return SignalProducer<[Int64 : TimeInterval], APIAccessError>([[Int64: TimeInterval]()])
+            }
+        }()
+
+        let todayWorkedTimesProducer = workedTimesProducer(workspaceIdsProducer: workspaceIdsProducer, since: today, until: today)
+
+        reports <~ SignalProducer.combineLatest(previousToTodayWorkedTimesProducer.mapToNoError(),
+                                                todayWorkedTimesProducer.mapToNoError())
+            .reduce(into: [Int64 : TwoPartTimeReport]()) { [startOfPeriod, today] (indexedTwoPartReports, indexedTimes) in
+                let indexedPreviousToTodayTimes = indexedTimes.0
+                let indexedTodayTimes = indexedTimes.1
+
+                let ids: Set<Int64> = Set<Int64>(indexedPreviousToTodayTimes.keys).union(indexedTodayTimes.keys)
+
+                for id in ids {
+                    let timeWorkedPreviousToToday: TimeInterval = indexedPreviousToTodayTimes[id] ?? 0.0
+                    let timeWorkedToday: TimeInterval = indexedTodayTimes[id] ?? 0.0
+                    indexedTwoPartReports[id] = TwoPartTimeReport(projectId: id, since: startOfPeriod, until: today, workedTimeUntilYesterday: timeWorkedPreviousToToday, workedTimeToday: timeWorkedToday)
+                }
+        }
+
+        reports.producer.startWithValues { [unowned self] (indexedReports) in
+            for (projectId, report) in indexedReports {
+                self.reportMutableProperty(for: projectId).value = report
+            }
+        }
     }
 }
 

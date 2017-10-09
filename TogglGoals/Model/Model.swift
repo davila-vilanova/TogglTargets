@@ -8,112 +8,40 @@
 
 import Cocoa
 
-struct Profile {
+struct Profile: Decodable {
     let id: Int64
-    var name: String?
-    var email: String?
-    var imageUrl: URL?
-    var timeZone:String?
+    let name: String?
+    let email: String?
+    let imageUrl: URL?
+    let timeZone:String? // TODO: Rename to 'timezone'
+    let workspaces: [Workspace]
 
-    init(id: Int64) {
-        self.id = id
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case name = "fullname"
+        case email
+        case imageUrl = "image_url"
+        case timeZone
+        case workspaces
     }
 }
 
-typealias StringKeyedDictionary = Dictionary<String, Any>
-
-extension Profile {
-    static func fromTogglAPI(dictionary: StringKeyedDictionary) -> Profile? {
-        if let id = dictionary["id"] as? Int64 {
-            var profile = Profile(id: id)
-            if let name = dictionary["fullname"] as? String {
-                profile.name = name
-            }
-            if let email = dictionary["email"] as? String {
-                profile.email = email
-            }
-            if let imageUrlString = dictionary["image_url"] as? String,
-                let imageUrl = URL(string: imageUrlString) {
-                profile.imageUrl = imageUrl
-            }
-
-            return profile
-        } else {
-            return nil
-        }
-    }
-}
-
-struct Workspace {
+struct Workspace: Decodable {
     let id: Int64
-    var name: String?
-
-    init(id: Int64) {
-        self.id = id
-    }
+    let name: String?
 }
 
-extension Workspace {
-    static func fromTogglAPI(dictionary: StringKeyedDictionary) -> Workspace? {
-        if let id = dictionary["id"] as? Int64 {
-            var workspace = Workspace(id: id)
-            if let name = dictionary["name"] as? String {
-                workspace.name = name
-            }
-            return workspace
-        } else {
-            return nil
-        }
-    }
-
-    static func collectionFromTogglAPI(dictionaries: [StringKeyedDictionary]) -> [Workspace] {
-        var workspaces = Array<Workspace>()
-        for workspaceDictionary in dictionaries {
-            if let workspace = Workspace.fromTogglAPI(dictionary: workspaceDictionary) {
-                workspaces.append(workspace)
-            }
-        }
-        return workspaces
-    }
-}
-
-struct Project {
+struct Project: Decodable {
     let id: Int64
-    var name: String?
-    var active: Bool?
-    var workspaceId: Int64?
+    let name: String?
+    let active: Bool?
+    let workspaceId: Int64?
 
-    init(id: Int64) {
-        self.id = id
-    }
-}
-
-extension Project {
-    static func fromTogglAPI(dictionary: StringKeyedDictionary) -> Project? {
-        if let id = dictionary["id"] as? Int64 {
-            var project = Project(id: id)
-            if let name = dictionary["name"] as? String {
-                project.name = name
-            }
-            if let active = dictionary["active"] as? Bool {
-                project.active = active
-            }
-            if let workspaceId = dictionary["wid"] as? Int64 {
-                project.workspaceId = workspaceId
-            }
-            return project
-        }
-        return nil
-    }
-
-    static func collectionFromTogglAPI(dictionaries: [StringKeyedDictionary]) -> [Project] {
-        var projects = Array<Project>()
-        for projectDictionary in dictionaries {
-            if let project = Project.fromTogglAPI(dictionary: projectDictionary) {
-                projects.append(project)
-            }
-        }
-        return projects
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case active
+        case workspaceId = "wid"
     }
 }
 
@@ -333,19 +261,25 @@ extension SingleTimeReport: CustomDebugStringConvertible {
 
 extension TwoPartTimeReport: CustomDebugStringConvertible {
     var debugDescription: String {
-        return "TwoPartTimeReport(workedTime: \(workedTime))";
+        return "TwoPartTimeReport(untilYesterday: \(workedTimeUntilYesterday), today: \(workedTimeToday)";
     }
 }
 
-struct RunningEntry {
+struct RunningEntry: Decodable {
     let id: Int64
     let projectId: Int64
     let start: Date
     let retrieved: Date
-}
 
-extension RunningEntry {
     func runningTime(at pointInTime: Date) -> TimeInterval {
         return pointInTime.timeIntervalSince(start)
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case projectId = "pid"
+        case start
+        case retrieved = "at"
+    }
 }
+
