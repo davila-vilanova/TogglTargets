@@ -47,8 +47,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             masterDetailController.calendar <~ modelCoordinator.calendar
             
             masterDetailController.projectsByGoals <~ modelCoordinator.projectsByGoals
-            masterDetailController.fullProjectsUpdate <~ modelCoordinator.fullProjectsUpdate
-            masterDetailController.cluedProjectsUpdate <~ modelCoordinator.cluedProjectsUpdate
             
             masterDetailController.goalReadProviderProducer = modelCoordinator.goalReadProviderProducer
             masterDetailController.goalWriteProviderProducer = modelCoordinator.goalWriteProviderProducer

@@ -19,8 +19,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - Exposed targets and source
 
     internal var projectsByGoals: BindingTarget<ProjectsByGoals> { return _projectsByGoals.deoptionalizedBindingTarget }
-    internal var fullProjectsUpdate: BindingTarget<Bool> { return _fullProjectsUpdate.deoptionalizedBindingTarget }
-    internal var cluedProjectsUpdate: BindingTarget<CollectionUpdateClue> { return _cluedProjectsUpdate.deoptionalizedBindingTarget }
 
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
     internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
@@ -31,8 +29,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - Backing properties
 
     private let _projectsByGoals = MutableProperty<ProjectsByGoals?>(nil)
-    private let _fullProjectsUpdate = MutableProperty<Bool?>(nil)
-    private let _cluedProjectsUpdate = MutableProperty<CollectionUpdateClue?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
     private let _now = MutableProperty<Date?>(nil)
     private let _selectedProject = MutableProperty<Project?>(nil)
@@ -83,42 +79,38 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let headerNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewHeader"), bundle: nil)!
         projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: SectionHeaderIdentifier)
 
-        let providersProducer = SignalProducer.combineLatest(goalReadProvider.producer.skipNil().take(first: 1),
-                                                             reportReadProvider.producer.skipNil().take(first: 1))
-        providersProducer.combineLatest(with: _fullProjectsUpdate.producer.skipNil().filter { $0 })
+        SignalProducer.combineLatest(_projectsByGoals.producer,
+                                     goalReadProvider.producer.skipNil().take(first: 1),
+                                     reportReadProvider.producer.skipNil().take(first: 1))
             .observe(on: UIScheduler())
             .startWithValues { [unowned self] (_) in
                 self.reloadList()
-        }
-        providersProducer.combineLatest(with: _cluedProjectsUpdate.producer.skipNil())
-            .observe(on: UIScheduler())
-            .startWithValues { [unowned self] (_, clue) in
-                self.updateList(with: clue)
         }
     }
 
     private func reloadList() {
         projectsCollectionView.reloadData()
+
         updateSelection()
         scrollToSelection()
     }
 
-    private func updateList(with clue: CollectionUpdateClue) {
-        // First move items that have moved, then delete items at old index paths, finally add items at new index paths
-        if let moved = clue.movedItems {
-            for (oldIndexPath, newIndexPath) in moved {
-                projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
-            }
-        }
-        if let removed = clue.removedItems {
-            projectsCollectionView.animator().deleteItems(at: removed)
-        }
-        if let added = clue.addedItems {
-            projectsCollectionView.animator().insertItems(at: added)
-        }
-
-        scrollToSelection()
-    }
+//    private func updateList(with clue: CollectionUpdateClue) {
+//        // First move items that have moved, then delete items at old index paths, finally add items at new index paths
+//        if let moved = clue.movedItems {
+//            for (oldIndexPath, newIndexPath) in moved {
+//                projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
+//            }
+//        }
+//        if let removed = clue.removedItems {
+//            projectsCollectionView.animator().deleteItems(at: removed)
+//        }
+//        if let added = clue.addedItems {
+//            projectsCollectionView.animator().insertItems(at: added)
+//        }
+//
+//        scrollToSelection()
+//    }
 
     private func updateSelection() {
         let indexPath = projectsCollectionView.selectionIndexPaths.first

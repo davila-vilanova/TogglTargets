@@ -89,7 +89,7 @@ extension ProjectsByGoals {
 }
 
 extension ProjectsByGoals {
-    mutating func moveProjectAfterGoalChange(projectId: Int64) -> (IndexPath, IndexPath)? {
+    @discardableResult mutating func moveProjectAfterGoalChange(projectId: Int64) -> (IndexPath, IndexPath)? {
         guard let oldIndex = sortedProjectIds.index(of: projectId),
             let oldIndexPath = indexPath(for: oldIndex) else {
             return nil

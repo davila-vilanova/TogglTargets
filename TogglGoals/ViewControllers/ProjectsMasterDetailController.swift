@@ -15,8 +15,6 @@ class ProjectsMasterDetailController: NSSplitViewController {
     // MARK: - Exposed targets
 
     internal var projectsByGoals: BindingTarget<ProjectsByGoals> { return _projectsByGoals.deoptionalizedBindingTarget }
-    internal var fullProjectsUpdate: BindingTarget<Bool> { return _fullProjectsUpdate.deoptionalizedBindingTarget }
-    internal var cluedProjectsUpdate: BindingTarget<CollectionUpdateClue> { return _cluedProjectsUpdate.deoptionalizedBindingTarget }
 
     internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
@@ -26,8 +24,6 @@ class ProjectsMasterDetailController: NSSplitViewController {
     // MARK: - Backing properties
 
     private let _projectsByGoals = MutableProperty<ProjectsByGoals?>(nil)
-    private let _fullProjectsUpdate = MutableProperty<Bool?>(nil)
-    private let _cluedProjectsUpdate = MutableProperty<CollectionUpdateClue?>(nil)
 
     private let _now = MutableProperty<Date?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
@@ -97,8 +93,6 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
         let listController = projectsListViewController, detailController = selectionDetailViewController
         listController.projectsByGoals <~ _projectsByGoals.producer.skipNil()
-        listController.fullProjectsUpdate <~ _fullProjectsUpdate.producer.skipNil()
-        listController.cluedProjectsUpdate <~ _cluedProjectsUpdate.producer.skipNil()
         listController.runningEntry <~ _runningEntry
         listController.now <~ _now.producer.skipNil()
 

@@ -11,35 +11,57 @@ import ReactiveSwift
 import Result
 
 internal class ModelCoordinator: NSObject {
+
+    // MARK: Working dates
+
+    private lazy var reportsStartDate: SignalProducer<DayComponents, NoError> =
+        SignalProducer.combineLatest(calendar.producer, now.producer).map { (calendar, now) in
+            calendar.firstDayOfMonth(for: now)
+    }
+    private lazy var reportsEndDate: SignalProducer<DayComponents, NoError> =
+        SignalProducer.combineLatest(calendar.producer, now.producer).map { (calendar, now) in
+            calendar.lastDayOfMonth(for: now)
+    }
+
+
+    // MARK: - Data retrieval
+
+    private let apiCredential = MutableProperty(TogglAPICredential())
+    private lazy var apiAccess: TogglAPIAccess = {
+        let aa = TogglAPIAccess()
+        aa.apiCredential <~ apiCredential
+        aa.reportsStartDate <~ reportsStartDate
+        aa.reportsEndDate <~ reportsEndDate
+        aa.calendar <~ calendar
+        aa.now <~ now
+        return aa
+    }()
+
     private let goalsStore: GoalsStore
-    private lazy var session = URLSession(togglAPICredential: apiCredential)
+
 
     // MARK: - Exposed properties and signals
 
-    internal lazy var profile = Property(_profile)
+    internal var profile: Property<Profile?> { return apiAccess.profile }
+    internal var runningEntry: Property<RunningEntry?> { return apiAccess.runningEntry }
 
     internal lazy var projectsByGoals = Property(_projectsByGoals)
-    internal var fullProjectsUpdate: Signal<Bool, NoError> {
-        return fullProjectsUpdatePipe.output
-    }
-    internal var cluedProjectsUpdate: Signal<CollectionUpdateClue, NoError> {
-        return cluedProjectsUpdatePipe.output
-    }
 
-    internal lazy var runningEntry = Property(_runningEntry)
     internal lazy var now = Property(_now)
     internal lazy var calendar = Property(_calendar)
 
 
     // MARK: - Backing of exposed properties and signals
 
-    private let _profile = MutableProperty<Profile?>(nil)
-    private let _projectsByGoals = MutableProperty(ProjectsByGoals())
+    private lazy var _projectsByGoals: MutableProperty<ProjectsByGoals> = {
+        let p = MutableProperty(ProjectsByGoals())
+        p <~ apiAccess.projects
+            .map { [unowned goalsStore] (projects) in
+            ProjectsByGoals(projects: projects, goalsStore: goalsStore)
+        }
+        return p
+    }()
 
-    private var fullProjectsUpdatePipe = Signal<Bool, NoError>.pipe()
-    private var cluedProjectsUpdatePipe = Signal<CollectionUpdateClue, NoError>.pipe()
-
-    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
     private lazy var _now = MutableProperty(scheduler.currentDate)
     private lazy var _calendar: MutableProperty<Calendar> = {
         var cal = Calendar(identifier: .iso8601)
@@ -87,9 +109,7 @@ internal class ModelCoordinator: NSObject {
     }
 
     private func goalChanged(for projectId: Int64) {
-        let indexPaths = _projectsByGoals.value.moveProjectAfterGoalChange(projectId: projectId)!
-        let clue = CollectionUpdateClue(itemMovedFrom: indexPaths.0, to: indexPaths.1)
-        cluedProjectsUpdatePipe.input.send(value: clue)
+        _ = _projectsByGoals.value.moveProjectAfterGoalChange(projectId: projectId)!
     }
 
 
@@ -100,168 +120,92 @@ internal class ModelCoordinator: NSObject {
     /// that conveys the values of the time report associated with the provided project ID.
     internal lazy var reportReadProviderProducer = SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError> { [unowned self] observer, lifetime in
         let action = Action<Int64, Property<TwoPartTimeReport?>, NoError>() { projectId in
-            let mutable = self.reportMutableProperty(for: projectId)
-            let immutable = Property<TwoPartTimeReport?>(mutable)
-            return SignalProducer<Property<TwoPartTimeReport?>, NoError>(value: immutable)
+            let extracted = self.apiAccess.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
+            return SignalProducer<Property<TwoPartTimeReport?>, NoError>(value: extracted)
         }
         observer.send(value: action)
         observer.sendCompleted()
     }
 
-    private func reportMutableProperty(for projectId: Int64) -> MutableProperty<TwoPartTimeReport?> {
-        if let existing = reportProperties[projectId] {
-            return existing
-        } else {
-            let new = MutableProperty<TwoPartTimeReport?>(nil)
-            reportProperties[projectId] = new
-            return new
-        }
-    }
 
-    // MARK: - Running Entry
+    // MARK: - Running entry update
 
-    private var runningEntryRefreshTimer: Timer?
+    private let neverDateSignal = Signal<Date?, NoError>.never
+    private lazy var runningEntryUpdateTimerInput = MutableProperty(SignalProducer(neverDateSignal))
+    private lazy var runningEntryUpdateTimer: RunningEntryUpdateTimer = {
+        let t = RunningEntryUpdateTimer()
+        t.runningEntryStart <~ runningEntryUpdateTimerInput.producer.flatten(.latest)
+        apiAccess.retrieveRunningEntry <~ t.updateRunningEntry
+        return t
+    }()
 
     internal func startRefreshingRunningTimeEntry() {
-        guard runningEntryRefreshTimer == nil || runningEntryRefreshTimer?.isValid == false else {
-            return
-        }
-        runningEntryRefreshTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true, block: { [unowned self] (timer) in
-            self.retrieveRunningTimeEntry()
-        })
-        retrieveRunningTimeEntry()
+        runningEntryUpdateTimerInput <~ apiAccess.runningEntry.map { SignalProducer(value: $0?.start) }
     }
 
     internal func stopRefreshingRunningTimeEntry() {
-        guard let timer = runningEntryRefreshTimer else {
-            return
-        }
-        if timer.isValid {
-            timer.invalidate()
-        }
-        runningEntryRefreshTimer = nil
+        runningEntryUpdateTimerInput <~ SignalProducer(value: SignalProducer(neverDateSignal))
     }
-
-    private func retrieveRunningTimeEntry() {
-        _runningEntry <~ session.togglAPIRequestProducer(for: RunningEntryService.endpoint, decoder: RunningEntryService.decodeRunningEntry).mapToNoError()
-    }
-
 
     // MARK : -
 
-    private let apiCredential = TogglAPICredential()
-
-    private var reportProperties = Dictionary<Int64, MutableProperty<TwoPartTimeReport?>>()
-    private var reports = MutableProperty([Int64 : TwoPartTimeReport]())
-
-    private lazy var startOfPeriod: DayComponents = _calendar.value.firstDayOfMonth(for: scheduler.currentDate)
-    private lazy var yesterday: DayComponents? = try? _calendar.value.previousDay(for: scheduler.currentDate, notBefore: startOfPeriod)
-    private lazy var today: DayComponents = _calendar.value.dayComponents(from: scheduler.currentDate)
-
-    private let scheduler = QueueScheduler.init(name: "ModelCoordinator scheduler")
-
-    private var updateNowOnRunningEntryTickDisposable: Disposable?
+    private let scheduler = QueueScheduler.init(name: "ModelCoordinator-scheduler")
 
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.goalsStore = goalsStore
-
         super.init()
+    }
+}
 
-        // Update the now property as seldom as possible and as precisely as required to match minute increments in the accumulated running time entry
-        // TODO: extract and test this logic
-        Property.combineLatest(_runningEntry, _calendar).producer
-            .startWithValues { [unowned self] (runningEntry, calendar) in
-                // Keep at most one regular update of the now property related to the current time entry
-                if let disposable = self.updateNowOnRunningEntryTickDisposable {
-                    disposable.dispose()
-                    self.updateNowOnRunningEntryTickDisposable = nil
-                }
+fileprivate class RunningEntryUpdateTimer {
+    // input
+    var runningEntryStart: BindingTarget<Date?> { return _runningEntryStart.bindingTarget }
+    // output
+    var updateRunningEntry: Signal<(), NoError> { return updateRunningEntryPipe.output }
 
-                guard let runningEntry = runningEntry else {
-                    return
-                }
+    private let _runningEntryStart = MutableProperty<Date?>(nil)
+    private let updateRunningEntryPipe = Signal<(), NoError>.pipe()
 
-                let nextRefresh = calendar.date(byAdding: DateComponents(minute: 1), to: runningEntry.start)! // it is a sound calculation, force result unwrapping
-                self.updateNowOnRunningEntryTickDisposable = self.scheduler.schedule(after: nextRefresh, interval: .seconds(60), action: {
-                    self._now.value = self.scheduler.currentDate
-                })
+    private let scheduler = QueueScheduler(name: "RunningEntryUpdateTimer-scheduler")
+    private var scheduledTickDisposable: Disposable?
+
+    init() {
+        _runningEntryStart.producer.startWithValues { [unowned self] (startDateOrNil) in
+            self.onRunningEntryStartDateValue(startDateOrNil)
         }
-
-        retrieveUserDataFromToggl()
     }
 
-    private func retrieveUserDataFromToggl() {
-        _profile <~ session.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
-            .start(on: scheduler)
-            .mapToNoError() // TODO: divert errors
+    private func onRunningEntryStartDateValue(_ runningEntryStartDate: Date?) {
+        let oneMinute = TimeInterval.from(minutes: 1)
+        let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
 
-        // workspaceIdsProducer will emit one value event per workspace ID
-        let workspaceIdsProducer: SignalProducer<Int64, NoError> = profile.producer.skipNil()
-            .take(first: 1)
-            .map { SignalProducer($0.workspaces) }
-            .flatten(.merge)
-            .map { $0.id }
-
-        _projectsByGoals <~ workspaceIdsProducer
-            .map(ProjectsService.endpoint)
-            .map { [session] in session.togglAPIRequestProducer(for: $0, decoder: ProjectsService.decodeProjects) }
-            .flatten(.merge)
-            .mapToNoError()
-            .reduce(into: [Int64 : Project](), { (indexedProjects, projects) in
-                for project in projects {
-                    indexedProjects[project.id] = project
-                }
-            })
-            .map { [goalsStore = self.goalsStore] (projects) -> ProjectsByGoals in
-                ProjectsByGoals(projects: projects, goalsStore: goalsStore)
+        let scheduleDate: Date = {
+            guard let startDate = runningEntryStartDate,
+                let date = scheduler.closestFutureDateIncrementing(date: startDate, byMultipleOf: oneMinute) else {
+                return scheduler.currentDate.addingTimeInterval(oneMinute)
             }
-            .on(value: { [updateObserver = fullProjectsUpdatePipe.input] (_) in updateObserver.send(value: true) })
-
-
-        func workedTimesProducer(workspaceIdsProducer: SignalProducer<Int64, NoError>,
-                                 since: DayComponents,
-                                 until: DayComponents) -> SignalProducer<[Int64 : TimeInterval], APIAccessError> {
-            return workspaceIdsProducer
-                .map { ReportsService.endpoint(workspaceId: $0, since: since.iso8601String, until: until.iso8601String, userAgent: UserAgent) }
-                .map { [session] in session.togglAPIRequestProducer(for: $0, decoder: ReportsService.decodeReportEntries) }
-                .flatten(.merge)
-                .reduce(into: [Int64 : TimeInterval]()) { (indexedWorkedTimeEntries, reportEntries) in
-                    for entry in reportEntries {
-                        indexedWorkedTimeEntries[entry.id] = TimeInterval.from(milliseconds: entry.time)
-                    }
-            }
-        }
-
-        let previousToTodayWorkedTimesProducer: SignalProducer<[Int64 : TimeInterval], APIAccessError> = {
-            if let yesterday = yesterday {
-                return workedTimesProducer(workspaceIdsProducer: workspaceIdsProducer, since: startOfPeriod, until: yesterday)
-            } else {
-                return SignalProducer<[Int64 : TimeInterval], APIAccessError>([[Int64: TimeInterval]()])
-            }
+            return date
         }()
-
-        let todayWorkedTimesProducer = workedTimesProducer(workspaceIdsProducer: workspaceIdsProducer, since: today, until: today)
-
-        reports <~ SignalProducer.combineLatest(previousToTodayWorkedTimesProducer.mapToNoError(),
-                                                todayWorkedTimesProducer.mapToNoError())
-            .reduce(into: [Int64 : TwoPartTimeReport]()) { [startOfPeriod, today] (indexedTwoPartReports, indexedTimes) in
-                let indexedPreviousToTodayTimes = indexedTimes.0
-                let indexedTodayTimes = indexedTimes.1
-
-                let ids: Set<Int64> = Set<Int64>(indexedPreviousToTodayTimes.keys).union(indexedTodayTimes.keys)
-
-                for id in ids {
-                    let timeWorkedPreviousToToday: TimeInterval = indexedPreviousToTodayTimes[id] ?? 0.0
-                    let timeWorkedToday: TimeInterval = indexedTodayTimes[id] ?? 0.0
-                    indexedTwoPartReports[id] = TwoPartTimeReport(projectId: id, since: startOfPeriod, until: today, workedTimeUntilYesterday: timeWorkedPreviousToToday, workedTimeToday: timeWorkedToday)
-                }
+        if let disposable = scheduledTickDisposable {
+            disposable.dispose()
         }
+        scheduledTickDisposable = scheduler.schedule(after: scheduleDate, interval: oneMinuteDispatch, action: { [update = updateRunningEntryPipe.input] in
+                update.send(value: ())
+        })
+    }
+}
 
-        reports.producer.startWithValues { [unowned self] (indexedReports) in
-            for (projectId, report) in indexedReports {
-                self.reportMutableProperty(for: projectId).value = report
-            }
+fileprivate extension QueueScheduler {
+    // find the closest future date that is a minute increment over the input date
+    func closestFutureDateIncrementing(date inputDate: Date, byMultipleOf unit: TimeInterval) -> Date? {
+        let now = currentDate
+        guard now > inputDate else {
+            return nil
         }
+        let diff = now.timeIntervalSinceReferenceDate - inputDate.timeIntervalSinceReferenceDate
+        let elapsedFullUnitPeriods = floor(diff / unit)
+        let closestFutureInterval = inputDate.timeIntervalSinceReferenceDate + (unit * (elapsedFullUnitPeriods + 1))
+        return Date(timeIntervalSinceReferenceDate: closestFutureInterval)
     }
 }
 

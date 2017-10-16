@@ -19,40 +19,32 @@ class GoalsStore {
     private let hoursPerMonthExpression = Expression<Int>("hours_per_month")
     private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
 
-    private var goalProperties = Dictionary<Int64, MutableProperty<Goal?>>()
+    private var allGoals = MutableProperty([Int64 : Goal]())
+
+    private let (lifetime, token) = Lifetime.make()
+    private lazy var writeScheduler = QueueScheduler(name: "GoalsStore-writeScheduler")
 
     init?(baseDirectory: URL?) {
         do {
             let databaseURL = URL(fileURLWithPath: "goalsdb.sqlite3", relativeTo: baseDirectory)
             db = try Connection(databaseURL.absoluteString)
             ensureTableCreated()
+            retrieveAllGoals()
         } catch {
             return nil
         }
     }
 
     func goalProperty(for projectId: Int64) -> Property<Goal?> {
-        return Property<Goal?>(goalMutableProperty(for: projectId))
+        return allGoals.map { $0[projectId] }.skipRepeats { $0 == $1 }
     }
 
     func goalBindingTarget(for projectId: Int64) -> BindingTarget<Goal?> {
-        return goalMutableProperty(for: projectId).bindingTarget
-    }
-    
-    // Third parties don't access these mutable properties directly
-    private func goalMutableProperty(for projectId: Int64) -> MutableProperty<Goal?> {
-        if let existing = goalProperties[projectId] {
-            return existing
+        return BindingTarget<Goal?>(on: writeScheduler, lifetime: lifetime) { [unowned self] in
+            self.goalChanged($0, for: projectId)
         }
-        let goal = retrieveGoal(for: projectId)
-        let new = MutableProperty<Goal?>(goal)
-        new.skipRepeats{ $0 == $1 }.signal.observeValues { [unowned self] timeGoalOrNil in
-            self.goalChanged(timeGoalOrNil, for: projectId)
-        }
-        goalProperties[projectId] = new
-        return new
     }
-    
+
     private func goalChanged(_ timeGoalOrNil: Goal?, for projectId: Int64) {
         if let modifiedGoal = timeGoalOrNil {
             print("will store goal=\(modifiedGoal)")
@@ -62,6 +54,7 @@ class GoalsStore {
             // delete goal for captured projectId when goal is set to nil
             deleteGoal(for: projectId)
         }
+        allGoals.value[projectId] = timeGoalOrNil
     }
 
     private func deleteGoal(for projectId: Int64) {
@@ -70,7 +63,7 @@ class GoalsStore {
     }
 
     func goalExists(for projectId: Int64) -> Bool {
-        return goalProperties[projectId]?.value != nil
+        return goalProperty(for: projectId).value != nil
     }
 
     private func storeGoal(_ goal: Goal) {
@@ -90,20 +83,23 @@ class GoalsStore {
         })
     }
 
-    private func retrieveGoal(for projectId: Int64) -> Goal? {
-        let q = goalsTable.filter(projectIdExpression == projectId).limit(1)
-        if let row = try! db.pluck(q) {
-            let projectIdValue = row[projectIdExpression]
-            let hoursPerMonthValue = row[hoursPerMonthExpression]
-            let workWeekdaysValue = row.get(workWeekdaysExpression) // [1]
-            return Goal(forProjectId: projectIdValue, hoursPerMonth: hoursPerMonthValue, workWeekdays: workWeekdaysValue)
+    private func retrieveAllGoals() {
+        var retrievedGoals = [Int64 : Goal]()
+        let retrievedRows = try! db.prepare(goalsTable)
+        for retrievedRow in retrievedRows {
+            let projectIdValue = retrievedRow[projectIdExpression]
+            let hoursPerMonthValue = retrievedRow[hoursPerMonthExpression]
+            let workWeekdaysValue = retrievedRow.get(workWeekdaysExpression) // [1]
+            let goal = Goal(forProjectId: projectIdValue, hoursPerMonth: hoursPerMonthValue, workWeekdays: workWeekdaysValue)
 
-            // [1] Can't use subscripts with custom types.
-            // https://github.com/stephencelis/SQLite.swift/blob/master/Documentation/Index.md#custom-type-caveats
-            // (f3da195)
-        } else {
-            return nil
+            retrievedGoals[projectIdValue] = goal
         }
+
+        allGoals.value = retrievedGoals
+
+        // [1] Can't use subscripts with custom types.
+        // https://github.com/stephencelis/SQLite.swift/blob/master/Documentation/Index.md#custom-type-caveats
+        // (f3da195)
     }
 }
 

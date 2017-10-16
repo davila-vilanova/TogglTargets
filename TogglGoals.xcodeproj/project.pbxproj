@@ -60,7 +60,6 @@
 		63BBBA911F35E81100A8A174 /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8D1F35E7DA00A8A174 /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		63BBBA921F35E81100A8A174 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63BBBA8E1F35E7DA00A8A174 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		63D4BBA51F7D821800B87298 /* TogglAPIAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB991F7D80FC00B87298 /* TogglAPIAccess.swift */; };
-		63D4BBA61F7D821800B87298 /* CollectionUpdateClue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9A1F7D80FC00B87298 /* CollectionUpdateClue.swift */; };
 		63D4BBA71F7D821800B87298 /* DateTimeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9B1F7D80FC00B87298 /* DateTimeExtensions.swift */; };
 		63D4BBA81F7D821800B87298 /* GoalProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9C1F7D80FC00B87298 /* GoalProgress.swift */; };
 		63D4BBA91F7D821800B87298 /* GoalsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9D1F7D80FC00B87298 /* GoalsStore.swift */; };
@@ -72,7 +71,6 @@
 		63D4BBAF1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */; };
 		63D4BBB01F7D821800B87298 /* TogglAPICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */; };
 		63D4BBB11F7D821800B87298 /* TogglAPIAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB991F7D80FC00B87298 /* TogglAPIAccess.swift */; };
-		63D4BBB21F7D821800B87298 /* CollectionUpdateClue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9A1F7D80FC00B87298 /* CollectionUpdateClue.swift */; };
 		63D4BBB31F7D821800B87298 /* DateTimeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9B1F7D80FC00B87298 /* DateTimeExtensions.swift */; };
 		63D4BBB41F7D821800B87298 /* GoalProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9C1F7D80FC00B87298 /* GoalProgress.swift */; };
 		63D4BBB51F7D821800B87298 /* GoalsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9D1F7D80FC00B87298 /* GoalsStore.swift */; };
@@ -84,7 +82,6 @@
 		63D4BBBB1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */; };
 		63D4BBBC1F7D821800B87298 /* TogglAPICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */; };
 		63D4BBBD1F7D821900B87298 /* TogglAPIAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB991F7D80FC00B87298 /* TogglAPIAccess.swift */; };
-		63D4BBBE1F7D821900B87298 /* CollectionUpdateClue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9A1F7D80FC00B87298 /* CollectionUpdateClue.swift */; };
 		63D4BBBF1F7D821900B87298 /* DateTimeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9B1F7D80FC00B87298 /* DateTimeExtensions.swift */; };
 		63D4BBC01F7D821900B87298 /* GoalProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9C1F7D80FC00B87298 /* GoalProgress.swift */; };
 		63D4BBC11F7D821900B87298 /* GoalsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D4BB9D1F7D80FC00B87298 /* GoalsStore.swift */; };
@@ -190,7 +187,6 @@
 		63BBBA8E1F35E7DA00A8A174 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/Mac/Result.framework; sourceTree = "<group>"; };
 		63D4BB961F7D7FF800B87298 /* ProjectsMasterDetailWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsMasterDetailWindowController.swift; sourceTree = "<group>"; };
 		63D4BB991F7D80FC00B87298 /* TogglAPIAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIAccess.swift; sourceTree = "<group>"; };
-		63D4BB9A1F7D80FC00B87298 /* CollectionUpdateClue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionUpdateClue.swift; sourceTree = "<group>"; };
 		63D4BB9B1F7D80FC00B87298 /* DateTimeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeExtensions.swift; sourceTree = "<group>"; };
 		63D4BB9C1F7D80FC00B87298 /* GoalProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgress.swift; sourceTree = "<group>"; };
 		63D4BB9D1F7D80FC00B87298 /* GoalsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsStore.swift; sourceTree = "<group>"; };
@@ -331,7 +327,6 @@
 			children = (
 				63D4BB9E1F7D80FC00B87298 /* Model.swift */,
 				63D4BBA11F7D80FC00B87298 /* ProjectsByGoals.swift */,
-				63D4BB9A1F7D80FC00B87298 /* CollectionUpdateClue.swift */,
 				63D4BBA01F7D80FC00B87298 /* ModelCoordinator.swift */,
 				63D4BB9D1F7D80FC00B87298 /* GoalsStore.swift */,
 				63D4BB9F1F7D80FC00B87298 /* ModelCache.swift */,
@@ -511,7 +506,6 @@
 				637A324E1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */,
 				637A323E1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */,
 				632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */,
-				63D4BBA61F7D821800B87298 /* CollectionUpdateClue.swift in Sources */,
 				63D4BBAB1F7D821800B87298 /* ModelCache.swift in Sources */,
 				63D4BBD71F7D84A500B87298 /* ProjectsMasterDetailWindowController.swift in Sources */,
 				63D4BBAD1F7D821800B87298 /* ProjectsByGoals.swift in Sources */,
@@ -558,7 +552,6 @@
 				63D4BBBC1F7D821800B87298 /* TogglAPICredential.swift in Sources */,
 				63EF58191F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */,
 				63D4BBB61F7D821800B87298 /* Model.swift in Sources */,
-				63D4BBB21F7D821800B87298 /* CollectionUpdateClue.swift in Sources */,
 				63D4BBB51F7D821800B87298 /* GoalsStore.swift in Sources */,
 				63D4BBBB1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */,
 			);
@@ -574,7 +567,6 @@
 				639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
 				63D4BBC51F7D821900B87298 /* ProjectsByGoals.swift in Sources */,
 				637A32471EE16FD600667FC3 /* GoalStrategyViewController.swift in Sources */,
-				63D4BBBE1F7D821900B87298 /* CollectionUpdateClue.swift in Sources */,
 				63D4BBD81F7D84A600B87298 /* ProjectsMasterDetailWindowController.swift in Sources */,
 				637A323F1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */,
 				637A325B1EE1727600667FC3 /* ProjectCollectionViewItem.swift in Sources */,

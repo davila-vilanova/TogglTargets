@@ -265,6 +265,16 @@ extension TwoPartTimeReport: CustomDebugStringConvertible {
     }
 }
 
+extension TwoPartTimeReport: Equatable {
+    static func ==(lhs: TwoPartTimeReport, rhs: TwoPartTimeReport) -> Bool {
+        return lhs.projectId == rhs.projectId
+            && lhs.since == rhs.since
+            && lhs.until == rhs.until
+            && lhs.workedTimeUntilYesterday == rhs.workedTimeUntilYesterday
+            && lhs.workedTimeToday == rhs.workedTimeToday
+    }
+}
+
 struct RunningEntry: Decodable {
     let id: Int64
     let projectId: Int64
