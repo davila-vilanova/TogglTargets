@@ -214,6 +214,12 @@ extension Goal: Equatable {
     }
 }
 
+extension Goal: Comparable {
+    static func <(lhs: Goal, rhs: Goal) -> Bool {
+        return lhs.hoursPerMonth < rhs.hoursPerMonth
+    }
+}
+
 extension Goal {
     static var empty: Goal {
         return Goal(forProjectId: 0, hoursPerMonth: 0, workWeekdays: WeekdaySelection.empty)

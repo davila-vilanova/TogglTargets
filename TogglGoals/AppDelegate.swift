@@ -46,7 +46,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             masterDetailController.now <~ modelCoordinator.now
             masterDetailController.calendar <~ modelCoordinator.calendar
             
-            masterDetailController.projectsByGoals <~ modelCoordinator.projectsByGoals
+            masterDetailController.projects <~ modelCoordinator.projects
+            masterDetailController.goals <~ modelCoordinator.goals
             
             masterDetailController.goalReadProviderProducer = modelCoordinator.goalReadProviderProducer
             masterDetailController.goalWriteProviderProducer = modelCoordinator.goalWriteProviderProducer

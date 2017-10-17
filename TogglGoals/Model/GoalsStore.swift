@@ -19,7 +19,8 @@ class GoalsStore {
     private let hoursPerMonthExpression = Expression<Int>("hours_per_month")
     private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
 
-    private var allGoals = MutableProperty([Int64 : Goal]())
+    lazy var allGoals = Property(_allGoals)
+    private var _allGoals = MutableProperty([Int64 : Goal]())
 
     private let (lifetime, token) = Lifetime.make()
     private lazy var writeScheduler = QueueScheduler(name: "GoalsStore-writeScheduler")
@@ -36,7 +37,7 @@ class GoalsStore {
     }
 
     func goalProperty(for projectId: Int64) -> Property<Goal?> {
-        return allGoals.map { $0[projectId] }.skipRepeats { $0 == $1 }
+        return _allGoals.map { $0[projectId] }.skipRepeats { $0 == $1 }
     }
 
     func goalBindingTarget(for projectId: Int64) -> BindingTarget<Goal?> {
@@ -54,7 +55,7 @@ class GoalsStore {
             // delete goal for captured projectId when goal is set to nil
             deleteGoal(for: projectId)
         }
-        allGoals.value[projectId] = timeGoalOrNil
+        _allGoals.value[projectId] = timeGoalOrNil
     }
 
     private func deleteGoal(for projectId: Int64) {
@@ -95,7 +96,7 @@ class GoalsStore {
             retrievedGoals[projectIdValue] = goal
         }
 
-        allGoals.value = retrievedGoals
+        _allGoals.value = retrievedGoals
 
         // [1] Can't use subscripts with custom types.
         // https://github.com/stephencelis/SQLite.swift/blob/master/Documentation/Index.md#custom-type-caveats

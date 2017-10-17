@@ -10,6 +10,9 @@ import Foundation
 import ReactiveSwift
 import Result
 
+typealias PropertyProvidingAction<Value> = Action<Int64, Property<Value?>, NoError>
+typealias BindingTargetProvidingAction<Value> = Action<Int64, BindingTarget<Value?>, NoError>
+
 internal class ModelCoordinator: NSObject {
 
     // MARK: Working dates
@@ -45,22 +48,14 @@ internal class ModelCoordinator: NSObject {
     internal var profile: Property<Profile?> { return apiAccess.profile }
     internal var runningEntry: Property<RunningEntry?> { return apiAccess.runningEntry }
 
-    internal lazy var projectsByGoals = Property(_projectsByGoals)
+    internal lazy var projects = Property(apiAccess.projects)
+    internal lazy var goals = Property(goalsStore.allGoals)
 
     internal lazy var now = Property(_now)
     internal lazy var calendar = Property(_calendar)
 
 
     // MARK: - Backing of exposed properties and signals
-
-    private lazy var _projectsByGoals: MutableProperty<ProjectsByGoals> = {
-        let p = MutableProperty(ProjectsByGoals())
-        p <~ apiAccess.projects
-            .map { [unowned goalsStore] (projects) in
-            ProjectsByGoals(projects: projects, goalsStore: goalsStore)
-        }
-        return p
-    }()
 
     private lazy var _now = MutableProperty(scheduler.currentDate)
     private lazy var _calendar: MutableProperty<Calendar> = {
@@ -97,19 +92,11 @@ internal class ModelCoordinator: NSObject {
     }
 
     private func goalProperty(for projectId: Int64) -> Property<Goal?> {
-        let goalProperty = goalsStore.goalProperty(for: projectId)
-        goalProperty.skipRepeats{ $0 == $1 }.signal.observeValues { [unowned self] timeGoalOrNil in
-            self.goalChanged(for: projectId)
-        }
-        return goalProperty
+        return goalsStore.goalProperty(for: projectId)
     }
 
     private func goalBindingTarget(for projectId: Int64) -> BindingTarget<Goal?> {
         return goalsStore.goalBindingTarget(for: projectId)
-    }
-
-    private func goalChanged(for projectId: Int64) {
-        _ = _projectsByGoals.value.moveProjectAfterGoalChange(projectId: projectId)!
     }
 
 
@@ -146,6 +133,7 @@ internal class ModelCoordinator: NSObject {
     internal func stopRefreshingRunningTimeEntry() {
         runningEntryUpdateTimerInput <~ SignalProducer(value: SignalProducer(neverDateSignal))
     }
+
 
     // MARK : -
 
@@ -206,32 +194,5 @@ fileprivate extension QueueScheduler {
         let elapsedFullUnitPeriods = floor(diff / unit)
         let closestFutureInterval = inputDate.timeIntervalSinceReferenceDate + (unit * (elapsedFullUnitPeriods + 1))
         return Date(timeIntervalSinceReferenceDate: closestFutureInterval)
-    }
-}
-
-extension ProjectsByGoals {
-    init(projects: Dictionary<Int64, Project>, goalsStore: GoalsStore) {
-        let hasGoal = { [weak goalsStore] (projectId: Int64) -> Bool in
-            guard let store = goalsStore else {
-                return false
-            }
-            return store.goalExists(for: projectId)
-        }
-        let areGoalsInIncreasingOrder = { [weak goalsStore] (id0: Int64, id1: Int64) -> Bool in
-            let goal0 = goalsStore?.goalProperty(for: id0).value,
-            goal1 = goalsStore?.goalProperty(for: id1).value
-            if goal0 != nil, goal1 == nil {
-                // a project with goal comes before a project without it
-                return true
-            } else if let hoursPerMonth0 = goal0?.hoursPerMonth,
-                let hoursPerMonth1 = goal1?.hoursPerMonth {
-                // when two projects have goals the one with the larger goal comes first
-                return hoursPerMonth0 > hoursPerMonth1
-            } else {
-                return false
-            }
-        }
-        
-        self.init(projects: projects, hasGoal: hasGoal, areGoalsInIncreasingOrder: areGoalsInIncreasingOrder)
     }
 }
