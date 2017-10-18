@@ -40,32 +40,22 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
     @IBOutlet weak var reportLabel: NSTextField!
 
 
-    // MARK: - Project
-
-    internal var currentProject: Project? {
-        set {
-            project.value = newValue
-        }
-        get {
-            return project.value
-        }
-    }
-
-
     // MARK: - Exposed targets
 
+    internal var projects: BindingTarget<Property<Project?>?> { return _projects.bindingTarget }
     internal var goals: BindingTarget<Property<Goal?>?> { return _goals.bindingTarget }
     internal var reports: BindingTarget<Property<TwoPartTimeReport?>?> { return _reports.bindingTarget }
 
     // MARK: - Backing properties
 
+    private let _projects = MutableProperty<Property<Project?>?>(nil)
     private let _goals = MutableProperty<Property<Goal?>?>(nil)
     private let _reports = MutableProperty<Property<TwoPartTimeReport?>?>(nil)
 
 
     // MARK: - Selection of latest binding
 
-    private var project = MutableProperty<Project?>(nil)
+    private lazy var project: SignalProducer<Project?, NoError> = _projects.producer.skipNil().flatten(.latest)
     private lazy var goal: SignalProducer<Goal?, NoError> = _goals.producer.skipNil().flatten(.latest)
     private lazy var report: SignalProducer<TwoPartTimeReport?, NoError> = _reports.producer.skipNil().flatten(.latest)
 

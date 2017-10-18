@@ -221,11 +221,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         projectItem.connectOnceInLifecycle(runningEntry: _runningEntry.producer, now: _now.producer.skipNil())
 
         let projectId = metadata.value!.projectId(for: indexPath)!
-        let project = _projects.value![projectId]!
 
-        projectItem.currentProject = project
-        projectItem.goals <~ goalReadProvider.value!.apply(project.id).mapToNoError()
-        projectItem.reports <~ reportReadProvider.value!.apply(project.id).mapToNoError()
+        let projectProperty: Property<Project?> = _projects.map { $0?[projectId] }
+        projectItem.projects <~ SignalProducer<Property<Project?>, NoError>(value: projectProperty)
+        projectItem.goals <~ goalReadProvider.value!.apply(projectId).mapToNoError()
+        projectItem.reports <~ reportReadProvider.value!.apply(projectId).mapToNoError()
 
         return projectItem
     }
