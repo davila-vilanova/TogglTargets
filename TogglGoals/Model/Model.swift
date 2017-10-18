@@ -13,7 +13,7 @@ struct Profile: Decodable {
     let name: String?
     let email: String?
     let imageUrl: URL?
-    let timeZone:String? // TODO: Rename to 'timezone'
+    let timezone:String?
     let workspaces: [Workspace]
 
     private enum CodingKeys: String, CodingKey {
@@ -21,7 +21,7 @@ struct Profile: Decodable {
         case name = "fullname"
         case email
         case imageUrl = "image_url"
-        case timeZone
+        case timezone
         case workspaces
     }
 }
