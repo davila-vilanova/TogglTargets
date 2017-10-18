@@ -117,70 +117,73 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Running entry update
 
-    private let neverDateSignal = Signal<Date?, NoError>.never
-    private lazy var runningEntryUpdateTimerInput = MutableProperty(SignalProducer(neverDateSignal))
     private lazy var runningEntryUpdateTimer: RunningEntryUpdateTimer = {
         let t = RunningEntryUpdateTimer()
-        t.runningEntryStart <~ runningEntryUpdateTimerInput.producer.flatten(.latest)
-        apiAccess.retrieveRunningEntry <~ t.updateRunningEntry
+        t.runningEntryStart <~ runningEntry.map { $0?.start }
+        updateNow <~ t.updateRunningEntry
         return t
     }()
 
-    internal func startRefreshingRunningTimeEntry() {
-        runningEntryUpdateTimerInput <~ apiAccess.runningEntry.map { SignalProducer(value: $0?.start) }
+    // Connected outside the scope of property initializers to avoid a dependency cycle
+    // between the initializers of apiAccess and runningEntryUpdateTimer
+    private func connectRunningEntryUpdateTimer() {
+        apiAccess.retrieveRunningEntry <~ runningEntryUpdateTimer.updateRunningEntry
     }
 
-    internal func stopRefreshingRunningTimeEntry() {
-        runningEntryUpdateTimerInput <~ SignalProducer(value: SignalProducer(neverDateSignal))
+    internal func forceRefreshRunningEntry() {
+        apiAccess.retrieveRunningEntry <~ SignalProducer<(), NoError>(value: ())
     }
 
+    // MARK: - Current time (now) update
 
-    // MARK : -
+    private lazy var updateNow = BindingTarget<()>(on: scheduler, lifetime: lifetime) { [_now, scheduler] in
+        _now <~ SignalProducer(value: scheduler.currentDate)
+    }
+
+    // MARK: -
 
     private let scheduler = QueueScheduler.init(name: "ModelCoordinator-scheduler")
+    private let (lifetime, token) = Lifetime.make()
 
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.goalsStore = goalsStore
         super.init()
+
+        connectRunningEntryUpdateTimer()
     }
 }
 
 fileprivate class RunningEntryUpdateTimer {
     // input
-    var runningEntryStart: BindingTarget<Date?> { return _runningEntryStart.bindingTarget }
-    // output
-    var updateRunningEntry: Signal<(), NoError> { return updateRunningEntryPipe.output }
-
-    private let _runningEntryStart = MutableProperty<Date?>(nil)
-    private let updateRunningEntryPipe = Signal<(), NoError>.pipe()
-
-    private let scheduler = QueueScheduler(name: "RunningEntryUpdateTimer-scheduler")
-    private var scheduledTickDisposable: Disposable?
-
-    init() {
-        _runningEntryStart.producer.startWithValues { [unowned self] (startDateOrNil) in
-            self.onRunningEntryStartDateValue(startDateOrNil)
-        }
-    }
-
-    private func onRunningEntryStartDateValue(_ runningEntryStartDate: Date?) {
+    lazy var runningEntryStart: BindingTarget<Date?> = BindingTarget(on: scheduler, lifetime: lifetime) { [unowned self] (runningEntryStartDate: Date?) in
         let oneMinute = TimeInterval.from(minutes: 1)
         let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
 
         let scheduleDate: Date = {
             guard let startDate = runningEntryStartDate,
-                let date = scheduler.closestFutureDateIncrementing(date: startDate, byMultipleOf: oneMinute) else {
-                return scheduler.currentDate.addingTimeInterval(oneMinute)
+                let date = self.scheduler.closestFutureDateIncrementing(date: startDate, byMultipleOf: oneMinute) else {
+                    return self.scheduler.currentDate.addingTimeInterval(oneMinute)
             }
             return date
         }()
-        if let disposable = scheduledTickDisposable {
+        if let disposable = self.scheduledTickDisposable {
             disposable.dispose()
         }
-        scheduledTickDisposable = scheduler.schedule(after: scheduleDate, interval: oneMinuteDispatch, action: { [update = updateRunningEntryPipe.input] in
-                update.send(value: ())
+        self.scheduledTickDisposable = self.scheduler.schedule(after: scheduleDate,
+                                                               interval: oneMinuteDispatch,
+                                                               action: { [update = self.updateRunningEntryPipe.input] in
+            update.send(value: ())
         })
     }
+
+    // output
+    var updateRunningEntry: Signal<(), NoError> { return updateRunningEntryPipe.output }
+
+    private let updateRunningEntryPipe = Signal<(), NoError>.pipe()
+
+    private let scheduler = QueueScheduler(name: "RunningEntryUpdateTimer-scheduler")
+    private var scheduledTickDisposable: Disposable?
+    private let (lifetime, token) = Lifetime.make()
 }
 
 fileprivate extension QueueScheduler {

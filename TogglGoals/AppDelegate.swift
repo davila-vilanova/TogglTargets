@@ -55,18 +55,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             masterDetailController.runningEntry <~ modelCoordinator.runningEntry
         }
-    }
 
-    func applicationDidBecomeActive(_ notification: Notification) {
-        modelCoordinator.startRefreshingRunningTimeEntry()
-    }
-
-    func applicationWillResignActive(_ notification: Notification) {
-
-    }
-
-    func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
+        modelCoordinator.forceRefreshRunningEntry()
     }
     
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
