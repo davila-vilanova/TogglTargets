@@ -14,6 +14,9 @@
 		632EEBED1E42789100608D01 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 632EEBE81E42786100608D01 /* SQLite.framework */; };
 		632EEBEE1E42789100608D01 /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 632EEBE81E42786100608D01 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		632EEBF21E4278F300608D01 /* SQLite.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 632EEBF11E4278F300608D01 /* SQLite.framework.dSYM */; };
+		6333B6CA1F974348002CF189 /* ListLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6C91F974348002CF189 /* ListLayout.swift */; };
+		6333B6CB1F974348002CF189 /* ListLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6C91F974348002CF189 /* ListLayout.swift */; };
+		6333B6CC1F974348002CF189 /* ListLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6C91F974348002CF189 /* ListLayout.swift */; };
 		633CEADC1E6C2DB800831611 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 632EEBE81E42786100608D01 /* SQLite.framework */; };
 		6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634396891F80456200FDADE3 /* GoalProgressTests.swift */; };
 		636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */; };
@@ -157,6 +160,7 @@
 		632957641DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		632EEBE81E42786100608D01 /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/Mac/SQLite.framework; sourceTree = "<group>"; };
 		632EEBF11E4278F300608D01 /* SQLite.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = SQLite.framework.dSYM; path = Carthage/Build/Mac/SQLite.framework.dSYM; sourceTree = "<group>"; };
+		6333B6C91F974348002CF189 /* ListLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ListLayout.swift; path = ViewControllers/ListLayout.swift; sourceTree = "<group>"; };
 		634396891F80456200FDADE3 /* GoalProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressTests.swift; sourceTree = "<group>"; };
 		636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountWeekdaysTests.swift; sourceTree = "<group>"; };
 		637A32341EE16FD600667FC3 /* DayProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DayProgressViewController.swift; path = ViewControllers/DayProgressViewController.swift; sourceTree = "<group>"; };
@@ -303,6 +307,7 @@
 				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
 				637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */,
 				63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */,
+				6333B6C91F974348002CF189 /* ListLayout.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -495,6 +500,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63D4BBA81F7D821800B87298 /* GoalProgress.swift in Sources */,
+				6333B6CA1F974348002CF189 /* ListLayout.swift in Sources */,
 				637A324E1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */,
 				637A323E1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */,
 				632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */,
@@ -533,6 +539,7 @@
 				63D4BBB81F7D821800B87298 /* ModelCoordinator.swift in Sources */,
 				63D4BBBA1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				63D4BBB41F7D821800B87298 /* GoalProgress.swift in Sources */,
+				6333B6CB1F974348002CF189 /* ListLayout.swift in Sources */,
 				639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
 				63D4BBB31F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */,
@@ -551,6 +558,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63D4BBC21F7D821900B87298 /* Model.swift in Sources */,
+				6333B6CC1F974348002CF189 /* ListLayout.swift in Sources */,
 				637A324F1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */,
 				637A32571EE1727600667FC3 /* ProjectCollectionViewHeader.swift in Sources */,
 				639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
