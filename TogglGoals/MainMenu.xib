@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13189.4"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
         <customObject id="Mk7-Bv-jsF" customClass="AppDelegate" customModule="TogglGoals" customModuleProvider="target"/>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application">
+        <customObject id="-3" userLabel="Application" customClass="NSObject">
             <connections>
                 <outlet property="delegate" destination="Mk7-Bv-jsF" id="FRS-il-w9f"/>
             </connections>
@@ -27,7 +27,11 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="qfa-1e-Xtf"/>
-                            <menuItem title="Preferences…" keyEquivalent="," id="VeB-aD-8j2"/>
+                            <menuItem title="Preferences…" keyEquivalent="," id="VeB-aD-8j2">
+                                <connections>
+                                    <action selector="openPreferencesWindow:" target="Mk7-Bv-jsF" id="TQI-K5-IY8"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="XuO-sI-cl8"/>
                             <menuItem title="Services" id="wcS-fg-e0z">
                                 <modifierMask key="keyEquivalentModifierMask"/>

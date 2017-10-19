@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="q1A-6B-gAB">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="njc-87-Wrv">
+            <objects>
+                <windowController id="q1A-6B-gAB" sceneMemberID="viewController">
+                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="gQX-cp-e9p">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="425" y="461" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+                        <connections>
+                            <outlet property="delegate" destination="q1A-6B-gAB" id="2vp-jt-apm"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="cFd-GK-h7o" kind="relationship" relationship="window.shadowedContentViewController" id="EJM-gh-yN2"/>
+                    </connections>
+                </windowController>
+                <customObject id="wIn-E2-xVY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7" y="-577"/>
+        </scene>
+        <!--Preferences View Controller-->
+        <scene sceneID="yIZ-dt-DHE">
+            <objects>
+                <tabViewController selectedTabViewItemIndex="0" id="cFd-GK-h7o" customClass="PreferencesViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabViewItems>
+                        <tabViewItem id="NXb-l5-2iN"/>
+                        <tabViewItem identifier="" id="Kgh-ty-bI7"/>
+                    </tabViewItems>
+                    <tabView key="tabView" type="noTabsNoBorder" id="oDe-yB-vHc">
+                        <rect key="frame" x="0.0" y="0.0" width="488" height="404"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <font key="font" metaFont="message"/>
+                        <tabViewItems/>
+                        <connections>
+                            <outlet property="delegate" destination="cFd-GK-h7o" id="cpe-5j-J06"/>
+                        </connections>
+                    </tabView>
+                    <connections>
+                        <outlet property="tabView" destination="oDe-yB-vHc" id="45C-l7-n7D"/>
+                        <segue destination="dvF-Cf-Qok" kind="relationship" relationship="tabItems" id="u2P-vr-j6Y"/>
+                        <segue destination="DPU-zp-q1w" kind="relationship" relationship="tabItems" id="ezp-ig-2nR"/>
+                    </connections>
+                </tabViewController>
+                <customObject id="nAo-m1-JRR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="26" y="8"/>
+        </scene>
+        <!--Account-->
+        <scene sceneID="wUP-qS-shd">
+            <objects>
+                <viewController title="Account" id="dvF-Cf-Qok" customClass="LoginViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="kBz-yA-1xn">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="210"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1Ml-C6-cim">
+                                <rect key="frame" x="18" y="172" width="84" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="login method" id="iIq-Mw-2Ug">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="sK3-Rd-Chx">
+                                <rect key="frame" x="20" y="61" width="410" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="hJh-vE-gdJ"/>
+                                </constraints>
+                            </customView>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eiy-Oe-NmO">
+                                <rect key="frame" x="344" y="13" width="92" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="3gS-wa-TY4"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="test it out" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2NB-LB-rhK">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                            <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Nal-sn-bL2">
+                                <rect key="frame" x="326" y="23" width="16" height="16"/>
+                            </progressIndicator>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kjb-Wq-f83">
+                                <rect key="frame" x="18" y="23" width="302" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="Gbp-xu-xPS">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qTJ-Gk-lXB" userLabel="Login Method">
+                                <rect key="frame" x="106" y="166" width="97" height="26"/>
+                                <popUpButtonCell key="cell" type="push" title="username" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="gQ9-fl-YaC" id="9Vx-xU-9Hv">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="696-hw-Lg1">
+                                        <items>
+                                            <menuItem title="username" state="on" id="gQ9-fl-YaC"/>
+                                            <menuItem title="API token" id="XDV-RR-2ST"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="eiy-Oe-NmO" firstAttribute="trailing" secondItem="sK3-Rd-Chx" secondAttribute="trailing" id="4lt-Fa-MgP"/>
+                            <constraint firstItem="sK3-Rd-Chx" firstAttribute="top" secondItem="qTJ-Gk-lXB" secondAttribute="bottom" constant="8" symbolic="YES" id="7g7-PY-HYp"/>
+                            <constraint firstItem="qTJ-Gk-lXB" firstAttribute="leading" secondItem="1Ml-C6-cim" secondAttribute="trailing" constant="8" symbolic="YES" id="Blg-eM-5A5"/>
+                            <constraint firstItem="sK3-Rd-Chx" firstAttribute="leading" secondItem="kBz-yA-1xn" secondAttribute="leading" constant="20" symbolic="YES" id="Hcr-mx-EWV"/>
+                            <constraint firstItem="kjb-Wq-f83" firstAttribute="leading" secondItem="kBz-yA-1xn" secondAttribute="leading" constant="20" symbolic="YES" id="JO3-x0-eSA"/>
+                            <constraint firstItem="1Ml-C6-cim" firstAttribute="leading" secondItem="kBz-yA-1xn" secondAttribute="leading" constant="20" symbolic="YES" id="S68-zB-zZb"/>
+                            <constraint firstItem="Nal-sn-bL2" firstAttribute="leading" secondItem="kjb-Wq-f83" secondAttribute="trailing" constant="8" symbolic="YES" id="Vjb-np-9fr"/>
+                            <constraint firstItem="eiy-Oe-NmO" firstAttribute="baseline" secondItem="kjb-Wq-f83" secondAttribute="baseline" id="ZXJ-l9-Mth"/>
+                            <constraint firstItem="eiy-Oe-NmO" firstAttribute="centerY" secondItem="Nal-sn-bL2" secondAttribute="centerY" id="dBm-HA-n6p"/>
+                            <constraint firstItem="qTJ-Gk-lXB" firstAttribute="baseline" secondItem="1Ml-C6-cim" secondAttribute="baseline" id="h4i-l8-XuM"/>
+                            <constraint firstItem="qTJ-Gk-lXB" firstAttribute="top" secondItem="kBz-yA-1xn" secondAttribute="top" constant="20" symbolic="YES" id="hel-Pj-dt4"/>
+                            <constraint firstItem="eiy-Oe-NmO" firstAttribute="top" secondItem="sK3-Rd-Chx" secondAttribute="bottom" constant="20" symbolic="YES" id="leq-xH-shV"/>
+                            <constraint firstItem="eiy-Oe-NmO" firstAttribute="leading" secondItem="Nal-sn-bL2" secondAttribute="trailing" constant="8" symbolic="YES" id="oXB-Oz-vMi"/>
+                            <constraint firstAttribute="bottom" secondItem="eiy-Oe-NmO" secondAttribute="bottom" constant="20" symbolic="YES" id="uRu-Fg-t6W"/>
+                            <constraint firstAttribute="trailing" secondItem="sK3-Rd-Chx" secondAttribute="trailing" constant="20" symbolic="YES" id="zyN-5g-4aI"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="credentialsView" destination="sK3-Rd-Chx" id="Q7m-jr-zdz"/>
+                        <outlet property="loginMethodAPITokenItem" destination="XDV-RR-2ST" id="xZ8-28-Rt0"/>
+                        <outlet property="loginMethodButton" destination="qTJ-Gk-lXB" id="Xjm-lb-szQ"/>
+                        <outlet property="loginMethodUsernameItem" destination="gQ9-fl-YaC" id="WaS-x7-NFn"/>
+                        <outlet property="progressIndicator" destination="Nal-sn-bL2" id="S2C-6U-edt"/>
+                        <outlet property="resultLabel" destination="kjb-Wq-f83" id="Ni8-RR-bCQ"/>
+                        <outlet property="testCredentialsButton" destination="eiy-Oe-NmO" id="95g-ha-Nov"/>
+                        <segue destination="Luk-hD-CZ9" kind="custom" identifier="UsernamePasswordVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="OA3-AA-G4A"/>
+                        <segue destination="ySu-bD-nwW" kind="custom" identifier="APITokenVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="F60-Jw-gUo"/>
+                    </connections>
+                </viewController>
+                <customObject id="e6B-cn-KmC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="657" y="-422.5"/>
+        </scene>
+        <!--Username Password View Controller-->
+        <scene sceneID="WoN-Sb-uiO">
+            <objects>
+                <viewController id="Luk-hD-CZ9" customClass="UsernamePasswordViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="EAt-GK-mDh">
+                        <rect key="frame" x="0.0" y="0.0" width="365" height="94"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AgI-42-GN7">
+                                <rect key="frame" x="18" y="55" width="64" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="username" id="ie6-ix-81j">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CpQ-D4-tc7">
+                                <rect key="frame" x="19" y="23" width="63" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="password" id="a3O-vG-gUE">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oDY-SB-O5V">
+                                <rect key="frame" x="88" y="52" width="257" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="axF-BO-hro">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mB4-Z1-BU4">
+                                <rect key="frame" x="88" y="20" width="257" height="22"/>
+                                <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="ZMn-4F-meU">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <allowedInputSourceLocales>
+                                        <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                                    </allowedInputSourceLocales>
+                                </secureTextFieldCell>
+                            </secureTextField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="mB4-Z1-BU4" secondAttribute="bottom" constant="20" symbolic="YES" id="24F-dc-Ips"/>
+                            <constraint firstItem="mB4-Z1-BU4" firstAttribute="leading" secondItem="oDY-SB-O5V" secondAttribute="leading" id="2CH-N8-9M3"/>
+                            <constraint firstItem="AgI-42-GN7" firstAttribute="leading" secondItem="EAt-GK-mDh" secondAttribute="leading" constant="20" symbolic="YES" id="2KM-Cc-DbC"/>
+                            <constraint firstAttribute="trailing" secondItem="oDY-SB-O5V" secondAttribute="trailing" constant="20" symbolic="YES" id="Gms-RS-POQ"/>
+                            <constraint firstItem="mB4-Z1-BU4" firstAttribute="top" secondItem="oDY-SB-O5V" secondAttribute="bottom" constant="10" symbolic="YES" id="PX1-PT-kt7"/>
+                            <constraint firstItem="oDY-SB-O5V" firstAttribute="baseline" secondItem="AgI-42-GN7" secondAttribute="baseline" id="cTT-iW-U87"/>
+                            <constraint firstAttribute="trailing" secondItem="mB4-Z1-BU4" secondAttribute="trailing" constant="20" symbolic="YES" id="lEb-Mx-IMI"/>
+                            <constraint firstItem="mB4-Z1-BU4" firstAttribute="baseline" secondItem="CpQ-D4-tc7" secondAttribute="baseline" id="lHO-LU-l4D"/>
+                            <constraint firstItem="oDY-SB-O5V" firstAttribute="top" secondItem="EAt-GK-mDh" secondAttribute="top" constant="20" symbolic="YES" id="uEo-Ii-nT0"/>
+                            <constraint firstItem="oDY-SB-O5V" firstAttribute="leading" secondItem="AgI-42-GN7" secondAttribute="trailing" constant="8" symbolic="YES" id="wGW-8w-YBf"/>
+                            <constraint firstItem="mB4-Z1-BU4" firstAttribute="leading" secondItem="CpQ-D4-tc7" secondAttribute="trailing" constant="8" symbolic="YES" id="zhe-zy-xH2"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="passwordField" destination="mB4-Z1-BU4" id="0t7-Gh-DP9"/>
+                        <outlet property="usernameField" destination="oDY-SB-O5V" id="7Yl-3A-ROL"/>
+                    </connections>
+                </viewController>
+                <customObject id="yml-nP-qH9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1185" y="-531"/>
+        </scene>
+        <!--Token View Controller-->
+        <scene sceneID="vTJ-KD-t4P">
+            <objects>
+                <viewController id="ySu-bD-nwW" customClass="APITokenViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="d9g-Vu-E5t">
+                        <rect key="frame" x="0.0" y="0.0" width="363" height="62"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="B0e-u9-7hF">
+                                <rect key="frame" x="18" y="23" width="62" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="API token" id="4FU-Dn-LAc">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EEL-gn-NV5">
+                                <rect key="frame" x="86" y="20" width="257" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="bd9-Kt-XVh">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="EEL-gn-NV5" firstAttribute="baseline" secondItem="B0e-u9-7hF" secondAttribute="baseline" id="2xN-Z3-cMP"/>
+                            <constraint firstItem="EEL-gn-NV5" firstAttribute="leading" secondItem="B0e-u9-7hF" secondAttribute="trailing" constant="8" symbolic="YES" id="Vqm-We-NMO"/>
+                            <constraint firstAttribute="trailing" secondItem="EEL-gn-NV5" secondAttribute="trailing" constant="20" symbolic="YES" id="aXV-lJ-V1T"/>
+                            <constraint firstItem="B0e-u9-7hF" firstAttribute="leading" secondItem="d9g-Vu-E5t" secondAttribute="leading" constant="20" id="lC3-cV-dlY"/>
+                            <constraint firstItem="EEL-gn-NV5" firstAttribute="top" secondItem="d9g-Vu-E5t" secondAttribute="top" constant="20" symbolic="YES" id="rJD-cl-g7A"/>
+                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="EEL-gn-NV5" secondAttribute="bottom" constant="20" symbolic="YES" id="vQ3-G3-X8w"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="apiTokenField" destination="EEL-gn-NV5" id="i0I-ek-Oj8"/>
+                    </connections>
+                </viewController>
+                <customObject id="R61-f0-YKI" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1184" y="-301"/>
+        </scene>
+        <!--Goal Periods-->
+        <scene sceneID="moW-Kh-FCL">
+            <objects>
+                <viewController title="Goal Periods" id="DPU-zp-q1w" sceneMemberID="viewController">
+                    <view key="view" id="kQJ-7X-Tb0">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="pl0-vh-U51" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="677" y="142"/>
+        </scene>
+    </scenes>
+</document>

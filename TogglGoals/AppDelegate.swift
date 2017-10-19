@@ -10,12 +10,14 @@ import Cocoa
 import ReactiveSwift
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
-    var mainStoryboard: NSStoryboard?
-    var mainWindow: NSWindow?
-    
-    var modelCoordinator: ModelCoordinator
+    private lazy var mainStoryboard = NSStoryboard(name: .init("Main"), bundle: nil)
+    private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
+
+    private var preferencesWindowController: NSWindowController?
+
+    private var modelCoordinator: ModelCoordinator
 
     override init() {
         let supportDir: URL
@@ -37,12 +39,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        mainStoryboard = NSStoryboard(name: .init("Main"), bundle: nil)
-        let windowController = mainStoryboard?.instantiateInitialController() as! NSWindowController
-        mainWindow = windowController.window
+        let mainWindow = mainWindowController.window
         mainWindow!.makeKeyAndOrderFront(nil)
 
-        if let masterDetailController = windowController.window?.contentViewController as? ProjectsMasterDetailController {
+        if let masterDetailController = mainWindowController.window?.contentViewController as? ProjectsMasterDetailController {
             masterDetailController.now <~ modelCoordinator.now
             masterDetailController.calendar <~ modelCoordinator.calendar
             
@@ -58,9 +58,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         modelCoordinator.forceRefreshRunningEntry()
     }
-    
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        return true
+
+    @IBAction func openPreferencesWindow(_ sender: Any) {
+        guard preferencesWindowController == nil else {
+            return
+        }
+        let preferencesStoryboard = NSStoryboard(name: .init("Preferences"), bundle: nil)
+        preferencesWindowController = (preferencesStoryboard.instantiateInitialController() as! NSWindowController)
+        let preferencesWindow = preferencesWindowController!.window
+        preferencesWindow!.makeKeyAndOrderFront(nil)
+        preferencesWindow!.delegate = self
+    }
+
+    // MARK: - NSWindowDelegate
+
+    func windowWillClose(_ notification: Notification) {
+        if (notification.object as? NSWindow) === preferencesWindowController?.window {
+            preferencesWindowController = nil
+        }
     }
 }
 

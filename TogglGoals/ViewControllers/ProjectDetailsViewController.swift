@@ -40,7 +40,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     private let goalDownstream = MutableProperty<Goal?>(nil)
 
     /// goalUpstream relays the edits on the goal and goal deletion outputted by goalViewController
-    /// and the freshly created goal outputted by noGoalViewController
+    /// and the freshly created goal outputsetContainedViewControllerted by noGoalViewController
     private let goalUpstream = MutableProperty<Goal?>(nil)
 
 
@@ -162,7 +162,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     }
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        switch controller {
+        switch controller { // TODO: rework cases
         case _ where (controller as? GoalViewController) != nil:
             goalViewController = controller as! GoalViewController
         case _ where (controller as? GoalReportViewController) != nil:

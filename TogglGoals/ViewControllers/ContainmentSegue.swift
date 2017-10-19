@@ -20,7 +20,7 @@ fileprivate extension NSView {
     }
 }
 
-class ContainmentSegue: NSStoryboardSegue {
+class ContainmentSegue: NSStoryboardSegue { // TODO: it's too eager
     override func perform() {
         if let controller = sourceController as? NSViewController,
             let container = controller as? ViewControllerContaining,
@@ -40,7 +40,7 @@ func displayController(_ controller: NSViewController, in parentView: NSView) {
     controller.view.autoPinEdgesToSuperviewEdges()
 }
 
-extension NSViewController {
+extension NSViewController { // TODO: 'where NSViewController is ViewControlelrContaining'
     func initializeControllerContainment(containmentIdentifiers: [String]) {
         for identifier in containmentIdentifiers {
             performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
