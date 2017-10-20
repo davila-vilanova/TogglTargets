@@ -100,7 +100,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
                 if let previousDisposable = self.currentUpstreamGoalBindingDisposable {
                     previousDisposable.dispose()
                 }
-                // Important, if subtle: connect the signal of goalUpstream to the provided target, not the producer.
+                // Important, if subtle: connect the _signal_ of goalUpstream to the provided target, not the producer.
                 // The producer will relay the last known value and that will be nil if this is the first time a goal is connected
                 // or the value of the previously connected goal otherwise. Connecting the signal ensures that only subsequent
                 // updates will be relayed upstream.

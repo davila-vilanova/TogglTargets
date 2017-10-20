@@ -9,15 +9,17 @@
 import Cocoa
 import ReactiveSwift
 
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     private lazy var mainStoryboard = NSStoryboard(name: .init("Main"), bundle: nil)
     private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
-
     private var preferencesWindowController: NSWindowController?
 
-    private var modelCoordinator: ModelCoordinator
+    private let modelCoordinator: ModelCoordinator
+    private let userDefaults = UserDefaults()
+    private let togglAPICredential = MutableProperty<TogglAPICredential?>(nil)
 
     override init() {
         let supportDir: URL
@@ -36,6 +38,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         super.init()
+
+        togglAPICredential.value = TogglAPITokenCredential(apiToken: "8e536ec872a3900a616198ecb3415c03")
+//        togglAPICredential.value = TogglAPIUsernameCredential(username: "david@davi.la", password: "Go$zKDMKAcGmKByl7rwbE3MMMpKnAvKsz5rycpAI|usGsvBU1A")
+        modelCoordinator.apiCredential <~ togglAPICredential
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -65,9 +71,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         let preferencesStoryboard = NSStoryboard(name: .init("Preferences"), bundle: nil)
         preferencesWindowController = (preferencesStoryboard.instantiateInitialController() as! NSWindowController)
-        let preferencesWindow = preferencesWindowController!.window
-        preferencesWindow!.makeKeyAndOrderFront(nil)
-        preferencesWindow!.delegate = self
+        let preferencesWindow = preferencesWindowController!.window!
+        preferencesWindow.makeKeyAndOrderFront(nil)
+        preferencesWindow.delegate = self
+
+        let preferencesController = preferencesWindowController!.contentViewController! as! PreferencesViewController
+        preferencesController.credentialDownstream <~ togglAPICredential
+        togglAPICredential <~ preferencesController.credentialUpstream.logEvents(identifier: "credentialUpstream")
     }
 
     // MARK: - NSWindowDelegate

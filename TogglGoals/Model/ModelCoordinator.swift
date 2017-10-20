@@ -29,10 +29,9 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Data retrieval
 
-    private let apiCredential = MutableProperty(TogglAPICredential())
     private lazy var apiAccess: TogglAPIAccess = {
         let aa = TogglAPIAccess()
-        aa.apiCredential <~ apiCredential
+        aa.apiCredential <~ _apiCredential.producer.skipNil()
         aa.reportsStartDate <~ reportsStartDate
         aa.reportsEndDate <~ reportsEndDate
         aa.calendar <~ calendar
@@ -54,6 +53,8 @@ internal class ModelCoordinator: NSObject {
     internal lazy var now = Property(_now)
     internal lazy var calendar = Property(_calendar)
 
+    internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
+
 
     // MARK: - Backing of exposed properties and signals
 
@@ -63,6 +64,7 @@ internal class ModelCoordinator: NSObject {
         cal.locale = Locale.current // TODO: get from user profile
         return MutableProperty(cal)
     }()
+    private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
 
 
     // MARK: - Goals

@@ -9,6 +9,7 @@
 import Cocoa
 import ReactiveSwift
 import ReactiveCocoa
+import Result
 
 fileprivate let UsernamePasswordVCContainment = "UsernamePasswordVCContainment"
 fileprivate let APITokenVCContainment = "APITokenVCContainment"
@@ -19,6 +20,18 @@ fileprivate enum LoginMethod: Int {
 }
 
 class LoginViewController: NSViewController, ViewControllerContaining {
+
+    // MARK: - Exposed reactive interface
+
+    internal var credential: BindingTarget<TogglAPICredential?> { return _credential.bindingTarget }
+    internal var userUpdates: Signal<TogglAPICredential?, NoError> { return _userUpdates.output }
+
+
+    // MARK: - Backing of reactive interface
+
+    internal var _credential = MutableProperty<TogglAPICredential?>(nil)
+    internal var _userUpdates = Signal<TogglAPICredential?, NoError>.pipe()
+
 
     // MARK: - Contained view controllers
 
@@ -44,7 +57,6 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     @IBOutlet weak var resultLabel: NSTextField!
 
 
-
     // MARK: -
 
     private let (lifetime, token) = Lifetime.make()
@@ -52,10 +64,13 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         switch (method) {
         case .username:
             displayController(self.usernamePasswordViewController, in: self.credentialsView)
+            self.loginMethodButton.select(self.loginMethodUsernameItem)
         case .apiToken:
             displayController(self.apiTokenViewController, in: self.credentialsView)
+            self.loginMethodButton.select(self.loginMethodAPITokenItem)
         }
     }
+
 
     // MARK: -
 
@@ -63,7 +78,17 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         super.viewDidLoad()
         initializeControllerContainment(containmentIdentifiers: [UsernamePasswordVCContainment, APITokenVCContainment])
 
-        loginMethod <~ loginMethodButton.reactive.selectedItems.map { [loginMethodUsernameItem, loginMethodAPITokenItem] (item) -> LoginMethod in
+        let loginMethodFromCredential = _credential
+            .map { $0?.type }
+            .map { (credential: CredentialType?) -> LoginMethod in
+                switch credential {
+                case .username?: return .username
+                case .apiToken?: return .apiToken
+                default: return .username
+                }
+        }
+
+        let loginMethodFromButton = loginMethodButton.reactive.selectedItems.map { [loginMethodUsernameItem, loginMethodAPITokenItem] (item) -> LoginMethod in
             switch item {
             case loginMethodUsernameItem!: return .username
             case loginMethodAPITokenItem!: return .apiToken
@@ -71,7 +96,8 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             }
         }
 
-        loginMethodButton.select(loginMethodUsernameItem)
+        loginMethod <~ loginMethodFromCredential
+        loginMethod <~ loginMethodFromButton
     }
 }
 
