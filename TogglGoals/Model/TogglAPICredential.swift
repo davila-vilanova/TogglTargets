@@ -10,90 +10,82 @@ import Foundation
 
 fileprivate let APITokenPassword = "api_token"
 fileprivate let AuthHeaderKey = "Authorization"
+fileprivate let BasicAuthHeaderPrefix = "Basic " // <-- end space built into the prefix
+fileprivate let UsernamePasswordSeparator: Character = ":"
 
 enum CredentialType: String {
-    case username
-    case apiToken
-
-    private static let key = "CredentialType"
-
-    fileprivate static func read(from userDefaults: UserDefaults) -> CredentialType? {
-        guard let typeString = userDefaults.string(forKey: CredentialType.key),
-            let type = CredentialType(rawValue: typeString) else {
-                return nil
-        }
-        return type
-    }
-
-    fileprivate func save(to userDefaults: UserDefaults) {
-        userDefaults.set(rawValue, forKey: CredentialType.key)
-    }
-}
-
-fileprivate enum CredentialValueKey: String {
-    case username
-    case password
+    case email
     case apiToken
 }
 
 fileprivate func computeAuthHeaderValue(username: String, password: String) -> String {
-    let data = "\(username):\(password)".data(using: .utf8)!
+    let data = "\(username)\(UsernamePasswordSeparator)\(password)".data(using: .utf8)!
     let credential = data.base64EncodedString(options: [])
-    return "Basic \(credential)"
+    return "\(BasicAuthHeaderPrefix)\(credential)"
 }
+
+fileprivate func extractLoginDataFromAuthHeaderValue(_ authHeaderValue: String) -> (username: String, password: String)? {
+    let prefixEndIndex = BasicAuthHeaderPrefix.endIndex
+    let headerEndIndex = authHeaderValue.endIndex
+
+    guard headerEndIndex > prefixEndIndex else {
+        return nil
+    }
+    let deprefixed = authHeaderValue[prefixEndIndex..<headerEndIndex]
+
+    if let encodedData = deprefixed.data(using: .utf8),
+        let decodedData = Data(base64Encoded: encodedData),
+        let decodedString = String(data: decodedData, encoding: .utf8),
+        let separatorIndex = decodedString.index(of: UsernamePasswordSeparator) {
+        let username = decodedString[decodedString.startIndex..<separatorIndex]
+        let password = decodedString[decodedString.index(after: separatorIndex)..<decodedString.endIndex]
+        return (String(username), String(password))
+    } else {
+        return nil
+    }
+}
+
 
 protocol TogglAPICredential {
     var type: CredentialType { get }
 
     var authHeaderKey: String { get }
     var authHeaderValue: String { get }
-
-    func write(to userDefaults: UserDefaults)
 }
 
-func readTogglAPICredential(from userDefaults: UserDefaults) -> TogglAPICredential? {
-    switch CredentialType.read(from: userDefaults) {
-    case .username?: return TogglAPIUsernameCredential(userDefaults: userDefaults)
-    case .apiToken?: return TogglAPITokenCredential(userDefaults: userDefaults)
-    default: return nil
-    }
-}
-
-struct TogglAPIUsernameCredential: TogglAPICredential {
-    private let username: String
+struct TogglAPIEmailCredential: TogglAPICredential {
+    fileprivate let email: String
     private let password: String
-    var type: CredentialType { return CredentialType.username }
+    var type: CredentialType { return CredentialType.email }
 
-    init(username: String, password: String) {
-        self.username = username
+    init(email: String, password: String) {
+        self.email = email
         self.password = password
-        self.authHeaderValue = computeAuthHeaderValue(username: username, password: password)
-    }
-
-    init?(userDefaults: UserDefaults) {
-        guard let username = userDefaults.string(forKey: CredentialValueKey.username.rawValue),
-            let password = userDefaults.string(forKey: CredentialValueKey.password.rawValue) else {
-                return nil
-        }
-        self.init(username: username, password: password)
+        self.authHeaderValue = computeAuthHeaderValue(username: email, password: password)
     }
 
     var authHeaderKey = AuthHeaderKey
     private(set) var authHeaderValue: String
+}
 
-    func write(to userDefaults: UserDefaults) {
-        type.save(to: userDefaults)
-        userDefaults.set(username, forKey: CredentialValueKey.username.rawValue)
-        userDefaults.set(password, forKey: CredentialValueKey.password.rawValue)
+extension TogglAPIEmailCredential: Equatable {
+    static func ==(lhs: TogglAPIEmailCredential, rhs: TogglAPIEmailCredential) -> Bool {
+        return lhs.email == rhs.email
+            && lhs.password == rhs.password
     }
 }
 
 struct TogglAPITokenCredential: TogglAPICredential {
+    // Email is not stricty necessary but it allows to detect when an APIToken credential is
+    // derived from an email and password-based credential and thus avoid treating
+    // a credential transformation like a credential swap
+    fileprivate let derivedFromEmail: String?
     private let apiToken: String
     var type: CredentialType { return CredentialType.apiToken }
 
-    init(apiToken: String) {
+    init(apiToken: String, derivedFromEmail: String? = nil) {
         self.apiToken = apiToken
+        self.derivedFromEmail = derivedFromEmail
         self.authHeaderValue = computeAuthHeaderValue(username: apiToken, password: APITokenPassword)
     }
 
@@ -108,7 +100,30 @@ struct TogglAPITokenCredential: TogglAPICredential {
     private(set) var authHeaderValue: String
 
     func write(to userDefaults: UserDefaults) {
-        type.save(to: userDefaults)
         userDefaults.set(apiToken, forKey: CredentialValueKey.apiToken.rawValue)
+    }
+
+    private enum CredentialValueKey: String {
+        case apiToken
+    }
+
+    func isLikelyDerived(from emailCredential: TogglAPIEmailCredential) -> Bool {
+        guard let email = derivedFromEmail else {
+            return false
+        }
+        return email == emailCredential.email
+    }
+
+    static func headersIncludeTokenAuthenticationEntry(_ headers: [AnyHashable : Any]) -> Bool {
+        guard let headerValue = headers[AuthHeaderKey] as? String else {
+            return false
+        }
+        return extractLoginDataFromAuthHeaderValue(headerValue)?.password == APITokenPassword
+    }
+}
+
+extension TogglAPITokenCredential: Equatable {
+    static func ==(lhs: TogglAPITokenCredential, rhs: TogglAPITokenCredential) -> Bool {
+        return lhs.apiToken == rhs.apiToken
     }
 }

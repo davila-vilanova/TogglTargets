@@ -14,14 +14,17 @@ class PreferencesViewController: NSTabViewController {
 
     // MARK: - Exposed reactive interface
 
-    internal var credentialDownstream: BindingTarget<TogglAPICredential?> { return _credentialDownstream.bindingTarget }
+    internal var credentialDownstream: BindingTarget<TogglAPITokenCredential?> { return _credentialDownstream.bindingTarget }
     internal var credentialUpstream: Signal<TogglAPICredential?, NoError> { return _credentialUpstream.signal }
+
+    internal var credentialValidationResult: BindingTarget<CredentialValidator.ValidationResult> { return _credentialValidationResult.deoptionalizedBindingTarget}
 
 
     // MARK: - Backing of reactive interface
 
-    internal var _credentialDownstream = MutableProperty<TogglAPICredential?>(nil)
-    internal var _credentialUpstream = MutableProperty<TogglAPICredential?>(nil)
+    internal let _credentialDownstream = MutableProperty<TogglAPITokenCredential?>(nil)
+    internal let _credentialUpstream = MutableProperty<TogglAPICredential?>(nil)
+    internal let _credentialValidationResult = MutableProperty<CredentialValidator.ValidationResult?>(nil)
 
 
     // MARK: - Contained view controllers
@@ -47,5 +50,6 @@ class PreferencesViewController: NSTabViewController {
         
         loginViewController.credential <~ _credentialDownstream
         _credentialUpstream <~ loginViewController.userUpdates
+        loginViewController._credentialValidationResult <~ _credentialValidationResult
     }
 }

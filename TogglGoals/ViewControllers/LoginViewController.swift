@@ -15,7 +15,7 @@ fileprivate let UsernamePasswordVCContainment = "UsernamePasswordVCContainment"
 fileprivate let APITokenVCContainment = "APITokenVCContainment"
 
 fileprivate enum LoginMethod: Int {
-    case username
+    case email
     case apiToken
 }
 
@@ -23,23 +23,29 @@ class LoginViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Exposed reactive interface
 
-    internal var credential: BindingTarget<TogglAPICredential?> { return _credential.bindingTarget }
-    internal var userUpdates: Signal<TogglAPICredential?, NoError> { return _userUpdates.output }
+    internal var credential: BindingTarget<TogglAPITokenCredential?> { return _credential.bindingTarget }
+    internal var userUpdates: Signal<TogglAPICredential?, NoError> { return _userUpdates.signal }
+    internal var credentialValidationResult: BindingTarget<CredentialValidator.ValidationResult> { return _credentialValidationResult.deoptionalizedBindingTarget}
 
 
     // MARK: - Backing of reactive interface
 
-    internal var _credential = MutableProperty<TogglAPICredential?>(nil)
-    internal var _userUpdates = Signal<TogglAPICredential?, NoError>.pipe()
+    internal var _credential = MutableProperty<TogglAPITokenCredential?>(nil)
+    internal var _userUpdates = MutableProperty<TogglAPICredential?>(nil)
+    internal let _credentialValidationResult = MutableProperty<CredentialValidator.ValidationResult?>(nil)
 
 
     // MARK: - Contained view controllers
 
-    private var usernamePasswordViewController: UsernamePasswordViewController!
+    private var usernamePasswordViewController: EmailPasswordViewController! {
+        didSet {
+            _userUpdates <~ usernamePasswordViewController.credentialUpstream.producer.skipNil().map { $0 as TogglAPICredential }
+        }
+    }
     private var apiTokenViewController: APITokenViewController!
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        if let vc = controller as? UsernamePasswordViewController {
+        if let vc = controller as? EmailPasswordViewController {
             usernamePasswordViewController = vc
         } else if let vc = controller as? APITokenViewController {
             apiTokenViewController = vc
@@ -62,7 +68,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     private let (lifetime, token) = Lifetime.make()
     private lazy var loginMethod = BindingTarget<LoginMethod>(on: UIScheduler(), lifetime: lifetime) { [unowned self] method in
         switch (method) {
-        case .username:
+        case .email:
             displayController(self.usernamePasswordViewController, in: self.credentialsView)
             self.loginMethodButton.select(self.loginMethodUsernameItem)
         case .apiToken:
@@ -82,15 +88,15 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             .map { $0?.type }
             .map { (credential: CredentialType?) -> LoginMethod in
                 switch credential {
-                case .username?: return .username
+                case .email?: return .email
                 case .apiToken?: return .apiToken
-                default: return .username
+                default: return .email
                 }
         }
 
         let loginMethodFromButton = loginMethodButton.reactive.selectedItems.map { [loginMethodUsernameItem, loginMethodAPITokenItem] (item) -> LoginMethod in
             switch item {
-            case loginMethodUsernameItem!: return .username
+            case loginMethodUsernameItem!: return .email
             case loginMethodAPITokenItem!: return .apiToken
             default: return .apiToken
             }
@@ -98,16 +104,34 @@ class LoginViewController: NSViewController, ViewControllerContaining {
 
         loginMethod <~ loginMethodFromCredential
         loginMethod <~ loginMethodFromButton
+
+        resultLabel.reactive.stringValue <~ _credentialValidationResult.producer.skipNil().map { (result) -> String in
+            switch result {
+            case .valid: return "Credential is valid :)"
+            case .invalid: return "Credential is not valid :("
+            case let .error(err): return "Cannot verify -- \(err)"
+            }
+        }
     }
 }
 
-class UsernamePasswordViewController: NSViewController {
+fileprivate func nonEmpty(_ string: String) -> Bool {
+    return !string.isEmpty
+}
+
+class EmailPasswordViewController: NSViewController {
     @IBOutlet weak var usernameField: NSTextField!
     @IBOutlet weak var passwordField: NSSecureTextField!
 
+    lazy var credentialUpstream = Property(_credentialUpstream)
+    private let _credentialUpstream = MutableProperty<TogglAPIEmailCredential?>(nil)
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do view setup here.
+
+        _credentialUpstream <~ SignalProducer.combineLatest(usernameField.reactive.stringValues.filter(nonEmpty),
+                                                           passwordField.reactive.stringValues.filter(nonEmpty))
+            .map { TogglAPIEmailCredential(email: $0, password: $1) }
     }
 
 }

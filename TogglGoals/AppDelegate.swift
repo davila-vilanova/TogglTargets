@@ -8,7 +8,7 @@
 
 import Cocoa
 import ReactiveSwift
-
+import Result
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
@@ -19,7 +19,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     private let modelCoordinator: ModelCoordinator
     private let userDefaults = UserDefaults()
-    private let togglAPICredential = MutableProperty<TogglAPICredential?>(nil)
+    private let scheduler = QueueScheduler()
+
+    private lazy var credentialStore = CredentialStore(userDefaults: userDefaults, scheduler: scheduler)
+
+    lazy var credentialValidator = CredentialValidator()
 
     override init() {
         let supportDir: URL
@@ -39,9 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         super.init()
 
-        togglAPICredential.value = TogglAPITokenCredential(apiToken: "8e536ec872a3900a616198ecb3415c03")
-//        togglAPICredential.value = TogglAPIUsernameCredential(username: "david@davi.la", password: "Go$zKDMKAcGmKByl7rwbE3MMMpKnAvKsz5rycpAI|usGsvBU1A")
-        modelCoordinator.apiCredential <~ togglAPICredential
+        modelCoordinator.apiCredential <~ credentialStore.credential.producer.skipNil().map { $0 as TogglAPICredential }
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -76,16 +78,60 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         preferencesWindow.delegate = self
 
         let preferencesController = preferencesWindowController!.contentViewController! as! PreferencesViewController
-        preferencesController.credentialDownstream <~ togglAPICredential
-        togglAPICredential <~ preferencesController.credentialUpstream.logEvents(identifier: "credentialUpstream")
+        preferencesController.credentialDownstream <~ credentialStore.credential
+
+        credentialValidator.credential <~ preferencesController.credentialUpstream.skipNil()
+        preferencesController.credentialValidationResult <~ credentialValidator.validationResult
+
+        let validationResult = credentialValidator.validationResult // TODO: may there be glitches if credential is set also from persistent storage?
+            .map { validationResult -> TogglAPITokenCredential? in
+                switch validationResult {
+                case let .valid(credential): return credential
+                default: return nil
+                }
+            }
+            .skipNil()
+        credentialStore.updater <~ SignalProducer(value: validationResult)
     }
+
 
     // MARK: - NSWindowDelegate
 
     func windowWillClose(_ notification: Notification) {
         if (notification.object as? NSWindow) === preferencesWindowController?.window {
             preferencesWindowController = nil
+            credentialStore.updater <~ SignalProducer.never
         }
+    }
+}
+
+fileprivate class CredentialStore {
+    init(userDefaults: UserDefaults, scheduler: Scheduler) {
+        self.userDefaults = userDefaults
+        self.scheduler = scheduler
+
+        let updater = _credentialUpdater.producer.skipNil().flatten(.latest)
+        persistCredential <~ updater
+        _latestKnownCredential <~ updater
+    }
+
+    lazy var credential = Property(_latestKnownCredential)
+    var updater: BindingTarget<SignalProducer<TogglAPITokenCredential, NoError>> { return _credentialUpdater.deoptionalizedBindingTarget }
+
+    private let userDefaults: UserDefaults
+    private let scheduler: Scheduler
+
+    private lazy var _latestKnownCredential: MutableProperty<TogglAPITokenCredential?> = {
+        let initialCredentialValue = TogglAPITokenCredential(userDefaults: userDefaults)
+        return MutableProperty(initialCredentialValue)
+    }()
+
+    private lazy var _credentialUpdater = MutableProperty<SignalProducer<TogglAPITokenCredential, NoError>?>(nil)
+
+    private let (lifetime, token) = Lifetime.make()
+
+    private lazy var persistCredential = BindingTarget<TogglAPITokenCredential>(on: scheduler, lifetime: lifetime) { [userDefaults] credential in
+        credential.write(to: userDefaults)
     }
 }
 

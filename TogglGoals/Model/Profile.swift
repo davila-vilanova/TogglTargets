@@ -11,10 +11,11 @@ import Foundation
 struct Profile: Decodable {
     let id: Int64
     let name: String?
-    let email: String?
+    let email: String
     let imageUrl: URL?
     let timezone:String?
     let workspaces: [Workspace]
+    let apiToken: String?
 
     private enum CodingKeys: String, CodingKey {
         case id
@@ -23,6 +24,7 @@ struct Profile: Decodable {
         case imageUrl = "image_url"
         case timezone
         case workspaces
+        case apiToken = "api_token"
     }
 }
 

@@ -145,10 +145,10 @@
             </objects>
             <point key="canvasLocation" x="657" y="-422.5"/>
         </scene>
-        <!--Username Password View Controller-->
+        <!--Email Password View Controller-->
         <scene sceneID="WoN-Sb-uiO">
             <objects>
-                <viewController id="Luk-hD-CZ9" customClass="UsernamePasswordViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Luk-hD-CZ9" customClass="EmailPasswordViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="EAt-GK-mDh">
                         <rect key="frame" x="0.0" y="0.0" width="365" height="94"/>
                         <autoresizingMask key="autoresizingMask"/>

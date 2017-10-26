@@ -64,7 +64,7 @@ class TogglAPIAccess {
     private let _now = MutableProperty<Date?>(nil)
 
 
-    // MARK: -
+    // MARK: - Output wiring
 
     private lazy var _profile: MutableProperty<Profile?> = {
         let p = MutableProperty<Profile?>(nil)
@@ -103,7 +103,7 @@ class TogglAPIAccess {
         typealias IndexedWorkedTimes = [Int64 : TimeInterval]
         typealias WorkedTimesProducer = SignalProducer<IndexedWorkedTimes, APIAccessError>
 
-        struct Period { // TODO: rename
+        struct Period { // TODO: rename?
             let start: DayComponents
             let end: DayComponents
         }
@@ -117,7 +117,7 @@ class TogglAPIAccess {
             let endpoint = ReportsService.endpoint(workspaceId: workspaceId,
                                                    since: period.start.iso8601String, until: period.end.iso8601String,
                                                    userAgent: UserAgent)
-            return sessionProducer.map { [endpoint] (session) in
+            return sessionProducer.filter { $0.canAccessTogglReportsAPI }.map { [endpoint] (session) in
                 session.togglAPIRequestProducer(for: endpoint, decoder: ReportsService.decodeReportEntries)
                 }.flatten(.latest)
                 .take(first: 1)
@@ -190,7 +190,7 @@ class TogglAPIAccess {
 
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
     private func _retrieveRunningEntry() {
-        _runningEntry <~ session.producer.skipNil().take(first: 1).map { (session) in
+        _runningEntry <~ sessionProducer.take(first: 1).map { (session) in
             session.togglAPIRequestProducer(for: RunningEntryService.endpoint,
                                             decoder: RunningEntryService.decodeRunningEntry)
             .mapToNoError()
@@ -198,12 +198,67 @@ class TogglAPIAccess {
     }
 }
 
+class CredentialValidator {
+    enum ValidationResult {
+        case valid(TogglAPITokenCredential)
+        case invalid
+        /// Error other than authentication error
+        case error(APIAccessError)
+    }
+
+    var credential: BindingTarget<TogglAPICredential> { return _credential.deoptionalizedBindingTarget }
+    private let _credential = MutableProperty<TogglAPICredential?>(nil)
+
+    lazy var validationResult: SignalProducer<ValidationResult, NoError> = {
+        let session = _credential.producer.skipNil().map { credential -> URLSession in
+            return URLSession(togglAPICredential: credential)
+        }
+
+        let profileProducer: SignalProducer<SignalProducer<Profile, APIAccessError>, NoError> =
+            session.map { $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile) }
+
+        // Take a producer that generates a single value of type profile or triggers an error
+        // Return a producer that generates a single value of type Result that can contain a profile value or an error
+        func redirectErrorToValue(producerWithError: SignalProducer<Profile, APIAccessError>)
+            -> SignalProducer<Result<Profile, APIAccessError>, NoError> {
+                return producerWithError.materialize().map { event -> Result<Profile, APIAccessError>? in
+                    switch event {
+                    case let .value(val): return Result<Profile, APIAccessError>(value: val)
+                    case let .failed(err): return Result<Profile, APIAccessError>(error: err)
+                    default: return nil
+                    }
+                    }.skipNil()
+        }
+
+        let profileOrErrorProducer = profileProducer.map(redirectErrorToValue)
+
+        let validationResult = profileOrErrorProducer.flatten(.latest)
+            .map { (result) -> ValidationResult in
+                switch result {
+                case let .success(profile): return ValidationResult.valid(TogglAPITokenCredential(apiToken: profile.apiToken!))
+                case .failure(.authenticationError): return ValidationResult.invalid
+                case let .failure(apiAccessError): return ValidationResult.error(apiAccessError)
+                }
+            }
+
+        return validationResult
+    }()
+}
+
+
 extension URLSession {
     convenience init(togglAPICredential: TogglAPICredential) {
         let authHeaders: [String: String] = [ togglAPICredential.authHeaderKey : togglAPICredential.authHeaderValue ]
         let config = URLSessionConfiguration.default
         config.httpAdditionalHeaders = authHeaders
         self.init(configuration: config)
+    }
+
+    var canAccessTogglReportsAPI: Bool {
+        guard let headers = configuration.httpAdditionalHeaders else {
+            return false
+        }
+        return TogglAPITokenCredential.headersIncludeTokenAuthenticationEntry(headers)
     }
 
     func togglAPIRequestProducer(for endpoint: String) -> SignalProducer<(Data, URLResponse), APIAccessError> {
@@ -229,7 +284,6 @@ extension URLSession {
                     return .failure(APIAccessError.invalidJSON(underlyingError: error, data: data))
                 }
             })
-//            .logEvents(identifier: "request for \(endpoint)")
     }
 
     static func requestDataToString(data: Data, response: URLResponse) -> String {
