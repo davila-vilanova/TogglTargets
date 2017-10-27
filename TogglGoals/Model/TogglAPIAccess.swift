@@ -200,7 +200,7 @@ class TogglAPIAccess {
 
 class CredentialValidator {
     enum ValidationResult {
-        case valid(TogglAPITokenCredential)
+        case valid(TogglAPITokenCredential, Profile)
         case invalid
         /// Error other than authentication error
         case error(APIAccessError)
@@ -235,7 +235,7 @@ class CredentialValidator {
         let validationResult = profileOrErrorProducers.flatten(.latest)
             .map { (result) -> ValidationResult in
                 switch result {
-                case let .success(profile): return ValidationResult.valid(TogglAPITokenCredential(apiToken: profile.apiToken!))
+                case let .success(profile): return ValidationResult.valid(TogglAPITokenCredential(apiToken: profile.apiToken!), profile)
                 case .failure(.authenticationError): return ValidationResult.invalid
                 case let .failure(apiAccessError): return ValidationResult.error(apiAccessError)
                 }

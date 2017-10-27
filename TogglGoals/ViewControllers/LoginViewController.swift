@@ -36,7 +36,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     internal lazy var resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
         credentialValidator.validationResult.map { validationResult -> TogglAPITokenCredential? in
             switch validationResult {
-            case let .valid(credential): return credential
+            case let .valid(credential, _): return credential
             default: return nil
             }
         }.skipNil()
@@ -78,6 +78,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     @IBOutlet weak var testCredentialsButton: NSButton!
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var resultLabel: NSTextField!
+    @IBOutlet weak var profileImageView: NSImageView!
 
 
     // MARK: -
@@ -159,11 +160,24 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         credentialValidator.credential <~ credentialProvider.producer.skipNil().flatten(.latest)
         resultLabel.reactive.stringValue <~ credentialValidator.validationResult.map { (result) -> String in
             switch result {
-            case .valid: return "Credential is valid :)"
+            case let .valid(_, profile): return "Hello, \(profile.name ?? "there") :)"
             case .invalid: return "Credential is not valid :("
             case let .error(err): return "Cannot verify -- \(err)"
             }
         }
+
+        profileImageView.reactive.image <~ credentialValidator.validationResult.map { (result) -> NSImage? in
+            switch result {
+            case let .valid(_, profile):
+                if let imageURL = profile.imageUrl {
+                    let image = NSImage(contentsOf: imageURL)
+                    return image
+                } else {
+                    return nil
+                }
+            default: return nil
+            }
+            }
     }
 }
 
