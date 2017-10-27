@@ -166,6 +166,15 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             }
         }
 
+        let startProgressIndication = progressIndicator.reactive.makeBindingTarget(on: UIScheduler()) { (indicator, _: ()) -> Void in
+            indicator.startAnimation(nil)
+        }
+        let stopProgressIndication = progressIndicator.reactive.makeBindingTarget(on: UIScheduler()) { (indicator, _: ()) in
+            indicator.stopAnimation(nil)
+        }
+        startProgressIndication <~ credentialProvider.producer.skipNil().flatten(.latest).map { _ in () }
+        stopProgressIndication <~ credentialValidator.validationResult.map { _ in () }
+
         profileImageView.reactive.image <~ credentialValidator.validationResult.map { (result) -> NSImage? in
             switch result {
             case let .valid(_, profile):
