@@ -16,7 +16,8 @@ fileprivate let APITokenVCContainment = "APITokenVCContainment"
 
 fileprivate enum PersistenceKeys: String {
     case selectedLoginMethod
-    case lastUsedEmailAddress
+    case lastEnteredEmailAddress
+    case lastEnteredAPIToken
 }
 
 fileprivate enum LoginMethod: String {
@@ -76,21 +77,36 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
 
-    private lazy var selectLoginMethod =
+    private lazy var displayViewForLoginMethod =
         BindingTarget<LoginMethod>(on: UIScheduler(), lifetime: lifetime) { [unowned self] loginMethod in
+            let selectedController: NSViewController
             switch (loginMethod) {
             case .email:
-                displayController(self.emailPasswordViewController, in: self.credentialsView)
-                self.loginMethodButton.select(self.loginMethodUsernameItem) // TODO: separate
-                self.credentialProvider <~ SignalProducer(value: self.emailPasswordViewController.credentialUpstream.map { $0 as TogglAPICredential })
+                selectedController = self.emailPasswordViewController
             case .apiToken:
-                displayController(self.apiTokenViewController, in: self.credentialsView)
-                self.loginMethodButton.select(self.loginMethodAPITokenItem) // TODO: separate
-                self.credentialProvider <~ SignalProducer(value: self.apiTokenViewController.credentialUpstream.map {$0 as TogglAPICredential })
+                selectedController = self.apiTokenViewController
+            }
+            displayController(selectedController, in: self.credentialsView)
+            if let credentialProducingController = selectedController as? CredentialProducing {
+                self.credentialProvider <~ SignalProducer(value: credentialProducingController.credentialUpstream)
+            } else {
+                fatalError("Selected a controller that does not produce credentials: \(selectedController)")
             }
     }
 
     private let credentialProvider = MutableProperty<Signal<TogglAPICredential, NoError>?>(nil)
+
+    private lazy var selectLoginMethodButton =
+        BindingTarget<LoginMethod>(on: UIScheduler(), lifetime: lifetime) { [unowned self] loginMethod in
+            let selectedItem: NSMenuItem
+            switch (loginMethod) {
+            case .email:
+                selectedItem = self.loginMethodUsernameItem
+            case .apiToken:
+                selectedItem = self.loginMethodAPITokenItem
+            }
+            self.loginMethodButton.select(selectedItem)
+    }
 
     private lazy var persistLoginMethod =
         BindingTarget<(UserDefaults, LoginMethod)>(on: scheduler, lifetime: lifetime) { (userDefaults, loginMethod) in
@@ -127,8 +143,9 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             }
         }
 
-        selectLoginMethod <~ persistedLoginMethod.take(first: 1)
-        selectLoginMethod <~ loginMethodFromButton // This will only fire when the user themselves hit the button
+        displayViewForLoginMethod <~ persistedLoginMethod.take(first: 1)
+        selectLoginMethodButton <~ persistedLoginMethod.take(first: 1)
+        displayViewForLoginMethod <~ loginMethodFromButton // This will only fire when the user themselves hit the button
         persistLoginMethod <~ _userDefaults.producer.skipNil().combineLatest(with: loginMethodFromButton)
 
         credentialValidator.credential <~ credentialProvider.producer.skipNil().flatten(.latest)
@@ -146,11 +163,15 @@ fileprivate func nonEmpty(_ string: String) -> Bool {
     return !string.isEmpty
 }
 
-class EmailPasswordViewController: NSViewController {
+fileprivate protocol CredentialProducing {
+    var credentialUpstream: Signal<TogglAPICredential, NoError> { get }
+}
+
+class EmailPasswordViewController: NSViewController, CredentialProducing {
     @IBOutlet weak var usernameField: NSTextField!
     @IBOutlet weak var passwordField: NSSecureTextField!
 
-    lazy var credentialUpstream = Property(_credentialUpstream).signal.skipNil()
+    lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.skipNil().map { $0 as TogglAPICredential }
     private let _credentialUpstream = MutableProperty<TogglAPIEmailCredential?>(nil)
 
     override func viewDidLoad() {
@@ -163,10 +184,10 @@ class EmailPasswordViewController: NSViewController {
 
 }
 
-class APITokenViewController: NSViewController {
+class APITokenViewController: NSViewController, CredentialProducing {
     @IBOutlet weak var apiTokenField: NSTextField!
 
-    lazy var credentialUpstream = Property(_credentialUpstream).signal.skipNil()
+    lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.skipNil().map { $0 as TogglAPICredential }
     private let _credentialUpstream = MutableProperty<TogglAPITokenCredential?>(nil)
 
     override func viewDidLoad() {
