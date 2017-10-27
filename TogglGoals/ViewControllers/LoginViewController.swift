@@ -245,7 +245,8 @@ class EmailPasswordViewController: NSViewController, CredentialProducing {
 }
 
 class APITokenViewController: NSViewController, CredentialProducing {
-    @IBOutlet weak var apiTokenField: NSTextField!
+
+    // MARK: - Reactive interface and backing
 
     lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.skipNil().map { $0 as TogglAPICredential }
     private let _credentialUpstream = MutableProperty<TogglAPITokenCredential?>(nil)
@@ -253,8 +254,31 @@ class APITokenViewController: NSViewController, CredentialProducing {
     var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
     private var _userDefaults = MutableProperty<UserDefaults?>(nil)
 
+
+    // MARK: - Outlets
+
+    @IBOutlet weak var apiTokenField: NSTextField!
+
+
+    // MARK: -
+
+    private let (lifetime, token) = Lifetime.make()
+    private let scheduler = QueueScheduler()
+
+    private lazy var persistAPIToken =
+        BindingTarget<(UserDefaults, String)>(on: scheduler, lifetime: lifetime) { (userDefaults, token) in
+            userDefaults.set(token, forKey: PersistenceKeys.lastEnteredAPIToken.rawValue)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let persistedAPIToken = _userDefaults.producer.skipNil()
+            .map { $0.string(forKey: PersistenceKeys.lastEnteredAPIToken.rawValue) }
+            .map { $0 ?? "" }
+
+        apiTokenField.reactive.stringValue <~ persistedAPIToken.take(first: 1)
+        persistAPIToken <~ _userDefaults.producer.skipNil().combineLatest(with: apiTokenField.reactive.stringValues.skipRepeats())
 
         _credentialUpstream <~ apiTokenField.reactive.stringValues
             .filter(nonEmpty)
