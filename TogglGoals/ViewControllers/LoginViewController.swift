@@ -49,8 +49,16 @@ class LoginViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Contained view controllers
 
-    private var emailPasswordViewController: EmailPasswordViewController!
-    private var apiTokenViewController: APITokenViewController!
+    private var emailPasswordViewController: EmailPasswordViewController! {
+        didSet {
+            emailPasswordViewController.userDefaults <~ _userDefaults.producer.skipNil()
+        }
+    }
+    private var apiTokenViewController: APITokenViewController! {
+        didSet {
+            apiTokenViewController.userDefaults <~ _userDefaults.producer.skipNil()
+        }
+    }
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
         if let vc = controller as? EmailPasswordViewController {
@@ -167,19 +175,71 @@ fileprivate protocol CredentialProducing {
     var credentialUpstream: Signal<TogglAPICredential, NoError> { get }
 }
 
+fileprivate let DummyPassword = "***************"
+
 class EmailPasswordViewController: NSViewController, CredentialProducing {
-    @IBOutlet weak var usernameField: NSTextField!
-    @IBOutlet weak var passwordField: NSSecureTextField!
+
+    // MARK: - Reactive interface and backing
 
     lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.skipNil().map { $0 as TogglAPICredential }
     private let _credentialUpstream = MutableProperty<TogglAPIEmailCredential?>(nil)
 
+    var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
+    private var _userDefaults = MutableProperty<UserDefaults?>(nil)
+
+
+    // MARK: - Outlets
+
+    @IBOutlet weak var usernameField: NSTextField!
+    @IBOutlet weak var passwordField: NSSecureTextField!
+
+
+    // MARK: -
+
+    private let (lifetime, token) = Lifetime.make()
+    private let scheduler = QueueScheduler()
+
+    private lazy var persistEmailAddress =
+        BindingTarget<(UserDefaults, String)>(on: scheduler, lifetime: lifetime) { (userDefaults, email) in
+            userDefaults.set(email, forKey: PersistenceKeys.lastEnteredEmailAddress.rawValue)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let persistedEmailAddress = _userDefaults.producer.skipNil()
+            .map { $0.string(forKey: PersistenceKeys.lastEnteredEmailAddress.rawValue) }
+            .map { $0 ?? "" }
+
+        usernameField.reactive.stringValue <~ persistedEmailAddress.take(first: 1)
+        passwordField.reactive.stringValue <~ persistedEmailAddress.take(first: 1)
+                .map { $0.count > 0 ? DummyPassword : "" }
+
+        let changeInEmailAddress = SignalProducer.combineLatest(usernameField.reactive.stringValues,
+                                                                persistedEmailAddress.take(first: 1))
+            .filter { (inField, persisted) in inField != persisted }
+            .map { _ in return () }
+
+        let changeInPassword = passwordField.reactive.stringValues
+            .filter { $0 != DummyPassword }
+            .map { _ in return () }
+
+        // Clear password field's contents the first time the email address differs from the persisted one,
+        // except if the password has changed already
+        passwordField.reactive.stringValue <~ changeInEmailAddress
+            .take(first: 1)
+            .take(until: changeInPassword)
+            .map { _ in return "" }
+
+        persistEmailAddress <~ _userDefaults.producer.skipNil().combineLatest(with: usernameField.reactive.stringValues.skipRepeats())
+
+        // Generate credentials only from the moment the user has entered a password onwards
         _credentialUpstream <~ SignalProducer.combineLatest(usernameField.reactive.stringValues.filter(nonEmpty),
-                                                           passwordField.reactive.stringValues.filter(nonEmpty))
-            .map { TogglAPIEmailCredential(email: $0, password: $1) }
+                                                            passwordField.reactive.stringValues.filter(nonEmpty),
+                                                            changeInPassword.take(first: 1))
+            .map { (email, password, _) in TogglAPIEmailCredential(email: email, password: password) }
+            .skipRepeats()
+            .logEvents()
     }
 
 }
@@ -190,11 +250,15 @@ class APITokenViewController: NSViewController, CredentialProducing {
     lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.skipNil().map { $0 as TogglAPICredential }
     private let _credentialUpstream = MutableProperty<TogglAPITokenCredential?>(nil)
 
+    var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
+    private var _userDefaults = MutableProperty<UserDefaults?>(nil)
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         _credentialUpstream <~ apiTokenField.reactive.stringValues
             .filter(nonEmpty)
             .map { TogglAPITokenCredential(apiToken: $0) }
+            .skipRepeats()
     }
 }
