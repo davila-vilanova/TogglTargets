@@ -156,6 +156,45 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         displayViewForLoginMethod <~ loginMethodFromButton // This will only fire when the user themselves hit the button
         persistLoginMethod <~ _userDefaults.producer.skipNil().combineLatest(with: loginMethodFromButton)
 
+        let credentialsValidationStarted = credentialProvider.producer.skipNil().flatten(.latest).map { _ in () }
+        let credentialsValidationFinished = credentialValidator.validationResult.map { _ in () }
+        let startProgressIndication = progressIndicator.reactive.makeBindingTarget(on: UIScheduler()) { (indicator, _: ()) -> Void in
+            indicator.startAnimation(nil)
+        }
+        let stopProgressIndication = progressIndicator.reactive.makeBindingTarget(on: UIScheduler()) { (indicator, _: ()) in
+            indicator.stopAnimation(nil)
+        }
+        startProgressIndication <~ credentialsValidationStarted
+        stopProgressIndication <~ credentialsValidationFinished
+
+        resultLabel.reactive.textColor <~ credentialsValidationStarted.map { NSColor.gray }
+        resultLabel.reactive.textColor <~ credentialsValidationFinished.map { NSColor.black }
+
+        profileImageView.reactive.image <~ credentialsValidationStarted.map { [unowned self] () -> NSImage? in
+            // TODO: remove this horror. It is going to work but it is terrible.
+            guard let original = self.profileImageView.image else {
+                return nil
+            }
+            func applyGaussianBlur(_ original: NSImage) -> NSImage? {
+                guard let tiff = original.tiffRepresentation,
+                    let ciImage = CIImage(data: tiff),
+                    let filter = CIFilter(name: "CIGaussianBlur", withInputParameters: ["inputImage": ciImage]),
+                    let output = filter.outputImage else {
+                    return nil
+                }
+
+                let image = NSImage(size: original.size)
+                image.lockFocus()
+                output.draw(at: NSPoint.zero,
+                            from: NSRect(origin: NSPoint.zero, size: image.size),
+                            operation: NSCompositingOperation.destinationAtop,
+                            fraction: 1.0)
+                image.unlockFocus()
+                return image
+            }
+            return applyGaussianBlur(original)
+        }.skipNil()
+
         credentialValidator.credential <~ credentialProvider.producer.skipNil().flatten(.latest)
         resultLabel.reactive.stringValue <~ credentialValidator.validationResult.map { (result) -> String in
             switch result {
@@ -164,15 +203,6 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             case let .error(err): return "Cannot verify -- \(err)"
             }
         }
-
-        let startProgressIndication = progressIndicator.reactive.makeBindingTarget(on: UIScheduler()) { (indicator, _: ()) -> Void in
-            indicator.startAnimation(nil)
-        }
-        let stopProgressIndication = progressIndicator.reactive.makeBindingTarget(on: UIScheduler()) { (indicator, _: ()) in
-            indicator.stopAnimation(nil)
-        }
-        startProgressIndication <~ credentialProvider.producer.skipNil().flatten(.latest).map { _ in () }
-        stopProgressIndication <~ credentialValidator.validationResult.map { _ in () }
 
         profileImageView.reactive.image <~ credentialValidator.validationResult.map { (result) -> NSImage? in
             switch result {
