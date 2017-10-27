@@ -75,7 +75,6 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     @IBOutlet weak var loginMethodUsernameItem: NSMenuItem!
     @IBOutlet weak var loginMethodAPITokenItem: NSMenuItem!
     @IBOutlet weak var credentialsView: NSView!
-    @IBOutlet weak var testCredentialsButton: NSButton!
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var resultLabel: NSTextField!
     @IBOutlet weak var profileImageView: NSImageView!
