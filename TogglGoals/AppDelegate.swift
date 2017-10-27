@@ -18,12 +18,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var preferencesWindowController: NSWindowController?
 
     private let modelCoordinator: ModelCoordinator
-    private let userDefaults = UserDefaults()
+    private let userDefaults = Property(value: UserDefaults())
     private let scheduler = QueueScheduler()
 
     private lazy var credentialStore = CredentialStore(userDefaults: userDefaults, scheduler: scheduler)
 
-    lazy var credentialValidator = CredentialValidator()
+    private lazy var credentialValidator = CredentialValidator()
 
     override init() {
         let supportDir: URL
@@ -76,22 +76,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let preferencesWindow = preferencesWindowController!.window!
         preferencesWindow.makeKeyAndOrderFront(nil)
         preferencesWindow.delegate = self
-
         let preferencesController = preferencesWindowController!.contentViewController! as! PreferencesViewController
-        preferencesController.credentialDownstream <~ credentialStore.credential
 
-        credentialValidator.credential <~ preferencesController.credentialUpstream.skipNil()
-        preferencesController.credentialValidationResult <~ credentialValidator.validationResult
-
-        let validationResult = credentialValidator.validationResult // TODO: may there be glitches if credential is set also from persistent storage?
-            .map { validationResult -> TogglAPITokenCredential? in
-                switch validationResult {
-                case let .valid(credential): return credential
-                default: return nil
-                }
-            }
-            .skipNil()
-        credentialStore.updater <~ SignalProducer(value: validationResult)
+        preferencesController.userDefaults <~ userDefaults
+        credentialStore.updater <~ SignalProducer(value: preferencesController.resolvedCredential.skipNil())
     }
 
 
@@ -106,32 +94,35 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 }
 
 fileprivate class CredentialStore {
-    init(userDefaults: UserDefaults, scheduler: Scheduler) {
+    init(userDefaults: Property<UserDefaults>, scheduler: Scheduler) {
         self.userDefaults = userDefaults
         self.scheduler = scheduler
 
+        // The first value of _latestKnownCredential comes from reading the user defaults
+        _latestKnownCredential <~ userDefaults.producer.map { TogglAPITokenCredential(userDefaults: $0) }
+
+        // Subsequent values come from the latest credentials-updating source assigned to updater
         let updater = _credentialUpdater.producer.skipNil().flatten(.latest)
-        persistCredential <~ updater
         _latestKnownCredential <~ updater
+
+        // This also updates the credential in the user defaults
+        persistCredential <~ userDefaults.producer.combineLatest(with: updater)
     }
 
     lazy var credential = Property(_latestKnownCredential)
-    var updater: BindingTarget<SignalProducer<TogglAPITokenCredential, NoError>> { return _credentialUpdater.deoptionalizedBindingTarget }
+    var updater: BindingTarget<Signal<TogglAPITokenCredential, NoError>> { return _credentialUpdater.deoptionalizedBindingTarget }
 
-    private let userDefaults: UserDefaults
+    private let userDefaults: Property<UserDefaults>
     private let scheduler: Scheduler
 
-    private lazy var _latestKnownCredential: MutableProperty<TogglAPITokenCredential?> = {
-        let initialCredentialValue = TogglAPITokenCredential(userDefaults: userDefaults)
-        return MutableProperty(initialCredentialValue)
-    }()
+    private lazy var _latestKnownCredential = MutableProperty<TogglAPITokenCredential?>(nil)
 
-    private lazy var _credentialUpdater = MutableProperty<SignalProducer<TogglAPITokenCredential, NoError>?>(nil)
+    private lazy var _credentialUpdater = MutableProperty<Signal<TogglAPITokenCredential, NoError>?>(nil)
 
     private let (lifetime, token) = Lifetime.make()
 
-    private lazy var persistCredential = BindingTarget<TogglAPITokenCredential>(on: scheduler, lifetime: lifetime) { [userDefaults] credential in
-        credential.write(to: userDefaults)
+    private lazy var persistCredential = BindingTarget<(UserDefaults, TogglAPITokenCredential)>(on: scheduler, lifetime: lifetime) { (defaults, credential) in
+        credential.write(to: defaults)
     }
 }
 

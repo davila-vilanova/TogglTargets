@@ -14,43 +14,55 @@ import Result
 fileprivate let UsernamePasswordVCContainment = "UsernamePasswordVCContainment"
 fileprivate let APITokenVCContainment = "APITokenVCContainment"
 
-fileprivate enum LoginMethod: Int {
+fileprivate enum PersistenceKeys: String {
+    case selectedLoginMethod
+    case lastUsedEmailAddress
+}
+
+fileprivate enum LoginMethod: String {
     case email
     case apiToken
 }
+
+fileprivate let DefaultLoginMethod = LoginMethod.email
 
 class LoginViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Exposed reactive interface
 
-    internal var credential: BindingTarget<TogglAPITokenCredential?> { return _credential.bindingTarget }
-    internal var userUpdates: Signal<TogglAPICredential?, NoError> { return _userUpdates.signal }
-    internal var credentialValidationResult: BindingTarget<CredentialValidator.ValidationResult> { return _credentialValidationResult.deoptionalizedBindingTarget}
+    internal var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
+
+    internal lazy var resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
+        credentialValidator.validationResult.map { validationResult -> TogglAPITokenCredential? in
+            switch validationResult {
+            case let .valid(credential): return credential
+            default: return nil
+            }
+        }.skipNil()
 
 
-    // MARK: - Backing of reactive interface
+    // MARK: - Backing of exposed reactive interface
 
-    internal var _credential = MutableProperty<TogglAPITokenCredential?>(nil)
-    internal var _userUpdates = MutableProperty<TogglAPICredential?>(nil)
-    internal let _credentialValidationResult = MutableProperty<CredentialValidator.ValidationResult?>(nil)
+    private var _userDefaults = MutableProperty<UserDefaults?>(nil)
 
 
     // MARK: - Contained view controllers
 
-    private var usernamePasswordViewController: EmailPasswordViewController! {
+    private var emailPasswordViewController: EmailPasswordViewController! {
         didSet {
-            _userUpdates <~ usernamePasswordViewController.credentialUpstream.producer.skipNil().map { $0 as TogglAPICredential }
+            credentialValidator.credential <~ emailPasswordViewController.credentialUpstream.producer.skipNil().map { $0 as TogglAPICredential }
         }
     }
     private var apiTokenViewController: APITokenViewController!
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
         if let vc = controller as? EmailPasswordViewController {
-            usernamePasswordViewController = vc
+            emailPasswordViewController = vc
         } else if let vc = controller as? APITokenViewController {
             apiTokenViewController = vc
         }
     }
+
 
     // MARK: - Outlets
 
@@ -66,16 +78,29 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     // MARK: -
 
     private let (lifetime, token) = Lifetime.make()
-    private lazy var loginMethod = BindingTarget<LoginMethod>(on: UIScheduler(), lifetime: lifetime) { [unowned self] method in
-        switch (method) {
-        case .email:
-            displayController(self.usernamePasswordViewController, in: self.credentialsView)
-            self.loginMethodButton.select(self.loginMethodUsernameItem)
-        case .apiToken:
-            displayController(self.apiTokenViewController, in: self.credentialsView)
-            self.loginMethodButton.select(self.loginMethodAPITokenItem)
-        }
+    private let scheduler = QueueScheduler()
+
+    private lazy var selectLoginMethod =
+        BindingTarget<LoginMethod>(on: UIScheduler(), lifetime: lifetime) { [unowned self] loginMethod in
+            switch (loginMethod) {
+            case .email:
+                displayController(self.emailPasswordViewController, in: self.credentialsView)
+                self.loginMethodButton.select(self.loginMethodUsernameItem)
+            case .apiToken:
+                displayController(self.apiTokenViewController, in: self.credentialsView)
+                self.loginMethodButton.select(self.loginMethodAPITokenItem)
+            }
     }
+
+    private lazy var persistLoginMethod =
+        BindingTarget<(UserDefaults, LoginMethod)>(on: scheduler, lifetime: lifetime) { (userDefaults, loginMethod) in
+            userDefaults.set(loginMethod.rawValue, forKey: PersistenceKeys.selectedLoginMethod.rawValue)
+    }
+
+
+    // MARK: -
+
+    private lazy var credentialValidator = CredentialValidator()
 
 
     // MARK: -
@@ -84,14 +109,14 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         super.viewDidLoad()
         initializeControllerContainment(containmentIdentifiers: [UsernamePasswordVCContainment, APITokenVCContainment])
 
-        let loginMethodFromCredential = _credential
-            .map { $0?.type }
-            .map { (credential: CredentialType?) -> LoginMethod in
-                switch credential {
-                case .email?: return .email
-                case .apiToken?: return .apiToken
-                default: return .email
+        let persistedLoginMethod = _userDefaults.producer.skipNil()
+            .map { $0.string(forKey: PersistenceKeys.selectedLoginMethod.rawValue) }
+            .map { methodOrNil -> LoginMethod in
+                if let methodString = methodOrNil,
+                    let method = LoginMethod(rawValue: methodString) {
+                    return method
                 }
+                return DefaultLoginMethod
         }
 
         let loginMethodFromButton = loginMethodButton.reactive.selectedItems.map { [loginMethodUsernameItem, loginMethodAPITokenItem] (item) -> LoginMethod in
@@ -102,10 +127,11 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             }
         }
 
-        loginMethod <~ loginMethodFromCredential
-        loginMethod <~ loginMethodFromButton
+        selectLoginMethod <~ persistedLoginMethod.take(first: 1)
+        selectLoginMethod <~ loginMethodFromButton // This will only fire when the user themselves hit the button
+        persistLoginMethod <~ _userDefaults.producer.skipNil().combineLatest(with: loginMethodFromButton)
 
-        resultLabel.reactive.stringValue <~ _credentialValidationResult.producer.skipNil().map { (result) -> String in
+        resultLabel.reactive.stringValue <~ credentialValidator.validationResult.map { (result) -> String in
             switch result {
             case .valid: return "Credential is valid :)"
             case .invalid: return "Credential is not valid :("

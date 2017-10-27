@@ -209,12 +209,12 @@ class CredentialValidator {
     var credential: BindingTarget<TogglAPICredential> { return _credential.deoptionalizedBindingTarget }
     private let _credential = MutableProperty<TogglAPICredential?>(nil)
 
-    lazy var validationResult: SignalProducer<ValidationResult, NoError> = {
-        let session = _credential.producer.skipNil().map { credential -> URLSession in
+    lazy var validationResult: Signal<ValidationResult, NoError> = {
+        let session = _credential.signal.skipNil().map { credential -> URLSession in
             return URLSession(togglAPICredential: credential)
         }
 
-        let profileProducer: SignalProducer<SignalProducer<Profile, APIAccessError>, NoError> =
+        let profileProducers: Signal<SignalProducer<Profile, APIAccessError>, NoError> =
             session.map { $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile) }
 
         // Take a producer that generates a single value of type profile or triggers an error
@@ -230,9 +230,9 @@ class CredentialValidator {
                     }.skipNil()
         }
 
-        let profileOrErrorProducer = profileProducer.map(redirectErrorToValue)
+        let profileOrErrorProducers = profileProducers.map(redirectErrorToValue)
 
-        let validationResult = profileOrErrorProducer.flatten(.latest)
+        let validationResult = profileOrErrorProducers.flatten(.latest)
             .map { (result) -> ValidationResult in
                 switch result {
                 case let .success(profile): return ValidationResult.valid(TogglAPITokenCredential(apiToken: profile.apiToken!))

@@ -14,17 +14,14 @@ class PreferencesViewController: NSTabViewController {
 
     // MARK: - Exposed reactive interface
 
-    internal var credentialDownstream: BindingTarget<TogglAPITokenCredential?> { return _credentialDownstream.bindingTarget }
-    internal var credentialUpstream: Signal<TogglAPICredential?, NoError> { return _credentialUpstream.signal }
-
-    internal var credentialValidationResult: BindingTarget<CredentialValidator.ValidationResult> { return _credentialValidationResult.deoptionalizedBindingTarget}
+    internal var resolvedCredential: Signal<TogglAPITokenCredential?, NoError> { return _resolvedCredential.signal }
+    internal var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
 
 
     // MARK: - Backing of reactive interface
 
-    internal let _credentialDownstream = MutableProperty<TogglAPITokenCredential?>(nil)
-    internal let _credentialUpstream = MutableProperty<TogglAPICredential?>(nil)
-    internal let _credentialValidationResult = MutableProperty<CredentialValidator.ValidationResult?>(nil)
+    private let _resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
+    private let _userDefaults = MutableProperty<UserDefaults?>(nil)
 
 
     // MARK: - Contained view controllers
@@ -47,9 +44,8 @@ class PreferencesViewController: NSTabViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        loginViewController.credential <~ _credentialDownstream
-        _credentialUpstream <~ loginViewController.userUpdates
-        loginViewController._credentialValidationResult <~ _credentialValidationResult
+
+        loginViewController.userDefaults <~ _userDefaults.producer.skipNil()
+        _resolvedCredential <~ loginViewController.resolvedCredential
     }
 }
