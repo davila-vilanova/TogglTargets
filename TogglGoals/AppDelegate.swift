@@ -18,7 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var preferencesWindowController: NSWindowController?
 
     private let modelCoordinator: ModelCoordinator
-    private let userDefaults = Property(value: UserDefaults())
+    private let userDefaults = Property(value: UserDefaults.standard)
     private let scheduler = QueueScheduler()
 
     private lazy var credentialStore = CredentialStore(userDefaults: userDefaults, scheduler: scheduler)
@@ -65,6 +65,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         modelCoordinator.forceRefreshRunningEntry()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        userDefaults.value.synchronize()
     }
 
     @IBAction func openPreferencesWindow(_ sender: Any) {
