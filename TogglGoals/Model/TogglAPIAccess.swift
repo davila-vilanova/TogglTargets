@@ -198,54 +198,6 @@ class TogglAPIAccess {
     }
 }
 
-class CredentialValidator {
-    enum ValidationResult {
-        case valid(TogglAPITokenCredential, Profile)
-        case invalid
-        /// Error other than authentication error
-        case error(APIAccessError)
-    }
-
-    var credential: BindingTarget<TogglAPICredential> { return _credential.deoptionalizedBindingTarget }
-    private let _credential = MutableProperty<TogglAPICredential?>(nil)
-
-    lazy var validationResult: Signal<ValidationResult, NoError> = {
-        let session = _credential.signal.skipNil().map { credential -> URLSession in
-            return URLSession(togglAPICredential: credential)
-        }
-
-        let profileProducers: Signal<SignalProducer<Profile, APIAccessError>, NoError> =
-            session.map { $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile) }
-
-        // Take a producer that generates a single value of type profile or triggers an error
-        // Return a producer that generates a single value of type Result that can contain a profile value or an error
-        func redirectErrorToValue(producerWithError: SignalProducer<Profile, APIAccessError>)
-            -> SignalProducer<Result<Profile, APIAccessError>, NoError> {
-                return producerWithError.materialize().map { event -> Result<Profile, APIAccessError>? in
-                    switch event {
-                    case let .value(val): return Result<Profile, APIAccessError>(value: val)
-                    case let .failed(err): return Result<Profile, APIAccessError>(error: err)
-                    default: return nil
-                    }
-                    }.skipNil()
-        }
-
-        let profileOrErrorProducers = profileProducers.map(redirectErrorToValue)
-
-        let validationResult = profileOrErrorProducers.flatten(.latest)
-            .map { (result) -> ValidationResult in
-                switch result {
-                case let .success(profile): return ValidationResult.valid(TogglAPITokenCredential(apiToken: profile.apiToken!), profile)
-                case .failure(.authenticationError): return ValidationResult.invalid
-                case let .failure(apiAccessError): return ValidationResult.error(apiAccessError)
-                }
-            }
-
-        return validationResult
-    }()
-}
-
-
 extension URLSession {
     convenience init(togglAPICredential: TogglAPICredential) {
         let authHeaders: [String: String] = [ togglAPICredential.authHeaderKey : togglAPICredential.authHeaderValue ]

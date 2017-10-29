@@ -27,6 +27,13 @@ fileprivate enum LoginMethod: String {
 
 fileprivate let DefaultLoginMethod = LoginMethod.email
 
+fileprivate enum CredentialValidationResult {
+    case valid(TogglAPITokenCredential, Profile)
+    case invalid
+    /// Error other than authentication error
+    case error(APIAccessError)
+}
+
 class LoginViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Exposed reactive interface
@@ -34,7 +41,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     internal var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
 
     internal lazy var resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
-        credentialValidator.validationResult.map { validationResult -> TogglAPITokenCredential? in
+        credentialValidatingAction.values.map { validationResult -> TogglAPITokenCredential? in
             switch validationResult {
             case let .valid(credential, _): return credential
             default: return nil
@@ -102,7 +109,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             }
     }
 
-    private let credentialProvider = MutableProperty<Signal<TogglAPICredential, NoError>?>(nil)
+    private let credentialProvider = MutableProperty<Signal<TogglAPICredential?, NoError>?>(nil)
 
     private lazy var selectLoginMethodButton =
         BindingTarget<LoginMethod>(on: UIScheduler(), lifetime: lifetime) { [unowned self] loginMethod in
@@ -122,9 +129,65 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     }
 
 
-    // MARK: -
+    // MARK: - Credential Validation
 
-    private lazy var credentialValidator = CredentialValidator()
+    private lazy var credentialValidatingAction: Action<TogglAPICredential, CredentialValidationResult, NoError> = {
+        let credential = credentialProvider.producer.skipNil().flatten(.latest)
+        let validationEnabled: Property<Bool> = {
+            let enabled = MutableProperty<Bool>(false)
+            enabled <~ credential.map { $0 != nil }
+            return Property(capturing: enabled)
+        }()
+
+        let action = Action<TogglAPICredential, CredentialValidationResult, NoError>(
+            state: validationEnabled,
+            enabledIf: { $0 },
+            execute: { (_, credential) -> SignalProducer<CredentialValidationResult, NoError> in
+                let session = URLSession(togglAPICredential: credential)
+                // profileProducer generates a single value of type profile or triggers an error
+                let profileProducer = session.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
+                // profileOrErrorProducer generates a single value of type Result that can contain a profile value or an error
+                let profileOrErrorProducer = profileProducer.materialize().map { event -> Result<Profile, APIAccessError>? in
+                    switch event {
+                    case let .value(val): return Result<Profile, APIAccessError>(value: val)
+                    case let .failed(err): return Result<Profile, APIAccessError>(error: err)
+                    default: return nil
+                    }
+                    }
+                    .skipNil()
+
+                return profileOrErrorProducer.map { (result) -> CredentialValidationResult in
+                    switch result {
+                    case let .success(profile): return CredentialValidationResult.valid(TogglAPITokenCredential(apiToken: profile.apiToken!)!, profile)
+                    case .failure(.authenticationError): return CredentialValidationResult.invalid
+                    case let .failure(apiAccessError): return CredentialValidationResult.error(apiAccessError)
+                    }
+                }
+        })
+
+        action <~ credential.skipNil()
+
+        return action
+    }()
+
+    private lazy var displaySpinner =
+        BindingTarget<Bool>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (spin: Bool) -> Void in
+            if spin {
+                self.progressIndicator.startAnimation(nil)
+            } else {
+                self.progressIndicator.stopAnimation(nil)
+            }
+    }
+
+    private lazy var dimLoginResult =
+        BindingTarget<Bool>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (dim: Bool) -> Void in
+            if dim {
+                self.profileImageView.applyGaussianBlur()
+                self.resultLabel.textColor = NSColor.gray
+            } else {
+                self.resultLabel.textColor = NSColor.black
+            }
+    }
 
 
     // MARK: -
@@ -153,50 +216,11 @@ class LoginViewController: NSViewController, ViewControllerContaining {
 
         displayViewForLoginMethod <~ persistedLoginMethod.take(first: 1)
         selectLoginMethodButton <~ persistedLoginMethod.take(first: 1)
-        displayViewForLoginMethod <~ loginMethodFromButton // This will only fire when the user themselves hit the button
+        displayViewForLoginMethod <~ loginMethodFromButton // This will only fire when the user themselves select a login method from the popup menu
         persistLoginMethod <~ _userDefaults.producer.skipNil().combineLatest(with: loginMethodFromButton)
 
-        let credentialsValidationStarted = credentialProvider.producer.skipNil().flatten(.latest).map { _ in () }
-        let credentialsValidationFinished = credentialValidator.validationResult.map { _ in () }
-        let startProgressIndication = progressIndicator.reactive.makeBindingTarget(on: UIScheduler()) { (indicator, _: ()) -> Void in
-            indicator.startAnimation(nil)
-        }
-        let stopProgressIndication = progressIndicator.reactive.makeBindingTarget(on: UIScheduler()) { (indicator, _: ()) in
-            indicator.stopAnimation(nil)
-        }
-        startProgressIndication <~ credentialsValidationStarted
-        stopProgressIndication <~ credentialsValidationFinished
 
-        resultLabel.reactive.textColor <~ credentialsValidationStarted.map { NSColor.gray }
-        resultLabel.reactive.textColor <~ credentialsValidationFinished.map { NSColor.black }
-
-        profileImageView.reactive.image <~ credentialsValidationStarted.map { [unowned self] () -> NSImage? in
-            // TODO: remove this horror. It is going to work but it is terrible.
-            guard let original = self.profileImageView.image else {
-                return nil
-            }
-            func applyGaussianBlur(_ original: NSImage) -> NSImage? {
-                guard let tiff = original.tiffRepresentation,
-                    let ciImage = CIImage(data: tiff),
-                    let filter = CIFilter(name: "CIGaussianBlur", withInputParameters: ["inputImage": ciImage]),
-                    let output = filter.outputImage else {
-                    return nil
-                }
-
-                let image = NSImage(size: original.size)
-                image.lockFocus()
-                output.draw(at: NSPoint.zero,
-                            from: NSRect(origin: NSPoint.zero, size: image.size),
-                            operation: NSCompositingOperation.destinationAtop,
-                            fraction: 1.0)
-                image.unlockFocus()
-                return image
-            }
-            return applyGaussianBlur(original)
-        }.skipNil()
-
-        credentialValidator.credential <~ credentialProvider.producer.skipNil().flatten(.latest)
-        resultLabel.reactive.stringValue <~ credentialValidator.validationResult.map { (result) -> String in
+        resultLabel.reactive.stringValue <~ credentialValidatingAction.values.map { (result) -> String in
             switch result {
             case let .valid(_, profile): return "Hello, \(profile.name ?? "there") :)"
             case .invalid: return "Credential is not valid :("
@@ -204,7 +228,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             }
         }
 
-        profileImageView.reactive.image <~ credentialValidator.validationResult.map { (result) -> NSImage? in
+        profileImageView.reactive.image <~ credentialValidatingAction.values.map { (result) -> NSImage? in
             switch result {
             case let .valid(_, profile):
                 if let imageURL = profile.imageUrl {
@@ -215,16 +239,15 @@ class LoginViewController: NSViewController, ViewControllerContaining {
                 }
             default: return nil
             }
-            }
+        }
+
+        displaySpinner <~ credentialValidatingAction.isExecuting
+        dimLoginResult <~ credentialValidatingAction.isExecuting
     }
 }
 
-fileprivate func nonEmpty(_ string: String) -> Bool {
-    return !string.isEmpty
-}
-
 fileprivate protocol CredentialProducing {
-    var credentialUpstream: Signal<TogglAPICredential, NoError> { get }
+    var credentialUpstream: Signal<TogglAPICredential?, NoError> { get }
 }
 
 fileprivate let DummyPassword = "***************"
@@ -233,7 +256,7 @@ class EmailPasswordViewController: NSViewController, CredentialProducing {
 
     // MARK: - Reactive interface and backing
 
-    lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.skipNil().map { $0 as TogglAPICredential }
+    lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.map { $0 as TogglAPICredential? }
     private let _credentialUpstream = MutableProperty<TogglAPIEmailCredential?>(nil)
 
     var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
@@ -286,21 +309,18 @@ class EmailPasswordViewController: NSViewController, CredentialProducing {
         persistEmailAddress <~ _userDefaults.producer.skipNil().combineLatest(with: usernameField.reactive.stringValues.skipRepeats())
 
         // Generate credentials only from the moment the user has entered a password onwards
-        _credentialUpstream <~ SignalProducer.combineLatest(usernameField.reactive.stringValues.filter(nonEmpty),
-                                                            passwordField.reactive.stringValues.filter(nonEmpty),
+        _credentialUpstream <~ SignalProducer.combineLatest(usernameField.reactive.stringValues,
+                                                            passwordField.reactive.stringValues,
                                                             changeInPassword.take(first: 1))
             .map { (email, password, _) in TogglAPIEmailCredential(email: email, password: password) }
-            .skipRepeats()
-            .logEvents()
     }
-
 }
 
 class APITokenViewController: NSViewController, CredentialProducing {
 
     // MARK: - Reactive interface and backing
 
-    lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.skipNil().map { $0 as TogglAPICredential }
+    lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.map { $0 as TogglAPICredential? }
     private let _credentialUpstream = MutableProperty<TogglAPITokenCredential?>(nil)
 
     var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
@@ -333,8 +353,26 @@ class APITokenViewController: NSViewController, CredentialProducing {
         persistAPIToken <~ _userDefaults.producer.skipNil().combineLatest(with: apiTokenField.reactive.stringValues.skipRepeats())
 
         _credentialUpstream <~ apiTokenField.reactive.stringValues
-            .filter(nonEmpty)
             .map { TogglAPITokenCredential(apiToken: $0) }
-            .skipRepeats()
+    }
+}
+
+fileprivate extension NSImageView {
+    func applyGaussianBlur() {
+        guard let original = self.image,
+            let tiff = original.tiffRepresentation,
+            let ciImage = CIImage(data: tiff),
+            let filter = CIFilter(name: "CIGaussianBlur", withInputParameters: ["inputImage": ciImage]),
+            let output = filter.outputImage else {
+            return
+        }
+        let result = NSImage(size: original.size)
+        result.lockFocus()
+        output.draw(at: NSPoint.zero,
+                    from: NSRect(origin: NSPoint.zero, size: result.size),
+                    operation: NSCompositingOperation.destinationAtop,
+                    fraction: 1.0)
+        result.unlockFocus()
+        self.image = result
     }
 }

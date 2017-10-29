@@ -23,8 +23,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     private lazy var credentialStore = CredentialStore(userDefaults: userDefaults, scheduler: scheduler)
 
-    private lazy var credentialValidator = CredentialValidator()
-
     override init() {
         let supportDir: URL
 

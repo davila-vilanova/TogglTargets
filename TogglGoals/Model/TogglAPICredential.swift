@@ -58,7 +58,10 @@ struct TogglAPIEmailCredential: TogglAPICredential {
     private let password: String
     var type: CredentialType { return CredentialType.email }
 
-    init(email: String, password: String) {
+    init?(email: String, password: String) {
+        guard !email.isEmpty, !password.isEmpty else {
+            return nil
+        }
         self.email = email
         self.password = password
         self.authHeaderValue = computeAuthHeaderValue(username: email, password: password)
@@ -83,7 +86,10 @@ struct TogglAPITokenCredential: TogglAPICredential {
     private let apiToken: String
     var type: CredentialType { return CredentialType.apiToken }
 
-    init(apiToken: String, derivedFromEmail: String? = nil) {
+    init?(apiToken: String, derivedFromEmail: String? = nil) {
+        guard !apiToken.isEmpty else {
+            return nil
+        }
         self.apiToken = apiToken
         self.derivedFromEmail = derivedFromEmail
         self.authHeaderValue = computeAuthHeaderValue(username: apiToken, password: APITokenPassword)
