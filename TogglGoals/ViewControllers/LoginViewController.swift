@@ -32,6 +32,8 @@ fileprivate enum CredentialValidationResult {
     case invalid
     /// Error other than authentication error
     case error(APIAccessError)
+    /// internal inconsistency, should not happen
+    case other
 }
 
 class LoginViewController: NSViewController, ViewControllerContaining {
@@ -82,7 +84,14 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     @IBOutlet weak var loginMethodUsernameItem: NSMenuItem!
     @IBOutlet weak var loginMethodAPITokenItem: NSMenuItem!
     @IBOutlet weak var credentialsView: NSView!
-    @IBOutlet weak var loginButton: NSButton!
+    @IBOutlet weak var loginButton: NSButton! {
+        didSet {
+            guard let button = loginButton else {
+                return
+            }
+            button.reactive.pressed = CocoaAction(credentialValidatingAction) { _ in () }
+        }
+    }
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var resultLabel: NSTextField!
     @IBOutlet weak var profileImageView: NSImageView!
@@ -108,9 +117,13 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             } else {
                 fatalError("Selected a controller that does not produce credentials: \(selectedController)")
             }
+            if let keyViewsProvidingViewController = selectedController as? KeyViewsProviding {
+                self.loginMethodButton.nextKeyView = keyViewsProvidingViewController.firstKeyView
+                keyViewsProvidingViewController.lastKeyView.nextKeyView = self.loginButton
+            }
     }
 
-    private let credentialProvider = MutableProperty<Signal<TogglAPICredential?, NoError>?>(nil)
+    private let credentialProvider = MutableProperty<SignalProducer<TogglAPICredential?, NoError>?>(nil)
 
     private lazy var selectLoginMethodButton =
         BindingTarget<LoginMethod>(on: UIScheduler(), lifetime: lifetime) { [unowned self] loginMethod in
@@ -132,18 +145,23 @@ class LoginViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Credential Validation
 
-    private lazy var credentialValidatingAction: Action<TogglAPICredential, CredentialValidationResult, NoError> = {
+    private lazy var credentialValidatingAction: Action<(), CredentialValidationResult, NoError> = {
         let credential = credentialProvider.producer.skipNil().flatten(.latest)
-        let validationEnabled: Property<Bool> = {
-            let enabled = MutableProperty<Bool>(false)
-            enabled <~ credential.map { $0 != nil }
-            return Property(capturing: enabled)
+
+        let latestSeenCredential: Property<TogglAPICredential?> = {
+            let p = MutableProperty<TogglAPICredential?>(nil)
+            p <~ credential
+            return Property(capturing: p)
         }()
 
-        let action = Action<TogglAPICredential, CredentialValidationResult, NoError>(
-            state: validationEnabled,
-            enabledIf: { $0 },
-            execute: { (_, credential) -> SignalProducer<CredentialValidationResult, NoError> in
+        return Action<(), CredentialValidationResult, NoError>(
+            state: latestSeenCredential,
+            enabledIf: { $0 != nil },
+            execute: { (credentialOrNil, _) -> SignalProducer<CredentialValidationResult, NoError> in
+                guard let credential = credentialOrNil else {
+                    assert(false, "credential should not be nil if the action is enabled")
+                    return SignalProducer(value: CredentialValidationResult.other)
+                }
                 let session = URLSession(togglAPICredential: credential)
                 // profileProducer generates a single value of type profile or triggers an error
                 let profileProducer = session.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
@@ -165,10 +183,6 @@ class LoginViewController: NSViewController, ViewControllerContaining {
                     }
                 }
         })
-
-        action <~ credential.skipNil()
-
-        return action
     }()
 
     private lazy var displaySpinner =
@@ -183,7 +197,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     private lazy var dimLoginResult =
         BindingTarget<Bool>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (dim: Bool) -> Void in
             if dim {
-                self.profileImageView.applyGaussianBlur()
+                self.profileImageView.animator().applyGaussianBlur()
                 self.resultLabel.textColor = NSColor.gray
             } else {
                 self.resultLabel.textColor = NSColor.black
@@ -191,8 +205,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     }
 
 
-    // MARK: -
-
+    // MARK: - View did load
     override func viewDidLoad() {
         super.viewDidLoad()
         initializeControllerContainment(containmentIdentifiers: [UsernamePasswordVCContainment, APITokenVCContainment])
@@ -220,12 +233,12 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         displayViewForLoginMethod <~ loginMethodFromButton // This will only fire when the user themselves select a login method from the popup menu
         persistLoginMethod <~ _userDefaults.producer.skipNil().combineLatest(with: loginMethodFromButton)
 
-
         resultLabel.reactive.stringValue <~ credentialValidatingAction.values.map { (result) -> String in
             switch result {
             case let .valid(_, profile): return "Hello, \(profile.name ?? "there") :)"
             case .invalid: return "Credential is not valid :("
             case let .error(err): return "Cannot verify -- \(err)"
+            case .other: return "Cannot verify"
             }
         }
 
@@ -245,19 +258,23 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         displaySpinner <~ credentialValidatingAction.isExecuting
         dimLoginResult <~ credentialValidatingAction.isExecuting
     }
+    // MARK: -
 }
 
 fileprivate protocol CredentialProducing {
-    var credentialUpstream: Signal<TogglAPICredential?, NoError> { get }
+    var credentialUpstream: SignalProducer<TogglAPICredential?, NoError> { get }
 }
 
-fileprivate let DummyPassword = "***************"
+fileprivate protocol KeyViewsProviding {
+    var firstKeyView: NSView { get }
+    var lastKeyView: NSView { get }
+}
 
-class EmailPasswordViewController: NSViewController, CredentialProducing {
+class EmailPasswordViewController: NSViewController, CredentialProducing, KeyViewsProviding {
 
     // MARK: - Reactive interface and backing
 
-    lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.map { $0 as TogglAPICredential? }
+    lazy private(set) var credentialUpstream = Property(_credentialUpstream).producer.map { $0 as TogglAPICredential? }
     private let _credentialUpstream = MutableProperty<TogglAPIEmailCredential?>(nil)
 
     var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
@@ -268,6 +285,12 @@ class EmailPasswordViewController: NSViewController, CredentialProducing {
 
     @IBOutlet weak var usernameField: NSTextField!
     @IBOutlet weak var passwordField: NSSecureTextField!
+
+
+    // MARK: - KeyViewsProviding
+
+    var firstKeyView: NSView { return usernameField }
+    var lastKeyView: NSView { return passwordField }
 
 
     // MARK: -
@@ -288,40 +311,21 @@ class EmailPasswordViewController: NSViewController, CredentialProducing {
             .map { $0 ?? "" }
 
         usernameField.reactive.stringValue <~ persistedEmailAddress.take(first: 1)
-        passwordField.reactive.stringValue <~ persistedEmailAddress.take(first: 1)
-                .map { $0.count > 0 ? DummyPassword : "" }
-
-        let changeInEmailAddress = SignalProducer.combineLatest(usernameField.reactive.stringValues,
-                                                                persistedEmailAddress.take(first: 1))
-            .filter { (inField, persisted) in inField != persisted }
-            .map { _ in return () }
-
-        let changeInPassword = passwordField.reactive.stringValues
-            .filter { $0 != DummyPassword }
-            .map { _ in return () }
-
-        // Clear password field's contents the first time the email address differs from the persisted one,
-        // except if the password has changed already
-        passwordField.reactive.stringValue <~ changeInEmailAddress
-            .take(first: 1)
-            .take(until: changeInPassword)
-            .map { _ in return "" }
 
         persistEmailAddress <~ _userDefaults.producer.skipNil().combineLatest(with: usernameField.reactive.stringValues.skipRepeats())
 
-        // Generate credentials only from the moment the user has entered a password onwards
-        _credentialUpstream <~ SignalProducer.combineLatest(usernameField.reactive.stringValues,
-                                                            passwordField.reactive.stringValues,
-                                                            changeInPassword.take(first: 1))
-            .map { (email, password, _) in TogglAPIEmailCredential(email: email, password: password) }
+        _credentialUpstream <~ SignalProducer.combineLatest(
+            persistedEmailAddress.take(untilReplacement: usernameField.reactive.continuousStringValues),
+            passwordField.reactive.continuousStringValues)
+            .map { TogglAPIEmailCredential(email: $0, password: $1) }
     }
 }
 
-class APITokenViewController: NSViewController, CredentialProducing {
+class APITokenViewController: NSViewController, CredentialProducing, KeyViewsProviding {
 
     // MARK: - Reactive interface and backing
 
-    lazy private(set) var credentialUpstream = Property(_credentialUpstream).signal.map { $0 as TogglAPICredential? }
+    lazy private(set) var credentialUpstream = Property(_credentialUpstream).producer.map { $0 as TogglAPICredential? }
     private let _credentialUpstream = MutableProperty<TogglAPITokenCredential?>(nil)
 
     var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
@@ -331,6 +335,12 @@ class APITokenViewController: NSViewController, CredentialProducing {
     // MARK: - Outlets
 
     @IBOutlet weak var apiTokenField: NSTextField!
+
+
+    // MARK: - KeyViewsProviding
+
+    var firstKeyView: NSView { return apiTokenField }
+    var lastKeyView: NSView { return apiTokenField }
 
 
     // MARK: -
@@ -351,9 +361,10 @@ class APITokenViewController: NSViewController, CredentialProducing {
             .map { $0 ?? "" }
 
         apiTokenField.reactive.stringValue <~ persistedAPIToken.take(first: 1)
-        persistAPIToken <~ _userDefaults.producer.skipNil().combineLatest(with: apiTokenField.reactive.stringValues.skipRepeats())
+        persistAPIToken <~ _userDefaults.producer.skipNil()
+            .combineLatest(with: apiTokenField.reactive.stringValues.skipRepeats())
 
-        _credentialUpstream <~ apiTokenField.reactive.stringValues
+        _credentialUpstream <~ persistedAPIToken.take(untilReplacement: apiTokenField.reactive.continuousStringValues)
             .map { TogglAPITokenCredential(apiToken: $0) }
     }
 }
