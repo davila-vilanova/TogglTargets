@@ -93,7 +93,7 @@
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="sK3-Rd-Chx">
                                             <rect key="frame" x="20" y="20" width="368" height="100"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="hJh-vE-gdJ"/>
+                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="hJh-vE-gdJ"/>
                                             </constraints>
                                         </customView>
                                     </subviews>

@@ -111,6 +111,17 @@ class LoginViewController: NSViewController, ViewControllerContaining {
             case .apiToken:
                 selectedController = self.apiTokenViewController
             }
+
+            let fittingHeight = selectedController.view.fittingSize.height
+            let currentHeight = self.credentialsView.frame.height
+            let diff = fittingHeight - currentHeight
+            if let window = self.view.window {
+                var newFrame = window.frame
+                newFrame.size.height += diff
+                newFrame.origin.y -= diff
+                window.setFrame(newFrame, display: true, animate: true)
+            }
+
             displayController(selectedController, in: self.credentialsView)
             if let credentialProducingController = selectedController as? CredentialProducing {
                 self.credentialProvider <~ SignalProducer(value: credentialProducingController.credentialUpstream)
