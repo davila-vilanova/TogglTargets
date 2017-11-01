@@ -107,3 +107,37 @@ extension Calendar {
         return compared > reference && !isDate(compared, inSameDayAs: reference)
     }
 }
+
+extension Calendar {
+    func findClosestWeekdayDate(startingFrom: Date,
+                                matchingWeekDay soughtWeekday: Int,
+                                direction: SearchDirection) -> Date? {
+        let weekdayCount = veryShortWeekdaySymbols.count
+        let startDayDate = startOfDay(for: startingFrom)
+
+        let range: CountableClosedRange<Int> = {
+            let limit = weekdayCount - 1
+            switch direction {
+            case .forward: return 0...limit
+            case .backward: return (0 - limit)...0
+            }
+        }()
+
+        for dayAmount in range {
+            if let candidate = date(byAdding: .day,
+                                    value: dayAmount,
+                                    to: startDayDate,
+                                    wrappingComponents: false),
+                dateComponents([.weekday], from: candidate).weekday == soughtWeekday {
+                return candidate
+            }
+        }
+        return nil
+    }
+
+    func findClosestWeekdayDate(startingFrom: Date, matching weekday: Weekday,  direction: SearchDirection) -> Date? {
+        return findClosestWeekdayDate(startingFrom: startingFrom,
+                                      matchingWeekDay: weekday.indexInGregorianCalendar,
+                                      direction: direction)
+    }
+}

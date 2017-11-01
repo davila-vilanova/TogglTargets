@@ -118,6 +118,7 @@
 		63D4FF301F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
 		63D4FF311F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
+		63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */; };
 		63EF58181F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */; };
 		63EF58191F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */; };
 		63EF581A1F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */; };
@@ -226,6 +227,7 @@
 		63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63D4FF2E1F5AD839006368A3 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
+		63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindClosestMatchingWeekdayTests.swift; sourceTree = "<group>"; };
 		63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NSViewControllerExtensions.swift; path = ViewControllers/NSViewControllerExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -304,6 +306,7 @@
 				632957591DBA99F000E11A10 /* Info.plist */,
 				636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */,
 				63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */,
+				63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */,
 				634396891F80456200FDADE3 /* GoalProgressTests.swift */,
 			);
 			path = TogglGoalsTests;
@@ -587,6 +590,7 @@
 				6333B6DF1F974741002CF189 /* TimeReport.swift in Sources */,
 				63D4BBBA1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				63D4BBB41F7D821800B87298 /* GoalProgress.swift in Sources */,
+				63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */,
 				6333B6CB1F974348002CF189 /* ListLayout.swift in Sources */,
 				639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
 				63D4BBB31F7D821800B87298 /* DateTimeExtensions.swift in Sources */,

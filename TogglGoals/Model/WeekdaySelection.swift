@@ -38,6 +38,12 @@ enum Weekday: Int {
     }()
 }
 
+extension Weekday {
+    var indexInGregorianCalendar: Int {
+        return rawValue + 1
+    }
+}
+
 struct WeekdaySelection {
     private var selectionDict = Dictionary<Weekday, Bool>()
 
