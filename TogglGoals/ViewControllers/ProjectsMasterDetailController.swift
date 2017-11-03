@@ -19,6 +19,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
+    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
 
 
@@ -29,6 +30,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     private let _now = MutableProperty<Date?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
+    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
 
 
@@ -101,6 +103,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
         detailController.now <~ _now.producer.skipNil()
         detailController.calendar <~ _calendar.producer.skipNil()
+        detailController.periodPreference <~ _periodPreference.producer.skipNil()
         detailController.runningEntry <~ _runningEntry
 
         detailController.project <~ listController.selectedProject

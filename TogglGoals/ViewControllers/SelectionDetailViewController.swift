@@ -21,6 +21,7 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
 
     internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
+    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
 
 
@@ -30,6 +31,7 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
 
     private let _now = MutableProperty<Date?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
+    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
 
 
@@ -87,6 +89,7 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
                 controller.project <~ _project.producer.skipNil()
                 controller.now <~ _now.producer.skipNil()
                 controller.calendar <~ _calendar.producer.skipNil()
+                controller.periodPreference <~ _periodPreference.producer.skipNil()
                 controller.runningEntry <~ _runningEntry
             }
         }

@@ -26,12 +26,14 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     var runningEntry: BindingTarget<RunningEntry?> { return goalProgress.runningEntry.bindingTarget }
     var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
     var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
+    var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
 
 
     // MARK: - Properties
 
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _now = MutableProperty<Date?>(nil)
+    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
 
     private let computeStrategyFrom = MutableProperty<DayComponents?>(nil)
     private let selectedComputeStrategyFrom = MutableProperty<NSMenuItem?>(nil)
@@ -41,10 +43,15 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
 
     private let goalProgress = GoalProgress()
 
+    private lazy var goalPeriod: SignalProducer<Period, NoError> =
+        SignalProducer.combineLatest(_periodPreference.producer.skipNil(),
+                                     _calendar.producer.skipNil(), _now.producer.skipNil())
+            .map { $0.currentPeriod(for: $1, now: $2) }
+
 
     // MARK: - Outlets
     
-    @IBOutlet weak var monthNameLabel: NSTextField!
+    @IBOutlet weak var periodDescriptionLabel: NSTextField!
     @IBOutlet weak var goalProgressView: NSView!
     @IBOutlet weak var goalStrategyView: NSView!
     @IBOutlet weak var dayProgressView: NSView!
@@ -105,6 +112,13 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         return f
     }()
 
+    private lazy var periodDescriptionFormatter = _calendar.producer.map { cal -> DateFormatter in
+        let f = DateFormatter()
+        f.calendar = cal
+        f.dateStyle = .short
+        f.timeStyle = .none
+        return f
+    }
 
     // MARK: -
     
@@ -115,7 +129,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
             performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
         }
         
-        wireMonthName()
+        wirePeriodDescription()
         setupComputeStrategyFromButton()
         connectPropertiesToGoalProgress()
         setupContainedViewControllerVisibility()
@@ -153,12 +167,18 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     // MARK: -
 
-    private func wireMonthName() {
-        monthNameLabel.reactive.text <~ SignalProducer.combineLatest(_calendar.producer.skipNil(), _now.producer.skipNil()).map({ (calendar, now) -> String in
-            let comps = calendar.dateComponents([.month], from: now)
-            let monthName = calendar.monthSymbols[comps.month! - 1]
-            return monthName
-        })
+    private func wirePeriodDescription() {
+        periodDescriptionLabel.reactive.text <~ SignalProducer.combineLatest(goalPeriod.producer,
+                                                                             periodDescriptionFormatter,
+                                                                             _calendar.producer.skipNil())
+            .map { (period, formatter, calendar) in
+                // Assuming that period has been automatically generated and thus the day components are valid and the calls won't throw
+                let startDate = try! calendar.date(from: period.start)
+                let endDate = try! calendar.date(from: period.end)
+                let formattedStart = formatter.string(from: startDate)
+                let formattedEnd = formatter.string(from: endDate)
+                return "\(formattedStart) - \(formattedEnd)" // TODO: Localizable
+        }
     }
     
     private func setupComputeStrategyFromButton() {
@@ -194,16 +214,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     }
     
     private func connectPropertiesToGoalProgress() {
-        goalProgress.startGoalDay <~ SignalProducer.combineLatest(_now.producer.skipNil(),
-                                                                  _calendar.producer.skipNil())
-            .map { (now, calendar) in
-                calendar.firstDayOfMonth(for: now)
-        }
-        goalProgress.endGoalDay <~ SignalProducer.combineLatest(_now.producer.skipNil(),
-                                                                _calendar.producer.skipNil())
-            .map { (now, calendar) in
-                calendar.lastDayOfMonth(for: now)
-        }
+        goalProgress.startGoalDay <~ goalPeriod.map { $0.start }
+        goalProgress.endGoalDay <~ goalPeriod.map { $0.end }
         goalProgress.startStrategyDay <~ computeStrategyFrom.producer.skipNil()
         goalProgress.now <~ _now.producer.skipNil()
         goalProgress.calendar <~ _calendar.producer.skipNil()

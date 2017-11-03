@@ -17,14 +17,9 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: Working dates
 
-    private lazy var reportsStartDate: SignalProducer<DayComponents, NoError> =
-        SignalProducer.combineLatest(calendar.producer, now.producer).map { (calendar, now) in
-            calendar.firstDayOfMonth(for: now)
-    }
-    private lazy var reportsEndDate: SignalProducer<DayComponents, NoError> =
-        SignalProducer.combineLatest(calendar.producer, now.producer).map { (calendar, now) in
-            calendar.lastDayOfMonth(for: now)
-    }
+    private lazy var reportsPeriod: SignalProducer<Period, NoError> =
+        SignalProducer.combineLatest(_periodPreference.producer.skipNil(), calendar.producer, now.producer)
+            .map { $0.currentPeriod(for: $1, now: $2) }
 
 
     // MARK: - Data retrieval
@@ -32,8 +27,8 @@ internal class ModelCoordinator: NSObject {
     private lazy var apiAccess: TogglAPIAccess = {
         let aa = TogglAPIAccess()
         aa.apiCredential <~ _apiCredential.producer.skipNil()
-        aa.reportsStartDate <~ reportsStartDate
-        aa.reportsEndDate <~ reportsEndDate
+        aa.reportsStartDate <~ reportsPeriod.map { $0.start }
+        aa.reportsEndDate <~ reportsPeriod.map { $0.end }
         aa.calendar <~ calendar
         aa.now <~ now
         return aa
@@ -55,6 +50,7 @@ internal class ModelCoordinator: NSObject {
 
     internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
 
+    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
 
     // MARK: - Backing of exposed properties and signals
 
@@ -66,6 +62,7 @@ internal class ModelCoordinator: NSObject {
     }()
     private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
 
+    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
 
     // MARK: - Goals
 

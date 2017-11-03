@@ -23,6 +23,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     internal var project: BindingTarget<Project> { return _project.deoptionalizedBindingTarget }
     internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
+    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
 
 
@@ -31,6 +32,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     private let _project = MutableProperty<Project?>(nil)
     private let _now = MutableProperty<Date?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
+    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
 
     private var currentUpstreamGoalBindingDisposable: Disposable?
@@ -144,6 +146,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
                 controller.now <~ _now.producer.skipNil()
                 controller.goal <~ goalDownstream.producer.skipNil()
                 controller.calendar <~ _calendar.producer.skipNil()
+                controller.periodPreference <~ _periodPreference.producer.skipNil()
                 controller.runningEntry <~ _runningEntry.producer.skipNil()
             }
         }

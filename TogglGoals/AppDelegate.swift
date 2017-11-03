@@ -22,6 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let scheduler = QueueScheduler()
 
     private lazy var credentialStore = CredentialStore(userDefaults: userDefaults, scheduler: scheduler)
+    private lazy var periodPreference = SignalProducer(value: PeriodPreference.monthly) // TODO: real preference
 
     override init() {
         let supportDir: URL
@@ -42,6 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         super.init()
 
         modelCoordinator.apiCredential <~ credentialStore.credential.producer.skipNil().map { $0 as TogglAPICredential }
+        modelCoordinator.periodPreference <~ periodPreference
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -51,7 +53,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if let masterDetailController = mainWindowController.window?.contentViewController as? ProjectsMasterDetailController {
             masterDetailController.now <~ modelCoordinator.now
             masterDetailController.calendar <~ modelCoordinator.calendar
-            
+            masterDetailController.periodPreference <~ periodPreference
+
             masterDetailController.projects <~ modelCoordinator.projects
             masterDetailController.goals <~ modelCoordinator.goals
             

@@ -861,7 +861,7 @@
                         <outlet property="fromTodayItem" destination="CSh-kF-rVJ" id="Kgl-Tl-XAL"/>
                         <outlet property="goalProgressView" destination="Cmp-ld-qcb" id="Muq-7o-RCh"/>
                         <outlet property="goalStrategyView" destination="oap-Fn-wNg" id="ekt-fB-JFu"/>
-                        <outlet property="monthNameLabel" destination="v1h-N7-niu" id="yuX-Fn-sJh"/>
+                        <outlet property="periodDescriptionLabel" destination="v1h-N7-niu" id="yuX-Fn-sJh"/>
                         <segue destination="7US-0q-kKJ" kind="custom" identifier="GoalProgressVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="kbd-qA-CZc"/>
                         <segue destination="izu-wK-mXn" kind="custom" identifier="GoalStrategyVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="Isy-wW-ZIj"/>
                         <segue destination="hvJ-dC-Kbs" kind="custom" identifier="DayProgressVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="8Ie-pp-gUW"/>
