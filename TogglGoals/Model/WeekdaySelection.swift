@@ -39,6 +39,15 @@ enum Weekday: Int {
 }
 
 extension Weekday {
+    var previous: Weekday {
+        switch self.rawValue {
+        case 0: return Weekday.allDaysOrdered.last!
+        default: return Weekday(rawValue: self.rawValue - 1)!
+        }
+    }
+}
+
+extension Weekday {
     var indexInGregorianCalendar: Int {
         return rawValue + 1
     }

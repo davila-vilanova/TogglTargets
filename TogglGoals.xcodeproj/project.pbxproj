@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
+		6310EFCC1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
+		6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
+		6310EFCF1FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
+		6310EFD01FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
+		6310EFD11FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
 		631E46301F9799190012E491 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 631E462F1F9799190012E491 /* Preferences.storyboard */; };
 		631E46311F9799190012E491 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 631E462F1F9799190012E491 /* Preferences.storyboard */; };
 		631E463F1F97CB730012E491 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631E463E1F97CB730012E491 /* LoginViewController.swift */; };
@@ -170,6 +176,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6310EFCA1FAC6D3700B42C44 /* Period.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Period.swift; sourceTree = "<group>"; };
+		6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodPreference.swift; sourceTree = "<group>"; };
 		631E462F1F9799190012E491 /* Preferences.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Preferences.storyboard; sourceTree = "<group>"; };
 		631E463E1F97CB730012E491 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = ViewControllers/LoginViewController.swift; sourceTree = "<group>"; };
 		631E46411F97CB980012E491 /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesViewController.swift; path = ViewControllers/PreferencesViewController.swift; sourceTree = "<group>"; };
@@ -374,6 +382,8 @@
 				63D4BBA21F7D80FC00B87298 /* PropertyExtensions.swift */,
 				63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */,
 				639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */,
+				6310EFCA1FAC6D3700B42C44 /* Period.swift */,
+				6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -553,6 +563,7 @@
 				63D4BBAB1F7D821800B87298 /* ModelCache.swift in Sources */,
 				6333B6D61F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				63D4BBD71F7D84A500B87298 /* ProjectsMasterDetailWindowController.swift in Sources */,
+				6310EFCF1FAC6E8700B42C44 /* PeriodPreference.swift in Sources */,
 				637A32441EE16FD600667FC3 /* GoalReportViewController.swift in Sources */,
 				63D4BBA71F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				637A32421EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
@@ -563,6 +574,7 @@
 				637A32461EE16FD600667FC3 /* GoalStrategyViewController.swift in Sources */,
 				63D4BBAC1F7D821800B87298 /* ModelCoordinator.swift in Sources */,
 				637A325A1EE1727600667FC3 /* ProjectCollectionViewItem.swift in Sources */,
+				6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */,
 				63D4BBAF1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */,
 				63EF58181F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */,
 				637A325F1EE1761C00667FC3 /* ContainmentSegue.swift in Sources */,
@@ -586,7 +598,9 @@
 				6333B6CF1F974690002CF189 /* Profile.swift in Sources */,
 				636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */,
 				63D4BBB71F7D821800B87298 /* ModelCache.swift in Sources */,
+				6310EFD01FAC6E8700B42C44 /* PeriodPreference.swift in Sources */,
 				63D4BBB81F7D821800B87298 /* ModelCoordinator.swift in Sources */,
+				6310EFCC1FAC6D3700B42C44 /* Period.swift in Sources */,
 				6333B6DF1F974741002CF189 /* TimeReport.swift in Sources */,
 				63D4BBBA1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				63D4BBB41F7D821800B87298 /* GoalProgress.swift in Sources */,
@@ -624,6 +638,7 @@
 				6333B6D81F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				63D4BBD81F7D84A600B87298 /* ProjectsMasterDetailWindowController.swift in Sources */,
 				637A323F1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */,
+				6310EFD11FAC6E8700B42C44 /* PeriodPreference.swift in Sources */,
 				637A325B1EE1727600667FC3 /* ProjectCollectionViewItem.swift in Sources */,
 				63D4BBBF1F7D821900B87298 /* DateTimeExtensions.swift in Sources */,
 				63D4BBC41F7D821900B87298 /* ModelCoordinator.swift in Sources */,
@@ -634,6 +649,7 @@
 				63D4BBC31F7D821900B87298 /* ModelCache.swift in Sources */,
 				63D4BBC71F7D821900B87298 /* SignalProducerExtensions.swift in Sources */,
 				63EF581A1F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */,
+				6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */,
 				637A32491EE16FD600667FC3 /* GoalViewController.swift in Sources */,
 				63D4BBC61F7D821900B87298 /* PropertyExtensions.swift in Sources */,
 				63D4BBC01F7D821900B87298 /* GoalProgress.swift in Sources */,

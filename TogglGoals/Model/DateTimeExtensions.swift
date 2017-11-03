@@ -135,9 +135,13 @@ extension Calendar {
         return nil
     }
 
-    func findClosestWeekdayDate(startingFrom: Date, matching weekday: Weekday,  direction: SearchDirection) -> Date? {
-        return findClosestWeekdayDate(startingFrom: startingFrom,
-                                      matchingWeekDay: weekday.indexInGregorianCalendar,
-                                      direction: direction)
+    func findClosestDay(matching weekday: Weekday,
+                        startingFrom date: Date,
+                        direction: SearchDirection) -> DayComponents {
+        let date =
+            findClosestWeekdayDate(startingFrom: date,
+                                   matchingWeekDay: weekday.indexInGregorianCalendar,
+                                   direction: direction)! // Assumed it cannot fail for range-bound weekday
+        return dayComponents(from: date)
     }
 }

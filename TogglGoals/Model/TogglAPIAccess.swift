@@ -103,11 +103,6 @@ class TogglAPIAccess {
         typealias IndexedWorkedTimes = [Int64 : TimeInterval]
         typealias WorkedTimesProducer = SignalProducer<IndexedWorkedTimes, APIAccessError>
 
-        struct Period { // TODO: rename?
-            let start: DayComponents
-            let end: DayComponents
-        }
-
         func workedTimesProducer(workspaceId: Int64, period: Period?) -> WorkedTimesProducer { // [1]
             guard let period = period else {
                 return WorkedTimesProducer(value: IndexedWorkedTimes()) // empty

@@ -150,28 +150,20 @@ class FindClosestMatchingWeekdayTests : XCTestCase {
                       direction: Calendar.SearchDirection,
                       referenceDay: DayComponents,
                       expectedDict: [Weekday : DayComponents]) {
-        let foundOrNil: Date? = {
+        let found: DayComponents = {
             let comps = DateComponents(calendar: calendar, timeZone: calendar.timeZone,
                                        year: referenceDay.year, month: referenceDay.month, day: referenceDay.day,
                                        hour: 17, minute: 30)
             let date = calendar.date(from: comps)
             XCTAssertNotNil(date)
-            return calendar.findClosestWeekdayDate(startingFrom: date!, matching: weekday, direction: direction)
+            return calendar.findClosestDay(matching: weekday, startingFrom: date!, direction: direction)
         }()
-        XCTAssertNotNil(foundOrNil)
-        let found = foundOrNil!
 
         let expectedOrNil = expectedDict[weekday]
         XCTAssertNotNil(expectedOrNil)
         let expected = expectedOrNil!
 
-        let foundAsDateComponents = calendar.dateComponents([.calendar, .timeZone, .year, .month, .day, .weekday],
-                                                            from: found)
-
-        let expectedAsDateComponents = DateComponents(calendar: calendar, timeZone: calendar.timeZone,
-                                                      year: expected.year, month: expected.month, day: expected.day,
-                                                      weekday: weekday.indexInGregorianCalendar)
-        XCTAssertEqual(foundAsDateComponents, expectedAsDateComponents)
+        XCTAssertEqual(found, expected)
     }
 }
 
