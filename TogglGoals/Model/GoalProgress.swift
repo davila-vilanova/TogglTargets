@@ -188,12 +188,6 @@ class GoalProgress {
     }()
 }
 
-extension Weekday {
-    var dayIndex: Int {
-        return rawValue + 1
-    }
-}
-
 extension Calendar {
     func countWeekdaysMatching(_ weekday: Weekday, from: DayComponents, until: DayComponents) throws -> Int {
         return try countWeekdaysMatching([weekday], from: from, to: until)
@@ -204,7 +198,7 @@ extension Calendar {
 
         var matchComponents = Set<DateComponents>()
         for weekday in weekdays {
-            matchComponents.insert(DateComponents(weekday: weekday.dayIndex))
+            matchComponents.insert(DateComponents(weekday: weekday.indexInGregorianCalendar))
         }
 
         let oneDayIncrement = DateComponents(day: 1)

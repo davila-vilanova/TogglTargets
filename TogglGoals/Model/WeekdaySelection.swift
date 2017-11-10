@@ -51,6 +51,15 @@ extension Weekday {
     var indexInGregorianCalendar: Int {
         return rawValue + 1
     }
+    static func fromIndexInGregorianCalendar(_ index: Int) -> Weekday? {
+        return Weekday(rawValue: index - 1)
+    }
+    var indexInGregorianCalendarSymbolsArray: Int {
+        return rawValue
+    }
+    static func fromIndexInGregorianCalendarSymbolsArray(_ index: Int) -> Weekday? {
+        return Weekday(rawValue: index)
+    }
 }
 
 struct WeekdaySelection {

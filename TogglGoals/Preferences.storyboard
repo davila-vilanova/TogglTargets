@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="q1A-6B-gAB">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="q1A-6B-gAB">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -313,11 +312,68 @@
         <!--Goal Periods-->
         <scene sceneID="moW-Kh-FCL">
             <objects>
-                <viewController title="Goal Periods" id="DPU-zp-q1w" sceneMemberID="viewController">
+                <viewController title="Goal Periods" id="DPU-zp-q1w" customClass="GoalPeriodsPreferencesViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kQJ-7X-Tb0">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oZs-KT-MV2">
+                                <rect key="frame" x="20" y="263" width="95" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="establish goals" id="5l0-Ob-5ya">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EqR-Bd-zhD">
+                                <rect key="frame" x="39" y="238" width="71" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="radio" title="monthly" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="N4l-a1-YpH">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e9U-8j-qE7">
+                                <rect key="frame" x="39" y="216" width="64" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="radio" title="weekly" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="oVQ-XK-S6M">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o1h-Dr-imu">
+                                <rect key="frame" x="38" y="192" width="133" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="weekly goals start on" id="zAY-Ev-8Tw">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iax-dd-6YJ">
+                                <rect key="frame" x="175" y="187" width="128" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Olx-ko-dlQ" id="rXZ-F1-DX4">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="gxC-07-VKw">
+                                        <items>
+                                            <menuItem title="Item 1" state="on" id="Olx-ko-dlQ"/>
+                                            <menuItem title="Item 2" id="Lxh-pK-uek"/>
+                                            <menuItem title="Item 3" id="NnP-Xw-Iuc"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                        </subviews>
                     </view>
+                    <connections>
+                        <outlet property="preferMonthlyGoalPeriodsButton" destination="EqR-Bd-zhD" id="dMU-b6-dIn"/>
+                        <outlet property="preferWeeklyGoalPeriodsButton" destination="e9U-8j-qE7" id="05I-11-5h5"/>
+                        <outlet property="weeklyGoalStartDayLabel" destination="o1h-Dr-imu" id="si8-pq-Yqm"/>
+                        <outlet property="weeklyGoalStartDayPopUp" destination="iax-dd-6YJ" id="CWh-ea-epj"/>
+                    </connections>
                 </viewController>
                 <customObject id="pl0-vh-U51" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
