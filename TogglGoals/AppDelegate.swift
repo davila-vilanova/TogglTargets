@@ -21,8 +21,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let userDefaults = Property(value: UserDefaults.standard)
     private let scheduler = QueueScheduler()
 
-    private lazy var credentialStore = CredentialStore(userDefaults: userDefaults, scheduler: scheduler)
-    private lazy var periodPreference = SignalProducer(value: PeriodPreference.monthly) // TODO: real preference
+    private lazy var credentialStore =
+        PreferenceStore<TogglAPITokenCredential>(userDefaults: userDefaults, scheduler: scheduler)
+    private lazy var periodPreferenceStore =
+        PreferenceStore<PeriodPreference>(userDefaults: userDefaults, scheduler: scheduler)
 
     override init() {
         let supportDir: URL
@@ -42,8 +44,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         super.init()
 
-        modelCoordinator.apiCredential <~ credentialStore.credential.producer.skipNil().map { $0 as TogglAPICredential }
-        modelCoordinator.periodPreference <~ periodPreference
+        modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
+        modelCoordinator.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -53,7 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if let masterDetailController = mainWindowController.window?.contentViewController as? ProjectsMasterDetailController {
             masterDetailController.now <~ modelCoordinator.now
             masterDetailController.calendar <~ modelCoordinator.calendar
-            masterDetailController.periodPreference <~ periodPreference
+            masterDetailController.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
 
             masterDetailController.projects <~ modelCoordinator.projects
             masterDetailController.goals <~ modelCoordinator.goals
@@ -84,7 +86,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let preferencesController = preferencesWindowController!.contentViewController! as! PreferencesViewController
 
         preferencesController.userDefaults <~ userDefaults
-        credentialStore.updater <~ SignalProducer(value: preferencesController.resolvedCredential.skipNil())
+        credentialStore.input <~ SignalProducer(value: preferencesController.resolvedCredential.skipNil())
+        preferencesController.calendar <~ modelCoordinator.calendar
+        periodPreferenceStore.input <~ SignalProducer(value: preferencesController.updatedGoalPeriodPreference)
+        preferencesController.existingGoalPeriodPreference <~ periodPreferenceStore.output.producer.skipNil()
     }
 
 
@@ -93,43 +98,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         if (notification.object as? NSWindow) === preferencesWindowController?.window {
             preferencesWindowController = nil
-            credentialStore.updater <~ SignalProducer.never
+            credentialStore.input <~ SignalProducer.never
+            periodPreferenceStore.input <~ SignalProducer.never
         }
     }
 }
 
-fileprivate class CredentialStore {
-    init(userDefaults: Property<UserDefaults>, scheduler: Scheduler) {
-        self.userDefaults = userDefaults
-        self.scheduler = scheduler
 
-        // The first value of _latestKnownCredential comes from reading the user defaults
-        _latestKnownCredential <~ userDefaults.producer.map { TogglAPITokenCredential(userDefaults: $0) }
-
-        // Subsequent values come from the latest credentials-updating source assigned to updater
-        let updater = _credentialUpdater.producer.skipNil().flatten(.latest)
-        _latestKnownCredential <~ updater
-
-        // This also updates the credential in the user defaults
-        persistCredential <~ userDefaults.producer.combineLatest(with: updater)
-    }
-
-    lazy var credential = Property(_latestKnownCredential)
-    var updater: BindingTarget<Signal<TogglAPITokenCredential, NoError>> { return _credentialUpdater.deoptionalizedBindingTarget }
-
-    private let userDefaults: Property<UserDefaults>
-    private let scheduler: Scheduler
-
-    private lazy var _latestKnownCredential = MutableProperty<TogglAPITokenCredential?>(nil)
-
-    private lazy var _credentialUpdater = MutableProperty<Signal<TogglAPITokenCredential, NoError>?>(nil)
-
-    private let (lifetime, token) = Lifetime.make()
-
-    private lazy var persistCredential = BindingTarget<(UserDefaults, TogglAPITokenCredential)>(on: scheduler, lifetime: lifetime) { (defaults, credential) in
-        credential.write(to: defaults)
-    }
-}
+// MARK: -
 
 fileprivate class SupportDirectoryProvider {
     static var shared: SupportDirectoryProvider = { SupportDirectoryProvider() }()

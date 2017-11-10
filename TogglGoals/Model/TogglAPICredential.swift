@@ -95,23 +95,8 @@ struct TogglAPITokenCredential: TogglAPICredential {
         self.authHeaderValue = computeAuthHeaderValue(username: apiToken, password: APITokenPassword)
     }
 
-    init?(userDefaults: UserDefaults) {
-        guard let token = userDefaults.string(forKey: CredentialValueKey.apiToken.rawValue) else {
-            return nil
-        }
-        self.init(apiToken: token)
-    }
-
     var authHeaderKey: String = AuthHeaderKey
     private(set) var authHeaderValue: String
-
-    func write(to userDefaults: UserDefaults) {
-        userDefaults.set(apiToken, forKey: CredentialValueKey.apiToken.rawValue)
-    }
-
-    private enum CredentialValueKey: String {
-        case apiToken
-    }
 
     func isLikelyDerived(from emailCredential: TogglAPIEmailCredential) -> Bool {
         guard let email = derivedFromEmail else {
@@ -125,6 +110,23 @@ struct TogglAPITokenCredential: TogglAPICredential {
             return false
         }
         return extractLoginDataFromAuthHeaderValue(headerValue)?.password == APITokenPassword
+    }
+}
+
+extension TogglAPITokenCredential: StorableInUserDefaults {
+    private enum UserDefaultsKey: String {
+        case apiToken
+    }
+
+    init?(userDefaults: UserDefaults) {
+        guard let token = userDefaults.string(forKey: UserDefaultsKey.apiToken.rawValue) else {
+            return nil
+        }
+        self.init(apiToken: token)
+    }
+
+    func write(to userDefaults: UserDefaults) {
+        userDefaults.set(apiToken, forKey: UserDefaultsKey.apiToken.rawValue)
     }
 }
 

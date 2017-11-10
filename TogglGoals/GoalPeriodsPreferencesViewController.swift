@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-fileprivate let DefaultPreference = PeriodPreference.monthly
+internal let DefaultPeriodPreference = PeriodPreference.monthly
 
 class GoalPeriodsPreferencesViewController: NSViewController {
 
@@ -28,7 +28,7 @@ class GoalPeriodsPreferencesViewController: NSViewController {
     // MARK: - Backing properties
 
     private let _calendar = MutableProperty<Calendar?>(nil)
-    private let _existingPreference = MutableProperty<PeriodPreference>(DefaultPreference)
+    private let _existingPreference = MutableProperty<PeriodPreference>(DefaultPeriodPreference)
 
 
     // MARK: - IBOutlets
@@ -42,7 +42,7 @@ class GoalPeriodsPreferencesViewController: NSViewController {
     // MARK: - State
 
     private lazy var isWeeklyPreferenceSelectedProperty: MutableProperty<Bool> = {
-        let p = MutableProperty(isWeeklyPreference(DefaultPreference)) // default value
+        let p = MutableProperty(isWeeklyPreference(DefaultPeriodPreference)) // default value
         p <~ _existingPreference.map(isWeeklyPreference) // value from upstream
         p <~ weeklyButtonPress.values.map { _ in true }
         p <~ generateMonthlyPeriodPreference.values.map { _ in false }
@@ -51,7 +51,7 @@ class GoalPeriodsPreferencesViewController: NSViewController {
 
     private lazy var selectedWeekdayProperty: MutableProperty<Weekday> = {
         let p = MutableProperty(
-            selectedWeekday(in: DefaultPreference) ?? (Weekday.fromIndexInGregorianCalendarSymbolsArray(0)!)) // default value
+            selectedWeekday(in: DefaultPeriodPreference) ?? (Weekday.fromIndexInGregorianCalendarSymbolsArray(0)!)) // default value
         p <~ weeklyGoalStartDayPopUp.reactive.selectedIndexes.map(Weekday.fromIndexInGregorianCalendarSymbolsArray).skipNil()
         return p
     }()
