@@ -19,7 +19,7 @@ class PreferencesViewController: NSTabViewController {
     internal var updatedGoalPeriodPreference: Signal<PeriodPreference, NoError> { return _updatedGoalPeriodPreference.signal.skipNil() }
     internal var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-
+    internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
 
     // MARK: - Backing of reactive interface
 
@@ -28,6 +28,7 @@ class PreferencesViewController: NSTabViewController {
     private let _updatedGoalPeriodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _userDefaults = MutableProperty<UserDefaults?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
+    private let _now = MutableProperty<Date?>(nil)
 
 
     // MARK: - Contained view controllers
@@ -61,5 +62,6 @@ class PreferencesViewController: NSTabViewController {
         goalPeriodsController.existingPreference <~ _existingGoalPeriodPreference.producer.skipNil()
         _updatedGoalPeriodPreference <~ goalPeriodsController.updatedPreference
         goalPeriodsController.calendar <~ _calendar.producer.skipNil()
+        goalPeriodsController.now <~ _now.producer.skipNil()
     }
 }

@@ -88,6 +88,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         preferencesController.userDefaults <~ userDefaults
         credentialStore.input <~ SignalProducer(value: preferencesController.resolvedCredential.skipNil())
         preferencesController.calendar <~ modelCoordinator.calendar
+        preferencesController.now <~ modelCoordinator.now
         periodPreferenceStore.input <~ SignalProducer(value: preferencesController.updatedGoalPeriodPreference)
         preferencesController.existingGoalPeriodPreference <~ periodPreferenceStore.output.producer.skipNil()
     }
