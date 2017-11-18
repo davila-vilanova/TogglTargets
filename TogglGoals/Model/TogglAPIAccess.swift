@@ -10,6 +10,17 @@ import Foundation
 import Result
 import ReactiveSwift
 
+// TODO: Propagate these type definitions
+typealias WorkspaceID = Int64
+typealias ProjectID = Int64
+typealias IndexedProjects = [ProjectID : Project]
+typealias WorkedTime = TimeInterval
+typealias IndexedWorkedTimes = [ProjectID : WorkedTime]
+typealias IndexedTwoPartTimeReports = [ProjectID : TwoPartTimeReport]
+
+
+// MARK: APIAccessError
+
 enum APIAccessError: Error {
     case loadingSubsystemError(underlyingError: Error)
     case nonHTTPResponseReceived(response: URLResponse)
@@ -19,179 +30,182 @@ enum APIAccessError: Error {
     case invalidJSON(underlyingError: Error, data: Data)
 }
 
-class TogglAPIAccess {
-    private let scheduler = QueueScheduler.init(name: "TogglAPIAccess-scheduler")
-    private let (lifetime, token) = Lifetime.make()
 
-    // MARK: - Exposed inputs and outputs
+// MARK: - TogglAPIAccess
+
+class TogglAPIAccess {
+    let reportPeriodsProducer: ReportPeriodsProducer
+
+    init (reportPeriodsProducer: ReportPeriodsProducer) {
+        self.reportPeriodsProducer = reportPeriodsProducer
+
+        latestProfile <~ actionRetrieveProfile.values
+        workspaceIDsFromLatestProfile <~ latestProfile.producer.skipNil().map { $0.workspaces.map { $0.id } }
+    }
+
+
+    // MARK: - Exposed inputs
 
     var apiCredential: BindingTarget<TogglAPICredential> { return _apiCredential.deoptionalizedBindingTarget }
-    var reportsStartDate: BindingTarget<DayComponents> { return _reportsStartDate.deoptionalizedBindingTarget }
-    var reportsEndDate: BindingTarget<DayComponents> { return _reportsEndDate.deoptionalizedBindingTarget }
-    var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
-    lazy var retrieveRunningEntry = BindingTarget<()>(on: scheduler, lifetime: lifetime) { [unowned self] in self._retrieveRunningEntry() }
-
-    lazy var profile = Property(_profile)
-    lazy var projects = Property(_projects)
-    lazy var reports = Property(_reports)
-    lazy var runningEntry = Property(_runningEntry)
-
-
-    // MARK: - Intermediary derived signals
-
-    // sessions are available after credential is set
-    private lazy var session: MutableProperty<URLSession?> = {
-        let ses = MutableProperty<URLSession?>(nil)
-        ses <~ _apiCredential.producer.skipNil().map { URLSession(togglAPICredential: $0) }
-        return ses
-    }()
-    private lazy var sessionProducer = session.producer.skipNil()
-
-    // workspaceIdsProducer will emit one value event per workspace ID
-    private lazy var workspaceIdsProducer: SignalProducer<Int64, NoError> = _profile.producer.skipNil()
-        .map { SignalProducer($0.workspaces) }
-        .flatten(.latest)
-        .map { $0.id }
 
 
     // MARK: - Backing of inputs
 
     private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
-    private let _reportsStartDate = MutableProperty<DayComponents?>(nil)
-    private let _reportsEndDate = MutableProperty<DayComponents?>(nil)
-    private let _calendar = MutableProperty<Calendar?>(nil)
-    private let _now = MutableProperty<Date?>(nil)
 
 
-    // MARK: - Output wiring
+    // MARK: - Derived properties
 
-    private lazy var _profile: MutableProperty<Profile?> = {
-        let p = MutableProperty<Profile?>(nil)
-        p <~ sessionProducer
-            .start(on: scheduler)
-            .map { $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile) }
-            .flatten(.latest)
-            .mapToNoError() // TODO: divert errors
-        return p
-    }()
+    private lazy var urlSession = _apiCredential.producer.skipNil().map(URLSession.init)
 
-    private lazy var _projects: MutableProperty<[Int64 : Project]> = {
-        let p = MutableProperty([Int64 : Project]())
-        // TODO: schedulers
-        p <~ workspaceIdsProducer
+
+    // MARK: - Actions that do most of the actual work
+
+    private let actionRetrieveProfile = Action<URLSession, Profile, APIAccessError> {
+        $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
+    }
+
+    private let actionRetrieveProjects = Action<(URLSession, [WorkspaceID]), IndexedProjects, APIAccessError> {
+        (session, workspaceIDs) in
+        let workspaceIDsProducer = SignalProducer(workspaceIDs) // will emit one value per workspace ID
+        let projectsProducer: SignalProducer<[Project], APIAccessError> = workspaceIDsProducer
             .map(ProjectsService.endpoint)
-            .combineLatest(with: sessionProducer)
-            .map { (endpoint, session) in
+            .map { [session] endpoint in
                 session.togglAPIRequestProducer(for: endpoint, decoder: ProjectsService.decodeProjects)
-            }.take(first: 1)
-            .flatten(.latest)
-            .mapToNoError()
-            .reduce(into: [Int64 : Project](), { (indexedProjects, projects) in
-                for project in projects {
-                    indexedProjects[project.id] = project
-                }
-            })
-        return p
-    }()
+            } // will emit one [Project] producer per endpoint, then complete
+            .flatten(.concat)
 
-
-    private lazy var _reports: MutableProperty<[Int64 : TwoPartTimeReport]> = {
-        let p = MutableProperty([Int64 : TwoPartTimeReport]())
-
-        /// TODO: describe how worked times are going to be merged in TwoPartTimeReport instances
-        typealias IndexedWorkedTimes = [Int64 : TimeInterval]
-        typealias WorkedTimesProducer = SignalProducer<IndexedWorkedTimes, APIAccessError>
-
-        func workedTimesProducer(workspaceId: Int64, period: Period?) -> WorkedTimesProducer { // [1]
-            guard let period = period else {
-                return WorkedTimesProducer(value: IndexedWorkedTimes()) // empty
-            }
-            //     static func endpoint(workspaceId: Int64, since: String, until: String, userAgent: String) -> String {
-
-            let endpoint = ReportsService.endpoint(workspaceId: workspaceId,
-                                                   since: period.start.iso8601String, until: period.end.iso8601String,
-                                                   userAgent: UserAgent)
-            return sessionProducer.filter { $0.canAccessTogglReportsAPI }.map { [endpoint] (session) in
-                session.togglAPIRequestProducer(for: endpoint, decoder: ReportsService.decodeReportEntries)
-                }.flatten(.latest)
-                .take(first: 1)
-                .reduce(into: IndexedWorkedTimes()) { (indexedWorkedTimeEntries, reportEntries) in
-                    for entry in reportEntries {
-                        indexedWorkedTimeEntries[entry.id] = TimeInterval.from(milliseconds: entry.time)
-                    }
+        return projectsProducer.reduce(into: IndexedProjects()) { (indexedProjects, projects) in
+            for project in projects {
+                indexedProjects[project.id] = project
             }
         }
+    }
 
-        let todayProducer: SignalProducer<DayComponents, NoError>
-            = SignalProducer.combineLatest(_calendar.producer.skipNil(), _now.producer.skipNil())
-                .map { (calendar, now) in
-                    return calendar.dayComponents(from: now)
+    private let actionRetrieveReports =
+        Action<(URLSession, [WorkspaceID], Period, Period?, Period), IndexedTwoPartTimeReports, APIAccessError> {
+            (session, workspaceIDs, fullPeriod, periodUntilYesterday, todayPeriod) in
+
+            let workedUntilYesterday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: periodUntilYesterday)
+            let workedToday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: todayPeriod)
+            return SignalProducer.combineLatest(workedUntilYesterday, workedToday, SignalProducer(value: fullPeriod))
+                .map(generateIndexedReportsFromWorkedTimes)
+    }
+
+    private let actionRetrieveRunningEntry = Action<URLSession, RunningEntry?, APIAccessError> {
+        $0.togglAPIRequestProducer(for: RunningEntryService.endpoint, decoder: RunningEntryService.decodeRunningEntry)
+    }
+
+    // MARK: Intermediate properties
+    /// Populated by some action's outputs, these properties hold data from which other actions will take in their input
+
+    private let latestProfile = MutableProperty<Profile?>(nil)
+    private let workspaceIDsFromLatestProfile = MutableProperty<[WorkspaceID]?>(nil)
+
+
+    // MARK: - Output interface for consumer
+
+    func makeProfileProducer() -> SignalProducer<SignalProducer<Profile, APIAccessError>, NoError> {
+        return urlSession.map { [actionRetrieveProfile] in
+            actionRetrieveProfile.apply($0).mapError(assertProducerError)
         }
-        let yesterdayProducer: SignalProducer<DayComponents?, NoError>
-            = SignalProducer.combineLatest(_calendar.producer.skipNil(),
-                                           _now.producer.skipNil(),
-                                           _reportsStartDate.producer.skipNil())
-                .map { (calendar, now, startDate) in
-                    return try? calendar.previousDay(for: now, notBefore: startDate)
+    }
+
+    func makeProjectsProducer() -> SignalProducer<SignalProducer<IndexedProjects, APIAccessError>, NoError> {
+        return urlSession.combineLatest(with: workspaceIDsFromLatestProfile.producer.skipNil())
+            .map { [actionRetrieveProjects] in
+                actionRetrieveProjects.apply($0).mapError(assertProducerError)
         }
+    }
 
-        let previousToTodayPeriodProducer: SignalProducer<Period?, NoError> =
-            SignalProducer.combineLatest(_reportsStartDate.producer.skipNil(), yesterdayProducer)
-                .map { (start, yesterdayOrNil) in
-                    if let yesterday = yesterdayOrNil {
-                        return Period(start: start, end: yesterday)
-                    } else {
-                        return nil
-                    }
+    func makeReportsProducer() -> SignalProducer<SignalProducer<IndexedTwoPartTimeReports, APIAccessError>, NoError> {
+        return SignalProducer.combineLatest(urlSession,
+                                            workspaceIDsFromLatestProfile.producer.skipNil(),
+                                            reportPeriodsProducer.fullPeriod,
+                                            reportPeriodsProducer.previousToTodayPeriod,
+                                            reportPeriodsProducer.todayPeriod)
+            .map { [actionRetrieveReports] in
+                actionRetrieveReports.apply($0).mapError(assertProducerError)
         }
-        let todayPeriodProducer: SignalProducer<Period, NoError> =
-            todayProducer.map { Period(start: $0, end: $0)
+    }
+
+    func makeRunningEntryProducer() -> SignalProducer<SignalProducer<RunningEntry?, APIAccessError>, NoError> {
+        return urlSession.map { [actionRetrieveRunningEntry] in
+            actionRetrieveRunningEntry.apply($0).mapError(assertProducerError)
         }
-
-        let previousToTodayWorkedTimesProducer: WorkedTimesProducer = // [C]
-            SignalProducer.combineLatest(workspaceIdsProducer, previousToTodayPeriodProducer)
-                .map {  workedTimesProducer(workspaceId: $0, period: $1) }
-                .flatten(.latest)
-
-        let todayWorkedTimesProducer: WorkedTimesProducer = // [C]
-            SignalProducer.combineLatest(workspaceIdsProducer, todayPeriodProducer)
-                .map { workedTimesProducer(workspaceId: $0, period: $1) }
-                .flatten(.latest)
-
-        func generateIndexedReportsFromWorkedTimes(untilPreviousDay: IndexedWorkedTimes, today: IndexedWorkedTimes, period: Period) -> [Int64 : TwoPartTimeReport] {
-            var reports = [Int64 : TwoPartTimeReport]()
-            let ids: Set<Int64> = Set<Int64>(untilPreviousDay.keys).union(today.keys)
-            for id in ids {
-                let timeWorkedPreviousToToday: TimeInterval = untilPreviousDay[id] ?? 0.0
-                let timeWorkedToday: TimeInterval = today[id] ?? 0.0
-                reports[id] = TwoPartTimeReport(projectId: id,
-                                                since: period.start,
-                                                until: period.end,
-                                                workedTimeUntilYesterday: timeWorkedPreviousToToday,
-                                                workedTimeToday: timeWorkedToday)
-            }
-            return reports
-        }
-
-        p <~ SignalProducer.combineLatest(previousToTodayWorkedTimesProducer.mapToNoError(),
-                                          todayWorkedTimesProducer.mapToNoError(),
-                                          _reportsStartDate.producer.skipNil(),
-                                          _reportsEndDate.producer.skipNil())
-            .map { generateIndexedReportsFromWorkedTimes(untilPreviousDay: $0, today: $1, period: Period(start: $2, end: $3)) }
-
-        return p
-    }()
-
-    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
-    private func _retrieveRunningEntry() {
-        _runningEntry <~ sessionProducer.take(first: 1).map { (session) in
-            session.togglAPIRequestProducer(for: RunningEntryService.endpoint,
-                                            decoder: RunningEntryService.decodeRunningEntry)
-            .mapToNoError()
-        }.flatten(.latest)
     }
 }
+
+// MARK: - Helpers to TogglAPIAccess that don't depend on its (hopefully minimal) state
+
+/// Returns a producer that, on success, emits a single IndexedWorkedTimes value
+/// corresponding to the aggregate of all the provided workspace IDs, then completes.
+fileprivate func workedTimesProducer(session: URLSession, workspaceIDs: [WorkspaceID], period: Period?)
+    -> SignalProducer<IndexedWorkedTimes, APIAccessError> {
+        guard session.canAccessTogglReportsAPI else {
+            assert(false, "Session is not suitable for accessing the Toggl API") // TODO: codify in type?
+            return SignalProducer(value: IndexedWorkedTimes()) // empty
+        }
+        guard let period = period else {
+            return SignalProducer(value: IndexedWorkedTimes()) // empty
+        }
+
+        func timesProducer(forSingle workspaceID: WorkspaceID) -> SignalProducer<IndexedWorkedTimes, APIAccessError> {
+            let endpoint =
+                ReportsService.endpoint(workspaceId: workspaceID,
+                                        since: period.start.iso8601String, until: period.end.iso8601String,
+                                        userAgent: UserAgent)
+            return session.togglAPIRequestProducer(for: endpoint, decoder: ReportsService.decodeReportEntries)
+                .reduce(into: IndexedWorkedTimes()) { (indexedWorkedTimeEntries, reportEntries) in
+                    for entry in reportEntries {
+                        indexedWorkedTimeEntries[entry.id] = WorkedTime.from(milliseconds: entry.time)
+                    }
+            }
+        }
+
+        return SignalProducer(workspaceIDs)
+            .map(timesProducer)
+            .flatten(.concat)
+            .reduce(IndexedWorkedTimes(), { (combined: IndexedWorkedTimes, thisWorkspace: IndexedWorkedTimes) -> IndexedWorkedTimes in
+                combined.merging(thisWorkspace, uniquingKeysWith: { valueInCombinedTimes, _ in valueInCombinedTimes }) // Not expecting duplicates
+            })
+}
+
+fileprivate func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorkedTimes,
+                                                       today: IndexedWorkedTimes,
+                                                       fullPeriod: Period)
+    -> [Int64 : TwoPartTimeReport] {
+        var reports = [Int64 : TwoPartTimeReport]()
+        let ids: Set<Int64> = Set<Int64>(untilYesterday.keys).union(today.keys)
+        for id in ids {
+            let timeWorkedPreviousToToday: TimeInterval = untilYesterday[id] ?? 0.0
+            let timeWorkedToday: TimeInterval = today[id] ?? 0.0
+            reports[id] = TwoPartTimeReport(projectId: id,
+                                            since: fullPeriod.start,
+                                            until: fullPeriod.end,
+                                            workedTimeUntilYesterday: timeWorkedPreviousToToday,
+                                            workedTimeToday: timeWorkedToday)
+        }
+        return reports
+}
+
+// TODO: Reassess if any of the actions above can be attempted to run while not available
+// TODO: find a clearer name for this function if it's to be kept around
+fileprivate func assertProducerError(actionError: ActionError<APIAccessError>) -> APIAccessError {
+    switch actionError {
+    case .disabled:
+        print("unexpected ActionError.disabled: \(actionError)")
+        return .loadingSubsystemError(underlyingError: NSError(domain: "this should be a fatal error", code: -1, userInfo: nil))
+    case .producerFailed(let apiAccessError):
+        return apiAccessError
+    }
+}
+
+
+
+
+
+// MARK: - URLSession
 
 extension URLSession {
     convenience init(togglAPICredential: TogglAPICredential) {
@@ -219,6 +233,7 @@ extension URLSession {
             return URLRequest(url: resourceURL(for: path))
         }
 
+        print("** sending request to \(endpoint) **")
         return APIAccessError.mapErrors(from: self.reactive.data(with: request(for: endpoint)))
     }
 
@@ -237,6 +252,8 @@ extension URLSession {
         return String(data: data, encoding: .utf8)!
     }
 }
+
+// MARK: - Handy additions to APIAccessError
 
 fileprivate extension APIAccessError {
     static func wrapAnyErrorInLoadingSubsystemError(_ err: AnyError) -> APIAccessError {
@@ -263,7 +280,10 @@ fileprivate extension APIAccessError {
     }
 }
 
+// MARK: - User agent
 fileprivate let UserAgent = "david@davi.la"
+
+// MARK: - Service definitions
 
 struct MeService: Decodable {
     static let endpoint = "/api/v8/me"

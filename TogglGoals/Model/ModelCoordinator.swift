@@ -25,12 +25,13 @@ internal class ModelCoordinator: NSObject {
     // MARK: - Data retrieval
 
     private lazy var apiAccess: TogglAPIAccess = {
-        let aa = TogglAPIAccess()
+        let reportPeriodsProducer = ReportPeriodsProducer()
+        reportPeriodsProducer.startDate <~ reportsPeriod.map { $0.start }
+        reportPeriodsProducer.endDate <~ reportsPeriod.map { $0.end }
+        reportPeriodsProducer.calendar <~ calendar
+        reportPeriodsProducer.now <~ now
+        let aa = TogglAPIAccess(reportPeriodsProducer: reportPeriodsProducer)
         aa.apiCredential <~ _apiCredential.producer.skipNil()
-        aa.reportsStartDate <~ reportsPeriod.map { $0.start }
-        aa.reportsEndDate <~ reportsPeriod.map { $0.end }
-        aa.calendar <~ calendar
-        aa.now <~ now
         return aa
     }()
 
@@ -39,10 +40,58 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Exposed properties and signals
 
-    internal var profile: Property<Profile?> { return apiAccess.profile }
-    internal var runningEntry: Property<RunningEntry?> { return apiAccess.runningEntry }
+    // TODO: attempt to simplify by keeping only the producer, or forward to apiAccess's producer producing function
+    internal lazy var actionRetrieveProfile = Action { [unowned self] in
+        self.apiAccess.makeProfileProducer()
+            .take(first: 1)
+            .flatten(.latest)
+    }
+    private lazy var _profile: MutableProperty<Profile?> = {
+        let m = MutableProperty<Profile?>(nil)
+        m <~ actionRetrieveProfile.values
+        return m
+    }()
+    internal lazy var profile = Property(_profile)
 
-    internal lazy var projects = Property(apiAccess.projects)
+
+    // can stay a property since it's updated periodically and there's a binding target somewhere which can be used to trigger retri(ev)al
+    internal lazy var actionRetrieveRunningEntry = Action { [unowned self] in
+        self.apiAccess.makeRunningEntryProducer()
+            .take(first: 1)
+            .flatten(.latest) // TODO: Generify
+    }
+    private lazy var _runningEntry: MutableProperty<RunningEntry?> = {
+        let m = MutableProperty<RunningEntry?>(nil)
+        m <~ actionRetrieveRunningEntry.values // TODO: generalize too
+        return m
+    }()
+    internal lazy var runningEntry = Property(_runningEntry)
+
+    internal lazy var actionRetrieveProjects = Action { [unowned self] in
+        self.apiAccess.makeProjectsProducer()
+            .take(first: 1)
+            .flatten(.latest)
+    }
+    private lazy var _projects: MutableProperty<IndexedProjects> = {
+        let m = MutableProperty(IndexedProjects())
+        m <~ actionRetrieveProjects.values
+        return m
+    }()
+    internal lazy var projects = Property(_projects)
+
+    internal lazy var actionRetrieveReports = Action { [unowned self] in
+        self.apiAccess.makeReportsProducer()
+            .take(first: 1)
+            .flatten(.latest).logEvents(identifier: "1")
+    }
+    private lazy var _reports: MutableProperty<IndexedTwoPartTimeReports> = {
+        let m = MutableProperty(IndexedTwoPartTimeReports())
+        m <~ actionRetrieveReports.values.logEvents(identifier: "2")
+        return m
+    }()
+    internal lazy var reports = Property(_reports)
+
+    // TODO: use producer instead of property
     internal lazy var goals = Property(goalsStore.allGoals)
 
     internal lazy var now = Property(_now)
@@ -106,7 +155,7 @@ internal class ModelCoordinator: NSObject {
     /// that conveys the values of the time report associated with the provided project ID.
     internal lazy var reportReadProviderProducer = SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError> { [unowned self] observer, lifetime in
         let action = Action<Int64, Property<TwoPartTimeReport?>, NoError>() { projectId in
-            let extracted = self.apiAccess.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
+            let extracted = self.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
             return SignalProducer<Property<TwoPartTimeReport?>, NoError>(value: extracted)
         }
         observer.send(value: action)
@@ -123,15 +172,13 @@ internal class ModelCoordinator: NSObject {
         return t
     }()
 
+
     // Connected outside the scope of property initializers to avoid a dependency cycle
     // between the initializers of apiAccess and runningEntryUpdateTimer
     private func connectRunningEntryUpdateTimer() {
-        apiAccess.retrieveRunningEntry <~ runningEntryUpdateTimer.updateRunningEntry
+        actionRetrieveRunningEntry <~ runningEntryUpdateTimer.updateRunningEntry
     }
 
-    internal func forceRefreshRunningEntry() {
-        apiAccess.retrieveRunningEntry <~ SignalProducer<(), NoError>(value: ())
-    }
 
     // MARK: - Current time (now) update
 

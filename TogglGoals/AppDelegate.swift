@@ -57,7 +57,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             masterDetailController.calendar <~ modelCoordinator.calendar
             masterDetailController.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
 
-            masterDetailController.projects <~ modelCoordinator.projects
+            masterDetailController.projects <~ modelCoordinator.projects.producer
             masterDetailController.goals <~ modelCoordinator.goals
             
             masterDetailController.goalReadProviderProducer = modelCoordinator.goalReadProviderProducer
@@ -67,7 +67,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             masterDetailController.runningEntry <~ modelCoordinator.runningEntry
         }
 
-        modelCoordinator.forceRefreshRunningEntry()
+        modelCoordinator.actionRetrieveProfile.apply().start()
+        modelCoordinator.actionRetrieveProjects.apply().start()
+        modelCoordinator.actionRetrieveReports.apply().start()
+        modelCoordinator.actionRetrieveRunningEntry.apply().start()
     }
 
     func applicationWillTerminate(_ notification: Notification) {

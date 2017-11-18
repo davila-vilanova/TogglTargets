@@ -2,16 +2,25 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ActionBased.playground">
+   </FileRef>
+   <FileRef
+      location = "group:Carthage/Checkouts/ReactiveCocoa/ReactiveCocoa.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:DiscreteProducers.playground">
+   </FileRef>
+   <FileRef
       location = "group:Carthage/Checkouts/SQLite.swift/SQLite.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:TogglGoals.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:TogglGoals.playground">
+      location = "group:Carthage/Checkouts/Result/Result.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Carthage/Checkouts/Result/Result.xcodeproj">
+      location = "group:Carthage/Checkouts/ReactiveSwift/../../../PeriodPreferences.playground">
    </FileRef>
    <FileRef
       location = "group:Carthage/Checkouts/ReactiveSwift/ReactiveSwift.xcodeproj">
