@@ -5,9 +5,6 @@
       location = "group:ActionBased.playground">
    </FileRef>
    <FileRef
-      location = "group:../ValueHoldingAction.playground">
-   </FileRef>
-   <FileRef
       location = "group:Carthage/Checkouts/ReactiveCocoa/ReactiveCocoa.xcodeproj">
    </FileRef>
    <FileRef

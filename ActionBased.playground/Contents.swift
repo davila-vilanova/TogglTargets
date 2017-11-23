@@ -5,64 +5,50 @@ import ReactiveCocoa
 @testable import TogglGoals_MacOS
 import PlaygroundSupport
 
+PlaygroundPage.current.needsIndefiniteExecution = true
 
-//
-//
-//
-//
-//
-//let reportPeriodsProducer = ReportPeriodsProducer()
-//reportPeriodsProducer.startDate <~ SignalProducer(value: DayComponents(year: 2017, month: 11, day: 1))
-//reportPeriodsProducer.endDate <~ SignalProducer(value: DayComponents(year: 2017, month: 11, day: 30))
-//reportPeriodsProducer.calendar <~ SignalProducer(value: Calendar(identifier: .iso8601))
-//reportPeriodsProducer.now <~ SignalProducer(value: Date())
-//
-//let apiAccess = APIAccess(reportPeriodsProducer: reportPeriodsProducer)
-//let credential = TogglAPITokenCredential(apiToken: "8e536ec872a3900a616198ecb3415c03")!
-//apiAccess.apiCredential <~ SignalProducer<TogglAPICredential, NoError>(value: credential)
-//
-//let rootView = NSView(frame: CGRect(x: 0, y: 0, width: 300, height: 200))
-//rootView.wantsLayer = true; rootView.layer!.backgroundColor = CGColor.white
-//PlaygroundPage.current.liveView = rootView
-//
-//let nameLabel = NSTextField(frame: CGRect(x: 10, y: 165, width: 280, height: 25))
-//nameLabel.backgroundColor = NSColor.black
-//nameLabel.reactive.text <~ SignalProducer(value: "name label")
-//rootView.addSubview(nameLabel)
-//
-//let errorLabel = NSTextField(frame: CGRect(x: 10, y: 140, width: 280, height: 25))
-//errorLabel.backgroundColor = NSColor.black
-//errorLabel.reactive.text <~ SignalProducer(value: "error label")
-//rootView.addSubview(errorLabel)
-//
-//let retryButton = NSButton(frame: CGRect(x: 10, y: 110, width: 100, height: 25))
-//retryButton.title = "retry"
-//rootView.addSubview(retryButton)
-//
-//let retrieveProfileAction = Action {
-//    apiAccess.makeProfileProducer()
-//        .take(first: 1)
-//        .flatten(.latest)
-//}
-//
-//retryButton.reactive.pressed = CocoaAction(retrieveProfileAction)
-//
-//nameLabel.reactive.text <~ retrieveProfileAction.values
-//    .map { $0.name! }
-//errorLabel.reactive.text <~ retrieveProfileAction.errors
-//    .map { "\($0)" }
-//
-//retrieveProfileAction.apply().start()
-//
-//let retrieveReportsAction = Action {
-//    apiAccess.makeReportsProducer()
-//        .take(first: 1)
-//        .flatten(.latest)
-//}
-//
-//let reportsProp = MutableProperty<IndexedTwoPartTimeReports?>(nil)
-//
-//reportsProp <~ retrieveReportsAction.values.logEvents(identifier: "retrieveReportsAction")
-//
-//retrieveReportsAction.apply().start()
+class ModelCoordinator2 {
 
+    internal lazy var profileAction = Action<(), Profile, APIAccessError> { [unowned self] in
+        let cached = self.cache.retrieveCachedProfile()
+        let (cachedSignal, cachedObserver) = Signal<(result: Profile?, mustRefresh: Bool), NoError>.pipe()
+
+        cached.startWithSignal({ (signal, disposable) -> Void in
+            signal.observe(cachedObserver)
+            // TODO: disposable
+        })
+
+        let cachedProfile = cachedSignal.map { $0.result }.skipNil()
+        let mustRefresh = cachedSignal.logEvents(identifier: "cachedSignal").map { $0.mustRefresh }
+        //  |   cached?  |   mustRefresh?    |
+        //  |   no       |      yes          |
+        //  |   yes      |      no           |
+        //  |   yes      |      yes          |
+        let refreshedProfile: SignalProducer<Profile, APIAccessError> =
+            mustRefresh.producer.filter { $0 }//.logEvents(identifier: "mustRefresh")
+            .combineLatest(with: self.urlSession)
+            .map { (_, session) in actionRetrieveProfile.apply(session).mapError(assertProducerError) }
+            .take(first: 1).flatten(.latest)
+
+        return SignalProducer.merge(cachedProfile.producer.promoteError(APIAccessError.self), refreshedProfile)
+    }
+
+    private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
+    private lazy var urlSession = _apiCredential.producer.skipNil().map(URLSession.init)
+
+    let cache = Cache()
+}
+
+class Cache {
+    func retrieveCachedProfile() -> SignalProducer<(result: Profile?, mustRefresh: Bool), NoError> {
+        return SignalProducer(value: (nil, true))
+    }
+}
+
+let mc = ModelCoordinator2()
+
+let profileHolder = MutableProperty<Profile?>(nil)
+profileHolder <~ mc.profileAction.values.logEvents()
+
+mc.profileAction.apply().start()
+print ("start")

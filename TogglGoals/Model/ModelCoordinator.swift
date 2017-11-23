@@ -52,7 +52,7 @@ internal class ModelCoordinator: NSObject {
         return m
     }()
     internal lazy var profile = Property(_profile)
-
+    
 
     // can stay a property since it's updated periodically and there's a binding target somewhere which can be used to trigger retri(ev)al
     internal lazy var actionRetrieveRunningEntry = Action { [unowned self] in

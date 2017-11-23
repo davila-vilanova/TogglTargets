@@ -31,6 +31,10 @@ enum APIAccessError: Error {
 }
 
 
+internal let actionRetrieveProfile = Action<URLSession, Profile, APIAccessError> {
+    $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
+}
+
 // MARK: - TogglAPIAccess
 
 class TogglAPIAccess {
@@ -61,9 +65,7 @@ class TogglAPIAccess {
 
     // MARK: - Actions that do most of the actual work
 
-    private let actionRetrieveProfile = Action<URLSession, Profile, APIAccessError> {
-        $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
-    }
+
 
     private let actionRetrieveProjects = Action<(URLSession, [WorkspaceID]), IndexedProjects, APIAccessError> {
         (session, workspaceIDs) in
@@ -191,7 +193,7 @@ fileprivate func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWo
 
 // TODO: Reassess if any of the actions above can be attempted to run while not available
 // TODO: find a clearer name for this function if it's to be kept around
-fileprivate func assertProducerError(actionError: ActionError<APIAccessError>) -> APIAccessError {
+func assertProducerError(actionError: ActionError<APIAccessError>) -> APIAccessError {
     switch actionError {
     case .disabled:
         print("unexpected ActionError.disabled: \(actionError)")
