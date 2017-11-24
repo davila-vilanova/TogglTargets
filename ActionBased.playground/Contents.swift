@@ -10,14 +10,10 @@ PlaygroundPage.current.needsIndefiniteExecution = true
 class ModelCoordinator2 {
 
     internal lazy var profileAction = Action<(), Profile, APIAccessError> { [unowned self] in
-        let cached = self.cache.retrieveCachedProfile()
-        let (cachedSignal, cachedObserver) = Signal<(result: Profile?, mustRefresh: Bool), NoError>.pipe()
-
-        cached.startWithSignal({ (signal, disposable) -> Void in
-            signal.observe(cachedObserver)
-            // TODO: disposable
-        })
-
+        let (cachedSignal, cachedObserver) = Signal<(result: Profile?, mustRefresh: Bool), ActionError<NoError>>.pipe()
+        let cached = self.cache.retrieveCachedProfileAction.apply(0)
+        cached.logEvents(identifier: "cached").start(cachedObserver)
+        
         let cachedProfile = cachedSignal.map { $0.result }.skipNil()
         let mustRefresh = cachedSignal.logEvents(identifier: "cachedSignal").map { $0.mustRefresh }
         //  |   cached?  |   mustRefresh?    |
@@ -40,7 +36,7 @@ class ModelCoordinator2 {
 }
 
 class Cache {
-    func retrieveCachedProfile() -> SignalProducer<(result: Profile?, mustRefresh: Bool), NoError> {
+    let retrieveCachedProfileAction = Action<Int64, (result: Profile?, mustRefresh: Bool), NoError> { _ in
         return SignalProducer(value: (nil, true))
     }
 }
