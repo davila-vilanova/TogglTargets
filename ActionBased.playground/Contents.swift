@@ -7,44 +7,56 @@ import PlaygroundSupport
 
 PlaygroundPage.current.needsIndefiniteExecution = true
 
-class ModelCoordinator2 {
 
-    internal lazy var profileAction = Action<(), Profile, APIAccessError> { [unowned self] in
-        let (cachedSignal, cachedObserver) = Signal<(result: Profile?, mustRefresh: Bool), ActionError<NoError>>.pipe()
-        let cached = self.cache.retrieveCachedProfileAction.apply(0)
-        cached.logEvents(identifier: "cached").start(cachedObserver)
-        
-        let cachedProfile = cachedSignal.map { $0.result }.skipNil()
-        let mustRefresh = cachedSignal.logEvents(identifier: "cachedSignal").map { $0.mustRefresh }
-        //  |   cached?  |   mustRefresh?    |
-        //  |   no       |      yes          |
-        //  |   yes      |      no           |
-        //  |   yes      |      yes          |
-        let refreshedProfile: SignalProducer<Profile, APIAccessError> =
-            mustRefresh.producer.filter { $0 }//.logEvents(identifier: "mustRefresh")
-            .combineLatest(with: self.urlSession)
-            .map { (_, session) in actionRetrieveProfile.apply(session).mapError(assertProducerError) }
-            .take(first: 1).flatten(.latest)
+class TogglAPIAccess2 {
+    // MARK: - Exposed inputs
 
-        return SignalProducer.merge(cachedProfile.producer.promoteError(APIAccessError.self), refreshedProfile)
-    }
+    var apiCredential: BindingTarget<TogglAPICredential> { return _apiCredential.deoptionalizedBindingTarget }
+
+
+    // MARK: - Backing of inputs
 
     private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
-    private lazy var urlSession = _apiCredential.producer.skipNil().map(URLSession.init)
 
-    let cache = Cache()
-}
 
-class Cache {
-    let retrieveCachedProfileAction = Action<Int64, (result: Profile?, mustRefresh: Bool), NoError> { _ in
-        return SignalProducer(value: (nil, true))
+    // MARK: - Derived properties
+
+    private lazy var urlSession: MutableProperty<URLSession?> = {
+        let p = MutableProperty<URLSession?>(nil)
+        p <~ _apiCredential.producer.skipNil().map(URLSession.init)
+        return p
+    }()
+
+
+    // MARK: - Actions that do most of the actual work
+
+    lazy var actionRetrieveProfileFromNetwork =
+        Action<(), Profile, APIAccessError>(unwrapping: urlSession) {
+            $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
     }
+
+
+    // MARK: - Triggers to apply actions when their state changes
+
+//    private func setUpActionStateChangeTriggers() {
+//        urlSession.producer.skipNil().startWithValues { _ in  }
+//    }
+
 }
 
-let mc = ModelCoordinator2()
+let apiAccess = TogglAPIAccess2()
 
-let profileHolder = MutableProperty<Profile?>(nil)
-profileHolder <~ mc.profileAction.values.logEvents()
+let profile = MutableProperty<Profile?>(nil)
+profile <~ apiAccess.actionRetrieveProfileFromNetwork.values.logEvents(identifier: "action.values")
+let error = MutableProperty<APIAccessError?>(nil)
+error <~ apiAccess.actionRetrieveProfileFromNetwork.errors.logEvents(identifier: "action.errors")
 
-mc.profileAction.apply().start()
-print ("start")
+apiAccess.apiCredential <~
+    SignalProducer<TogglAPICredential, NoError>(value: TogglAPITokenCredential(apiToken: "8e536ec872a3900a616198ecb3415c03")!)
+
+apiAccess.actionRetrieveProfileFromNetwork.apply().start()
+
+//apiAccess.apiCredential <~
+//    SignalProducer<TogglAPICredential, NoError>(value: TogglAPITokenCredential(apiToken: "8e536ec872a3900a616198ecb3415c0")!)
+
+apiAccess.actionRetrieveProfileFromNetwork.apply().startWithResult { print ("result: \($0)") }

@@ -31,10 +31,6 @@ enum APIAccessError: Error {
 }
 
 
-internal let actionRetrieveProfile = Action<URLSession, Profile, APIAccessError> {
-    $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
-}
-
 // MARK: - TogglAPIAccess
 
 class TogglAPIAccess {
@@ -65,6 +61,9 @@ class TogglAPIAccess {
 
     // MARK: - Actions that do most of the actual work
 
+    internal let actionRetrieveProfile = Action<URLSession, Profile, APIAccessError> {
+        $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
+    }
 
 
     private let actionRetrieveProjects = Action<(URLSession, [WorkspaceID]), IndexedProjects, APIAccessError> {
