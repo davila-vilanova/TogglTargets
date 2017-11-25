@@ -67,9 +67,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             masterDetailController.runningEntry <~ modelCoordinator.runningEntry
         }
 
-        modelCoordinator.actionRetrieveProfile.apply().start()
-        modelCoordinator.actionRetrieveProjects.apply().start()
-        modelCoordinator.actionRetrieveReports.apply().start()
         modelCoordinator.actionRetrieveRunningEntry.apply().start()
     }
 

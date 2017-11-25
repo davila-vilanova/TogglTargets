@@ -34,29 +34,15 @@ enum APIAccessError: Error {
 // MARK: - TogglAPIAccess
 
 class TogglAPIAccess {
-    let reportPeriodsProducer: ReportPeriodsProducer
-
-    init (reportPeriodsProducer: ReportPeriodsProducer) {
-        self.reportPeriodsProducer = reportPeriodsProducer
-
-        latestProfile <~ actionRetrieveProfile.values
-        workspaceIDsFromLatestProfile <~ latestProfile.producer.skipNil().map { $0.workspaces.map { $0.id } }
-    }
-
 
     // MARK: - Exposed inputs
 
-    var apiCredential: BindingTarget<TogglAPICredential> { return _apiCredential.deoptionalizedBindingTarget }
+    internal var urlSession: BindingTarget<URLSession> { return _urlSession.deoptionalizedBindingTarget }
 
 
     // MARK: - Backing of inputs
 
-    private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
-
-
-    // MARK: - Derived properties
-
-    private lazy var urlSession = _apiCredential.producer.skipNil().map(URLSession.init)
+    private let _urlSession = MutableProperty<URLSession?>(nil)
 
 
     // MARK: - Actions that do most of the actual work
@@ -65,8 +51,7 @@ class TogglAPIAccess {
         $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
     }
 
-
-    private let actionRetrieveProjects = Action<(URLSession, [WorkspaceID]), IndexedProjects, APIAccessError> {
+    internal let actionRetrieveProjects = Action<(URLSession, [WorkspaceID]), IndexedProjects, APIAccessError> {
         (session, workspaceIDs) in
         let workspaceIDsProducer = SignalProducer(workspaceIDs) // will emit one value per workspace ID
         let projectsProducer: SignalProducer<[Project], APIAccessError> = workspaceIDsProducer
@@ -83,7 +68,7 @@ class TogglAPIAccess {
         }
     }
 
-    private let actionRetrieveReports =
+    internal let actionRetrieveReports =
         Action<(URLSession, [WorkspaceID], Period, Period?, Period), IndexedTwoPartTimeReports, APIAccessError> {
             (session, workspaceIDs, fullPeriod, periodUntilYesterday, todayPeriod) in
 
@@ -93,47 +78,24 @@ class TogglAPIAccess {
                 .map(generateIndexedReportsFromWorkedTimes)
     }
 
-    private let actionRetrieveRunningEntry = Action<URLSession, RunningEntry?, APIAccessError> {
+    internal let actionRetrieveRunningEntry = Action<URLSession, RunningEntry?, APIAccessError> {
         $0.togglAPIRequestProducer(for: RunningEntryService.endpoint, decoder: RunningEntryService.decodeRunningEntry)
     }
 
-    // MARK: Intermediate properties
-    /// Populated by some action's outputs, these properties hold data from which other actions will take in their input
+    // MARK: - Initialization and wiring
 
-    private let latestProfile = MutableProperty<Profile?>(nil)
-    private let workspaceIDsFromLatestProfile = MutableProperty<[WorkspaceID]?>(nil)
+    init (reportPeriodsProducer: ReportPeriodsProducer) {
+        let workspaceIDs = actionRetrieveProfile.values.map { $0.workspaces.map { $0.id } }
 
-
-    // MARK: - Output interface for consumer
-
-    func makeProfileProducer() -> SignalProducer<SignalProducer<Profile, APIAccessError>, NoError> {
-        return urlSession.map { [actionRetrieveProfile] in
-            actionRetrieveProfile.apply($0).mapError(assertProducerError)
-        }
-    }
-
-    func makeProjectsProducer() -> SignalProducer<SignalProducer<IndexedProjects, APIAccessError>, NoError> {
-        return urlSession.combineLatest(with: workspaceIDsFromLatestProfile.producer.skipNil())
-            .map { [actionRetrieveProjects] in
-                actionRetrieveProjects.apply($0).mapError(assertProducerError)
-        }
-    }
-
-    func makeReportsProducer() -> SignalProducer<SignalProducer<IndexedTwoPartTimeReports, APIAccessError>, NoError> {
-        return SignalProducer.combineLatest(urlSession,
-                                            workspaceIDsFromLatestProfile.producer.skipNil(),
-                                            reportPeriodsProducer.fullPeriod,
-                                            reportPeriodsProducer.previousToTodayPeriod,
-                                            reportPeriodsProducer.todayPeriod)
-            .map { [actionRetrieveReports] in
-                actionRetrieveReports.apply($0).mapError(assertProducerError)
-        }
-    }
-
-    func makeRunningEntryProducer() -> SignalProducer<SignalProducer<RunningEntry?, APIAccessError>, NoError> {
-        return urlSession.map { [actionRetrieveRunningEntry] in
-            actionRetrieveRunningEntry.apply($0).mapError(assertProducerError)
-        }
+        actionRetrieveProfile <~ _urlSession.producer.skipNil()
+        actionRetrieveProjects <~ SignalProducer.combineLatest(_urlSession.producer.skipNil(),
+                                                               workspaceIDs)
+        actionRetrieveReports <~ SignalProducer.combineLatest(_urlSession.producer.skipNil(),
+                                                              workspaceIDs,
+                                                              reportPeriodsProducer.fullPeriod,
+                                                              reportPeriodsProducer.previousToTodayPeriod,
+                                                              reportPeriodsProducer.todayPeriod)
+        // Running entry is only fetched on demand
     }
 }
 
@@ -189,21 +151,6 @@ fileprivate func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWo
         }
         return reports
 }
-
-// TODO: Reassess if any of the actions above can be attempted to run while not available
-// TODO: find a clearer name for this function if it's to be kept around
-func assertProducerError(actionError: ActionError<APIAccessError>) -> APIAccessError {
-    switch actionError {
-    case .disabled:
-        print("unexpected ActionError.disabled: \(actionError)")
-        return .loadingSubsystemError(underlyingError: NSError(domain: "this should be a fatal error", code: -1, userInfo: nil))
-    case .producerFailed(let apiAccessError):
-        return apiAccessError
-    }
-}
-
-
-
 
 
 // MARK: - URLSession
@@ -335,7 +282,6 @@ extension ReportsService {
             ReportsService.endpoint(workspaceId: workspaceId, since: since.iso8601String, until: until.iso8601String, userAgent: userAgent)
         }
     }
-
 }
 
 struct RunningEntryService: Decodable {
@@ -353,6 +299,3 @@ struct RunningEntryService: Decodable {
         return try decoder.decode(RunningEntryService.self, from: data).runningEntry
     }
 }
-
-
-

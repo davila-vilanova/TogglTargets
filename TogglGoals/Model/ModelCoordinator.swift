@@ -24,6 +24,12 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Data retrieval
 
+    private lazy var urlSession: Property<URLSession?> = {
+        let m = MutableProperty<URLSession?>(nil)
+        m <~ _apiCredential.producer.skipNil().map(URLSession.init)
+        return Property(capturing: m)
+    }()
+
     private lazy var apiAccess: TogglAPIAccess = {
         let reportPeriodsProducer = ReportPeriodsProducer()
         reportPeriodsProducer.startDate <~ reportsPeriod.map { $0.start }
@@ -31,7 +37,7 @@ internal class ModelCoordinator: NSObject {
         reportPeriodsProducer.calendar <~ calendar
         reportPeriodsProducer.now <~ now
         let aa = TogglAPIAccess(reportPeriodsProducer: reportPeriodsProducer)
-        aa.apiCredential <~ _apiCredential.producer.skipNil()
+        aa.urlSession <~ urlSession.producer.skipNil().logEvents(identifier: "urlSession")
         return aa
     }()
 
@@ -40,56 +46,39 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Exposed properties and signals
 
-    // TODO: attempt to simplify by keeping only the producer, or forward to apiAccess's producer producing function
-    internal lazy var actionRetrieveProfile = Action { [unowned self] in
-        self.apiAccess.makeProfileProducer()
-            .take(first: 1)
-            .flatten(.latest)
-    }
     private lazy var _profile: MutableProperty<Profile?> = {
         let m = MutableProperty<Profile?>(nil)
-        m <~ actionRetrieveProfile.values
+        m <~ actionRetryProfileRetrieval.values
         return m
     }()
     internal lazy var profile = Property(_profile)
-    
-
-    // can stay a property since it's updated periodically and there's a binding target somewhere which can be used to trigger retri(ev)al
-    internal lazy var actionRetrieveRunningEntry = Action { [unowned self] in
-        self.apiAccess.makeRunningEntryProducer()
-            .take(first: 1)
-            .flatten(.latest) // TODO: Generify
+    internal lazy var actionRetryProfileRetrieval = Action(unwrapping: urlSession) { [unowned self] state in
+        return self.apiAccess.actionRetrieveProfile.apply(state)
     }
-    private lazy var _runningEntry: MutableProperty<RunningEntry?> = {
-        let m = MutableProperty<RunningEntry?>(nil)
-        m <~ actionRetrieveRunningEntry.values // TODO: generalize too
-        return m
-    }()
-    internal lazy var runningEntry = Property(_runningEntry)
 
-    internal lazy var actionRetrieveProjects = Action { [unowned self] in
-        self.apiAccess.makeProjectsProducer()
-            .take(first: 1)
-            .flatten(.latest)
-    }
     private lazy var _projects: MutableProperty<IndexedProjects> = {
         let m = MutableProperty(IndexedProjects())
-        m <~ actionRetrieveProjects.values
+        m <~ apiAccess.actionRetrieveProjects.values
         return m
     }()
     internal lazy var projects = Property(_projects)
 
-    internal lazy var actionRetrieveReports = Action { [unowned self] in
-        self.apiAccess.makeReportsProducer()
-            .take(first: 1)
-            .flatten(.latest).logEvents(identifier: "1")
-    }
     private lazy var _reports: MutableProperty<IndexedTwoPartTimeReports> = {
         let m = MutableProperty(IndexedTwoPartTimeReports())
-        m <~ actionRetrieveReports.values.logEvents(identifier: "2")
+        m <~ apiAccess.actionRetrieveReports.values.logEvents(identifier: "2")
         return m
     }()
     internal lazy var reports = Property(_reports)
+
+    internal lazy var actionRetrieveRunningEntry = Action(unwrapping: urlSession) { [unowned self] state in
+        return self.apiAccess.actionRetrieveRunningEntry.apply(state)
+    }
+    private lazy var _runningEntry: MutableProperty<RunningEntry?> = {
+        let m = MutableProperty<RunningEntry?>(nil)
+        m <~ actionRetrieveRunningEntry.values // TODO: generalize
+        return m
+    }()
+    internal lazy var runningEntry = Property(_runningEntry)
 
     // TODO: use producer instead of property
     internal lazy var goals = Property(goalsStore.allGoals)
@@ -100,6 +89,7 @@ internal class ModelCoordinator: NSObject {
     internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
 
     internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
+
 
     // MARK: - Backing of exposed properties and signals
 
