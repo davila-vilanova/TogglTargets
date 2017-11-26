@@ -21,23 +21,20 @@ internal class ModelCoordinator: NSObject {
         SignalProducer.combineLatest(_periodPreference.producer.skipNil(), calendar.producer, now.producer)
             .map { $0.currentPeriod(for: $1, now: $2) }
 
+    private lazy var reportPeriodsProduxer: ReportPeriodsProducer = {
+        let p = ReportPeriodsProducer()
+        p.reportPeriod <~ reportsPeriod
+        p.calendar <~ calendar
+        p.now <~ now
+        return p
+    }()
+
 
     // MARK: - Data retrieval
 
-    private lazy var urlSession: Property<URLSession?> = {
-        let m = MutableProperty<URLSession?>(nil)
-        m <~ _apiCredential.producer.skipNil().map(URLSession.init)
-        return Property(capturing: m)
-    }()
-
     private lazy var apiAccess: TogglAPIAccess = {
-        let reportPeriodsProducer = ReportPeriodsProducer()
-        reportPeriodsProducer.startDate <~ reportsPeriod.map { $0.start }
-        reportPeriodsProducer.endDate <~ reportsPeriod.map { $0.end }
-        reportPeriodsProducer.calendar <~ calendar
-        reportPeriodsProducer.now <~ now
-        let aa = TogglAPIAccess(reportPeriodsProducer: reportPeriodsProducer)
-        aa.urlSession <~ urlSession.producer.skipNil().logEvents(identifier: "urlSession")
+        let aa = TogglAPIAccess()
+        aa.apiCredential <~ _apiCredential.producer.skipNil()
         return aa
     }()
 
@@ -48,13 +45,10 @@ internal class ModelCoordinator: NSObject {
 
     private lazy var _profile: MutableProperty<Profile?> = {
         let m = MutableProperty<Profile?>(nil)
-        m <~ actionRetryProfileRetrieval.values
+        m <~ apiAccess.actionRetrieveProfile.values
         return m
     }()
     internal lazy var profile = Property(_profile)
-    internal lazy var actionRetryProfileRetrieval = Action(unwrapping: urlSession) { [unowned self] state in
-        return self.apiAccess.actionRetrieveProfile.apply(state)
-    }
 
     private lazy var _projects: MutableProperty<IndexedProjects> = {
         let m = MutableProperty(IndexedProjects())
@@ -70,12 +64,9 @@ internal class ModelCoordinator: NSObject {
     }()
     internal lazy var reports = Property(_reports)
 
-    internal lazy var actionRetrieveRunningEntry = Action(unwrapping: urlSession) { [unowned self] state in
-        return self.apiAccess.actionRetrieveRunningEntry.apply(state)
-    }
     private lazy var _runningEntry: MutableProperty<RunningEntry?> = {
         let m = MutableProperty<RunningEntry?>(nil)
-        m <~ actionRetrieveRunningEntry.values // TODO: generalize
+        m <~ apiAccess.actionRetrieveRunningEntry.values // TODO: generalize
         return m
     }()
     internal lazy var runningEntry = Property(_runningEntry)
@@ -166,7 +157,7 @@ internal class ModelCoordinator: NSObject {
     // Connected outside the scope of property initializers to avoid a dependency cycle
     // between the initializers of apiAccess and runningEntryUpdateTimer
     private func connectRunningEntryUpdateTimer() {
-        actionRetrieveRunningEntry <~ runningEntryUpdateTimer.updateRunningEntry
+        apiAccess.actionRetrieveRunningEntry <~ runningEntryUpdateTimer.updateRunningEntry
     }
 
 
@@ -181,9 +172,15 @@ internal class ModelCoordinator: NSObject {
     private let scheduler = QueueScheduler.init(name: "ModelCoordinator-scheduler")
     private let (lifetime, token) = Lifetime.make()
 
+    private let (isEnabled1, isEnabled2, isEnabled3) = (MutableProperty(false), MutableProperty(false), MutableProperty(false))
+
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.goalsStore = goalsStore
         super.init()
+
+        apiAccess.actionRetrieveProfile.applyNextTimeEnabled()
+        apiAccess.actionRetrieveProjects.applyNextTimeEnabled()
+        apiAccess.actionRetrieveReports.applyNextTimeEnabled()
 
         connectRunningEntryUpdateTimer()
     }

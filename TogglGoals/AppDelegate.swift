@@ -66,8 +66,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             
             masterDetailController.runningEntry <~ modelCoordinator.runningEntry
         }
-
-        modelCoordinator.actionRetrieveRunningEntry.apply().start()
     }
 
     func applicationWillTerminate(_ notification: Notification) {

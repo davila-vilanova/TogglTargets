@@ -10,22 +10,26 @@ import Foundation
 import Result
 import ReactiveSwift
 
+struct TwoPartTimeReportPeriods {
+    let full: Period
+    let previousToToday: Period?
+    let today: Period?
+} // TODO
+
 /// ReportPeriodsProducer contains logic to calculate one to two subperiods given a start and and an end date
 /// represented by DayComponents...
 class ReportPeriodsProducer {
 
     // MARK: - Exposed inputs
 
-    var startDate: BindingTarget<DayComponents> { return _startDate.deoptionalizedBindingTarget }
-    var endDate: BindingTarget<DayComponents> { return _endDate.deoptionalizedBindingTarget }
+    var reportPeriod: BindingTarget<Period> { return _reportPeriod.deoptionalizedBindingTarget }
     var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
     var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
 
 
     // MARK: - Backing properties
 
-    private let _startDate = MutableProperty<DayComponents?>(nil)
-    private let _endDate = MutableProperty<DayComponents?>(nil)
+    private let _reportPeriod = MutableProperty<Period?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _now = MutableProperty<Date?>(nil)
 
@@ -41,28 +45,24 @@ class ReportPeriodsProducer {
     private lazy var yesterdayProducer: SignalProducer<DayComponents?, NoError>
         = SignalProducer.combineLatest(_calendar.producer.skipNil(),
                                        _now.producer.skipNil(),
-                                       _startDate.producer.skipNil())
-            .map { (calendar, now, startDate) in
-                return try? calendar.previousDay(for: now, notBefore: startDate)
+                                       _reportPeriod.producer.skipNil())
+            .map { (calendar, now, reportPeriod) in
+                return try? calendar.previousDay(for: now, notBefore: reportPeriod.start)
     }
 
-    // MARK: - Exposed outputs
+    // MARK: - Exposed output
 
-    lazy var fullPeriod: SignalProducer<Period, NoError> =
-        SignalProducer.combineLatest(_startDate.producer.skipNil(),
-                                     _endDate.producer.skipNil())
-            .map { Period(start: $0, end: $1) }
-
-    lazy var previousToTodayPeriod: SignalProducer<Period?, NoError> =
-        SignalProducer.combineLatest(_startDate.producer.skipNil(), yesterdayProducer)
-            .map { (start, yesterdayOrNil) in
-                if let yesterday = yesterdayOrNil {
-                    return Period(start: start, end: yesterday)
-                } else {
-                    return nil
-                }
+    lazy var twoPartPeriod: SignalProducer<TwoPartTimeReportPeriods, NoError> =
+        SignalProducer.combineLatest(_reportPeriod.producer.skipNil(), yesterdayProducer, todayProducer)
+            .map { (fullPeriod, yesterdayOrNil, today) in
+                let previousToToday: Period? = {
+                    if let yesterday = yesterdayOrNil {
+                        return Period(start: fullPeriod.start, end: yesterday)
+                    } else {
+                        return nil
+                    }
+                }()
+                let todayPeriod = Period(start: today, end: today)
+                return TwoPartTimeReportPeriods(full: fullPeriod, previousToToday: previousToToday, today: todayPeriod)
     }
-
-    lazy var todayPeriod: SignalProducer<Period, NoError> =
-        todayProducer.map { Period(start: $0, end: $0) }
 }

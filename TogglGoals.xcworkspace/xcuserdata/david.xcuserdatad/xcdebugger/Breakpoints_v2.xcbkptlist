@@ -2,4 +2,54 @@
 <Bucket
    type = "0"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TogglGoals/Model/TogglAPIAccess.swift"
+            timestampString = "533395377.645495"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
+            landmarkName = "applyNextTimeEnabled()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 () -&gt; () in (extension in TogglGoals):ReactiveSwift.Action&lt;A, B, C where A == (), C: Swift.Error&gt;.applyNextTimeEnabled(ReactiveSwift.MutableProperty&lt;Swift.Bool&gt;) -&gt; ()"
+                  moduleName = "TogglGoals"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/david/devspace/togglreports/TogglGoals/TogglGoals/Model/TogglAPIAccess.swift"
+                  timestampString = "533395330.512342"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "143"
+                  endingLineNumber = "143"
+                  offsetFromSymbolStart = "22">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 () -&gt; () in (extension in TogglGoals_MacOS):ReactiveSwift.Action&lt;A, B, C where A == (), C: Swift.Error&gt;.applyNextTimeEnabled(ReactiveSwift.MutableProperty&lt;Swift.Bool&gt;) -&gt; ()"
+                  moduleName = "TogglGoals_MacOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/david/devspace/togglreports/TogglGoals/TogglGoals/Model/TogglAPIAccess.swift"
+                  timestampString = "533395330.700541"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "143"
+                  endingLineNumber = "143"
+                  offsetFromSymbolStart = "22">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

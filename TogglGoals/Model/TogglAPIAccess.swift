@@ -37,65 +37,110 @@ class TogglAPIAccess {
 
     // MARK: - Exposed inputs
 
-    internal var urlSession: BindingTarget<URLSession> { return _urlSession.deoptionalizedBindingTarget }
-
+    internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
+    internal var twoPartTimeReportPeriods: BindingTarget<TwoPartTimeReportPeriods> { return _twoPartTimeReportPeriods.deoptionalizedBindingTarget }
 
     // MARK: - Backing of inputs
 
-    private let _urlSession = MutableProperty<URLSession?>(nil)
+    private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
+    private let _twoPartTimeReportPeriods = MutableProperty<TwoPartTimeReportPeriods?>(nil)
+
+    // MARK: - Intermediary properties
+
+    private lazy var urlSession: Property<URLSession?> = {
+        let m = MutableProperty<URLSession?>(nil)
+        m <~ _apiCredential.producer.skipNil().map(URLSession.init)
+        return Property(capturing: m)
+    }()
+
+    private lazy var workspaceIDs: Property<[WorkspaceID]?> = {
+        let m = MutableProperty<[WorkspaceID]?>(nil)
+        m <~ actionRetrieveProfile.values.map { $0.workspaces.map { $0.id } }
+        return Property(capturing: m)
+    }()
+
+    private lazy var retrieveProjectsInput: Property<(URLSession, [WorkspaceID])?> = {
+        let m = MutableProperty<(URLSession, [WorkspaceID])?>(nil)
+        m <~ SignalProducer.combineLatest(urlSession, workspaceIDs).map {
+            urlSessionOrNil, workspaceIDsOrNil -> (URLSession, [WorkspaceID])? in
+            if let urlSession = urlSessionOrNil,
+                let workspaceIDs = workspaceIDsOrNil {
+                return (urlSession, workspaceIDs)
+            } else {
+                return nil
+            }
+        }
+        return Property(capturing: m)
+    }()
+
+    private lazy var retrieveReportsInput: Property<(URLSession, [WorkspaceID], TwoPartTimeReportPeriods)?> = {
+        let m = MutableProperty<(URLSession, [WorkspaceID], TwoPartTimeReportPeriods)?>(nil)
+        m <~ SignalProducer.combineLatest(urlSession, workspaceIDs, _twoPartTimeReportPeriods).map {
+            urlSessionOrNil, workspaceIDsOrNil, twoPartTimeReportPeriodsOrNil -> (URLSession, [WorkspaceID], TwoPartTimeReportPeriods)? in
+            if let urlSession = urlSessionOrNil,
+                let workspaceIDs = workspaceIDsOrNil,
+                let twoPartTimeReportPeriods = twoPartTimeReportPeriodsOrNil {
+                return (urlSession, workspaceIDs, twoPartTimeReportPeriods)
+            } else {
+                return nil
+            }
+        }
+        return Property(capturing: m)
+    }()
 
 
     // MARK: - Actions that do most of the actual work
 
-    internal let actionRetrieveProfile = Action<URLSession, Profile, APIAccessError> {
+    internal lazy var actionRetrieveProfile = Action<(), Profile, APIAccessError>(unwrapping: urlSession) {
         $0.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
     }
 
-    internal let actionRetrieveProjects = Action<(URLSession, [WorkspaceID]), IndexedProjects, APIAccessError> {
-        (session, workspaceIDs) in
-        let workspaceIDsProducer = SignalProducer(workspaceIDs) // will emit one value per workspace ID
-        let projectsProducer: SignalProducer<[Project], APIAccessError> = workspaceIDsProducer
-            .map(ProjectsService.endpoint)
-            .map { [session] endpoint in
-                session.togglAPIRequestProducer(for: endpoint, decoder: ProjectsService.decodeProjects)
-            } // will emit one [Project] producer per endpoint, then complete
-            .flatten(.concat)
+    internal lazy var actionRetrieveProjects: Action<(), IndexedProjects, APIAccessError> = {
+        let execute: (URLSession, [WorkspaceID]) -> SignalProducer<IndexedProjects, APIAccessError> = {
+            (session, workspaceIDs) in
+            let workspaceIDsProducer = SignalProducer(workspaceIDs) // will emit one value per workspace ID
+            let projectsProducer: SignalProducer<[Project], APIAccessError> = workspaceIDsProducer
+                .map(ProjectsService.endpoint)
+                .map { [session] endpoint in
+                    session.togglAPIRequestProducer(for: endpoint, decoder: ProjectsService.decodeProjects)
+                } // will emit one [Project] producer per endpoint, then complete
+                .flatten(.concat)
 
-        return projectsProducer.reduce(into: IndexedProjects()) { (indexedProjects, projects) in
-            for project in projects {
-                indexedProjects[project.id] = project
+            return projectsProducer.reduce(into: IndexedProjects()) { (indexedProjects, projects) in
+                for project in projects {
+                    indexedProjects[project.id] = project
+                }
             }
         }
-    }
+        return Action<(), IndexedProjects, APIAccessError>(unwrapping: retrieveProjectsInput, execute: execute)
+    }()
 
-    internal let actionRetrieveReports =
-        Action<(URLSession, [WorkspaceID], Period, Period?, Period), IndexedTwoPartTimeReports, APIAccessError> {
-            (session, workspaceIDs, fullPeriod, periodUntilYesterday, todayPeriod) in
-
-            let workedUntilYesterday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: periodUntilYesterday)
-            let workedToday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: todayPeriod)
-            return SignalProducer.combineLatest(workedUntilYesterday, workedToday, SignalProducer(value: fullPeriod))
+    internal lazy var actionRetrieveReports: Action<(), IndexedTwoPartTimeReports, APIAccessError> = {
+        let execute: (URLSession, [WorkspaceID], TwoPartTimeReportPeriods) -> SignalProducer<IndexedTwoPartTimeReports, APIAccessError> = {
+            (session, workspaceIDs, periods) in
+            let workedUntilYesterday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: periods.previousToToday)
+            let workedToday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: periods.today)
+            return SignalProducer.combineLatest(workedUntilYesterday, workedToday, SignalProducer(value: periods.full))
                 .map(generateIndexedReportsFromWorkedTimes)
-    }
+        }
+        return Action<(), IndexedTwoPartTimeReports, APIAccessError>(unwrapping: retrieveReportsInput, execute: execute)
+    }()
 
-    internal let actionRetrieveRunningEntry = Action<URLSession, RunningEntry?, APIAccessError> {
+    internal lazy var actionRetrieveRunningEntry = Action<(), RunningEntry?, APIAccessError>(unwrapping: urlSession) {
         $0.togglAPIRequestProducer(for: RunningEntryService.endpoint, decoder: RunningEntryService.decodeRunningEntry)
     }
+}
 
-    // MARK: - Initialization and wiring
-
-    init (reportPeriodsProducer: ReportPeriodsProducer) {
-        let workspaceIDs = actionRetrieveProfile.values.map { $0.workspaces.map { $0.id } }
-
-        actionRetrieveProfile <~ _urlSession.producer.skipNil()
-        actionRetrieveProjects <~ SignalProducer.combineLatest(_urlSession.producer.skipNil(),
-                                                               workspaceIDs)
-        actionRetrieveReports <~ SignalProducer.combineLatest(_urlSession.producer.skipNil(),
-                                                              workspaceIDs,
-                                                              reportPeriodsProducer.fullPeriod,
-                                                              reportPeriodsProducer.previousToTodayPeriod,
-                                                              reportPeriodsProducer.todayPeriod)
-        // Running entry is only fetched on demand
+extension Action where Input == () {
+    func applyNextTimeEnabled() {
+        self.isEnabled
+            .producer
+            .filter { $0 } // only trues
+            .take(first: 1) // only first filtered value
+            .map { _ in () }
+            .startWithValues { [unowned self] in
+                self.apply().start()
+        }
     }
 }
 
