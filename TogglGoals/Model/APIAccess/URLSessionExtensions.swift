@@ -11,8 +11,11 @@ import Result
 import ReactiveSwift
 
 extension URLSession {
-    convenience init(togglAPICredential: TogglAPICredential) {
-        let authHeaders: [String: String] = [ togglAPICredential.authHeaderKey : togglAPICredential.authHeaderValue ]
+    convenience init?(togglAPICredential: TogglAPICredential?) {
+        guard let credential = togglAPICredential else {
+            return nil
+        }
+        let authHeaders: [String: String] = [ credential.authHeaderKey : credential.authHeaderValue ]
         let config = URLSessionConfiguration.default
         config.httpAdditionalHeaders = authHeaders
         self.init(configuration: config)

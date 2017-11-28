@@ -15,6 +15,28 @@ typealias BindingTargetProvidingAction<Value> = Action<Int64, BindingTarget<Valu
 
 internal class ModelCoordinator: NSObject {
 
+    // MARK: - Exposed binding targets
+
+    internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
+    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
+
+    private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
+    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
+
+
+    // MARK: - Current time and calendar
+
+    internal lazy var now = Property(_now)
+    internal lazy var calendar = Property(_calendar)
+
+    private lazy var _now = MutableProperty(scheduler.currentDate)
+    private lazy var _calendar: MutableProperty<Calendar> = {
+        var cal = Calendar(identifier: .iso8601)
+        cal.locale = Locale.current // TODO: get from user profile
+        return MutableProperty(cal)
+    }()
+
+
     // MARK: Working dates
 
     private lazy var reportsPeriod: SignalProducer<Period, NoError> =
@@ -30,71 +52,104 @@ internal class ModelCoordinator: NSObject {
     }()
 
 
-    // MARK: - Data retrieval
+    // MARK: - URLSession derived from TogglAPICredential
 
-    private lazy var apiAccess: TogglAPIAccess = {
-        let aa = TogglAPIAccess()
-        aa.apiCredential <~ _apiCredential.producer.skipNil()
-        return aa
+    private lazy var urlSession: MutableProperty<URLSession?> = {
+        let p = MutableProperty<URLSession?>(nil)
+        p <~ _apiCredential.map(URLSession.init)
+        return p
     }()
 
-    private let goalsStore: GoalsStore
 
+    // MARK: - Profile
 
-    // MARK: - Exposed properties and signals
+    private let retrieveProfileNetworkAction: RetrieveProfileNetworkAction
+    private let retrieveProfileCacheAction: RetrieveProfileCacheAction
+    private let storeProfileCacheAction: StoreProfileCacheAction
 
     private lazy var _profile: MutableProperty<Profile?> = {
         let m = MutableProperty<Profile?>(nil)
-        m <~ apiAccess.actionRetrieveProfile.values
+        m <~ Signal.merge(retrieveProfileNetworkAction.values,
+                          retrieveProfileCacheAction.values.skipNil())
         return m
     }()
     internal lazy var profile = Property(_profile)
 
+
+    // MARK: - Projects
+
+    private let retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction
+
     private lazy var _projects: MutableProperty<IndexedProjects> = {
         let m = MutableProperty(IndexedProjects())
-        m <~ apiAccess.actionRetrieveProjects.values
+        m <~ retrieveProjectsNetworkAction.values
         return m
     }()
     internal lazy var projects = Property(_projects)
 
+
+    // MARK: - Reports
+
+    private let retrieveReportsNetworkAction: RetrieveReportsNetworkAction
+
     private lazy var _reports: MutableProperty<IndexedTwoPartTimeReports> = {
         let m = MutableProperty(IndexedTwoPartTimeReports())
-        m <~ apiAccess.actionRetrieveReports.values.logEvents(identifier: "2")
+        m <~ retrieveReportsNetworkAction.values
         return m
     }()
     internal lazy var reports = Property(_reports)
 
+    /// Each invocation of this Producer will deliver a single value and then complete.
+    /// The value is an Action which takes a project ID as input and returns a Property
+    /// that conveys the values of the time report associated with the provided project ID.
+    internal lazy var reportReadProviderProducer = SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError> { [unowned self] observer, lifetime in
+        let action = Action<Int64, Property<TwoPartTimeReport?>, NoError>() { projectId in
+            let extracted = self.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
+            return SignalProducer<Property<TwoPartTimeReport?>, NoError>(value: extracted)
+        }
+        observer.send(value: action)
+        observer.sendCompleted()
+    }
+
+
+    // MARK: - RunningEntry
+
+    private let retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction
+
     private lazy var _runningEntry: MutableProperty<RunningEntry?> = {
         let m = MutableProperty<RunningEntry?>(nil)
-        m <~ apiAccess.actionRetrieveRunningEntry.values // TODO: generalize
+        m <~ retrieveRunningEntryNetworkAction.values
         return m
     }()
     internal lazy var runningEntry = Property(_runningEntry)
 
-    // TODO: use producer instead of property
-    internal lazy var goals = Property(goalsStore.allGoals)
-
-    internal lazy var now = Property(_now)
-    internal lazy var calendar = Property(_calendar)
-
-    internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
-
-    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
-
-
-    // MARK: - Backing of exposed properties and signals
-
-    private lazy var _now = MutableProperty(scheduler.currentDate)
-    private lazy var _calendar: MutableProperty<Calendar> = {
-        var cal = Calendar(identifier: .iso8601)
-        cal.locale = Locale.current // TODO: get from user profile
-        return MutableProperty(cal)
+    private lazy var runningEntryUpdateTimer: RunningEntryUpdateTimer = {
+        let t = RunningEntryUpdateTimer()
+        t.runningEntryStart <~ runningEntry.map { $0?.start }
+        updateNow <~ t.updateRunningEntry
+        return t
     }()
-    private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
 
-    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
+
+    // Connected outside the scope of property initializers to avoid a dependency cycle
+    // between the initializers of apiAccess and runningEntryUpdateTimer
+    private func connectRunningEntryUpdateTimer() {
+        retrieveRunningEntryNetworkAction <~ runningEntryUpdateTimer.updateRunningEntry.producer
+            .combineLatest(with: urlSession)
+            .map { _, session in session }
+    }
+
+    private lazy var updateNow = BindingTarget<()>(on: scheduler, lifetime: lifetime) { [_now, scheduler] in
+        _now <~ SignalProducer(value: scheduler.currentDate)
+    }
+
 
     // MARK: - Goals
+
+    private let goalsStore: GoalsStore
+
+    // TODO: use producer instead of property
+    internal lazy var goals = Property(goalsStore.allGoals)
 
     /// Each invocation of this Producer will deliver a single value and then complete.
     /// The value is an Action which takes a project ID as input and returns a Property
@@ -129,46 +184,6 @@ internal class ModelCoordinator: NSObject {
     }
 
 
-    // MARK: - Reports
-
-    /// Each invocation of this Producer will deliver a single value and then complete.
-    /// The value is an Action which takes a project ID as input and returns a Property
-    /// that conveys the values of the time report associated with the provided project ID.
-    internal lazy var reportReadProviderProducer = SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError> { [unowned self] observer, lifetime in
-        let action = Action<Int64, Property<TwoPartTimeReport?>, NoError>() { projectId in
-            let extracted = self.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
-            return SignalProducer<Property<TwoPartTimeReport?>, NoError>(value: extracted)
-        }
-        observer.send(value: action)
-        observer.sendCompleted()
-    }
-
-
-    // MARK: - Running entry update
-
-    private lazy var runningEntryUpdateTimer: RunningEntryUpdateTimer = {
-        let t = RunningEntryUpdateTimer()
-        t.runningEntryStart <~ runningEntry.map { $0?.start }
-        updateNow <~ t.updateRunningEntry
-        return t
-    }()
-
-
-    // Connected outside the scope of property initializers to avoid a dependency cycle
-    // between the initializers of apiAccess and runningEntryUpdateTimer
-    private func connectRunningEntryUpdateTimer() {
-        apiAccess.actionRetrieveRunningEntry <~ runningEntryUpdateTimer.updateRunningEntry.producer
-            .combineLatest(with: apiAccess.urlSession.producer.skipNil())
-            .map { _, session in session }
-    }
-
-
-    // MARK: - Current time (now) update
-
-    private lazy var updateNow = BindingTarget<()>(on: scheduler, lifetime: lifetime) { [_now, scheduler] in
-        _now <~ SignalProducer(value: scheduler.currentDate)
-    }
-
     // MARK: -
 
     private let scheduler = QueueScheduler.init(name: "ModelCoordinator-scheduler")
@@ -176,7 +191,20 @@ internal class ModelCoordinator: NSObject {
 
     private let (isEnabled1, isEnabled2, isEnabled3) = (MutableProperty(false), MutableProperty(false), MutableProperty(false))
 
-    internal init(cache: ModelCache, goalsStore: GoalsStore) {
+    internal init(retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
+                  retrieveProfileCacheAction: RetrieveProfileCacheAction,
+                  storeProfileCacheAction: StoreProfileCacheAction,
+                  retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction,
+                  retrieveReportsNetworkAction: RetrieveReportsNetworkAction,
+                  retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction,
+                  goalsStore: GoalsStore) {
+
+        self.retrieveProfileNetworkAction = retrieveProfileNetworkAction
+        self.retrieveProfileCacheAction = retrieveProfileCacheAction
+        self.storeProfileCacheAction = storeProfileCacheAction
+        self.retrieveProjectsNetworkAction = retrieveProjectsNetworkAction
+        self.retrieveReportsNetworkAction = retrieveReportsNetworkAction
+        self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkAction
         self.goalsStore = goalsStore
         super.init()
 

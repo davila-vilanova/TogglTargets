@@ -9,10 +9,13 @@
 import Foundation
 import ReactiveSwift
 
-typealias RetrieveRunningEntryNetworkAction = Action<URLSession, RunningEntry?, APIAccessError>
+typealias RetrieveRunningEntryNetworkAction = Action<URLSession?, RunningEntry?, APIAccessError>
 func makeRetrieveRunningEntryNetworkAction() -> RetrieveRunningEntryNetworkAction {
-    return RetrieveRunningEntryNetworkAction {
-        $0.togglAPIRequestProducer(for: RunningEntryService.endpoint, decoder: RunningEntryService.decodeRunningEntry)
+    return RetrieveRunningEntryNetworkAction { sessionOrNil in
+        guard let session = sessionOrNil else {
+            return SignalProducer(error: APIAccessError.noCredentials)
+        }
+        return session.togglAPIRequestProducer(for: RunningEntryService.endpoint, decoder: RunningEntryService.decodeRunningEntry)
     }
 }
 

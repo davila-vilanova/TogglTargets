@@ -35,9 +35,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             fatalError("Can't access app support directory")
         }
 
-        let modelCache = ModelCache()
         if let goalsStore = GoalsStore(baseDirectory: supportDir) {
-            modelCoordinator = ModelCoordinator(cache: modelCache, goalsStore: goalsStore)
+            modelCoordinator =
+                ModelCoordinator(retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
+                                 retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),
+                                 storeProfileCacheAction: makeStoreProfileCacheAction(),
+                                 retrieveProjectsNetworkAction: makeRetrieveProjectsNetworkAction(),
+                                 retrieveReportsNetworkAction: makeRetrieveReportsNetworkAction(),
+                                 retrieveRunningEntryNetworkAction: makeRetrieveRunningEntryNetworkAction(),
+                                 goalsStore: goalsStore)
         } else {
             fatalError("Goals store failed to initialize")
         }
