@@ -21,7 +21,7 @@ internal class ModelCoordinator: NSObject {
         SignalProducer.combineLatest(_periodPreference.producer.skipNil(), calendar.producer, now.producer)
             .map { $0.currentPeriod(for: $1, now: $2) }
 
-    private lazy var reportPeriodsProduxer: ReportPeriodsProducer = {
+    private lazy var reportPeriodsProducer: ReportPeriodsProducer = {
         let p = ReportPeriodsProducer()
         p.reportPeriod <~ reportsPeriod
         p.calendar <~ calendar
@@ -157,7 +157,9 @@ internal class ModelCoordinator: NSObject {
     // Connected outside the scope of property initializers to avoid a dependency cycle
     // between the initializers of apiAccess and runningEntryUpdateTimer
     private func connectRunningEntryUpdateTimer() {
-        apiAccess.actionRetrieveRunningEntry <~ runningEntryUpdateTimer.updateRunningEntry
+        apiAccess.actionRetrieveRunningEntry <~ runningEntryUpdateTimer.updateRunningEntry.producer
+            .combineLatest(with: apiAccess.urlSession.producer.skipNil())
+            .map { _, session in session }
     }
 
 
@@ -177,10 +179,6 @@ internal class ModelCoordinator: NSObject {
     internal init(cache: ModelCache, goalsStore: GoalsStore) {
         self.goalsStore = goalsStore
         super.init()
-
-        apiAccess.actionRetrieveProfile.applyNextTimeEnabled()
-        apiAccess.actionRetrieveProjects.applyNextTimeEnabled()
-        apiAccess.actionRetrieveReports.applyNextTimeEnabled()
 
         connectRunningEntryUpdateTimer()
     }

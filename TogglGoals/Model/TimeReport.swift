@@ -8,29 +8,31 @@
 
 import Foundation
 
+typealias WorkedTime = TimeInterval
+
 protocol TimeReport {
     var projectId: Int64 { get }
     var since: DayComponents { get }
     var until: DayComponents { get }
-    var workedTime: TimeInterval { get }
+    var workedTime: WorkedTime { get }
 }
 
 struct SingleTimeReport: TimeReport {
     let projectId: Int64
     let since: DayComponents
     let until: DayComponents
-    let workedTime: TimeInterval
+    let workedTime: WorkedTime
 }
 
 struct TwoPartTimeReport: TimeReport {
     let projectId: Int64
     let since: DayComponents
     let until: DayComponents
-    var workedTime: TimeInterval {
+    var workedTime: WorkedTime {
         return workedTimeUntilYesterday + workedTimeToday
     }
-    let workedTimeUntilYesterday: TimeInterval
-    let workedTimeToday: TimeInterval
+    let workedTimeUntilYesterday: WorkedTime
+    let workedTimeToday: WorkedTime
 }
 
 extension SingleTimeReport: CustomDebugStringConvertible {

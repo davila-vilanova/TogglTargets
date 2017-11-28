@@ -28,7 +28,9 @@ struct Profile: Decodable {
     }
 }
 
+typealias WorkspaceID = Int64
+
 struct Workspace: Decodable {
-    let id: Int64
+    let id: WorkspaceID
     let name: String?
 }

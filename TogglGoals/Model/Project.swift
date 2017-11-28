@@ -8,8 +8,10 @@
 
 import Foundation
 
+typealias ProjectID = Int64
+
 struct Project: Decodable {
-    let id: Int64
+    let id: ProjectID
     let name: String?
     let active: Bool?
     let workspaceId: Int64?
@@ -21,3 +23,5 @@ struct Project: Decodable {
         case workspaceId = "wid"
     }
 }
+
+typealias IndexedProjects = [ProjectID : Project]
