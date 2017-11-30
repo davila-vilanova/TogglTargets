@@ -167,20 +167,20 @@ class LoginViewController: NSViewController, ViewControllerContaining {
 
         return Action<(), CredentialValidationResult, NoError>(
             state: latestSeenCredential,
-            enabledIf: { $0 != nil },
-            execute: { (credentialOrNil, _) -> SignalProducer<CredentialValidationResult, NoError> in
+            enabledIf: { [retrieveProfileNetworkAction] in $0 != nil && retrieveProfileNetworkAction.isEnabled.value },
+            execute: { [retrieveProfileNetworkAction] (credentialOrNil, _) -> SignalProducer<CredentialValidationResult, NoError> in
                 guard let credential = credentialOrNil else {
                     assert(false, "credential should not be nil if the action is enabled")
                     return SignalProducer(value: CredentialValidationResult.other)
                 }
                 let session = URLSession(togglAPICredential: credential)
                 // profileProducer generates a single value of type profile or triggers an error
-                let profileProducer = session.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
+                let profileProducer = retrieveProfileNetworkAction.apply(session)
                 // profileOrErrorProducer generates a single value of type Result that can contain a profile value or an error
-                let profileOrErrorProducer = profileProducer.materialize().map { event -> Result<Profile, APIAccessError>? in
+                let profileOrErrorProducer = profileProducer.materialize().map { event -> Result<Profile, ActionError<APIAccessError>>? in
                     switch event {
-                    case let .value(val): return Result<Profile, APIAccessError>(value: val)
-                    case let .failed(err): return Result<Profile, APIAccessError>(error: err)
+                    case let .value(val): return Result(value: val)
+                    case let .failed(err): return Result(error: err)
                     default: return nil
                     }
                     }
@@ -189,12 +189,15 @@ class LoginViewController: NSViewController, ViewControllerContaining {
                 return profileOrErrorProducer.map { (result) -> CredentialValidationResult in
                     switch result {
                     case let .success(profile): return CredentialValidationResult.valid(TogglAPITokenCredential(apiToken: profile.apiToken!)!, profile)
-                    case .failure(.authenticationError): return CredentialValidationResult.invalid
-                    case let .failure(apiAccessError): return CredentialValidationResult.error(apiAccessError)
+                    case .failure(.disabled): return CredentialValidationResult.other // should never run if inner action disabled
+                    case .failure(.producerFailed(.authenticationError)): return CredentialValidationResult.invalid
+                    case let .failure(.producerFailed(apiAccessError)): return CredentialValidationResult.error(apiAccessError)
                     }
                 }
         })
     }()
+
+    private let retrieveProfileNetworkAction = makeRetrieveProfileNetworkAction()
 
     private lazy var displaySpinner =
         BindingTarget<Bool>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (spin: Bool) -> Void in

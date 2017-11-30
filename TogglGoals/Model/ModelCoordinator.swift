@@ -63,16 +63,14 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Profile
 
-    private let retrieveProfileNetworkAction: RetrieveProfileNetworkAction
+    /*private*/ let retrieveProfileNetworkAction: RetrieveProfileNetworkAction
+    private var currentRetrieveProfileNetworkDisposable: Disposable?
+    private var keepAroundActionInputFeedDisposable: Disposable?
+    private var keepAroundIsEnabledDisposable: Disposable?
     private let retrieveProfileCacheAction: RetrieveProfileCacheAction
     private let storeProfileCacheAction: StoreProfileCacheAction
 
-    private lazy var _profile: MutableProperty<Profile?> = {
-        let m = MutableProperty<Profile?>(nil)
-        m <~ Signal.merge(retrieveProfileNetworkAction.values,
-                          retrieveProfileCacheAction.values.skipNil())
-        return m
-    }()
+    private lazy var _profile = MutableProperty<Profile?>(nil)
     internal lazy var profile = Property(_profile)
 
 
@@ -80,11 +78,7 @@ internal class ModelCoordinator: NSObject {
 
     private let retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction
 
-    private lazy var _projects: MutableProperty<IndexedProjects> = {
-        let m = MutableProperty(IndexedProjects())
-        m <~ retrieveProjectsNetworkAction.values
-        return m
-    }()
+    private lazy var _projects = MutableProperty(IndexedProjects())
     internal lazy var projects = Property(_projects)
 
 
@@ -92,11 +86,7 @@ internal class ModelCoordinator: NSObject {
 
     private let retrieveReportsNetworkAction: RetrieveReportsNetworkAction
 
-    private lazy var _reports: MutableProperty<IndexedTwoPartTimeReports> = {
-        let m = MutableProperty(IndexedTwoPartTimeReports())
-        m <~ retrieveReportsNetworkAction.values
-        return m
-    }()
+    private lazy var _reports = MutableProperty(IndexedTwoPartTimeReports())
     internal lazy var reports = Property(_reports)
 
     /// Each invocation of this Producer will deliver a single value and then complete.
@@ -189,8 +179,6 @@ internal class ModelCoordinator: NSObject {
     private let scheduler = QueueScheduler.init(name: "ModelCoordinator-scheduler")
     private let (lifetime, token) = Lifetime.make()
 
-    private let (isEnabled1, isEnabled2, isEnabled3) = (MutableProperty(false), MutableProperty(false), MutableProperty(false))
-
     internal init(retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
                   retrieveProfileCacheAction: RetrieveProfileCacheAction,
                   storeProfileCacheAction: StoreProfileCacheAction,
@@ -207,6 +195,33 @@ internal class ModelCoordinator: NSObject {
         self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkAction
         self.goalsStore = goalsStore
         super.init()
+
+//        keepAroundIsEnabledDisposable = retrieveProfileNetworkAction.isEnabled.producer.startWithValues { print("isEnabled=\($0)") }
+
+        keepAroundActionInputFeedDisposable = urlSession.producer.startWithValues { [unowned self] session in
+            if let disposable = self.currentRetrieveProfileNetworkDisposable {
+                print("will dispose - action.isEnabled=\(self.retrieveProfileNetworkAction.isEnabled.value)")
+                disposable.dispose()
+                self.currentRetrieveProfileNetworkDisposable = nil
+                print("did dispose - action.isEnabled=\(retrieveProfileNetworkAction)")
+            }
+            print("will apply - action.isEnabled=\(self.retrieveReportsNetworkAction.isEnabled.value)")
+            self.currentRetrieveProfileNetworkDisposable = self.retrieveProfileNetworkAction.apply(session).logEvents(identifier: "profile producer").start()
+        }
+//        retrieveProfileNetworkAction <~ urlSession
+        _profile <~ Signal.merge(retrieveProfileNetworkAction.values,
+                                 retrieveProfileCacheAction.values.skipNil())
+        storeProfileCacheAction <~ retrieveProfileNetworkAction.values
+
+        let workspaceIDs = _profile.producer.skipNil().map { $0.workspaces.map { $0.id } }
+
+        retrieveProjectsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(), workspaceIDs)
+        _projects <~ retrieveProjectsNetworkAction.values
+
+        retrieveReportsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(),
+                                                                     workspaceIDs,
+                                                                     reportPeriodsProducer.twoPartPeriod)
+        _reports <~ retrieveReportsNetworkAction.values
 
         connectRunningEntryUpdateTimer()
     }

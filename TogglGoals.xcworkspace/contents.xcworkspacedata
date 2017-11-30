@@ -2,13 +2,16 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:ApplyActionNextTimeEnabled.playground">
+      location = "group:SendLockTrip/SendLockTrip.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ValueHoldingAction.playground">
+      location = "group:/Users/david/devspace/togglreports/TogglGoals/SelfCancellingAction.playground">
    </FileRef>
    <FileRef
-      location = "group:ActionBased.playground">
+      location = "group:/Users/david/devspace/togglreports/TogglGoals/ActionChaining.playground">
+   </FileRef>
+   <FileRef
+      location = "group:/Users/david/devspace/togglreports/TogglGoals/ModelCoordinator.playground">
    </FileRef>
    <FileRef
       location = "group:Carthage/Checkouts/ReactiveCocoa/ReactiveCocoa.xcodeproj">

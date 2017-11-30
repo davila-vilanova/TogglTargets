@@ -35,7 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             fatalError("Can't access app support directory")
         }
 
-        if let goalsStore = GoalsStore(baseDirectory: supportDir) {
+        if let goalsStore = SQLiteGoalsStore(baseDirectory: supportDir) {
             modelCoordinator =
                 ModelCoordinator(retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
                                  retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),

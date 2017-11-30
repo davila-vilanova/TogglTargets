@@ -10,17 +10,24 @@ import Foundation
 import SQLite
 import ReactiveSwift
 
-class GoalsStore {
+protocol GoalsStore {
+    var allGoals: Property<[ProjectID : Goal]> { get }
+    func goalProperty(for projectId: ProjectID) -> Property<Goal?>
+    func goalBindingTarget(for projectId: ProjectID) -> BindingTarget<Goal?>
+    func goalExists(for projectId: ProjectID) -> Bool
+}
+
+class SQLiteGoalsStore: GoalsStore {
     private let db: Connection
 
     private let goalsTable = Table("time_goal")
     private let idExpression = Expression<Int64>("id")
-    private let projectIdExpression = Expression<Int64>("project_id")
+    private let projectIdExpression = Expression<ProjectID>("project_id")
     private let hoursPerMonthExpression = Expression<Int>("hours_per_month")
     private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
 
     lazy var allGoals = Property(_allGoals)
-    private var _allGoals = MutableProperty([Int64 : Goal]())
+    private var _allGoals = MutableProperty([ProjectID : Goal]())
 
     private let (lifetime, token) = Lifetime.make()
     private lazy var writeScheduler = QueueScheduler(name: "GoalsStore-writeScheduler")
@@ -36,17 +43,17 @@ class GoalsStore {
         }
     }
 
-    func goalProperty(for projectId: Int64) -> Property<Goal?> {
+    func goalProperty(for projectId: ProjectID) -> Property<Goal?> {
         return _allGoals.map { $0[projectId] }.skipRepeats { $0 == $1 }
     }
 
-    func goalBindingTarget(for projectId: Int64) -> BindingTarget<Goal?> {
+    func goalBindingTarget(for projectId: ProjectID) -> BindingTarget<Goal?> {
         return BindingTarget<Goal?>(on: writeScheduler, lifetime: lifetime) { [unowned self] in
             self.goalChanged($0, for: projectId)
         }
     }
 
-    private func goalChanged(_ timeGoalOrNil: Goal?, for projectId: Int64) {
+    private func goalChanged(_ timeGoalOrNil: Goal?, for projectId: ProjectID) {
         if let modifiedGoal = timeGoalOrNil {
             print("will store goal=\(modifiedGoal)")
             storeGoal(modifiedGoal)
@@ -58,12 +65,12 @@ class GoalsStore {
         _allGoals.value[projectId] = timeGoalOrNil
     }
 
-    private func deleteGoal(for projectId: Int64) {
+    private func deleteGoal(for projectId: ProjectID) {
         let q = goalsTable.filter(projectIdExpression == projectId)
         try! db.run(q.delete())
     }
 
-    func goalExists(for projectId: Int64) -> Bool {
+    func goalExists(for projectId: ProjectID) -> Bool {
         return goalProperty(for: projectId).value != nil
     }
 
@@ -85,7 +92,7 @@ class GoalsStore {
     }
 
     private func retrieveAllGoals() {
-        var retrievedGoals = [Int64 : Goal]()
+        var retrievedGoals = [ProjectID : Goal]()
         let retrievedRows = try! db.prepare(goalsTable)
         for retrievedRow in retrievedRows {
             let projectIdValue = retrievedRow[projectIdExpression]
