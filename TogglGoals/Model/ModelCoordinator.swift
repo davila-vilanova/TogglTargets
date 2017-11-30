@@ -63,10 +63,7 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Profile
 
-    /*private*/ let retrieveProfileNetworkAction: RetrieveProfileNetworkAction
-    private var currentRetrieveProfileNetworkDisposable: Disposable?
-    private var keepAroundActionInputFeedDisposable: Disposable?
-    private var keepAroundIsEnabledDisposable: Disposable?
+    private let retrieveProfileNetworkAction: RetrieveProfileNetworkAction
     private let retrieveProfileCacheAction: RetrieveProfileCacheAction
     private let storeProfileCacheAction: StoreProfileCacheAction
 
@@ -196,31 +193,21 @@ internal class ModelCoordinator: NSObject {
         self.goalsStore = goalsStore
         super.init()
 
-//        keepAroundIsEnabledDisposable = retrieveProfileNetworkAction.isEnabled.producer.startWithValues { print("isEnabled=\($0)") }
-
-        keepAroundActionInputFeedDisposable = urlSession.producer.startWithValues { [unowned self] session in
-            if let disposable = self.currentRetrieveProfileNetworkDisposable {
-                print("will dispose - action.isEnabled=\(self.retrieveProfileNetworkAction.isEnabled.value)")
-                disposable.dispose()
-                self.currentRetrieveProfileNetworkDisposable = nil
-                print("did dispose - action.isEnabled=\(retrieveProfileNetworkAction)")
-            }
-            print("will apply - action.isEnabled=\(self.retrieveReportsNetworkAction.isEnabled.value)")
-            self.currentRetrieveProfileNetworkDisposable = self.retrieveProfileNetworkAction.apply(session).logEvents(identifier: "profile producer").start()
-        }
-//        retrieveProfileNetworkAction <~ urlSession
+        retrieveProfileNetworkAction <~ urlSession.signal.throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
         _profile <~ Signal.merge(retrieveProfileNetworkAction.values,
                                  retrieveProfileCacheAction.values.skipNil())
-        storeProfileCacheAction <~ retrieveProfileNetworkAction.values
+        storeProfileCacheAction <~ retrieveProfileNetworkAction.values.throttle(while: storeProfileCacheAction.isExecuting, on: scheduler)
 
         let workspaceIDs = _profile.producer.skipNil().map { $0.workspaces.map { $0.id } }
 
         retrieveProjectsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(), workspaceIDs)
+            .throttle(while: retrieveProjectsNetworkAction.isExecuting, on: scheduler)
         _projects <~ retrieveProjectsNetworkAction.values
 
         retrieveReportsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(),
                                                                      workspaceIDs,
                                                                      reportPeriodsProducer.twoPartPeriod)
+            .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
         _reports <~ retrieveReportsNetworkAction.values
 
         connectRunningEntryUpdateTimer()

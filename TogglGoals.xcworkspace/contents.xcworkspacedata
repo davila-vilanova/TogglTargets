@@ -2,10 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:SendLockTrip/SendLockTrip.xcodeproj">
+      location = "group:LatestInputObservingActionWrapper.playground">
    </FileRef>
    <FileRef
-      location = "group:/Users/david/devspace/togglreports/TogglGoals/SelfCancellingAction.playground">
+      location = "group:SendLockTrip/SendLockTrip.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:/Users/david/devspace/togglreports/TogglGoals/ActionChaining.playground">
