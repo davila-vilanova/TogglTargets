@@ -26,10 +26,10 @@ class SelfCancellingAction<Input, Output, Error: Swift.Error>: BindingTargetProv
     public var isEnabled: Property<Bool> { return wrappedAction.isEnabled }
 
 
-    var currentWorkDisposable: Disposable?
-
     public let lifetime: Lifetime // TODO: how lifetime relates to wrappedAction's lifetime
     private let deinitToken: Lifetime.Token
+
+    var currentWorkDisposable: Disposable?
 
     init(wrapping action: Action<Input, Output, Error>) {
         wrappedAction = action
