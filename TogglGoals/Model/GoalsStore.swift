@@ -8,13 +8,23 @@
 
 import Foundation
 import SQLite
+import Result
 import ReactiveSwift
 
+typealias ProjectIndexedGoals = [ProjectID : Goal]
+
 protocol GoalsStore {
-    var allGoals: Property<[ProjectID : Goal]> { get }
-    func goalProperty(for projectId: ProjectID) -> Property<Goal?>
-    func goalBindingTarget(for projectId: ProjectID) -> BindingTarget<Goal?>
-    func goalExists(for projectId: ProjectID) -> Bool
+    var allGoals: Property<ProjectIndexedGoals> { get }
+    
+    /// Action which takes a project ID as input and returns a producer that sends a single
+    /// Property value corresponding to the goal associated with the project ID.
+    var readGoalAction: Action<ProjectID, Property<Goal?>, NoError> { get }
+
+    /// Action which accepts new (or edited) goal values and stores them
+    var writeGoalAction: Action<Goal, Void, NoError> { get }
+
+    /// Action which takes a project ID as input and deletes the goal associated with that project ID
+    var deleteGoalAction: Action<ProjectID, Void, NoError> { get }
 }
 
 class SQLiteGoalsStore: GoalsStore {
@@ -27,7 +37,7 @@ class SQLiteGoalsStore: GoalsStore {
     private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
 
     lazy var allGoals = Property(_allGoals)
-    private var _allGoals = MutableProperty([ProjectID : Goal]())
+    private var _allGoals = MutableProperty(ProjectIndexedGoals())
 
     private let (lifetime, token) = Lifetime.make()
     private lazy var writeScheduler = QueueScheduler(name: "GoalsStore-writeScheduler")
@@ -43,44 +53,36 @@ class SQLiteGoalsStore: GoalsStore {
         }
     }
 
-    func goalProperty(for projectId: ProjectID) -> Property<Goal?> {
-        return _allGoals.map { $0[projectId] }.skipRepeats { $0 == $1 }
+    lazy var readGoalAction = Action<ProjectID, Property<Goal?>, NoError> { [unowned self] projectId in
+        let goalProperty = self._allGoals.map { $0[projectId] }.skipRepeats { $0 == $1 }
+        return SignalProducer(value: goalProperty)
     }
 
-    func goalBindingTarget(for projectId: ProjectID) -> BindingTarget<Goal?> {
-        return BindingTarget<Goal?>(on: writeScheduler, lifetime: lifetime) { [unowned self] in
-            self.goalChanged($0, for: projectId)
-        }
+    lazy var writeGoalAction = Action<Goal, Void, NoError> { [unowned self] goal in
+        self.storeGoal(goal)
+        return SignalProducer.empty
     }
 
-    private func goalChanged(_ timeGoalOrNil: Goal?, for projectId: ProjectID) {
-        if let modifiedGoal = timeGoalOrNil {
-            print("will store goal=\(modifiedGoal)")
-            storeGoal(modifiedGoal)
-        } else {
-            print("will delete goal for projectId=\(projectId)")
-            // delete goal for captured projectId when goal is set to nil
-            deleteGoal(for: projectId)
-        }
-        _allGoals.value[projectId] = timeGoalOrNil
-    }
-
-    private func deleteGoal(for projectId: ProjectID) {
-        let q = goalsTable.filter(projectIdExpression == projectId)
-        try! db.run(q.delete())
-    }
-
-    func goalExists(for projectId: ProjectID) -> Bool {
-        return goalProperty(for: projectId).value != nil
+    lazy var deleteGoalAction = Action<ProjectID, Void, NoError> { [unowned self] projectId in
+        self.deleteGoal(for: projectId)
+        return SignalProducer.empty
     }
 
     private func storeGoal(_ goal: Goal) {
+        _allGoals.value[goal.projectId] = goal
         try! db.run(goalsTable.insert(or: .replace,
                                       projectIdExpression <- goal.projectId,
                                       hoursPerMonthExpression <- goal.hoursPerMonth,
                                       workWeekdaysExpression <- goal.workWeekdays))
         // TODO: synchronize periodically instead of writing immediately
     }
+
+    private func deleteGoal(for projectId: ProjectID) {
+        _allGoals.value[projectId] = nil
+        let q = goalsTable.filter(projectIdExpression == projectId)
+        try! db.run(q.delete())
+    }
+
 
     private func ensureTableCreated() {
         try! db.run(goalsTable.create(ifNotExists: true) { t in
@@ -92,7 +94,7 @@ class SQLiteGoalsStore: GoalsStore {
     }
 
     private func retrieveAllGoals() {
-        var retrievedGoals = [ProjectID : Goal]()
+        var retrievedGoals = ProjectIndexedGoals()
         let retrievedRows = try! db.prepare(goalsTable)
         for retrievedRow in retrievedRows {
             let projectIdValue = retrievedRow[projectIdExpression]

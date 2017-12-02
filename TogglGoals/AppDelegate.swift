@@ -66,8 +66,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             masterDetailController.projects <~ modelCoordinator.projects.producer
             masterDetailController.goals <~ modelCoordinator.goals
             
-            masterDetailController.goalReadProviderProducer = modelCoordinator.goalReadProviderProducer
-            masterDetailController.goalWriteProviderProducer = modelCoordinator.goalWriteProviderProducer
+            masterDetailController.setGoalActions(read: modelCoordinator.readGoalAction,
+                                                  write: modelCoordinator.writeGoalAction,
+                                                  delete: modelCoordinator.deleteGoalAction)
             masterDetailController.reportReadProviderProducer = modelCoordinator.reportReadProviderProducer
             
             masterDetailController.runningEntry <~ modelCoordinator.runningEntry

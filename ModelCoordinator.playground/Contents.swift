@@ -7,21 +7,20 @@ import PlaygroundSupport
 PlaygroundPage.current.needsIndefiniteExecution = true
 
 
-class DummyGoalsStore: GoalsStore {
-    let allGoals = Property(value: [ProjectID: Goal]())
-    private let (lifetime, token) = Lifetime.make()
-    private lazy var dummyTarget = BindingTarget<Goal?>(lifetime: lifetime) { _ in }
+class NonPersistentGoalsStore: GoalsStore {
+    lazy var allGoals = Property(_allGoals)
+    private let _allGoals = MutableProperty([ProjectID: Goal]())
 
-    func goalProperty(for projectId: ProjectID) -> Property<Goal?> {
-        return Property(value: nil)
+    lazy var readGoalAction = Action<ProjectID, Goal?, NoError> { [unowned self] projectId in
+        self._allGoals.producer.map { $0[projectId] }.skipRepeats { $0 == $1 }
     }
-
-    func goalBindingTarget(for projectId: ProjectID) -> BindingTarget<Goal?> {
-        return dummyTarget
+    lazy var writeGoalAction = Action<Goal, Void, NoError> { [unowned self] goal in
+        self._allGoals.value[goal.projectId] = goal
+        return SignalProducer.empty
     }
-
-    func goalExists(for projectId: ProjectID) -> Bool {
-        return false
+    lazy var deleteGoalAction = Action<ProjectID, Void, NoError> { [unowned self] projectId in
+        self._allGoals.value[projectId] = nil
+        return SignalProducer.empty
     }
 }
 
@@ -34,7 +33,7 @@ let modelCoordinator =
                      retrieveProjectsNetworkAction: makeRetrieveProjectsNetworkAction(),
                      retrieveReportsNetworkAction: makeRetrieveReportsNetworkAction(),
                      retrieveRunningEntryNetworkAction: makeRetrieveRunningEntryNetworkAction(),
-                     goalsStore: DummyGoalsStore())
+                     goalsStore: NonPersistentGoalsStore())
 
 let profile = MutableProperty<Profile?>(nil)
 let projects = MutableProperty<IndexedProjects?>(nil)

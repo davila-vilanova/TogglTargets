@@ -36,27 +36,16 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     // MARK: - Goal and report providing
 
-    internal var goalReadProviderProducer: SignalProducer<Action<Int64, Property<Goal?>, NoError>, NoError>! {
-        didSet {
-            // Expect a single, non nil value during the Controller lifecycle
-            assert(goalReadProviderProducer != nil)
-            assert(oldValue == nil)
-            // Propagate value to contained controllers once they are available
-            doAfterViewIsLoaded { [unowned self, producer = goalReadProviderProducer] in
-                self.projectsListViewController.goalReadProviderProducer = producer
-                self.selectionDetailViewController.goalReadProviderProducer = producer
-            }
+    internal func setGoalActions(read readAction: Action<ProjectID, Property<Goal?>, NoError>,
+                                 write writeAction: Action<Goal, Void, NoError>,
+                                 delete deleteAction: Action<ProjectID, Void, NoError>) {
+        // Propagate value to contained controllers once they are available
+        doAfterViewIsLoaded { [unowned self] in
+            self.projectsListViewController.readGoalAction = readAction
+            self.selectionDetailViewController.setGoalActions(read: readAction, write: writeAction, delete: deleteAction)
         }
     }
-    internal var goalWriteProviderProducer: SignalProducer<Action<Int64, BindingTarget<Goal?>, NoError>, NoError>! {
-        didSet {
-            assert(goalWriteProviderProducer != nil)
-            assert(oldValue == nil)
-            doAfterViewIsLoaded { [unowned self, producer = goalWriteProviderProducer] in
-                self.selectionDetailViewController.goalWriteProviderProducer = producer
-            }
-        }
-    }
+
     internal var reportReadProviderProducer: SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError>! {
         didSet {
             assert(reportReadProviderProducer != nil)

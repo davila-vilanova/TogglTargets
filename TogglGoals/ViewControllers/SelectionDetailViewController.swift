@@ -37,22 +37,12 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
 
     // MARK: - Goal and report providing
 
-    internal var goalReadProviderProducer: SignalProducer<Action<Int64, Property<Goal?>, NoError>, NoError>! {
-        didSet {
-            assert(goalReadProviderProducer != nil)
-            assert(oldValue == nil)
-            doAfterViewIsLoaded { [unowned self, producer = goalReadProviderProducer] in
-                self.projectDetailsViewController.goalReadProviderProducer = producer
-            }
-        }
-    }
-    internal var goalWriteProviderProducer: SignalProducer<Action<Int64, BindingTarget<Goal?>, NoError>, NoError>! {
-        didSet {
-            assert(goalWriteProviderProducer != nil)
-            assert(oldValue == nil)
-            doAfterViewIsLoaded { [unowned self, producer = goalWriteProviderProducer] in
-                self.projectDetailsViewController.goalWriteProviderProducer = producer
-            }
+    internal func setGoalActions(read: Action<ProjectID, Property<Goal?>, NoError>,
+                                 write: Action<Goal, Void, NoError>,
+                                 delete: Action<ProjectID, Void, NoError>) {
+        // Propagate value to contained controllers once they are available
+        doAfterViewIsLoaded { [unowned self] in
+            self.projectDetailsViewController.setGoalActions(read: read, write: write, delete: delete)
         }
     }
     internal var reportReadProviderProducer: SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError>! {

@@ -35,16 +35,10 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
 
-    private var currentUpstreamGoalBindingDisposable: Disposable?
 
     /// goalDownstream holds and propagates the values read by this controller and subcontrollers
     /// of the currently selected goal, if any.
     private let goalDownstream = MutableProperty<Goal?>(nil)
-
-    /// goalUpstream relays the edits on the goal and goal deletion outputted by goalViewController
-    /// and the freshly created goal outputsetContainedViewControllerted by noGoalViewController
-    private let goalUpstream = MutableProperty<Goal?>(nil)
-
 
     // MARK: - Derived input
 
@@ -53,29 +47,35 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Goal and report providing
 
-    /// Each start invocation of this producer and its siblings (goalWriteProviderProducer and reportReadProviderProducer)
-    /// must deliver one and only one value which is an action taking a project ID as its input
-    internal var goalReadProviderProducer: SignalProducer<Action<Int64, Property<Goal?>, NoError>, NoError>! {
-        didSet {
-            assert(goalReadProviderProducer != nil)
-            assert(oldValue == nil)
-            if let producer = goalReadProviderProducer {
-                goalReadProvider <~ producer.take(first: 1)
-            }
-        }
-    }
-    private let goalReadProvider = MutableProperty<Action<Int64, Property<Goal?>, NoError>?>(nil)
+    internal func setGoalActions(read readAction: Action<ProjectID, Property<Goal?>, NoError>,
+                                 write writeAction: Action<Goal, Void, NoError>,
+                                 delete deleteAction: Action<ProjectID, Void, NoError>) {
+        // accept a single set of values during the controller's life
+        assert(readGoalAction == nil)
+        assert(writeGoalAction == nil)
+        assert(deleteGoalAction == nil)
 
-    internal var goalWriteProviderProducer: SignalProducer<Action<Int64, BindingTarget<Goal?>, NoError>, NoError>! {
-        didSet {
-            assert(goalWriteProviderProducer != nil)
-            assert(oldValue == nil)
-            if let producer = goalWriteProviderProducer {
-                goalWriteProvider <~ producer.take(first: 1)
-            }
-        }
+        readGoalAction = readAction
+        writeGoalAction = writeAction
+        deleteGoalAction = deleteAction
     }
-    private let goalWriteProvider = MutableProperty<Action<Int64, BindingTarget<Goal?>, NoError>?>(nil)
+
+    private func setupConnectionsWithActions() {
+        // This ensures that goalDownstream will only listen to values associated with the current project
+        self.goalDownstream <~ readGoalAction!.values.flatten(.latest)
+        // Retrieve new goal when project ID changes
+        readGoalAction!.serialInput <~ self.projectId
+
+        writeGoalAction!.serialInput <~ Signal.merge(self.goalViewController.userUpdates.skipNil(),
+                                                     noGoalViewController.goalCreated)
+
+        let deleteSignal = goalViewController.userUpdates.filter { $0 == nil}.map { _ in () }
+        deleteGoalAction!.serialInput <~ projectId.sample(on: deleteSignal)
+    }
+
+    private var readGoalAction: Action<ProjectID, Property<Goal?>, NoError>?
+    private var writeGoalAction: Action<Goal, Void, NoError>?
+    private var deleteGoalAction: Action<ProjectID, Void, NoError>?
 
     internal var reportReadProviderProducer: SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError>! {
         didSet {
@@ -89,28 +89,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     private let reportReadProvider = MutableProperty<Action<Int64, Property<TwoPartTimeReport?>, NoError>?>(nil)
 
     private func setupConnectionsWithProviders() {
-        goalReadProvider.producer.skipNil().take(first: 1) // A single, non-nil provider is expected during the controller lifecycle
-            .startWithValues { [unowned self] (action) in
-                // This ensures that goalDownstream will listen to changes of only the current project
-                self.goalDownstream <~ action.values.flatten(.latest)
-                action <~ self.projectId // Each time there is a change in project ID a different project is displayed
-        }
-
-        goalWriteProvider.producer.skipNil().take(first: 1).startWithValues { [unowned self] (action) in
-            action.values.observeValues { (upstream) in
-                // Propagate updated upstream values of goal to only the latest provided, current-goal pointing target
-                if let previousDisposable = self.currentUpstreamGoalBindingDisposable {
-                    previousDisposable.dispose()
-                }
-                // Important, if subtle: connect the _signal_ of goalUpstream to the provided target, not the producer.
-                // The producer will relay the last known value and that will be nil if this is the first time a goal is connected
-                // or the value of the previously connected goal otherwise. Connecting the signal ensures that only subsequent
-                // updates will be relayed upstream.
-                self.currentUpstreamGoalBindingDisposable = upstream <~ self.goalUpstream.signal
-            }
-            action <~ self.projectId
-        }
-
         reportReadProvider.producer.skipNil().take(first: 1).startWithValues { [unowned self] (action) in
             self.goalReportViewController.report <~ action.values.flatten(.latest)
             action <~ self.projectId
@@ -133,7 +111,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         didSet {
             if let controller = goalViewController {
                 controller.goal <~ goalDownstream
-                goalUpstream <~ controller.userUpdates
                 controller.calendar <~ _calendar.producer.skipNil()
             }
         }
@@ -156,10 +133,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         didSet {
             if let controller = noGoalViewController {
                 controller.projectId <~ projectId
-                // NoGoalViewController can output only non-optional goals as its output job is to send a freshly created
-                // goal through the channel or to not send anything. However, goalUpstream accepts an optional Goal because
-                // a nil value signals goal deletion.
-                goalUpstream <~ controller.goalCreated.map { Optional($0) }
             }
         }
     }
@@ -205,6 +178,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         setupConnectionsWithProviders()
         setupLocalProjectDisplay()
         setupContainedViewControllerVisibility()
+        setupConnectionsWithActions()
     }
 }
 

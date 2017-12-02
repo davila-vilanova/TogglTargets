@@ -135,40 +135,19 @@ internal class ModelCoordinator: NSObject {
 
     private let goalsStore: GoalsStore
 
-    // TODO: use producer instead of property
-    internal lazy var goals = Property(goalsStore.allGoals)
+    internal var goals: Property<ProjectIndexedGoals> { return goalsStore.allGoals }
 
-    /// Each invocation of this Producer will deliver a single value and then complete.
-    /// The value is an Action which takes a project ID as input and returns a Property
-    /// that conveys the values of the goal associated with the provided project ID.
-    internal lazy var goalReadProviderProducer = SignalProducer<Action<Int64, Property<Goal?>, NoError>, NoError> { [unowned self] observer, lifetime in
-        let action = Action<Int64, Property<Goal?>, NoError>() { projectId in
-            let goalProperty = self.goalProperty(for: projectId)
-            return SignalProducer<Property<Goal?>, NoError>(value: goalProperty)
-        }
-        observer.send(value: action)
-        observer.sendCompleted()
+    /// Action which takes a project ID as input and returns a producer that sends a single
+    /// Property value corresponding to the goal associated with the project ID.
+    internal var readGoalAction: Action<ProjectID, Property<Goal?>, NoError> {
+        return goalsStore.readGoalAction
     }
 
-    /// Each invocation of this Producer will deliver a single value and then complete.
-    /// The value is an Action which takes a project ID as input and returns a BindingTarget
-    /// that accepts new (or edited) values for the goal associated with the provided project ID.
-    internal lazy var goalWriteProviderProducer = SignalProducer<Action<Int64, BindingTarget<Goal?>, NoError>, NoError> { [unowned self] observer, lifetime in
-        let action = Action<Int64, BindingTarget<Goal?>, NoError> { projectId in
-            let goalBindingTarget = self.goalBindingTarget(for: projectId)
-            return SignalProducer<BindingTarget<Goal?>, NoError>(value: goalBindingTarget)
-        }
-        observer.send(value: action)
-        observer.sendCompleted()
-    }
+    /// Action which accepts new (or edited) goal values and stores them
+    internal var writeGoalAction: Action<Goal, Void, NoError> { return goalsStore.writeGoalAction }
 
-    private func goalProperty(for projectId: Int64) -> Property<Goal?> {
-        return goalsStore.goalProperty(for: projectId)
-    }
-
-    private func goalBindingTarget(for projectId: Int64) -> BindingTarget<Goal?> {
-        return goalsStore.goalBindingTarget(for: projectId)
-    }
+    /// Action which takes a project ID as input and deletes the goal associated with that project ID
+    internal var deleteGoalAction: Action<ProjectID, Void, NoError> { return goalsStore.deleteGoalAction }
 
 
     // MARK: -

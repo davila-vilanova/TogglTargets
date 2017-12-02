@@ -17,8 +17,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Exposed targets and source
 
-    internal var projects: BindingTarget<[Int64 : Project]> { return _projects.deoptionalizedBindingTarget }
-    internal var goals: BindingTarget<[Int64 : Goal]> { return _goals.deoptionalizedBindingTarget }
+    internal var projects: BindingTarget<IndexedProjects> { return _projects.deoptionalizedBindingTarget }
+    internal var goals: BindingTarget<ProjectIndexedGoals> { return _goals.deoptionalizedBindingTarget }
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
     internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
 
@@ -27,8 +27,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Backing properties
 
-    private let _projects = MutableProperty<[Int64 : Project]?>(nil)
-    private let _goals = MutableProperty<[Int64 : Goal]?>(nil)
+    private let _projects = MutableProperty<IndexedProjects?>(nil)
+    private let _goals = MutableProperty<ProjectIndexedGoals?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
     private let _now = MutableProperty<Date?>(nil)
     private let _selectedProject = MutableProperty<Project?>(nil)
@@ -36,17 +36,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Project, goal and report providing
 
-    // TODO: Generalize and encapsulate?
-    internal var goalReadProviderProducer: SignalProducer<PropertyProvidingAction<Goal>, NoError>! {
-        didSet {
-            assert(goalReadProviderProducer != nil)
-            assert(oldValue == nil)
-            if let producer = goalReadProviderProducer {
-                goalReadProvider <~ producer.take(first: 1)
-            }
-        }
-    }
-    private let goalReadProvider = MutableProperty<PropertyProvidingAction<Goal>?>(nil)
+    internal var readGoalAction: Action<ProjectID, Property<Goal?>, NoError>!
 
     internal var reportReadProviderProducer: SignalProducer<PropertyProvidingAction<TwoPartTimeReport>, NoError>! {
         didSet {
@@ -76,7 +66,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let countOfProjectsWithoutGoals: Int
         let projectIdsWithChangedGoals: [Int64]
 
-        init(projects: [Int64 : Project], goals: [Int64 : Goal], previousGoals: [Int64 : Goal]?) {
+        init(projects: IndexedProjects, goals: ProjectIndexedGoals, previousGoals: ProjectIndexedGoals?) {
             let changesInGoals = goals.keysOfDifferingValues(with: previousGoals)
             let sortedIds: [Int64] = [Int64](projects.keys).sorted(by: { (idA, idB) -> Bool in
                 let goalA = goals[idA]
@@ -222,12 +212,13 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectItem = item as! ProjectCollectionViewItem
         projectItem.connectOnceInLifecycle(runningEntry: _runningEntry.producer, now: _now.producer.skipNil())
 
-        let projectId = metadata.value!.projectId(for: indexPath)!
+        let projectId: ProjectID = metadata.value!.projectId(for: indexPath)!
 
         // Extract from the _projects property a property for the single project identified by projectId
         let projectProperty: Property<Project?> = _projects.map { $0?[projectId] }
         projectItem.projects <~ SignalProducer<Property<Project?>, NoError>(value: projectProperty)
-        projectItem.goals <~ goalReadProvider.value!.apply(projectId).mapToNoError()
+        projectItem.goals <~ readGoalAction.applySerially(projectId)
+
         projectItem.reports <~ reportReadProvider.value!.apply(projectId).mapToNoError()
 
         return projectItem
