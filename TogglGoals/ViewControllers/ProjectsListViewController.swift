@@ -49,7 +49,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         static var count = 2
     }
 
-    private struct CollectionViewMetadata {
+    private struct ProjectsCollectionViewMetadata {
         private let projectIdsToIndexPaths: [Int64 : IndexPath]
         private let indexPathsToProjectIds: [IndexPath : Int64]
         let countOfProjectsWithGoals: Int
@@ -106,14 +106,14 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
     }
 
-    private lazy var metadata: Property<CollectionViewMetadata?> = {
+    private lazy var metadata: Property<ProjectsCollectionViewMetadata?> = {
         let p = SignalProducer.combineLatest(_projects.producer.skipNil(), _goals.producer.combinePrevious())
-            .map { (input) -> CollectionViewMetadata? in
+            .map { (input) -> ProjectsCollectionViewMetadata? in
                 let (projects, (previousGoals, currentGoals)) = input
                 guard let goals = currentGoals else {
                     return nil
                 }
-                return CollectionViewMetadata(projects: projects, goals: goals, previousGoals: previousGoals)
+                return ProjectsCollectionViewMetadata(projects: projects, goals: goals, previousGoals: previousGoals)
         }
         return Property(initial: nil, then: p)
     }()
@@ -127,7 +127,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     private lazy var updateList =
-        BindingTarget<(CollectionViewMetadata, CollectionViewMetadata)>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (previousMetadata, currentMetadata) in
+        BindingTarget<(ProjectsCollectionViewMetadata, ProjectsCollectionViewMetadata)>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (previousMetadata, currentMetadata) in
             // Having the project IDs for the goal(s) whose change prompted the current update makes it simple to
             // move only the items directly affected by the changes.
             for projectId in currentMetadata.projectIdsWithChangedGoals {
