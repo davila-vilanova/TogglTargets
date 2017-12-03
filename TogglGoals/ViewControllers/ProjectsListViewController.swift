@@ -94,7 +94,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             indexPathsToProjectIds = indexPathsToIds
             countOfProjectsWithGoals = idsOfProjectsWithGoals.count
             countOfProjectsWithoutGoals = idsOfProjectsWithoutGoals.count
-            self.projectIdsWithChangedGoals = changesInGoals
+            projectIdsWithChangedGoals = changesInGoals
         }
 
         func indexPath(for projectId: Int64) -> IndexPath? {
@@ -106,10 +106,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
     }
 
-    private lazy var metadata: MutableProperty<CollectionViewMetadata?> = {
-        let p = MutableProperty<CollectionViewMetadata?>(nil)
-
-        p <~ SignalProducer.combineLatest(_projects.producer.skipNil(), _goals.producer.combinePrevious())
+    private lazy var metadata: Property<CollectionViewMetadata?> = {
+        let p = SignalProducer.combineLatest(_projects.producer.skipNil(), _goals.producer.combinePrevious())
             .map { (input) -> CollectionViewMetadata? in
                 let (projects, (previousGoals, currentGoals)) = input
                 guard let goals = currentGoals else {
@@ -117,8 +115,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                 }
                 return CollectionViewMetadata(projects: projects, goals: goals, previousGoals: previousGoals)
         }
-
-        return p
+        return Property(initial: nil, then: p)
     }()
 
     private let (lifetime, token) = Lifetime.make()

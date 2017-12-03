@@ -18,7 +18,7 @@ class DayProgressViewController: NSViewController {
     internal var remainingTimeToDayBaseline: BindingTarget<TimeInterval?> { return _remainingTimeToDayBaseline.bindingTarget }
 
 
-    // MARK: - Properties
+    // MARK: - Backing Properties
 
     private let _timeWorkedToday = MutableProperty<TimeInterval>(0)
     private let _remainingTimeToDayBaseline = MutableProperty<TimeInterval?>(nil)

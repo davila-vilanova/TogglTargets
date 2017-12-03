@@ -54,7 +54,7 @@ class SQLiteGoalsStore: GoalsStore {
     }
 
     lazy var readGoalAction = Action<ProjectID, Property<Goal?>, NoError> { [unowned self] projectId in
-        let goalProperty = self._allGoals.map { $0[projectId] }.skipRepeats { $0 == $1 }
+        let goalProperty = self.allGoals.map { $0[projectId] }.skipRepeats { $0 == $1 }
         return SignalProducer(value: goalProperty)
     }
 

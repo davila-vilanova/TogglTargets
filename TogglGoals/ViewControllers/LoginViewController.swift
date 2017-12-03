@@ -159,11 +159,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     private lazy var credentialValidatingAction: Action<(), CredentialValidationResult, NoError> = {
         let credential = credentialProvider.producer.skipNil().flatten(.latest)
 
-        let latestSeenCredential: Property<TogglAPICredential?> = {
-            let p = MutableProperty<TogglAPICredential?>(nil)
-            p <~ credential
-            return Property(capturing: p)
-        }()
+        let latestSeenCredential = Property<TogglAPICredential?>(initial: nil, then: credential)
 
         return Action<(), CredentialValidationResult, NoError>(
             state: latestSeenCredential,

@@ -46,18 +46,11 @@ class GoalPeriodsPreferencesViewController: NSViewController {
     // MARK: - State
 
 
-    private lazy var isWeeklyPreferenceSelectedProperty: MutableProperty<Bool> = {
-        // default value
-        let p = MutableProperty(isWeeklyPreference(DefaultPeriodPreference))
-
-        // value from upstream
-        p <~ _existingPreference.map(isWeeklyPreference)
-
-        // value from user input
-        p <~ weeklyButtonPress.values.map { _ in true }
-        p <~ generateMonthlyPeriodPreference.values.map { _ in false }
-        return p
-    }()
+    private lazy var isWeeklyPreferenceSelectedProperty =
+        Property<Bool>(initial: isWeeklyPreference(DefaultPeriodPreference),                            // default value
+                       then: SignalProducer.merge(_existingPreference.producer.map(isWeeklyPreference), // value from upstream
+                       weeklyButtonPress.values.producer.map { _ in true },                             // value from user input
+                       generateMonthlyPeriodPreference.values.producer.map { _ in false }))
 
     private lazy var selectedWeekdayProperty: MutableProperty<Weekday> = {
         // default value
