@@ -175,15 +175,11 @@ class NoGoalViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        createGoalAction = Action<Void, Goal, NoError>(unwrapping: _projectId, execute: { (projectIdValue: Int64) -> SignalProducer<Goal, NoError> in
-            return SignalProducer<Goal, NoError> { (sink: Signal<Goal, NoError>.Observer, disposable: Lifetime) in
-                sink.send(value: Goal(forProjectId: projectIdValue, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend))
-                sink.sendCompleted()
-            }
-        })
+        createGoalAction = Action<Void, Goal, NoError>(unwrapping: _projectId) {
+            SignalProducer(value: Goal(forProjectId: $0, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend))
+        }
 
-        self.createGoalButton.reactive.pressed = CocoaAction<NSButton>(createGoalAction)
-        
+        createGoalButton.reactive.pressed = CocoaAction<NSButton>(createGoalAction)
         createGoalAction.values.observe(_goalCreated.input)
     }
 }
