@@ -45,12 +45,11 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
             self.projectDetailsViewController.setGoalActions(read: read, write: write, delete: delete)
         }
     }
-    internal var reportReadProviderProducer: SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError>! {
+
+    internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>! {
         didSet {
-            assert(reportReadProviderProducer != nil)
-            assert(oldValue == nil)
-            doAfterViewIsLoaded { [unowned self, producer = reportReadProviderProducer] in
-                self.projectDetailsViewController.reportReadProviderProducer = producer
+            doAfterViewIsLoaded { [unowned self, action = readReportAction] in
+                self.projectDetailsViewController.readReportAction = action
             }
         }
     }
@@ -104,7 +103,6 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
         super.viewDidLoad()
 
         initializeControllerContainment(containmentIdentifiers: [ProjectDetailsVCContainment, EmtpySelectionVCContainment])
-
         setupContainedViewControllerVisibility()
     }
 }

@@ -46,14 +46,10 @@ class ProjectsMasterDetailController: NSSplitViewController {
         }
     }
 
-    internal var reportReadProviderProducer: SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError>! {
+    internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>! {
         didSet {
-            assert(reportReadProviderProducer != nil)
-            assert(oldValue == nil)
-            doAfterViewIsLoaded { [unowned self, producer = reportReadProviderProducer] in
-                self.projectsListViewController.reportReadProviderProducer = producer
-                self.selectionDetailViewController.reportReadProviderProducer = producer
-            }
+            self.projectsListViewController.readReportAction = readReportAction
+            self.selectionDetailViewController.readReportAction = readReportAction
         }
     }
 

@@ -83,22 +83,17 @@ internal class ModelCoordinator: NSObject {
 
     private let retrieveReportsNetworkAction: RetrieveReportsNetworkAction
 
-    private lazy var _reports = MutableProperty(IndexedTwoPartTimeReports())
-    internal lazy var reports = Property(_reports)
+    private let _reports = MutableProperty(IndexedTwoPartTimeReports())
+    private lazy var reports = Property(_reports)
 
-    /// Each invocation of this Producer will deliver a single value and then complete.
-    /// The value is an Action which takes a project ID as input and returns a Property
-    /// that conveys the values of the time report associated with the provided project ID.
-    internal lazy var reportReadProviderProducer = SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError> { [unowned self] observer, lifetime in
-        let action = Action<Int64, Property<TwoPartTimeReport?>, NoError>() { projectId in
-            let extracted = self.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
-            return SignalProducer<Property<TwoPartTimeReport?>, NoError>(value: extracted)
-        }
-        observer.send(value: action)
-        observer.sendCompleted()
+    /// Action which takes a project ID as input and returns a producer that sends a single
+    /// Property value corresponding to the report associated with the project ID.
+    internal lazy var readReportAction = Action<ProjectID, Property<TwoPartTimeReport?>, NoError> { [unowned self] projectId in
+        let reportProperty = self.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
+        return SignalProducer(value: reportProperty)
     }
 
-
+    
     // MARK: - RunningEntry
 
     private let retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction

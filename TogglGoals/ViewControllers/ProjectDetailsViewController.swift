@@ -62,11 +62,14 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     private func setupConnectionsWithActions() {
         // This ensures that goalDownstream will only listen to values associated with the current project
-        self.goalDownstream <~ readGoalAction!.values.flatten(.latest)
-        // Retrieve new goal when project ID changes
-        readGoalAction!.serialInput <~ self.projectId
+        goalDownstream <~ readGoalAction!.values.flatten(.latest)
+        goalReportViewController.report <~ readReportAction!.values.flatten(.latest)
 
-        writeGoalAction!.serialInput <~ Signal.merge(self.goalViewController.userUpdates.skipNil(),
+        // Retrieve corresponding goal and report when project ID changes
+        readGoalAction!.serialInput <~ projectId
+        readReportAction!.serialInput <~ projectId
+
+        writeGoalAction!.serialInput <~ Signal.merge(goalViewController.userUpdates.skipNil(),
                                                      noGoalViewController.goalCreated)
 
         let deleteSignal = goalViewController.userUpdates.filter { $0 == nil}.map { _ in () }
@@ -77,23 +80,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     private var writeGoalAction: Action<Goal, Void, NoError>?
     private var deleteGoalAction: Action<ProjectID, Void, NoError>?
 
-    internal var reportReadProviderProducer: SignalProducer<Action<Int64, Property<TwoPartTimeReport?>, NoError>, NoError>! {
-        didSet {
-            assert(reportReadProviderProducer != nil)
-            assert(oldValue == nil)
-            if let producer = reportReadProviderProducer {
-                reportReadProvider <~ producer.take(first: 1)
-            }
-        }
-    }
-    private let reportReadProvider = MutableProperty<Action<Int64, Property<TwoPartTimeReport?>, NoError>?>(nil)
-
-    private func setupConnectionsWithProviders() {
-        reportReadProvider.producer.skipNil().take(first: 1).startWithValues { [unowned self] (action) in
-            self.goalReportViewController.report <~ action.values.flatten(.latest)
-            action <~ self.projectId
-        }
-    }
+    internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>?
 
 
     // MARK: - Local use of project
@@ -175,7 +162,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         super.viewDidLoad()
 
         initializeControllerContainment(containmentIdentifiers: [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment])
-        setupConnectionsWithProviders()
         setupLocalProjectDisplay()
         setupContainedViewControllerVisibility()
         setupConnectionsWithActions()

@@ -69,7 +69,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             masterDetailController.setGoalActions(read: modelCoordinator.readGoalAction,
                                                   write: modelCoordinator.writeGoalAction,
                                                   delete: modelCoordinator.deleteGoalAction)
-            masterDetailController.reportReadProviderProducer = modelCoordinator.reportReadProviderProducer
+            masterDetailController.readReportAction = modelCoordinator.readReportAction
             
             masterDetailController.runningEntry <~ modelCoordinator.runningEntry
         }

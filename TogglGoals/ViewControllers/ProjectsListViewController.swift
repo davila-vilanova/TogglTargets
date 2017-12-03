@@ -34,20 +34,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private let _selectedProject = MutableProperty<Project?>(nil)
 
 
-    // MARK: - Project, goal and report providing
+    // MARK: - Goal and report providing
 
     internal var readGoalAction: Action<ProjectID, Property<Goal?>, NoError>!
-
-    internal var reportReadProviderProducer: SignalProducer<PropertyProvidingAction<TwoPartTimeReport>, NoError>! {
-        didSet {
-            assert(reportReadProviderProducer != nil)
-            assert(oldValue == nil)
-            if let producer = reportReadProviderProducer {
-                reportReadProvider <~ producer.take(first: 1)
-            }
-        }
-    }
-    private let reportReadProvider = MutableProperty<PropertyProvidingAction<TwoPartTimeReport>?>(nil)
+    internal var readReportAction : Action<ProjectID, Property<TwoPartTimeReport?>, NoError>!
 
 
     // MARK: Preparing collection view data
@@ -218,8 +208,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectProperty: Property<Project?> = _projects.map { $0?[projectId] }
         projectItem.projects <~ SignalProducer<Property<Project?>, NoError>(value: projectProperty)
         projectItem.goals <~ readGoalAction.applySerially(projectId)
-
-        projectItem.reports <~ reportReadProvider.value!.apply(projectId).mapToNoError()
+        projectItem.reports <~ readReportAction.applySerially(projectId)
 
         return projectItem
     }
