@@ -78,6 +78,15 @@ internal class ModelCoordinator: NSObject {
     private lazy var _projects = MutableProperty(IndexedProjects())
     internal lazy var projects = Property(_projects)
 
+    internal var projectIDsByGoals: SignalProducer<ProjectIDsByGoals.Update, NoError> {
+        return goalsStore.projectIDsByGoalsUpdates
+    }
+
+    internal lazy var readProjectAction =
+        Action<ProjectID, Property<Project?>, NoError> { [unowned self] projectId in
+            let projectProperty = self.projects.map { $0[projectId] }
+            return SignalProducer(value: projectProperty)
+    }
 
     // MARK: - Reports
 
@@ -93,7 +102,7 @@ internal class ModelCoordinator: NSObject {
         return SignalProducer(value: reportProperty)
     }
 
-    
+
     // MARK: - RunningEntry
 
     private let retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction
@@ -130,19 +139,17 @@ internal class ModelCoordinator: NSObject {
 
     private let goalsStore: GoalsStore
 
-    internal var goals: Property<ProjectIndexedGoals> { return goalsStore.allGoals }
-
     /// Action which takes a project ID as input and returns a producer that sends a single
     /// Property value corresponding to the goal associated with the project ID.
-    internal var readGoalAction: Action<ProjectID, Property<Goal?>, NoError> {
+    internal var readGoalAction: ReadGoalAction {
         return goalsStore.readGoalAction
     }
 
     /// Action which accepts new (or edited) goal values and stores them
-    internal var writeGoalAction: Action<Goal, Void, NoError> { return goalsStore.writeGoalAction }
+    internal var writeGoalAction: WriteGoalAction { return goalsStore.writeGoalAction }
 
     /// Action which takes a project ID as input and deletes the goal associated with that project ID
-    internal var deleteGoalAction: Action<ProjectID, Void, NoError> { return goalsStore.deleteGoalAction }
+    internal var deleteGoalAction: DeleteGoalAction { return goalsStore.deleteGoalAction }
 
 
     // MARK: -
@@ -167,6 +174,8 @@ internal class ModelCoordinator: NSObject {
         self.goalsStore = goalsStore
         super.init()
 
+        goalsStore.projectIDs <~ projects.map { [ProjectID]($0.keys) }
+
         retrieveProfileNetworkAction <~ urlSession.signal.throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
         _profile <~ Signal.merge(retrieveProfileNetworkAction.values,
                                  retrieveProfileCacheAction.values.skipNil())
@@ -187,6 +196,9 @@ internal class ModelCoordinator: NSObject {
         connectRunningEntryUpdateTimer()
     }
 }
+
+
+// MARK: -
 
 fileprivate class RunningEntryUpdateTimer {
     // input

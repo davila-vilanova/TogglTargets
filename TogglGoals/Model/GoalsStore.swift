@@ -12,19 +12,23 @@ import Result
 import ReactiveSwift
 
 typealias ProjectIndexedGoals = [ProjectID : Goal]
+typealias ReadGoalAction = Action<ProjectID, Property<Goal?>, NoError>
+typealias WriteGoalAction = Action<Goal, (), NoError>
+typealias DeleteGoalAction = Action<ProjectID, (), NoError>
 
 protocol GoalsStore {
-    var allGoals: Property<ProjectIndexedGoals> { get }
-    
     /// Action which takes a project ID as input and returns a producer that sends a single
     /// Property value corresponding to the goal associated with the project ID.
-    var readGoalAction: Action<ProjectID, Property<Goal?>, NoError> { get }
+    var readGoalAction: ReadGoalAction { get }
 
     /// Action which accepts new (or edited) goal values and stores them
-    var writeGoalAction: Action<Goal, Void, NoError> { get }
+    var writeGoalAction: WriteGoalAction { get }
 
     /// Action which takes a project ID as input and deletes the goal associated with that project ID
-    var deleteGoalAction: Action<ProjectID, Void, NoError> { get }
+    var deleteGoalAction: DeleteGoalAction { get }
+
+    var projectIDs: BindingTarget<[ProjectID]> { get }
+    var projectIDsByGoalsUpdates: SignalProducer<ProjectIDsByGoals.Update, NoError> { get }
 }
 
 class SQLiteGoalsStore: GoalsStore {
@@ -36,40 +40,92 @@ class SQLiteGoalsStore: GoalsStore {
     private let hoursPerMonthExpression = Expression<Int>("hours_per_month")
     private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
 
-    lazy var allGoals = Property(_allGoals)
-    private var _allGoals = MutableProperty(ProjectIndexedGoals())
+    private let allGoals = MutableProperty<ProjectIndexedGoals?>(nil)
+
+    private func connectInputsToAllGoals() {
+        allGoals <~ modifyGoalAction.values.map { $0.indexedGoals }
+    }
 
     private let (lifetime, token) = Lifetime.make()
-    private lazy var writeScheduler = QueueScheduler(name: "GoalsStore-writeScheduler")
+    private lazy var scheduler = QueueScheduler()
 
     init?(baseDirectory: URL?) {
         do {
             let databaseURL = URL(fileURLWithPath: "goalsdb.sqlite3", relativeTo: baseDirectory)
             db = try Connection(databaseURL.absoluteString)
             ensureTableCreated()
+            connectInputsToAllGoals()
+            connectInputsToMGAState()
             retrieveAllGoals()
         } catch {
             return nil
         }
     }
 
-    lazy var readGoalAction = Action<ProjectID, Property<Goal?>, NoError> { [unowned self] projectId in
-        let goalProperty = self.allGoals.map { $0[projectId] }.skipRepeats { $0 == $1 }
+    lazy var readGoalAction = ReadGoalAction { [unowned self] projectId in
+        let goalProperty = self.allGoals.map { $0?[projectId] }.skipRepeats { $0 == $1 }
         return SignalProducer(value: goalProperty)
     }
 
-    lazy var writeGoalAction = Action<Goal, Void, NoError> { [unowned self] goal in
-        self.storeGoal(goal)
+    lazy var writeGoalAction = WriteGoalAction(enabledIf: modifyGoalAction.isEnabled) {
+        [modifyGoalAction] goal in
+        _ = modifyGoalAction.applySerially((goal, goal.projectId)).start()
         return SignalProducer.empty
     }
 
-    lazy var deleteGoalAction = Action<ProjectID, Void, NoError> { [unowned self] projectId in
-        self.deleteGoal(for: projectId)
+    lazy var deleteGoalAction = DeleteGoalAction(enabledIf: modifyGoalAction.isEnabled) {
+        [modifyGoalAction] projectId in
+        _ = modifyGoalAction.applySerially((nil, projectId)).start()
         return SignalProducer.empty
+    }
+
+    var projectIDs: BindingTarget<[ProjectID]> { return _projectIDs.deoptionalizedBindingTarget }
+    private var _projectIDs = MutableProperty<[ProjectID]?>(nil)
+
+    var projectIDsByGoalsUpdates: SignalProducer<ProjectIDsByGoals.Update, NoError> {
+        let moveUpdates: Signal<ProjectIDsByGoals.MoveUpdate, NoError> = modifyGoalAction.values.map { $0.moveUpdate }
+        return SignalProducer.merge(fullRefreshUpdateProducer.map { ProjectIDsByGoals.Update.fullRefresh($0) },
+                                    moveUpdates.producer.map { ProjectIDsByGoals.Update.move($0) })
+    }
+
+    private lazy var fullRefreshUpdateProducer: SignalProducer<ProjectIDsByGoals, NoError> = {
+       return _projectIDs.producer.skipNil().combineLatest(with: allGoals.producer.skipNil())
+            .skipRepeats { (old, new) -> Bool in // let through only changes in project IDs, order insensitive
+                let oldIds = Set(old.0)
+                let newIds = Set(new.0)
+                return oldIds == newIds
+            }
+            .map(ProjectIDsByGoals.init)
+    }()
+
+    private let mgaState = MutableProperty<(ProjectIndexedGoals, ProjectIDsByGoals)?>(nil)
+    private func connectInputsToMGAState() {
+        let allGoalsProducer = allGoals.producer.skipNil()
+        let projectIDsByGoalsProducer = SignalProducer.merge(fullRefreshUpdateProducer,
+                                                             modifyGoalAction.values.producer.map { $0.projectIDsByGoals })
+        mgaState <~ allGoalsProducer.combineLatest(with: projectIDsByGoalsProducer)
+    }
+
+    private lazy var modifyGoalAction = Action<(Goal?, ProjectID), ProjectIDsByGoals.ModifyGoalOutput, NoError>(unwrapping: mgaState) {
+        [unowned self] (state, input) in
+        let (allGoals, projectIDsByGoalsPre) = state
+        let (goalPost, projectId) = input
+        let output = try! projectIDsByGoalsPre.afterEditingGoal(goalPost, for: projectId, in: allGoals)
+        let changeType = output.changeType
+
+        self.scheduler.schedule { [goal = goalPost, projectId, unowned self] in
+            switch changeType {
+            case .create: fallthrough
+            case .update:
+                self.storeGoal(goal!)
+            case .delete:
+                self.deleteGoal(for: projectId)
+            }
+        }
+        return SignalProducer(value: output)
     }
 
     private func storeGoal(_ goal: Goal) {
-        _allGoals.value[goal.projectId] = goal
         try! db.run(goalsTable.insert(or: .replace,
                                       projectIdExpression <- goal.projectId,
                                       hoursPerMonthExpression <- goal.hoursPerMonth,
@@ -78,11 +134,9 @@ class SQLiteGoalsStore: GoalsStore {
     }
 
     private func deleteGoal(for projectId: ProjectID) {
-        _allGoals.value[projectId] = nil
         let q = goalsTable.filter(projectIdExpression == projectId)
         try! db.run(q.delete())
     }
-
 
     private func ensureTableCreated() {
         try! db.run(goalsTable.create(ifNotExists: true) { t in
@@ -100,12 +154,13 @@ class SQLiteGoalsStore: GoalsStore {
             let projectIdValue = retrievedRow[projectIdExpression]
             let hoursPerMonthValue = retrievedRow[hoursPerMonthExpression]
             let workWeekdaysValue = retrievedRow.get(workWeekdaysExpression) // [1]
-            let goal = Goal(forProjectId: projectIdValue, hoursPerMonth: hoursPerMonthValue, workWeekdays: workWeekdaysValue)
-
+            let goal = Goal(forProjectId: projectIdValue,
+                            hoursPerMonth: hoursPerMonthValue,
+                            workWeekdays: workWeekdaysValue)
             retrievedGoals[projectIdValue] = goal
         }
 
-        _allGoals.value = retrievedGoals
+        allGoals <~ SignalProducer(value: retrievedGoals)
 
         // [1] Can't use subscripts with custom types.
         // https://github.com/stephencelis/SQLite.swift/blob/master/Documentation/Index.md#custom-type-caveats
@@ -132,3 +187,4 @@ extension WeekdaySelection: Value {
         }
     }
 }
+

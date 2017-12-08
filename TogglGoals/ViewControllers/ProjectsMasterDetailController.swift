@@ -14,9 +14,6 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     // MARK: - Exposed targets
 
-    internal var projects: BindingTarget<[Int64 : Project]> { return _projects.deoptionalizedBindingTarget }
-    internal var goals: BindingTarget<[Int64 : Goal]> { return _goals.deoptionalizedBindingTarget }
-
     internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
     internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
@@ -25,20 +22,32 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     // MARK: - Backing properties
 
-    private let _projects = MutableProperty<[Int64 : Project]?>(nil)
-    private let _goals = MutableProperty<[Int64 : Goal]?>(nil)
-
     private let _now = MutableProperty<Date?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
 
 
-    // MARK: - Goal and report providing
+    // MARK: - Projects, goals and reports providing
 
-    internal func setGoalActions(read readAction: Action<ProjectID, Property<Goal?>, NoError>,
-                                 write writeAction: Action<Goal, Void, NoError>,
-                                 delete deleteAction: Action<ProjectID, Void, NoError>) {
+    // TODO: make binding target
+    internal func setProjectIDsByGoals(_ producer: SignalProducer<ProjectIDsByGoals.Update, NoError>) {
+        doAfterViewIsLoaded { [unowned self] in
+            self.projectsListViewController.projectIDsByGoals <~ producer
+        }
+    }
+    
+    internal var readProjectAction: Action<ProjectID, Property<Project?>, NoError>! {
+        didSet {
+            doAfterViewIsLoaded { [unowned self] in
+                self.projectsListViewController.readProjectAction = self.readProjectAction
+            }
+        }
+    }
+
+    internal func setGoalActions(read readAction: ReadGoalAction,
+                                 write writeAction: WriteGoalAction,
+                                 delete deleteAction: DeleteGoalAction) {
         // Propagate value to contained controllers once they are available
         doAfterViewIsLoaded { [unowned self] in
             self.projectsListViewController.readGoalAction = readAction
@@ -48,8 +57,10 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>! {
         didSet {
-            self.projectsListViewController.readReportAction = readReportAction
-            self.selectionDetailViewController.readReportAction = readReportAction
+            doAfterViewIsLoaded { [unowned self] in
+                self.projectsListViewController.readReportAction = self.readReportAction
+                self.selectionDetailViewController.readReportAction = self.readReportAction
+            }
         }
     }
 
@@ -81,8 +92,6 @@ class ProjectsMasterDetailController: NSSplitViewController {
         super.viewDidLoad()
 
         let listController = projectsListViewController, detailController = selectionDetailViewController
-        listController.projects <~ _projects.producer.skipNil()
-        listController.goals <~ _goals.producer.skipNil()
         listController.runningEntry <~ _runningEntry
         listController.now <~ _now.producer.skipNil()
 

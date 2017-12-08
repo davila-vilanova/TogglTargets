@@ -37,9 +37,9 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
 
     // MARK: - Goal and report providing
 
-    internal func setGoalActions(read: Action<ProjectID, Property<Goal?>, NoError>,
-                                 write: Action<Goal, Void, NoError>,
-                                 delete: Action<ProjectID, Void, NoError>) {
+    internal func setGoalActions(read: ReadGoalAction,
+                                 write: WriteGoalAction,
+                                 delete: DeleteGoalAction) {
         // Propagate value to contained controllers once they are available
         doAfterViewIsLoaded { [unowned self] in
             self.projectDetailsViewController.setGoalActions(read: read, write: write, delete: delete)

@@ -58,20 +58,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let mainWindow = mainWindowController.window
         mainWindow!.makeKeyAndOrderFront(nil)
 
-        if let masterDetailController = mainWindowController.window?.contentViewController as? ProjectsMasterDetailController {
-            masterDetailController.now <~ modelCoordinator.now
-            masterDetailController.calendar <~ modelCoordinator.calendar
-            masterDetailController.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
+        if let controller = mainWindowController.window?.contentViewController as? ProjectsMasterDetailController {
+            controller.now <~ modelCoordinator.now
+            controller.calendar <~ modelCoordinator.calendar
+            controller.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
 
-            masterDetailController.projects <~ modelCoordinator.projects.producer
-            masterDetailController.goals <~ modelCoordinator.goals
+            controller.setProjectIDsByGoals(modelCoordinator.projectIDsByGoals)
+            controller.readProjectAction = modelCoordinator.readProjectAction
+            controller.setGoalActions(read: modelCoordinator.readGoalAction,
+                                      write: modelCoordinator.writeGoalAction,
+                                      delete: modelCoordinator.deleteGoalAction)
+            controller.readReportAction = modelCoordinator.readReportAction
             
-            masterDetailController.setGoalActions(read: modelCoordinator.readGoalAction,
-                                                  write: modelCoordinator.writeGoalAction,
-                                                  delete: modelCoordinator.deleteGoalAction)
-            masterDetailController.readReportAction = modelCoordinator.readReportAction
-            
-            masterDetailController.runningEntry <~ modelCoordinator.runningEntry
+            controller.runningEntry <~ modelCoordinator.runningEntry
         }
     }
 

@@ -47,9 +47,9 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     // MARK: - Goal and report providing
 
-    internal func setGoalActions(read readAction: Action<ProjectID, Property<Goal?>, NoError>,
-                                 write writeAction: Action<Goal, Void, NoError>,
-                                 delete deleteAction: Action<ProjectID, Void, NoError>) {
+    internal func setGoalActions(read readAction: ReadGoalAction,
+                                 write writeAction: WriteGoalAction,
+                                 delete deleteAction: DeleteGoalAction) {
         // accept a single set of values during the controller's life
         assert(readGoalAction == nil)
         assert(writeGoalAction == nil)
@@ -76,9 +76,9 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         deleteGoalAction!.serialInput <~ projectId.sample(on: deleteSignal)
     }
 
-    private var readGoalAction: Action<ProjectID, Property<Goal?>, NoError>?
-    private var writeGoalAction: Action<Goal, Void, NoError>?
-    private var deleteGoalAction: Action<ProjectID, Void, NoError>?
+    private var readGoalAction: ReadGoalAction?
+    private var writeGoalAction: WriteGoalAction?
+    private var deleteGoalAction: DeleteGoalAction?
 
     internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>?
 

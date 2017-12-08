@@ -147,6 +147,13 @@ extension WeekdaySelection: Equatable {
     }
 }
 
+extension WeekdaySelection: Comparable {
+    static func <(lhs: WeekdaySelection, rhs: WeekdaySelection) -> Bool {
+        return lhs.countOfSelectedDays < rhs.countOfSelectedDays
+    }
+
+}
+
 extension WeekdaySelection {
     typealias IntegerRepresentationType = UInt8
     var integerRepresentation: IntegerRepresentationType {
@@ -179,3 +186,4 @@ extension WeekdaySelection {
         self.integerRepresentation = integerRepresentation
     }
 }
+

@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/david/devspace/togglreports/TogglGoals/CombinedTarget.playground">
+   </FileRef>
+   <FileRef
       location = "group:ApplyActionSerially.playground">
    </FileRef>
    <FileRef

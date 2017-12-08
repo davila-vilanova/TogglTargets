@@ -9,11 +9,11 @@
 import Foundation
 
 struct Goal {
-    // TODO: move here the start and end days
     let projectId: Int64
     var hoursPerMonth: Int
     var workWeekdays: WeekdaySelection
 
+    // TODO: rename argument labels
     init(forProjectId projectId: Int64, hoursPerMonth: Int, workWeekdays: WeekdaySelection) {
         self.projectId = projectId
         self.hoursPerMonth = hoursPerMonth

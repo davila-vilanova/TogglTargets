@@ -15,10 +15,21 @@ fileprivate let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("Section
 
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate {
 
+    private let (lifetime, token) = Lifetime.make()
+
+
     // MARK: - Exposed targets and source
 
-    internal var projects: BindingTarget<IndexedProjects> { return _projects.deoptionalizedBindingTarget }
-    internal var goals: BindingTarget<ProjectIndexedGoals> { return _goals.deoptionalizedBindingTarget }
+    internal lazy var projectIDsByGoals = // TODO: should be an action that can fail and be retried
+        BindingTarget<ProjectIDsByGoals.Update>(on: UIScheduler(), lifetime: lifetime) { [unowned self] update in
+            switch update {
+            case .fullRefresh(let projectIDs):
+                self.refresh(with: projectIDs)
+            case .move(let moveUpdate):
+                self.update(with: moveUpdate)
+            }
+    }
+
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
     internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
 
@@ -27,118 +38,17 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Backing properties
 
-    private let _projects = MutableProperty<IndexedProjects?>(nil)
-    private let _goals = MutableProperty<ProjectIndexedGoals?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
     private let _now = MutableProperty<Date?>(nil)
     private let _selectedProject = MutableProperty<Project?>(nil)
 
 
-    // MARK: - Goal and report providing
+    // MARK: - Actions
 
-    internal var readGoalAction: Action<ProjectID, Property<Goal?>, NoError>!
-    internal var readReportAction : Action<ProjectID, Property<TwoPartTimeReport?>, NoError>!
+    internal var readProjectAction: Action<ProjectID, Property<Project?>, NoError>!
+    internal var readGoalAction: ReadGoalAction!
+    internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>!
 
-
-    // MARK: Preparing collection view data
-
-    enum Section: Int {
-        case withGoal = 0
-        case withoutGoal = 1
-
-        static var count = 2
-    }
-
-    private struct ProjectsCollectionViewMetadata {
-        private let projectIdsToIndexPaths: [Int64 : IndexPath]
-        private let indexPathsToProjectIds: [IndexPath : Int64]
-        let countOfProjectsWithGoals: Int
-        let countOfProjectsWithoutGoals: Int
-        let projectIdsWithChangedGoals: [Int64]
-
-        init(projects: IndexedProjects, goals: ProjectIndexedGoals, previousGoals: ProjectIndexedGoals?) {
-            let changesInGoals = goals.keysOfDifferingValues(with: previousGoals)
-            let sortedIds: [Int64] = [Int64](projects.keys).sorted(by: { (idA, idB) -> Bool in
-                let goalA = goals[idA]
-                let goalB = goals[idB]
-
-                if goalA != nil, goalB == nil {
-                    // a goal is more goaler than a no goal
-                    return true
-                } else if let a = goalA, let b = goalB {
-                    // the larger goal comes first
-                    return a > b
-                } else {
-                    return false
-                }
-            })
-            let idsOfProjectsWithGoals: ArraySlice<Int64> = sortedIds.prefix { (projectId) -> Bool in
-                return goals[projectId] != nil
-            }
-            let idsOfProjectsWithoutGoals = sortedIds.suffix(from: idsOfProjectsWithGoals.count)
-
-            var idsToIndexPaths = [Int64 : IndexPath]()
-            var indexPathsToIds = [IndexPath : Int64]()
-            for (index, projectId) in idsOfProjectsWithGoals.enumerated() {
-                let indexPath = IndexPath(item: index, section: Section.withGoal.rawValue)
-                idsToIndexPaths[projectId] = indexPath
-                indexPathsToIds[indexPath] = projectId
-            }
-            for (index, projectId) in idsOfProjectsWithoutGoals.enumerated() {
-                let indexPath = IndexPath(item: index, section: Section.withoutGoal.rawValue)
-                idsToIndexPaths[projectId] = indexPath
-                indexPathsToIds[indexPath] = projectId
-            }
-
-            projectIdsToIndexPaths = idsToIndexPaths
-            indexPathsToProjectIds = indexPathsToIds
-            countOfProjectsWithGoals = idsOfProjectsWithGoals.count
-            countOfProjectsWithoutGoals = idsOfProjectsWithoutGoals.count
-            projectIdsWithChangedGoals = changesInGoals
-        }
-
-        func indexPath(for projectId: Int64) -> IndexPath? {
-            return projectIdsToIndexPaths[projectId]
-        }
-
-        func projectId(for indexPath: IndexPath) -> Int64? {
-            return indexPathsToProjectIds[indexPath]
-        }
-    }
-
-    private lazy var metadata: Property<ProjectsCollectionViewMetadata?> = {
-        let p = SignalProducer.combineLatest(_projects.producer.skipNil(), _goals.producer.combinePrevious())
-            .map { (input) -> ProjectsCollectionViewMetadata? in
-                let (projects, (previousGoals, currentGoals)) = input
-                guard let goals = currentGoals else {
-                    return nil
-                }
-                return ProjectsCollectionViewMetadata(projects: projects, goals: goals, previousGoals: previousGoals)
-        }
-        return Property(initial: nil, then: p)
-    }()
-
-    private let (lifetime, token) = Lifetime.make()
-
-    private lazy var reloadList = BindingTarget<()>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (_) in
-        self.projectsCollectionView.reloadData()
-        self.updateSelection()
-        self.scrollToSelection()
-    }
-
-    private lazy var updateList =
-        BindingTarget<(ProjectsCollectionViewMetadata, ProjectsCollectionViewMetadata)>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (previousMetadata, currentMetadata) in
-            // Having the project IDs for the goal(s) whose change prompted the current update makes it simple to
-            // move only the items directly affected by the changes.
-            for projectId in currentMetadata.projectIdsWithChangedGoals {
-                let oldIndexPath = previousMetadata.indexPath(for: projectId)!
-                let newIndexPath = currentMetadata.indexPath(for: projectId)!
-                guard oldIndexPath != newIndexPath else {
-                    continue
-                }
-                self.projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
-            }
-    }
 
     // MARK: - Outlets
 
@@ -146,6 +56,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
 
     // MARK: -
+
+    private var currentProjectIDs = ProjectIDsByGoals.empty
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -157,28 +69,44 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         projectsCollectionView.register(itemNib, forItemWithIdentifier: ProjectItemIdentifier)
 
         let headerNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewHeader"), bundle: nil)!
-        projectsCollectionView.register(headerNib, forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: SectionHeaderIdentifier)
+        projectsCollectionView.register(headerNib,
+                                        forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
+                                        withIdentifier: SectionHeaderIdentifier)
+    }
 
-        reloadList <~ metadata.producer.skipNil().filter { $0.projectIdsWithChangedGoals.count == 0 }.map { _ in return () }
+    private func refresh(with projectIDs: ProjectIDsByGoals) {
+        self.currentProjectIDs = projectIDs
+        self.projectsCollectionView.reloadData()
+        self.updateSelection()
+        self.scrollToSelection()
+    }
 
-        updateList <~ metadata.producer.skipNil().combinePrevious().filter { (_, currentMetadata) in currentMetadata.projectIdsWithChangedGoals.count > 0 }
+    private func update(with moveUpdate: ProjectIDsByGoals.MoveUpdate) {
+        let beforeMove = self.currentProjectIDs
+        let afterMove = beforeMove.applying(moveUpdate)
+        let oldIndexPath = beforeMove.indexPath(forElementAt: moveUpdate.oldIndex)!
+        let newIndexPath = afterMove.indexPath(forElementAt: moveUpdate.newIndex)!
+
+        self.currentProjectIDs = afterMove
+        self.projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
+        self.scrollToSelection()
     }
 
     private func updateSelection() {
-        _selectedProject.value = {
-            guard let indexPath = projectsCollectionView.selectionIndexPaths.first else {
-                return nil
+        _selectedProject <~ { () -> SignalProducer<Project?, NoError> in
+            guard let indexPath = projectsCollectionView.selectionIndexPaths.first,
+                let projectId = currentProjectIDs.projectId(for: indexPath) else {
+                    return SignalProducer(value: nil)
             }
-            guard let projectId = metadata.value?.projectId(for: indexPath) else {
-                return nil
-            }
-            return _projects.value?[projectId]
+            return readProjectAction.applySerially(projectId).flatten(.latest)
         }()
     }
 
     private func scrollToSelection() {
         assert(Thread.current.isMainThread)
-        projectsCollectionView.animator().scrollToItems(at: projectsCollectionView.selectionIndexPaths, scrollPosition: .nearestHorizontalEdge)
+        projectsCollectionView.animator()
+            .scrollToItems(at: projectsCollectionView.selectionIndexPaths,
+                           scrollPosition: .nearestHorizontalEdge)
     }
 
     // MARK: - NSCollectionViewDataSource
@@ -187,31 +115,35 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         return Section.count
     }
 
-    func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: NSCollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .withGoal: return metadata.value?.countOfProjectsWithGoals ?? 0
-        case .withoutGoal: return metadata.value?.countOfProjectsWithoutGoals ?? 0
+        case .withGoal: return currentProjectIDs.countOfProjectsWithGoals
+        case .withoutGoal: return currentProjectIDs.countOfProjectsWithoutGoals
         }
     }
 
-    func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
+    func collectionView(_ collectionView: NSCollectionView,
+                        itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItem(withIdentifier: ProjectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
-        projectItem.connectOnceInLifecycle(runningEntry: _runningEntry.producer, now: _now.producer.skipNil())
+        projectItem.connectOnceInLifecycle(runningEntry: _runningEntry.producer,
+                                           now: _now.producer.skipNil())
 
-        let projectId: ProjectID = metadata.value!.projectId(for: indexPath)!
+        let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
 
-        // Extract from the _projects property a property for the single project identified by projectId
-        let projectProperty: Property<Project?> = _projects.map { $0?[projectId] }
-        projectItem.projects <~ SignalProducer<Property<Project?>, NoError>(value: projectProperty)
+        projectItem.projects <~ readProjectAction.applySerially(projectId)
         projectItem.goals <~ readGoalAction.applySerially(projectId)
         projectItem.reports <~ readReportAction.applySerially(projectId)
 
         return projectItem
     }
 
-    func collectionView(_ collectionView: NSCollectionView, viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSView {
-        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader, withIdentifier: SectionHeaderIdentifier, for: indexPath)
+    func collectionView(_ collectionView: NSCollectionView,
+                        viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind,
+                        at indexPath: IndexPath) -> NSView {
+        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
+                                                        withIdentifier: SectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
             switch Section(rawValue: indexPath.section)! {
             case .withGoal: header.title = "projects with goals"
@@ -230,25 +162,5 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
         updateSelection()
-    }
-}
-
-// MARK: -
-
-fileprivate extension Dictionary where Value: Equatable {
-    func keysOfDifferingValues(with anotherDictionaryOrNil: Dictionary<Key, Value>?) -> [Key] {
-        var diffKeys = [Key]()
-
-        guard let otherness = anotherDictionaryOrNil else {
-            return diffKeys
-        }
-
-        let allKeys = Set<Key>(self.keys).union(otherness.keys)
-        for key in allKeys {
-            if self[key] != otherness[key] {
-                diffKeys.append(key)
-            }
-        }
-        return diffKeys
     }
 }
