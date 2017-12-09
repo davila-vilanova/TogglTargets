@@ -23,10 +23,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     internal lazy var projectIDsByGoals = // TODO: should be an action that can fail and be retried
         BindingTarget<ProjectIDsByGoals.Update>(on: UIScheduler(), lifetime: lifetime) { [unowned self] update in
             switch update {
-            case .fullRefresh(let projectIDs):
+            case .full(let projectIDs):
                 self.refresh(with: projectIDs)
-            case .move(let moveUpdate):
-                self.update(with: moveUpdate)
+            case .createGoal(let goalUpdate):
+                self.update(with: goalUpdate)
             }
     }
 
@@ -81,11 +81,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         self.scrollToSelection()
     }
 
-    private func update(with moveUpdate: ProjectIDsByGoals.MoveUpdate) {
+    private func update(with update: ProjectIDsByGoals.Update.GoalUpdate) {
         let beforeMove = self.currentProjectIDs
-        let afterMove = beforeMove.applying(moveUpdate)
-        let oldIndexPath = beforeMove.indexPath(forElementAt: moveUpdate.oldIndex)!
-        let newIndexPath = afterMove.indexPath(forElementAt: moveUpdate.newIndex)!
+        let afterMove = update.apply(to: beforeMove)
+        let oldIndexPath = beforeMove.indexPath(forElementAt: update.indexChange.old)!
+        let newIndexPath = afterMove.indexPath(forElementAt: update.indexChange.new)!
 
         self.currentProjectIDs = afterMove
         self.projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
@@ -112,12 +112,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - NSCollectionViewDataSource
 
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
-        return Section.count
+        return ProjectIDsByGoals.Section.count
     }
 
     func collectionView(_ collectionView: NSCollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        switch Section(rawValue: section)! {
+        switch ProjectIDsByGoals.Section(rawValue: section)! {
         case .withGoal: return currentProjectIDs.countOfProjectsWithGoals
         case .withoutGoal: return currentProjectIDs.countOfProjectsWithoutGoals
         }
@@ -145,7 +145,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
                                                         withIdentifier: SectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
-            switch Section(rawValue: indexPath.section)! {
+            switch ProjectIDsByGoals.Section(rawValue: indexPath.section)! {
             case .withGoal: header.title = "projects with goals"
             case .withoutGoal: header.title = "projects without goals"
             }

@@ -8,24 +8,60 @@
 
 import Foundation
 
+/// Encloses a sorted array of project IDs, ordered primarily by descending goal size
+/// and a count of projects that have goals associated with them.
 struct ProjectIDsByGoals {
+    /// The sorted collection of array IDs
     let sortedProjectIDs: [ProjectID]
+
+    // Count of projects, from among those whose IDs are included in sortedProjectIDs,
+    /// that have goals associated with them
     let countOfProjectsWithGoals: Int
 
+    /// Represents a full or incremental update to a ProjectIDsByGoals
     enum Update {
-        case fullRefresh(ProjectIDsByGoals)
-        case move(MoveUpdate)
-    }
+        /// Represents a full update that entails a full refresh
+        case full(ProjectIDsByGoals)
 
-    struct MoveUpdate {
-        let oldIndex: Int
-        let newIndex: Int
-        let newCountOfProjectsWithGoals: Int
+        /// Represents an update that consists of a single move operation and possibly an
+        /// increment or decrement of the count of projects associated with goals
+        case createGoal(GoalUpdate)
 
-        init(from oldIndex: Int, to newIndex: Int, newCount: Int) {
-            self.oldIndex = oldIndex
-            self.newIndex = newIndex
-            self.newCountOfProjectsWithGoals = newCount
+        enum GoalUpdate {
+            case create(IndexChange)
+            case remove(IndexChange)
+            case update(IndexChange)
+
+            var indexChange: IndexChange {
+                switch self {
+                case .create(let change): return change
+                case .remove(let change): return change
+                case .update(let change): return change
+                }
+            }
+
+            func computeNewCount(from idsByGoals: ProjectIDsByGoals) -> Int {
+                let oldCount = idsByGoals.countOfProjectsWithGoals
+                switch self {
+                case .create: return oldCount + 1
+                case .remove: return oldCount - 1
+                case .update: return oldCount
+                }
+            }
+
+            func apply(to pre: ProjectIDsByGoals) -> ProjectIDsByGoals {
+                var sortedIDs = pre.sortedProjectIDs
+                let item = sortedIDs.remove(at: indexChange.old)
+                sortedIDs.insert(item, at: indexChange.new)
+                return ProjectIDsByGoals(sortedProjectIDs: sortedIDs,
+                                         countOfProjectsWithGoals: computeNewCount(from: pre))
+            }
+
+        }
+
+        struct IndexChange {
+            let old: Int
+            let new: Int
         }
     }
 
@@ -47,14 +83,15 @@ extension ProjectIDsByGoals {
     }
 }
 
-enum Section: Int {
-    case withGoal = 0
-    case withoutGoal = 1
-
-    static var count = 2
-}
-
 extension ProjectIDsByGoals {
+
+    enum Section: Int {
+        case withGoal = 0
+        case withoutGoal = 1
+
+        static var count = 2
+    }
+
     func projectId(for indexPath: IndexPath) -> ProjectID? {
         guard let section = Section(rawValue: indexPath.section) else {
             return nil
@@ -93,15 +130,6 @@ extension ProjectIDsByGoals {
     }
 }
 
-extension ProjectIDsByGoals {
-    func applying(_ update: MoveUpdate) -> ProjectIDsByGoals {
-        var sortedIDs = sortedProjectIDs
-        let item = sortedIDs.remove(at: update.oldIndex)
-        sortedIDs.insert(item, at: update.newIndex)
-        return ProjectIDsByGoals(sortedProjectIDs: sortedIDs,
-                                 countOfProjectsWithGoals: update.newCountOfProjectsWithGoals)
-    }
-}
 
 extension ProjectIDsByGoals {
     init(projectIDs: [ProjectID], goals: ProjectIndexedGoals) {
@@ -112,15 +140,8 @@ extension ProjectIDsByGoals {
 
     struct Error: Swift.Error { }
 
-    enum ChangeType {
-        case create
-        case delete
-        case update
-    }
-
     struct ModifyGoalOutput {
-        let moveUpdate: ProjectIDsByGoals.MoveUpdate
-        let changeType: ProjectIDsByGoals.ChangeType
+        let update: ProjectIDsByGoals.Update.GoalUpdate
         let indexedGoals: ProjectIndexedGoals
         let projectIDsByGoals: ProjectIDsByGoals
     }
@@ -146,21 +167,20 @@ extension ProjectIDsByGoals {
             guard let newIndex = newlySortedIDs.index(of: projectId) else {
                 throw Error()
             }
-            let (changeType, countIncrement) = { () -> (ChangeType, Int) in
+
+            let update: Update.GoalUpdate = {
+                let indexChange = Update.IndexChange(old: oldIndex, new: newIndex)
                 if (oldGoal == nil) && (newGoal != nil) {
-                    return (.create, +1)
+                    return .create(indexChange)
                 } else if (oldGoal != nil) && (newGoal == nil) {
-                    return (.delete, -1)
+                    return .remove(indexChange)
                 } else {
-                    return (.update, 0)
+                    return .update(indexChange)
                 }
             }()
-            let newCount = countOfProjectsWithGoals + countIncrement
-            let moveUpdate = ProjectIDsByGoals.MoveUpdate(from: oldIndex, to: newIndex,
-                                                          newCount: newCount)
-            let newProjectIDsByGoals = ProjectIDsByGoals(sortedProjectIDs: newlySortedIDs, countOfProjectsWithGoals: newCount)
-            return ModifyGoalOutput(moveUpdate: moveUpdate,
-                                    changeType: changeType,
+
+            let newProjectIDsByGoals = update.apply(to: self)
+            return ModifyGoalOutput(update: update,
                                     indexedGoals: newIndexedGoals,
                                     projectIDsByGoals: newProjectIDsByGoals)
     }

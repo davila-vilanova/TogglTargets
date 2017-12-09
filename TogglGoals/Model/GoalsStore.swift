@@ -83,9 +83,8 @@ class SQLiteGoalsStore: GoalsStore {
     private var _projectIDs = MutableProperty<[ProjectID]?>(nil)
 
     var projectIDsByGoalsUpdates: SignalProducer<ProjectIDsByGoals.Update, NoError> {
-        let moveUpdates: Signal<ProjectIDsByGoals.MoveUpdate, NoError> = modifyGoalAction.values.map { $0.moveUpdate }
-        return SignalProducer.merge(fullRefreshUpdateProducer.map { ProjectIDsByGoals.Update.fullRefresh($0) },
-                                    moveUpdates.producer.map { ProjectIDsByGoals.Update.move($0) })
+        return SignalProducer.merge(fullRefreshUpdateProducer.map { ProjectIDsByGoals.Update.full($0) },
+                                    modifyGoalAction.values.producer.map { ProjectIDsByGoals.Update.createGoal($0.update) })
     }
 
     private lazy var fullRefreshUpdateProducer: SignalProducer<ProjectIDsByGoals, NoError> = {
@@ -111,14 +110,14 @@ class SQLiteGoalsStore: GoalsStore {
         let (allGoals, projectIDsByGoalsPre) = state
         let (goalPost, projectId) = input
         let output = try! projectIDsByGoalsPre.afterEditingGoal(goalPost, for: projectId, in: allGoals)
-        let changeType = output.changeType
+        let update = output.update
 
         self.scheduler.schedule { [goal = goalPost, projectId, unowned self] in
-            switch changeType {
+            switch update {
             case .create: fallthrough
             case .update:
                 self.storeGoal(goal!)
-            case .delete:
+            case .remove:
                 self.deleteGoal(for: projectId)
             }
         }
