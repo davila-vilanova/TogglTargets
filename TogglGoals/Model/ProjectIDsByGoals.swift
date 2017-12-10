@@ -138,7 +138,7 @@ struct ProjectIDsByGoals {
 
 extension ProjectIDsByGoals {
     /// Initializes a `ProjectIDsByGoals` value with the provided projectIDs sorted by the descending size
-    /// of the provided goals. To guarantee deterministic order as long as the provided project IDs are unique,
+    /// of the provided goals. To guarantee stable order as long as the provided project IDs are unique,
     /// if two goals are considered of equivalent size the order will be determined by project ID descending.
     ///
     /// - parameters:
@@ -148,6 +148,17 @@ extension ProjectIDsByGoals {
         let sortedIDs = projectIDs.sorted(by: makeAreProjectIDsInIncreasingOrderFunction(for: goals))
         let countWithGoals = sortedIDs.prefix { goals[$0] != nil }.count
         self.init(sortedProjectIDs: sortedIDs, countOfProjectsWithGoals: countWithGoals)
+    }
+
+    /// Initializes a `ProjectIDsByGoals` value with the provided projectIDs sorted by the descending size
+    /// of the provided goals. To guarantee stable order, if two goals are considered of equivalent size the
+    /// order will be determined by project ID descending.
+    ///
+    /// - parameters:
+    ///   - projectIDs: The IDs to sort by the provided goals.
+    ///   - goals: The goals upon which to base the primary ordering of the IDs.
+    init(projectIDs: Set<ProjectID>, goals: ProjectIndexedGoals) {
+        self.init(projectIDs: [ProjectID](projectIDs), goals: goals)
     }
 }
 
@@ -236,7 +247,7 @@ extension ProjectIDsByGoals {
 
 /// Makes a function that can be used as input to `Array<ProjectID>.sort(by:)` and will determine the
 /// order of the project IDs by whether they have a goal or not and the size of the goal. IDs will be ordered
-/// with those that have a goal first ordered by descending goal size. To guarantee deterministic order as long as
+/// with those that have a goal first ordered by descending goal size. To guarantee stable order as long as
 /// the IDs are unique, if two goals are considered of equivalent size (including the case in which they are
 /// both missing) the order will be determined by project ID descending.
 ///
@@ -256,7 +267,7 @@ fileprivate func makeAreProjectIDsInIncreasingOrderFunction(for goals: ProjectIn
                 // a goal is more goaler than a no goal
                 return true
             } else if left == nil, right == nil {
-                // order needs to be deterministic, so use project ID
+                // order needs to be stable, so use project ID
                 return idL > idR
             } else {
                 return false
