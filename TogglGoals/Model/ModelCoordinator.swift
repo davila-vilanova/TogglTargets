@@ -137,7 +137,7 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Goals
 
-    private let goalsStore: GoalsStore
+    private let goalsStore: ProjectIDsByGoalsProducingGoalsStore
 
     /// Action which takes a project ID as input and returns a producer that sends a single
     /// Property value corresponding to the goal associated with the project ID.
@@ -163,7 +163,7 @@ internal class ModelCoordinator: NSObject {
                   retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction,
                   retrieveReportsNetworkAction: RetrieveReportsNetworkAction,
                   retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction,
-                  goalsStore: GoalsStore) {
+                  goalsStore: ProjectIDsByGoalsProducingGoalsStore) {
 
         self.retrieveProfileNetworkAction = retrieveProfileNetworkAction
         self.retrieveProfileCacheAction = retrieveProfileCacheAction
