@@ -40,12 +40,6 @@ class SQLiteGoalsStore: GoalsStore {
     private let hoursPerMonthExpression = Expression<Int>("hours_per_month")
     private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
 
-    private let allGoals = MutableProperty<ProjectIndexedGoals?>(nil)
-
-    private func connectInputsToAllGoals() {
-        allGoals <~ modifyGoalAction.values.map { $0.indexedGoals }
-    }
-
     private let (lifetime, token) = Lifetime.make()
     private lazy var scheduler = QueueScheduler()
 
@@ -55,12 +49,14 @@ class SQLiteGoalsStore: GoalsStore {
             db = try Connection(databaseURL.absoluteString)
             ensureTableCreated()
             connectInputsToAllGoals()
-            connectInputsToMGAState()
+            connectInputsToMGActionState()
             retrieveAllGoals()
         } catch {
             return nil
         }
     }
+
+    // MARK: - Public actions
 
     lazy var readGoalAction = ReadGoalAction { [unowned self] projectId in
         let goalProperty = self.allGoals.map { $0?[projectId] }.skipRepeats { $0 == $1 }
@@ -79,16 +75,20 @@ class SQLiteGoalsStore: GoalsStore {
         return SignalProducer.empty
     }
 
+
+    // MARK: - Generation of ProjectIDsByGoals
+
     var projectIDs: BindingTarget<[ProjectID]> { return _projectIDs.deoptionalizedBindingTarget }
     private var _projectIDs = MutableProperty<[ProjectID]?>(nil)
 
-    var projectIDsByGoalsUpdates: SignalProducer<ProjectIDsByGoals.Update, NoError> {
-        return SignalProducer.merge(fullRefreshUpdateProducer.map { ProjectIDsByGoals.Update.full($0) },
-                                    modifyGoalAction.values.producer.map { ProjectIDsByGoals.Update.createGoal($0.update) })
+    private let allGoals = MutableProperty<ProjectIndexedGoals?>(nil)
+
+    private func connectInputsToAllGoals() {
+        allGoals <~ modifyGoalAction.values.map { $0.3 }
     }
 
     private lazy var fullRefreshUpdateProducer: SignalProducer<ProjectIDsByGoals, NoError> = {
-       return _projectIDs.producer.skipNil().combineLatest(with: allGoals.producer.skipNil())
+        return _projectIDs.producer.skipNil().combineLatest(with: allGoals.producer.skipNil())
             .skipRepeats { (old, new) -> Bool in // let through only changes in project IDs, order insensitive
                 let oldIds = Set(old.0)
                 let newIds = Set(new.0)
@@ -97,32 +97,76 @@ class SQLiteGoalsStore: GoalsStore {
             .map(ProjectIDsByGoals.init)
     }()
 
-    private let mgaState = MutableProperty<(ProjectIndexedGoals, ProjectIDsByGoals)?>(nil)
-    private func connectInputsToMGAState() {
+    private typealias MGActionState = (ProjectIndexedGoals, ProjectIDsByGoals)
+    private typealias MGActionInput = (Goal?, ProjectID)
+    private typealias MGActionOutput = (PersistedGoalUpdate, ProjectIDsByGoals.Update.GoalUpdate, ProjectIDsByGoals, ProjectIndexedGoals)
+
+    private let mgActionState = MutableProperty<MGActionState?>(nil)
+    private func connectInputsToMGActionState() {
         let allGoalsProducer = allGoals.producer.skipNil()
         let projectIDsByGoalsProducer = SignalProducer.merge(fullRefreshUpdateProducer,
-                                                             modifyGoalAction.values.producer.map { $0.projectIDsByGoals })
-        mgaState <~ allGoalsProducer.combineLatest(with: projectIDsByGoalsProducer)
+                                                             modifyGoalAction.values.producer.map { $0.2 })
+        mgActionState <~ allGoalsProducer.combineLatest(with: projectIDsByGoalsProducer)
     }
 
-    private lazy var modifyGoalAction = Action<(Goal?, ProjectID), ProjectIDsByGoals.ModifyGoalOutput, NoError>(unwrapping: mgaState) {
-        [unowned self] (state, input) in
-        let (allGoals, projectIDsByGoalsPre) = state
-        let (goalPost, projectId) = input
-        let output = try! projectIDsByGoalsPre.afterEditingGoal(goalPost, for: projectId, in: allGoals)
-        let update = output.update
+    private lazy var modifyGoalAction = Action<MGActionInput, MGActionOutput, NoError>(unwrapping: mgActionState) {
+        (state, input) in
+        let (currentIndexedGoals, currentIDsByGoals) = state
+        let (newGoalOrNil, projectId) = input
+        let oldGoal = currentIndexedGoals[projectId]
 
-        self.scheduler.schedule { [goal = goalPost, projectId, unowned self] in
+        let newIndexedGoals: ProjectIndexedGoals = {
+            var t = currentIndexedGoals
+            t[projectId] = newGoalOrNil
+            return t
+        }()
+
+        let idsByGoalsUpdate = ProjectIDsByGoals.Update.GoalUpdate.forGoalChange(affecting: currentIDsByGoals,
+                                                                                 for: projectId,
+                                                                                 from: oldGoal,
+                                                                                 producing: newIndexedGoals)!
+
+        let persistedGoalUpdate: PersistedGoalUpdate = { [goal = newGoalOrNil] in
+            switch (idsByGoalsUpdate) {
+            case .create: return .create(goal!)
+            case .update: return .update(goal!)
+            case .remove: return .delete(projectId)
+            }
+        }()
+
+        let output = (persistedGoalUpdate, idsByGoalsUpdate, idsByGoalsUpdate.apply(to: currentIDsByGoals), newIndexedGoals)
+        return SignalProducer(value: output)
+    }
+
+    var projectIDsByGoalsUpdates: SignalProducer<ProjectIDsByGoals.Update, NoError> {
+        return SignalProducer.merge(fullRefreshUpdateProducer.map { ProjectIDsByGoals.Update.full($0) },
+                                    modifyGoalAction.values.producer.map { ProjectIDsByGoals.Update.createGoal($0.1) })
+    }
+
+
+    // MARK: -
+
+    private enum PersistedGoalUpdate {
+        case create(Goal)
+        case update(Goal)
+        case delete(ProjectID)
+    }
+
+    private lazy var persistedGoalUpdates: BindingTarget<PersistedGoalUpdate> = {
+        let target = BindingTarget<PersistedGoalUpdate>(on: scheduler, lifetime: lifetime) {
+            [unowned self] update in
             switch update {
-            case .create: fallthrough
-            case .update:
-                self.storeGoal(goal!)
-            case .remove:
+            case .create(let goal):
+                self.storeGoal(goal)
+            case .update(let goal):
+                self.storeGoal(goal)
+            case .delete(let projectId):
                 self.deleteGoal(for: projectId)
             }
         }
-        return SignalProducer(value: output)
-    }
+        target <~ modifyGoalAction.values.map { $0.0 }
+        return target
+    }()
 
     private func storeGoal(_ goal: Goal) {
         try! db.run(goalsTable.insert(or: .replace,

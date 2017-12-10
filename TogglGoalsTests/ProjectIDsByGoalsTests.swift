@@ -56,10 +56,44 @@ class ProjectIDsByGoalsTests: XCTestCase {
     }
 }
 
+fileprivate let SetupFailure = "Test setup failure: "
+fileprivate let SetupFailureNilIndexedGoals = "\(SetupFailure)indexedGoals and projectId must not be nil"
+fileprivate let SetupFailureNonMatchingProjectId = "\(SetupFailure)if a newGoal is provided, newGoal's projectId must match provided projectId"
+fileprivate let SetupFailureNilIdsByGoals = "\(SetupFailure)idsByGoals must not be nil"
+fileprivate let SetupFailureNilProjectIdOrNewIndexedGoals = "\(SetupFailure)after calling setupForProjectId(_, newGoal:) projectId and newIndexedGoals must not be nil"
+
 class ProjectIDsByGoalsUpdateTests: XCTestCase {
-    var indexedGoals: ProjectIndexedGoals!
-    var projectIDs: [ProjectID]!
-    var idsByGoals: ProjectIDsByGoals!
+    var indexedGoals: ProjectIndexedGoals?
+    var projectIDs: [ProjectID]?
+    var idsByGoals: ProjectIDsByGoals?
+
+    var projectId: ProjectID?
+    var oldGoal: Goal?
+    var newGoal: Goal?
+    var newIndexedGoals: ProjectIndexedGoals?
+
+    typealias GoalUpdate = ProjectIDsByGoals.Update.GoalUpdate
+
+    // Updates the values of projectId, oldGoal, newGoal and newIndexedGoals
+    func setUpForProjectId(_ projectId: ProjectID, newGoal: Goal?) {
+        guard let oldIndexedGoals = indexedGoals else {
+            XCTFail(SetupFailureNilIndexedGoals)
+            return
+        }
+        guard newGoal == nil || newGoal!.projectId == projectId else {
+            XCTFail(SetupFailureNonMatchingProjectId)
+            return
+        }
+
+        self.projectId = projectId
+        self.newGoal = newGoal
+        oldGoal = oldIndexedGoals[projectId]
+        newIndexedGoals = {
+            var t = oldIndexedGoals
+            t[projectId] = newGoal
+            return t
+        }()
+    }
 
     override func setUp() {
         super.setUp()
@@ -69,87 +103,123 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
                          48 : Goal(forProjectId: 48, hoursPerMonth: 30, workWeekdays: WeekdaySelection.exceptWeekend) ]
         projectIDs = [30, 12, 25, 89, 22, 48, 71, 60]
 
-        idsByGoals = ProjectIDsByGoals(projectIDs: projectIDs, goals: indexedGoals)
+        idsByGoals = ProjectIDsByGoals(projectIDs: projectIDs!, goals: indexedGoals!)
+
+        projectId = nil
+        oldGoal = nil
+        newGoal = nil
+        newIndexedGoals = nil
     }
 
     func testInitialization() {
+        guard let idsByGoals = idsByGoals else {
+            XCTFail(SetupFailureNilIdsByGoals)
+            return
+        }
         XCTAssertEqual(idsByGoals.sortedProjectIDs, [48, 25, 71, 89, 60, 30, 22, 12])
         XCTAssertEqual(idsByGoals.countOfProjectsWithGoals, 3)
     }
 
     func testEditExistingGoal() {
-        let newGoal = Goal(forProjectId: 48, hoursPerMonth: 15, workWeekdays: WeekdaySelection.exceptWeekend)
-        do {
-            let output = try idsByGoals.afterEditingGoal(newGoal, for: 48, in: indexedGoals)
-            XCTAssertEqual(output.projectIDsByGoals.sortedProjectIDs, [25, 48, 71, 89, 60, 30, 22, 12])
-            XCTAssertEqual(output.projectIDsByGoals.countOfProjectsWithGoals, 3)
-
-            let indexChange = output.update.indexChange
-            XCTAssertEqual(indexChange.old, 0)
-            XCTAssertEqual(indexChange.new, 1)
-            XCTAssertEqual(output.update.computeNewCount(from: idsByGoals), 3)
-
-            XCTAssertEqual(output.indexedGoals, [ 71 : Goal(forProjectId: 71, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend),
-                                                  25 : Goal(forProjectId: 25, hoursPerMonth: 20, workWeekdays: WeekdaySelection.wholeWeek),
-                                                  90 : Goal(forProjectId: 90, hoursPerMonth: 50, workWeekdays: WeekdaySelection.exceptWeekend),
-                                                  48 : Goal(forProjectId: 48, hoursPerMonth: 15, workWeekdays: WeekdaySelection.exceptWeekend) ])
-
-            XCTAssertEqual(output.update.apply(to: idsByGoals), output.projectIDsByGoals)
-
-            XCTAssertEqual(idsByGoals.indexPath(forElementAt: indexChange.old), IndexPath(item: 0, section: withGoal))
-            XCTAssertEqual(output.projectIDsByGoals.indexPath(forElementAt: indexChange.new), IndexPath(item: 1, section: withGoal))
-        } catch {
-            XCTFail()
+        guard let idsByGoals = idsByGoals else {
+            XCTFail(SetupFailureNilIdsByGoals)
+            return
         }
+
+        setUpForProjectId(48, newGoal: Goal(forProjectId: 48, hoursPerMonth: 15, workWeekdays: WeekdaySelection.exceptWeekend))
+        guard let projectId = projectId, let newIndexedGoals = newIndexedGoals else {
+            XCTFail(SetupFailureNilProjectIdOrNewIndexedGoals)
+            return
+        }
+
+        let goalUpdate = GoalUpdate.forGoalChange(affecting: idsByGoals,
+                                                  for: projectId,
+                                                  from: oldGoal,
+                                                  producing: newIndexedGoals)
+        guard let update = goalUpdate else {
+            XCTFail()
+            return
+        }
+
+        let indexChange = update.indexChange
+        XCTAssertEqual(indexChange.old, 0)
+        XCTAssertEqual(indexChange.new, 1)
+        XCTAssertEqual(update.computeNewCount(from: idsByGoals), 3)
+
+        let newIdsByGoals = update.apply(to: idsByGoals)
+        XCTAssertEqual(newIdsByGoals.sortedProjectIDs, [25, 48, 71, 89, 60, 30, 22, 12])
+        XCTAssertEqual(newIdsByGoals.countOfProjectsWithGoals, 3)
+
+        XCTAssertEqual(idsByGoals.indexPath(forElementAt: indexChange.old), IndexPath(item: 0, section: withGoal))
+        XCTAssertEqual(newIdsByGoals.indexPath(forElementAt: indexChange.new), IndexPath(item: 1, section: withGoal))
     }
 
+
     func testDeleteGoal() {
-        do {
-            let output = try idsByGoals.afterEditingGoal(nil, for: 25, in: indexedGoals)
-            XCTAssertEqual(output.projectIDsByGoals.sortedProjectIDs, [48, 71, 89, 60, 30, 25, 22, 12])
-            XCTAssertEqual(output.projectIDsByGoals.countOfProjectsWithGoals, 2)
-
-            let indexChange = output.update.indexChange
-            XCTAssertEqual(indexChange.old, 1)
-            XCTAssertEqual(indexChange.new, 5)
-            XCTAssertEqual(output.update.computeNewCount(from: idsByGoals), 2)
-
-            XCTAssertEqual(output.indexedGoals, [ 71 : Goal(forProjectId: 71, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend),
-                                                  90 : Goal(forProjectId: 90, hoursPerMonth: 50, workWeekdays: WeekdaySelection.exceptWeekend),
-                                                  48 : Goal(forProjectId: 48, hoursPerMonth: 30, workWeekdays: WeekdaySelection.exceptWeekend) ])
-
-            XCTAssertEqual(output.update.apply(to: idsByGoals), output.projectIDsByGoals)
-
-            XCTAssertEqual(idsByGoals.indexPath(forElementAt: indexChange.old), IndexPath(item: 1, section: withGoal))
-            XCTAssertEqual(output.projectIDsByGoals.indexPath(forElementAt: indexChange.new), IndexPath(item: 3, section: withoutGoal))
-        } catch {
-            XCTFail()
+        guard let idsByGoals = idsByGoals else {
+            XCTFail(SetupFailureNilIdsByGoals)
+            return
         }
+
+        setUpForProjectId(25, newGoal: nil)
+        guard let projectId = projectId, let newIndexedGoals = newIndexedGoals else {
+            XCTFail(SetupFailureNilProjectIdOrNewIndexedGoals)
+            return
+        }
+
+        let goalUpdate = GoalUpdate.forGoalChange(affecting: idsByGoals,
+                                                  for: projectId,
+                                                  from: oldGoal,
+                                                  producing: newIndexedGoals)
+        guard let update = goalUpdate else {
+            XCTFail()
+            return
+        }
+
+        let indexChange = update.indexChange
+        XCTAssertEqual(indexChange.old, 1)
+        XCTAssertEqual(indexChange.new, 5)
+        XCTAssertEqual(update.computeNewCount(from: idsByGoals), 2)
+
+        let newIdsByGoals = update.apply(to: idsByGoals)
+        XCTAssertEqual(newIdsByGoals.sortedProjectIDs, [48, 71, 89, 60, 30, 25, 22, 12])
+        XCTAssertEqual(newIdsByGoals.countOfProjectsWithGoals, 2)
+
+        XCTAssertEqual(idsByGoals.indexPath(forElementAt: indexChange.old), IndexPath(item: 1, section: withGoal))
+        XCTAssertEqual(newIdsByGoals.indexPath(forElementAt: indexChange.new), IndexPath(item: 3, section: withoutGoal))
     }
 
     func testCreateGoal() {
-        do {
-            let newGoal = Goal(forProjectId: 22, hoursPerMonth: 16, workWeekdays: WeekdaySelection.exceptWeekend)
-            let output = try idsByGoals.afterEditingGoal(newGoal, for: 22, in: indexedGoals)
-            XCTAssertEqual(output.projectIDsByGoals.sortedProjectIDs, [48, 25, 22, 71, 89, 60, 30, 12])
-            XCTAssertEqual(output.projectIDsByGoals.countOfProjectsWithGoals, 4)
-
-            let indexChange = output.update.indexChange
-            XCTAssertEqual(indexChange.old, 6)
-            XCTAssertEqual(indexChange.new, 2)
-            XCTAssertEqual(output.update.computeNewCount(from: idsByGoals), 4)
-
-            XCTAssertEqual(output.indexedGoals, [ 71 : Goal(forProjectId: 71, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend),
-                                                  25 : Goal(forProjectId: 25, hoursPerMonth: 20, workWeekdays: WeekdaySelection.wholeWeek),
-                                                  90 : Goal(forProjectId: 90, hoursPerMonth: 50, workWeekdays: WeekdaySelection.exceptWeekend),
-                                                  22 : Goal(forProjectId: 22, hoursPerMonth: 16, workWeekdays: WeekdaySelection.exceptWeekend),
-                                                  48 : Goal(forProjectId: 48, hoursPerMonth: 30, workWeekdays: WeekdaySelection.exceptWeekend) ])
-
-            XCTAssertEqual(output.update.apply(to: idsByGoals), output.projectIDsByGoals)
-            XCTAssertEqual(idsByGoals.indexPath(forElementAt: indexChange.old), IndexPath(item: 3, section: withoutGoal))
-            XCTAssertEqual(output.projectIDsByGoals.indexPath(forElementAt: indexChange.new), IndexPath(item: 2, section: withGoal))
-        } catch {
-            XCTFail()
+        guard let idsByGoals = idsByGoals else {
+            XCTFail(SetupFailureNilIdsByGoals)
+            return
         }
+
+        setUpForProjectId(22, newGoal: Goal(forProjectId: 22, hoursPerMonth: 16, workWeekdays: WeekdaySelection.exceptWeekend))
+        guard let projectId = projectId, let newIndexedGoals = newIndexedGoals else {
+            XCTFail(SetupFailureNilProjectIdOrNewIndexedGoals)
+            return
+        }
+
+        let goalUpdate = GoalUpdate.forGoalChange(affecting: idsByGoals,
+                                                  for: projectId,
+                                                  from: oldGoal,
+                                                  producing: newIndexedGoals)
+        guard let update = goalUpdate else {
+            XCTFail()
+            return
+        }
+
+        let indexChange = update.indexChange
+        XCTAssertEqual(indexChange.old, 6)
+        XCTAssertEqual(indexChange.new, 2)
+        XCTAssertEqual(update.computeNewCount(from: idsByGoals), 4)
+
+        let newIdsByGoals = update.apply(to: idsByGoals)
+        XCTAssertEqual(newIdsByGoals.sortedProjectIDs, [48, 25, 22, 71, 89, 60, 30, 12])
+        XCTAssertEqual(newIdsByGoals.countOfProjectsWithGoals, 4)
+
+        XCTAssertEqual(idsByGoals.indexPath(forElementAt: indexChange.old), IndexPath(item: 3, section: withoutGoal))
+        XCTAssertEqual(newIdsByGoals.indexPath(forElementAt: indexChange.new), IndexPath(item: 2, section: withGoal))
     }
 }

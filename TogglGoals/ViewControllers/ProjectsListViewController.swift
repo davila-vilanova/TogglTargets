@@ -109,6 +109,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                            scrollPosition: .nearestHorizontalEdge)
     }
 
+
     // MARK: - NSCollectionViewDataSource
 
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
