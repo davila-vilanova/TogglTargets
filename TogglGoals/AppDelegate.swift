@@ -63,7 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             controller.calendar <~ modelCoordinator.calendar
             controller.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
 
-            controller.setProjectIDsByGoals(modelCoordinator.projectIDsByGoals)
+            controller.fetchProjectIDsByGoalsAction = modelCoordinator.fetchProjectIDsByGoalsAction
             controller.readProjectAction = modelCoordinator.readProjectAction
             controller.setGoalActions(read: modelCoordinator.readGoalAction,
                                       write: modelCoordinator.writeGoalAction,

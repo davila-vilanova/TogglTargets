@@ -138,12 +138,12 @@ class SQLiteGoalsStore: GoalsStore {
         return SignalProducer(value: output)
     }
 
-    var projectIDsByGoalsUpdates: SignalProducer<ProjectIDsByGoals.Update, NoError> {
-        return SignalProducer.merge(fullRefreshUpdateProducer.map { ProjectIDsByGoals.Update.full($0) },
-                                    modifyGoalAction.values.producer.map { ProjectIDsByGoals.Update.singleGoal($0.1) })
+    lazy var fetchProjectIDsByGoalsAction = Action<(), ProjectIDsByGoals.Update, NoError> { [unowned self] in
+        return SignalProducer.merge(self.fullRefreshUpdateProducer.map { ProjectIDsByGoals.Update.full($0) },
+                                    self.modifyGoalAction.values.producer.map { ProjectIDsByGoals.Update.singleGoal($0.1) })
     }
 
-
+    
     // MARK: -
 
     private enum PersistedGoalUpdate {

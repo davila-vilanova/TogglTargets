@@ -78,8 +78,8 @@ internal class ModelCoordinator: NSObject {
     private lazy var _projects = MutableProperty(IndexedProjects())
     internal lazy var projects = Property(_projects)
 
-    internal var projectIDsByGoals: SignalProducer<ProjectIDsByGoals.Update, NoError> {
-        return goalsStore.projectIDsByGoalsUpdates
+    lazy var fetchProjectIDsByGoalsAction = Action<Void, ProjectIDsByGoals.Update, NoError> { [unowned self] in
+        return self.goalsStore.fetchProjectIDsByGoalsAction.applySerially()
     }
 
     internal lazy var readProjectAction =

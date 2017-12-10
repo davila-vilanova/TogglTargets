@@ -20,16 +20,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Exposed targets and source
 
-    internal lazy var projectIDsByGoals = // TODO: should be an action that can fail and be retried
-        BindingTarget<ProjectIDsByGoals.Update>(on: UIScheduler(), lifetime: lifetime) { [unowned self] update in
-            switch update {
-            case .full(let projectIDs):
-                self.refresh(with: projectIDs)
-            case .singleGoal(let goalUpdate):
-                self.update(with: goalUpdate)
-            }
-    }
-
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
     internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
 
@@ -45,6 +35,16 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Actions
 
+    internal var fetchProjectIDsByGoalsAction: Action<Void, ProjectIDsByGoals.Update, NoError>! {
+        didSet {
+            assert(fetchProjectIDsByGoalsAction != nil)
+            assert(oldValue == nil)
+            doAfterViewIsLoaded { [unowned self, action = fetchProjectIDsByGoalsAction!] in
+                self.projectIDsByGoals <~ action.values
+                action.applySerially().start()
+            }
+        }
+    }
     internal var readProjectAction: Action<ProjectID, Property<Project?>, NoError>!
     internal var readGoalAction: ReadGoalAction!
     internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>!
@@ -56,8 +56,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
 
     // MARK: -
-
-    private var currentProjectIDs = ProjectIDsByGoals.empty
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,6 +71,18 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                                         forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
                                         withIdentifier: SectionHeaderIdentifier)
     }
+
+    internal lazy var projectIDsByGoals =
+        BindingTarget<ProjectIDsByGoals.Update>(on: UIScheduler(), lifetime: lifetime) { [unowned self] update in
+            switch update {
+            case .full(let projectIDs):
+                self.refresh(with: projectIDs)
+            case .singleGoal(let goalUpdate):
+                self.update(with: goalUpdate)
+            }
+    }
+
+    private var currentProjectIDs = ProjectIDsByGoals.empty
 
     private func refresh(with projectIDs: ProjectIDsByGoals) {
         self.currentProjectIDs = projectIDs

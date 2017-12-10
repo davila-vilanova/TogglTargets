@@ -30,10 +30,11 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     // MARK: - Projects, goals and reports providing
 
-    // TODO: make binding target
-    internal func setProjectIDsByGoals(_ producer: SignalProducer<ProjectIDsByGoals.Update, NoError>) {
-        doAfterViewIsLoaded { [unowned self] in
-            self.projectsListViewController.projectIDsByGoals <~ producer
+    internal var fetchProjectIDsByGoalsAction: Action<Void, ProjectIDsByGoals.Update, NoError>! {
+        didSet {
+            doAfterViewIsLoaded { [unowned self, action = fetchProjectIDsByGoalsAction] in
+                self.projectsListViewController.fetchProjectIDsByGoalsAction = action
+            }
         }
     }
     

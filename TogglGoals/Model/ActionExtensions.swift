@@ -29,3 +29,9 @@ extension Action {
         return BindingTarget(lifetime: lifetime) { [weak self] in self?.applySerially($0).start() }
     }
 }
+
+extension Action where Input == Void {
+    func applySerially() -> SignalProducer<Output, Error> {
+        return applySerially(())
+    }
+}
