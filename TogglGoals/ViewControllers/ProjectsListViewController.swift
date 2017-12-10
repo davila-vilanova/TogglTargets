@@ -25,7 +25,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             switch update {
             case .full(let projectIDs):
                 self.refresh(with: projectIDs)
-            case .createGoal(let goalUpdate):
+            case .singleGoal(let goalUpdate):
                 self.update(with: goalUpdate)
             }
     }

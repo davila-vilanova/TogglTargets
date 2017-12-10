@@ -140,7 +140,7 @@ class SQLiteGoalsStore: GoalsStore {
 
     var projectIDsByGoalsUpdates: SignalProducer<ProjectIDsByGoals.Update, NoError> {
         return SignalProducer.merge(fullRefreshUpdateProducer.map { ProjectIDsByGoals.Update.full($0) },
-                                    modifyGoalAction.values.producer.map { ProjectIDsByGoals.Update.createGoal($0.1) })
+                                    modifyGoalAction.values.producer.map { ProjectIDsByGoals.Update.singleGoal($0.1) })
     }
 
 
