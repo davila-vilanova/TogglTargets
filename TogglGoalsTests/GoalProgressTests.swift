@@ -33,7 +33,7 @@ func makeRunningEntry(projectId: Int64, runningTime: TimeInterval) -> RunningEnt
 }
 
 
-/// This class just serves the purpose of doing all the common set up.
+/// This class just serves the purpose of doing all the common setup.
 /// The other XCTestCase derived classes in this file inherit from this.
 /// Do not include tests directly in this class, or else they will be run each time
 /// the tests for any of the subclasses are run.
