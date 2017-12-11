@@ -46,6 +46,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
     internal var goals: BindingTarget<Property<Goal?>?> { return _goals.bindingTarget }
     internal var reports: BindingTarget<Property<TwoPartTimeReport?>?> { return _reports.bindingTarget }
 
+    
     // MARK: - Backing properties
 
     private let _projects = MutableProperty<Property<Project?>?>(nil)

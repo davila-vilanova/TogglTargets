@@ -40,29 +40,37 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     /// of the currently selected goal, if any.
     private let goalDownstream = MutableProperty<Goal?>(nil)
 
+
     // MARK: - Derived input
 
     private lazy var projectId: SignalProducer<Int64, NoError> = _project.producer.skipNil().map { $0.id }
 
 
+
     // MARK: - Goal and report providing
 
-    internal func setGoalActions(read readAction: ReadGoalAction,
-                                 write writeAction: WriteGoalAction,
-                                 delete deleteAction: DeleteGoalAction) {
-        // accept a single set of values during the controller's life
-        assert(readGoalAction == nil)
-        assert(writeGoalAction == nil)
-        assert(deleteGoalAction == nil)
+    internal func setActions(readGoal: ReadGoalAction,
+                             writeGoal: WriteGoalAction,
+                             deleteGoal: DeleteGoalAction,
+                             readReport: ReadReportAction) {
+        assert(readGoalAction == nil,
+               "ProjectDetailsViewController's actions must be set exactly once.")
 
-        readGoalAction = readAction
-        writeGoalAction = writeAction
-        deleteGoalAction = deleteAction
+        readGoalAction = readGoal
+        writeGoalAction = writeGoal
+        deleteGoalAction = deleteGoal
+        readReportAction = readReport
     }
+
+    private var readGoalAction: ReadGoalAction?
+    private var writeGoalAction: WriteGoalAction?
+    private var deleteGoalAction: DeleteGoalAction?
+
+    internal var readReportAction: ReadReportAction?
 
     private func setupConnectionsWithActions() {
         // This ensures that goalDownstream will only listen to values associated with the current project
-        goalDownstream <~ readGoalAction!.values.flatten(.latest)
+        goalDownstream <~ readGoalAction!.values.flatten(.latest).logEvents()
         goalReportViewController.report <~ readReportAction!.values.flatten(.latest)
 
         // Retrieve corresponding goal and report when project ID changes
@@ -75,12 +83,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         let deleteSignal = goalViewController.userUpdates.filter { $0 == nil}.map { _ in () }
         deleteGoalAction!.serialInput <~ projectId.sample(on: deleteSignal)
     }
-
-    private var readGoalAction: ReadGoalAction?
-    private var writeGoalAction: WriteGoalAction?
-    private var deleteGoalAction: DeleteGoalAction?
-
-    internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>?
 
 
     // MARK: - Local use of project

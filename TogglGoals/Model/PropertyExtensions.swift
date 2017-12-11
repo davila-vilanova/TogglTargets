@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Result
 import ReactiveSwift
 
 // TODO: Extension on BindingTargetProvider?
@@ -15,5 +16,11 @@ extension MutablePropertyProtocol where Value: OptionalProtocol {
         return BindingTarget(lifetime: lifetime) { [unowned self] (neverNilValue: Value.Wrapped) in
             self.value = Value(reconstructing: neverNilValue)
         }
+    }
+}
+
+extension PropertyProtocol where Value == Bool {
+    var firstTrue: SignalProducer<Void, NoError> {
+        return producer.filter { $0 }.take(first: 1).map { _ in () }
     }
 }

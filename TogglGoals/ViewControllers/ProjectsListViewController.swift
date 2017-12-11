@@ -13,49 +13,116 @@ import Result
 fileprivate let ProjectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
 fileprivate let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
 
+/// Manages a collection view that displays `Project` items organized by whether they have an associated goal.
+/// Produces a stream of selected `Project` values via the `selectedProject` property.
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate {
 
-    private let (lifetime, token) = Lifetime.make()
+    /// Sets the actions used by this controller.
+    ///
+    /// - parameters:
+    ///   - fetchProjectIDs: An `Action` this controller will apply to obtain a signal producer that emits
+    ///     `ProjectIDsByGoals` values and incremental updates.
+    ///   - readProject: An `Action` this controller will apply to obtain project `Property` instances
+    ///     corresponding to its input project IDs.
+    ///   - readGoal: An `Action` this controller will apply to obtain goal `Property` instances corresponding
+    ///     to its input project IDs.
+    ///   - readReport: An `Action` this controller will apply to obtain `TwoPartTimeReport` `Property`
+    ///     instances corresponding to its input project IDs.
+    ///
+    /// - note: This method must be called exactly once during the life of this instance.
+    internal func setActions(fetchProjectIDs: FetchProjectIDsByGoalsAction,
+                             readProject: ReadProjectAction,
+                             readGoal: ReadGoalAction,
+                             readReport: ReadReportAction) {
+        UIScheduler().schedule { [weak self] in
+            guard let controller = self else {
+                return
+            }
+            assert(controller.fetchProjectIDsByGoalsAction == nil,
+                   "ProjectsListViewController's actions must be set exactly once.")
+            controller.fetchProjectIDsByGoalsAction = fetchProjectIDs
+            controller.readProjectAction = readProject
+            controller.readGoalAction = readGoal
+            controller.readReportAction = readReport
 
+            controller.isReadyToDisplayCollection.firstTrue.startWithValues {
+                controller.fetchProjectIDsByGoalsAction.applySerially().start()
+            }
+        }
+    }
 
-    // MARK: - Exposed targets and source
+    /// Connects the provided signal producers to the this controller's reactive inputs.
+    ///
+    /// - parameters:
+    ///   - runningEntry: A signal producer that emits `RunningEntry` or `nil` values depending on whether
+    ///     a time entry is currently active. This is used to add the currently running time to the reported
+    ///     worked time for the corresponding project.
+    ///   - now: A signal producer that emits `Date` values corresponding to the current date as time passes.
+    ///     This is useful to calculate the elapsed running time of the active time entry provided by `runningEntry`.
+    ///
+    /// - note: This method must be called exactly once during the life of this instance.
+    internal func connectInputs(runningEntry: SignalProducer<RunningEntry?, NoError>,
+                                now: SignalProducer<Date, NoError>) {
+        self.runningEntry <~ runningEntry
+        self.now <~ now
+        self.areInputsConnected = true
+    }
 
-    internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
-    internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
+    /// Use to enforce that the inputs cannot be connected more than once.
+    private var areInputsConnected = false
 
+    
+    // MARK: - Exposed reactive output
+
+    /// Emits `Project` values whenever a project is selected or `nil` when no project is selected.
+    /// Only one project can be selected at a time.
     internal lazy var selectedProject = Property<Project?>(_selectedProject)
 
-
+    
     // MARK: - Backing properties
 
-    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
-    private let _now = MutableProperty<Date?>(nil)
+    /// Holds the input `RunningEntry` values.
+    private let runningEntry = MutableProperty<RunningEntry?>(nil)
+
+    /// Holds the input current `Date` values.
+    private let now = MutableProperty<Date?>(nil)
+
+    /// Conveys the selected project to the `selectedProject` property.
     private let _selectedProject = MutableProperty<Project?>(nil)
 
 
     // MARK: - Actions
 
-    internal var fetchProjectIDsByGoalsAction: Action<Void, ProjectIDsByGoals.Update, NoError>! {
+    /// The action used to retrieve the project IDs sorted by goals as full values and
+    /// as incremental updates. Delives a full value first.
+    private var fetchProjectIDsByGoalsAction: FetchProjectIDsByGoalsAction! {
         didSet {
-            assert(fetchProjectIDsByGoalsAction != nil)
-            assert(oldValue == nil)
-            doAfterViewIsLoaded { [unowned self, action = fetchProjectIDsByGoalsAction!] in
-                self.projectIDsByGoals <~ action.values
-                action.applySerially().start()
-            }
+            projectIDsByGoals <~ fetchProjectIDsByGoalsAction.values
         }
     }
-    internal var readProjectAction: Action<ProjectID, Property<Project?>, NoError>!
-    internal var readGoalAction: ReadGoalAction!
-    internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>!
+
+    /// The action used to read projects by project ID.
+    private var readProjectAction: ReadProjectAction!
+
+    /// The action used to read goals by project ID.
+    private var readGoalAction: ReadGoalAction!
+
+    /// The action used to read reports by project ID.
+    private var readReportAction: ReadReportAction!
 
 
     // MARK: - Outlets
 
+    /// The collection view in charge of displaying the projects organized by goals following the
+    /// project ID order and the structure of the current `ProjectIDsByGoals` value.
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
 
 
     // MARK: -
+
+    /// Holds a `false` value that changes to `true` when the view is loaded and `projectsCollectionView` is
+    /// set up and ready to go.
+    private let isReadyToDisplayCollection = MutableProperty(false)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,8 +137,17 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         projectsCollectionView.register(headerNib,
                                         forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
                                         withIdentifier: SectionHeaderIdentifier)
+        isReadyToDisplayCollection.value = true
     }
 
+    /// The lifetime (and lifetime token) associated to this instance's binding targets.
+    private let (lifetime, token) = Lifetime.make()
+
+    /// Accepts full values and incremental udpates of the `ProjectIDsByGoals` value that is used to
+    /// determine the order and organization of the displayed projects.
+    /// Full values cause a full refresh. Incremental updates cause a reorder of projects in the
+    /// displayed collection.
+    /// Expects a full value first.
     internal lazy var projectIDsByGoals =
         BindingTarget<ProjectIDsByGoals.Update>(on: UIScheduler(), lifetime: lifetime) { [unowned self] update in
             switch update {
@@ -82,15 +158,20 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             }
     }
 
+    /// The current value of `ProjectsIDsByGoals`.
     private var currentProjectIDs = ProjectIDsByGoals.empty
 
+    /// Sets the current value of `currentProjectIDs` and triggers a full refresh of the collection
+    /// view that will reflect the provided value.
     private func refresh(with projectIDs: ProjectIDsByGoals) {
         self.currentProjectIDs = projectIDs
         self.projectsCollectionView.reloadData()
-        self.updateSelection()
+        self.sendSelectedProjectValue()
         self.scrollToSelection()
     }
 
+    /// Reflects the provided update in the value of `currentProjectIDs` and reorders the affected item
+    /// in the collection view.
     private func update(with update: ProjectIDsByGoals.Update.GoalUpdate) {
         let beforeMove = self.currentProjectIDs
         let afterMove = update.apply(to: beforeMove)
@@ -102,7 +183,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         self.scrollToSelection()
     }
 
-    private func updateSelection() {
+    /// Sends the value of the selected project through the `selectedProject` output.
+    private func sendSelectedProjectValue() {
         _selectedProject <~ { () -> SignalProducer<Project?, NoError> in
             guard let indexPath = projectsCollectionView.selectionIndexPaths.first,
                 let projectId = currentProjectIDs.projectId(for: indexPath) else {
@@ -112,6 +194,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }()
     }
 
+    /// Scrolls the collection view to display the currently selected item.
     private func scrollToSelection() {
         assert(Thread.current.isMainThread)
         projectsCollectionView.animator()
@@ -138,8 +221,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                         itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItem(withIdentifier: ProjectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
-        projectItem.connectOnceInLifecycle(runningEntry: _runningEntry.producer,
-                                           now: _now.producer.skipNil())
+        projectItem.connectOnceInLifecycle(runningEntry: runningEntry.producer,
+                                           now: now.producer.skipNil())
 
         let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
 
@@ -168,10 +251,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - NSCollectionViewDelegate
 
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
-        updateSelection()
+        sendSelectedProjectValue()
     }
 
     func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
-        updateSelection()
+        sendSelectedProjectValue()
     }
 }

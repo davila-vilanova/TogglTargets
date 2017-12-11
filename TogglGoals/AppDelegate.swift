@@ -62,15 +62,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             controller.now <~ modelCoordinator.now
             controller.calendar <~ modelCoordinator.calendar
             controller.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
-
-            controller.fetchProjectIDsByGoalsAction = modelCoordinator.fetchProjectIDsByGoalsAction
-            controller.readProjectAction = modelCoordinator.readProjectAction
-            controller.setGoalActions(read: modelCoordinator.readGoalAction,
-                                      write: modelCoordinator.writeGoalAction,
-                                      delete: modelCoordinator.deleteGoalAction)
-            controller.readReportAction = modelCoordinator.readReportAction
-            
             controller.runningEntry <~ modelCoordinator.runningEntry
+
+            controller.setActions(fetchProjectIDs: modelCoordinator.fetchProjectIDsByGoalsAction,
+                                  readProject: modelCoordinator.readProjectAction,
+                                  readGoal: modelCoordinator.readGoalAction,
+                                  writeGoal: modelCoordinator.writeGoalAction,
+                                  deleteGoal: modelCoordinator.deleteGoalAction,
+                                  readReport: modelCoordinator.readReportAction)
+            
         }
     }
 

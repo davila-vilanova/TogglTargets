@@ -30,38 +30,23 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     // MARK: - Projects, goals and reports providing
 
-    internal var fetchProjectIDsByGoalsAction: Action<Void, ProjectIDsByGoals.Update, NoError>! {
-        didSet {
-            doAfterViewIsLoaded { [unowned self, action = fetchProjectIDsByGoalsAction] in
-                self.projectsListViewController.fetchProjectIDsByGoalsAction = action
-            }
-        }
-    }
-    
-    internal var readProjectAction: Action<ProjectID, Property<Project?>, NoError>! {
-        didSet {
-            doAfterViewIsLoaded { [unowned self] in
-                self.projectsListViewController.readProjectAction = self.readProjectAction
-            }
-        }
-    }
-
-    internal func setGoalActions(read readAction: ReadGoalAction,
-                                 write writeAction: WriteGoalAction,
-                                 delete deleteAction: DeleteGoalAction) {
-        // Propagate value to contained controllers once they are available
-        doAfterViewIsLoaded { [unowned self] in
-            self.projectsListViewController.readGoalAction = readAction
-            self.selectionDetailViewController.setGoalActions(read: readAction, write: writeAction, delete: deleteAction)
-        }
-    }
-
-    internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>! {
-        didSet {
-            doAfterViewIsLoaded { [unowned self] in
-                self.projectsListViewController.readReportAction = self.readReportAction
-                self.selectionDetailViewController.readReportAction = self.readReportAction
-            }
+    internal func setActions(fetchProjectIDs: FetchProjectIDsByGoalsAction,
+                             readProject: ReadProjectAction,
+                             readGoal: ReadGoalAction,
+                             writeGoal: WriteGoalAction,
+                             deleteGoal: DeleteGoalAction,
+                             readReport: ReadReportAction) {
+        areChildrenControllersAvailable.firstTrue.startWithValues { [unowned self] _ in
+            self.projectsListViewController
+                .setActions(fetchProjectIDs: fetchProjectIDs,
+                            readProject: readProject,
+                            readGoal: readGoal,
+                            readReport: readReport)
+            self.selectionDetailViewController
+                .setActions(readGoal: readGoal,
+                            writeGoal: writeGoal,
+                            deleteGoal: deleteGoal,
+                            readReport: readReport)
         }
     }
 
@@ -86,21 +71,25 @@ class ProjectsMasterDetailController: NSSplitViewController {
         return splitViewItems[index.rawValue]
     }
 
+    private let areChildrenControllersAvailable = MutableProperty(false)
 
     // MARK: -
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let listController = projectsListViewController, detailController = selectionDetailViewController
-        listController.runningEntry <~ _runningEntry
-        listController.now <~ _now.producer.skipNil()
+        projectsListViewController.connectInputs(runningEntry: _runningEntry.producer,
+                                                 now: _now.producer.skipNil())
+
+        let detailController = selectionDetailViewController
 
         detailController.now <~ _now.producer.skipNil()
         detailController.calendar <~ _calendar.producer.skipNil()
         detailController.periodPreference <~ _periodPreference.producer.skipNil()
         detailController.runningEntry <~ _runningEntry
 
-        detailController.project <~ listController.selectedProject
+        detailController.project <~ projectsListViewController.selectedProject
+
+        areChildrenControllersAvailable.value = true
     }
 }

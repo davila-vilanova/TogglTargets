@@ -190,9 +190,6 @@
 		63D4FF311F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
 		63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */; };
-		63EF58181F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */; };
-		63EF58191F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */; };
-		63EF581A1F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -324,7 +321,6 @@
 		63D4FF2E1F5AD839006368A3 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
 		63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindClosestMatchingWeekdayTests.swift; sourceTree = "<group>"; };
-		63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NSViewControllerExtensions.swift; path = ViewControllers/NSViewControllerExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -446,7 +442,6 @@
 				637A32381EE16FD600667FC3 /* GoalStrategyViewController.swift */,
 				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
 				637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */,
-				63EF58171F7934E300D86556 /* NSViewControllerExtensions.swift */,
 				6333B6C91F974348002CF189 /* ListLayout.swift */,
 				631E46411F97CB980012E491 /* PreferencesViewController.swift */,
 				631E463E1F97CB730012E491 /* LoginViewController.swift */,
@@ -782,7 +777,6 @@
 				63D4BBAF1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */,
 				63A67F401FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
 				63AB08131FB6305200565D87 /* PreferenceStore.swift in Sources */,
-				63EF58181F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */,
 				637A325F1EE1761C00667FC3 /* ContainmentSegue.swift in Sources */,
 				637A32401EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
 				637A324A1EE16FD600667FC3 /* ProjectDetailsViewController.swift in Sources */,
@@ -831,7 +825,6 @@
 				63D4BBBC1F7D821800B87298 /* TogglAPICredential.swift in Sources */,
 				6333B6E71F974791002CF189 /* RunningEntry.swift in Sources */,
 				63AB08181FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift in Sources */,
-				63EF58191F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */,
 				63A67F461FCD9C77004BEFC6 /* URLSessionExtensions.swift in Sources */,
 				63D4BBB51F7D821800B87298 /* GoalsStore.swift in Sources */,
 				63D4BBBB1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */,
@@ -874,7 +867,6 @@
 				635DCE171FD326ED006FED93 /* ActionExtensions.swift in Sources */,
 				63AB08191FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift in Sources */,
 				63D4BBC71F7D821900B87298 /* SignalProducerExtensions.swift in Sources */,
-				63EF581A1F7934E300D86556 /* NSViewControllerExtensions.swift in Sources */,
 				6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */,
 				637A32491EE16FD600667FC3 /* GoalViewController.swift in Sources */,
 				63A67F421FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,

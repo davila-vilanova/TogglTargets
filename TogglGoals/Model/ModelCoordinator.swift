@@ -10,8 +10,8 @@ import Foundation
 import ReactiveSwift
 import Result
 
-typealias PropertyProvidingAction<Value> = Action<Int64, Property<Value?>, NoError>
-typealias BindingTargetProvidingAction<Value> = Action<Int64, BindingTarget<Value?>, NoError>
+typealias ReadProjectAction = Action<ProjectID, Property<Project?>, NoError>
+typealias ReadReportAction = Action<ProjectID, Property<TwoPartTimeReport?>, NoError>
 
 internal class ModelCoordinator: NSObject {
 
@@ -78,12 +78,12 @@ internal class ModelCoordinator: NSObject {
     private lazy var _projects = MutableProperty(IndexedProjects())
     internal lazy var projects = Property(_projects)
 
-    lazy var fetchProjectIDsByGoalsAction = Action<Void, ProjectIDsByGoals.Update, NoError> { [unowned self] in
+    lazy var fetchProjectIDsByGoalsAction = FetchProjectIDsByGoalsAction { [unowned self] in
         return self.goalsStore.fetchProjectIDsByGoalsAction.applySerially()
     }
 
     internal lazy var readProjectAction =
-        Action<ProjectID, Property<Project?>, NoError> { [unowned self] projectId in
+        ReadProjectAction { [unowned self] projectId in
             let projectProperty = self.projects.map { $0[projectId] }
             return SignalProducer(value: projectProperty)
     }
@@ -97,7 +97,7 @@ internal class ModelCoordinator: NSObject {
 
     /// Action which takes a project ID as input and returns a producer that sends a single
     /// Property value corresponding to the report associated with the project ID.
-    internal lazy var readReportAction = Action<ProjectID, Property<TwoPartTimeReport?>, NoError> { [unowned self] projectId in
+    internal lazy var readReportAction = ReadReportAction { [unowned self] projectId in
         let reportProperty = self.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
         return SignalProducer(value: reportProperty)
     }

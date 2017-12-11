@@ -35,22 +35,19 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
 
 
-    // MARK: - Goal and report providing
+    // MARK: - Actions
 
-    internal func setGoalActions(read: ReadGoalAction,
-                                 write: WriteGoalAction,
-                                 delete: DeleteGoalAction) {
-        // Propagate value to contained controllers once they are available
-        doAfterViewIsLoaded { [unowned self] in
-            self.projectDetailsViewController.setGoalActions(read: read, write: write, delete: delete)
-        }
-    }
-
-    internal var readReportAction: Action<ProjectID, Property<TwoPartTimeReport?>, NoError>! {
-        didSet {
-            doAfterViewIsLoaded { [unowned self, action = readReportAction] in
-                self.projectDetailsViewController.readReportAction = action
-            }
+    internal func setActions(readGoal: ReadGoalAction,
+                             writeGoal: WriteGoalAction,
+                             deleteGoal: DeleteGoalAction,
+                             readReport: ReadReportAction) {
+        areChildrenControllersAvailable.firstTrue.startWithValues {
+            [unowned self] in
+            self.projectDetailsViewController
+                .setActions(readGoal: readGoal,
+                            writeGoal: writeGoal,
+                            deleteGoal: deleteGoal,
+                            readReport: readReport)
         }
     }
 
@@ -96,6 +93,7 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
         }
     }
 
+    private let areChildrenControllersAvailable = MutableProperty(false)
 
     // MARK: -
 
@@ -104,5 +102,6 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
 
         initializeControllerContainment(containmentIdentifiers: [ProjectDetailsVCContainment, EmtpySelectionVCContainment])
         setupContainedViewControllerVisibility()
+        areChildrenControllersAvailable.value = true
     }
 }
