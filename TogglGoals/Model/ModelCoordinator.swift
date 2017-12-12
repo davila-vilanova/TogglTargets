@@ -18,34 +18,17 @@ internal class ModelCoordinator: NSObject {
     // MARK: - Exposed binding targets
 
     internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
-    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
-    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
+    internal var twoPartReportPeriod: BindingTarget<TwoPartTimeReportPeriod> { return _twoPartReportPeriod.deoptionalizedBindingTarget }
+
+
+    // MARK: - Target backing properties
 
     private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
-    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
-    private let _calendar = MutableProperty<Calendar?>(nil)
-
+    private let _twoPartReportPeriod = MutableProperty<TwoPartTimeReportPeriod?>(nil)
 
     // MARK: - Current date
 
     private let currentDateGenerator: CurrentDateGeneratorProtocol
-
-
-    // MARK: Working dates
-
-    private lazy var reportsPeriod: SignalProducer<Period, NoError> =
-        SignalProducer.combineLatest(_periodPreference.producer.skipNil(),
-                                     _calendar.producer.skipNil(),
-                                     currentDateGenerator.producer)
-            .map { $0.currentPeriod(in: $1, for: $2) }
-
-    private lazy var reportPeriodsProducer: ReportPeriodsProducer = {
-        let p = ReportPeriodsProducer()
-        p.reportPeriod <~ reportsPeriod
-        p.calendar <~ _calendar.producer.skipNil()
-        p.currentDate <~ currentDateGenerator.currentDate
-        return p
-    }()
 
 
     // MARK: - URLSession derived from TogglAPICredential
@@ -126,8 +109,6 @@ internal class ModelCoordinator: NSObject {
             .map { _, session in session }
     }
 
-    
-
 
     // MARK: - Goals
 
@@ -149,7 +130,6 @@ internal class ModelCoordinator: NSObject {
     // MARK: -
 
     private let scheduler = QueueScheduler.init(name: "ModelCoordinator-scheduler")
-    private let (lifetime, token) = Lifetime.make()
 
     internal init(currentDateGenerator: CurrentDateGeneratorProtocol,
                   retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
@@ -184,7 +164,7 @@ internal class ModelCoordinator: NSObject {
 
         retrieveReportsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(),
                                                                      workspaceIDs,
-                                                                     reportPeriodsProducer.twoPartPeriod)
+                                                                     _twoPartReportPeriod.producer.skipNil())
             .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
         _reports <~ retrieveReportsNetworkAction.values
 

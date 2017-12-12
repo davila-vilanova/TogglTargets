@@ -17,17 +17,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
     private var preferencesWindowController: NSWindowController?
 
-    private let modelCoordinator: ModelCoordinator
-    private let userDefaults = Property(value: UserDefaults.standard)
     private let scheduler = QueueScheduler()
+
     private let currentDateGenerator = CurrentDateGenerator.shared
     private let calendar = Property(value: Calendar.iso8601)
+    private let reportPeriodsProducer = ReportPeriodsProducer()
 
+    private let userDefaults = Property(value: UserDefaults.standard)
+    private lazy var credentialStore = PreferenceStore<TogglAPITokenCredential>(userDefaults: userDefaults,
+                                                                                scheduler: scheduler)
+    private lazy var periodPreferenceStore = PreferenceStore<PeriodPreference>(userDefaults: userDefaults,
+                                                                               scheduler: scheduler)
 
-    private lazy var credentialStore =
-        PreferenceStore<TogglAPITokenCredential>(userDefaults: userDefaults, scheduler: scheduler)
-    private lazy var periodPreferenceStore =
-        PreferenceStore<PeriodPreference>(userDefaults: userDefaults, scheduler: scheduler)
+    private let modelCoordinator: ModelCoordinator
 
     override init() {
         let supportDir: URL
@@ -54,9 +56,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         super.init()
 
+        reportPeriodsProducer.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
+        reportPeriodsProducer.calendar <~ calendar
+        reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
+
+        modelCoordinator.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod
+
         modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
-        modelCoordinator.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
-        modelCoordinator.calendar <~ calendar
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {

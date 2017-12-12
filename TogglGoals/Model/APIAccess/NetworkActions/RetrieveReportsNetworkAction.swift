@@ -11,7 +11,7 @@ import ReactiveSwift
 
 typealias IndexedTwoPartTimeReports = [ProjectID : TwoPartTimeReport]
 typealias RetrieveReportsNetworkAction =
-    Action<(URLSession, [WorkspaceID], TwoPartTimeReportPeriods), IndexedTwoPartTimeReports, APIAccessError>
+    Action<(URLSession, [WorkspaceID], TwoPartTimeReportPeriod), IndexedTwoPartTimeReports, APIAccessError>
 
 func makeRetrieveReportsNetworkAction() -> RetrieveReportsNetworkAction {
     return RetrieveReportsNetworkAction { (session, workspaceIDs, periods) in
