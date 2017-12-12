@@ -19,34 +19,30 @@ internal class ModelCoordinator: NSObject {
 
     internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
     internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
+    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
 
     private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
     private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
+    private let _calendar = MutableProperty<Calendar?>(nil)
 
 
-    // MARK: - Current time and calendar
+    // MARK: - Current date
 
     private let currentDateGenerator: CurrentDateGeneratorProtocol
-
-    internal lazy var calendar = Property(_calendar)
-
-    private lazy var _calendar: MutableProperty<Calendar> = {
-        var cal = Calendar(identifier: .iso8601)
-        cal.locale = Locale.current // TODO: get from user profile
-        return MutableProperty(cal)
-    }()
 
 
     // MARK: Working dates
 
     private lazy var reportsPeriod: SignalProducer<Period, NoError> =
-        SignalProducer.combineLatest(_periodPreference.producer.skipNil(), calendar.producer, currentDateGenerator.producer)
+        SignalProducer.combineLatest(_periodPreference.producer.skipNil(),
+                                     _calendar.producer.skipNil(),
+                                     currentDateGenerator.producer)
             .map { $0.currentPeriod(in: $1, for: $2) }
 
     private lazy var reportPeriodsProducer: ReportPeriodsProducer = {
         let p = ReportPeriodsProducer()
         p.reportPeriod <~ reportsPeriod
-        p.calendar <~ calendar
+        p.calendar <~ _calendar.producer.skipNil()
         p.currentDate <~ currentDateGenerator.currentDate
         return p
     }()

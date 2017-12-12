@@ -21,6 +21,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let userDefaults = Property(value: UserDefaults.standard)
     private let scheduler = QueueScheduler()
     private let currentDateGenerator = CurrentDateGenerator.shared
+    private let calendar = Property(value: Calendar.iso8601)
+
 
     private lazy var credentialStore =
         PreferenceStore<TogglAPITokenCredential>(userDefaults: userDefaults, scheduler: scheduler)
@@ -54,6 +56,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
         modelCoordinator.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
+        modelCoordinator.calendar <~ calendar
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -62,7 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         if let controller = mainWindowController.window?.contentViewController as? ProjectsMasterDetailController {
             controller.currentDate <~ currentDateGenerator.currentDate
-            controller.calendar <~ modelCoordinator.calendar
+            controller.calendar <~ calendar
             controller.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
             controller.runningEntry <~ modelCoordinator.runningEntry
 
@@ -93,7 +96,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         preferencesController.userDefaults <~ userDefaults
         credentialStore.input <~ SignalProducer(value: preferencesController.resolvedCredential.skipNil())
-        preferencesController.calendar <~ modelCoordinator.calendar
+        preferencesController.calendar <~ calendar
         preferencesController.currentDate <~ currentDateGenerator.currentDate
         periodPreferenceStore.input <~ SignalProducer(value: preferencesController.updatedGoalPeriodPreference)
         preferencesController.existingGoalPeriodPreference <~ periodPreferenceStore.output.producer.skipNil()

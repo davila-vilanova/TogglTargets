@@ -145,3 +145,11 @@ extension Calendar {
         return dayComponents(from: date)
     }
 }
+
+extension Calendar {
+    static var iso8601: Calendar {
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.locale = Locale.autoupdatingCurrent
+        return calendar
+    }
+}
