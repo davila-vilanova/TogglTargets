@@ -49,6 +49,10 @@
 		6333B6E81F974791002CF189 /* RunningEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6E51F974791002CF189 /* RunningEntry.swift */; };
 		633CEADC1E6C2DB800831611 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 632EEBE81E42786100608D01 /* SQLite.framework */; };
 		6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634396891F80456200FDADE3 /* GoalProgressTests.swift */; };
+		6355C5B71FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */; };
+		6355C5B81FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */; };
+		6355C5B91FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */; };
+		6355C5BA1FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */; };
 		635DCE151FD326ED006FED93 /* ActionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE141FD326ED006FED93 /* ActionExtensions.swift */; };
 		635DCE161FD326ED006FED93 /* ActionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE141FD326ED006FED93 /* ActionExtensions.swift */; };
 		635DCE171FD326ED006FED93 /* ActionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE141FD326ED006FED93 /* ActionExtensions.swift */; };
@@ -271,6 +275,7 @@
 		6333B6E11F974763002CF189 /* Goal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Goal.swift; sourceTree = "<group>"; };
 		6333B6E51F974791002CF189 /* RunningEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningEntry.swift; sourceTree = "<group>"; };
 		634396891F80456200FDADE3 /* GoalProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressTests.swift; sourceTree = "<group>"; };
+		6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDateGenerator.swift; sourceTree = "<group>"; };
 		635DCE141FD326ED006FED93 /* ActionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionExtensions.swift; sourceTree = "<group>"; };
 		635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectIDsByGoals.swift; sourceTree = "<group>"; };
 		636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountWeekdaysTests.swift; sourceTree = "<group>"; };
@@ -530,6 +535,7 @@
 				6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */,
 				63AB08121FB6305200565D87 /* PreferenceStore.swift */,
 				63B1BBE61FBE2570001E9FBE /* ReportPeriodsProducer.swift */,
+				6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -766,6 +772,7 @@
 				63D4BBB01F7D821800B87298 /* TogglAPICredential.swift in Sources */,
 				637A32481EE16FD600667FC3 /* GoalViewController.swift in Sources */,
 				639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
+				6355C5B71FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				63A67F511FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift in Sources */,
 				63D4BBAE1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				635DCE151FD326ED006FED93 /* ActionExtensions.swift in Sources */,
@@ -820,6 +827,7 @@
 				635DCE161FD326ED006FED93 /* ActionExtensions.swift in Sources */,
 				63A67F371FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				6333B6E31F974763002CF189 /* Goal.swift in Sources */,
+				6355C5B81FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */,
 				63A67F4B1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
 				63D4BBBC1F7D821800B87298 /* TogglAPICredential.swift in Sources */,
@@ -862,6 +870,7 @@
 				63D4BBC41F7D821900B87298 /* ModelCoordinator.swift in Sources */,
 				632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */,
 				637A32411EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
+				6355C5B91FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				637A32431EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
 				63A67F531FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift in Sources */,
 				635DCE171FD326ED006FED93 /* ActionExtensions.swift in Sources */,
@@ -896,6 +905,7 @@
 				63AB082D1FB77CB500565D87 /* Project.swift in Sources */,
 				63B1BBEA1FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,
 				63AB082F1FB77CB500565D87 /* TimeReport.swift in Sources */,
+				6355C5BA1FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				63AB08301FB77CB500565D87 /* Goal.swift in Sources */,
 				63A67F481FCD9C77004BEFC6 /* URLSessionExtensions.swift in Sources */,
 				635DCE181FD326ED006FED93 /* ActionExtensions.swift in Sources */,

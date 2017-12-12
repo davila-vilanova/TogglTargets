@@ -21,7 +21,7 @@ class GoalProgress {
     public var startGoalDay: BindingTarget<DayComponents>{ return _startGoalDay.deoptionalizedBindingTarget }
     public var endGoalDay: BindingTarget<DayComponents>{ return _endGoalDay.deoptionalizedBindingTarget }
     public var startStrategyDay: BindingTarget<DayComponents>{ return _startStrategyDay.deoptionalizedBindingTarget }
-    public var now: BindingTarget<Date>{ return _now.deoptionalizedBindingTarget }
+    public var currentDate: BindingTarget<Date>{ return _currentDate.deoptionalizedBindingTarget }
     public var calendar: BindingTarget<Calendar>{ return _calendar.deoptionalizedBindingTarget }
 
     // MARK: - Outputs
@@ -54,10 +54,10 @@ class GoalProgress {
 
     public lazy var strategyStartsToday: SignalProducer<Bool, NoError> = {
         return SignalProducer.combineLatest(_startStrategyDay.producer.skipNil(),
-                                            _now.producer.skipNil(),
+                                            _currentDate.producer.skipNil(),
                                             _calendar.producer.skipNil())
-            .map { (startStrategyDay, now, calendar) in
-                return calendar.dayComponents(from: now) == startStrategyDay
+            .map { (startStrategyDay, currentDate, calendar) in
+                return calendar.dayComponents(from: currentDate) == startStrategyDay
         }
     }()
 
@@ -166,7 +166,7 @@ class GoalProgress {
     private let _startGoalDay = MutableProperty<DayComponents?>(nil)
     private let _endGoalDay = MutableProperty<DayComponents?>(nil)
     private let _startStrategyDay = MutableProperty<DayComponents?>(nil)
-    private let _now = MutableProperty<Date?>(nil)
+    private let _currentDate = MutableProperty<Date?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
 
 
@@ -175,15 +175,15 @@ class GoalProgress {
     private lazy var runningEntryTime: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(_projectId.producer.skipNil(),
                                             _runningEntry,
-                                            _now.producer.skipNil())
-            .map { (projectId, runningEntry, now) in
+                                            _currentDate.producer.skipNil())
+            .map { (projectId, runningEntry, currentDate) in
                 guard let runningEntry = runningEntry else {
                     return 0
                 }
                 guard projectId == runningEntry.projectId else {
                     return 0
                 }
-                return runningEntry.runningTime(at: now)
+                return runningEntry.runningTime(at: currentDate)
         }
     }()
 }

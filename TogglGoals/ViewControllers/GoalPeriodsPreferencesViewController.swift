@@ -18,7 +18,7 @@ class GoalPeriodsPreferencesViewController: NSViewController {
     // MARK: - Reactive interface
 
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    internal var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
+    internal var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
     internal var existingPreference: BindingTarget<PeriodPreference> { return _existingPreference.bindingTarget }
     internal var updatedPreference: Signal<PeriodPreference, NoError> {
         return Signal.merge(generateMonthlyPeriodPreference.values,
@@ -29,7 +29,7 @@ class GoalPeriodsPreferencesViewController: NSViewController {
     // MARK: - Backing properties
 
     private let _calendar = MutableProperty<Calendar?>(nil)
-    private let _now = MutableProperty<Date?>(nil)
+    private let _currentDate = MutableProperty<Date?>(nil)
     private let _existingPreference = MutableProperty<PeriodPreference>(DefaultPeriodPreference)
 
 
@@ -141,9 +141,9 @@ class GoalPeriodsPreferencesViewController: NSViewController {
         let currentPeriod =
             SignalProducer.combineLatest(SignalProducer.merge(existingPreference.producer, userModifiedPreference.producer),
                                                               _calendar.producer.skipNil(),
-                                                              _now.producer.skipNil())
-            .map { (preference, calendar, now) in
-                preference.currentPeriod(for: calendar, now: now)
+                                                              _currentDate.producer.skipNil())
+            .map { (preference, calendar, currentDate) in
+                preference.currentPeriod(in: calendar, for: currentDate)
         }
 
         let formatter: SignalProducer<DateFormatter, NoError> = {

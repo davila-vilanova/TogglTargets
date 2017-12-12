@@ -57,14 +57,14 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///   - runningEntry: A signal producer that emits `RunningEntry` or `nil` values depending on whether
     ///     a time entry is currently active. This is used to add the currently running time to the reported
     ///     worked time for the corresponding project.
-    ///   - now: A signal producer that emits `Date` values corresponding to the current date as time passes.
+    ///   - currentDate: A signal producer that emits `Date` values corresponding to the current date as time passes.
     ///     This is useful to calculate the elapsed running time of the active time entry provided by `runningEntry`.
     ///
     /// - note: This method must be called exactly once during the life of this instance.
     internal func connectInputs(runningEntry: SignalProducer<RunningEntry?, NoError>,
-                                now: SignalProducer<Date, NoError>) {
+                                currentDate: SignalProducer<Date, NoError>) {
         self.runningEntry <~ runningEntry
-        self.now <~ now
+        self.currentDate <~ currentDate
         self.areInputsConnected = true
     }
 
@@ -84,8 +84,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// Holds the input `RunningEntry` values.
     private let runningEntry = MutableProperty<RunningEntry?>(nil)
 
-    /// Holds the input current `Date` values.
-    private let now = MutableProperty<Date?>(nil)
+    /// Holds the current `Date` input values.
+    private let currentDate = MutableProperty<Date?>(nil)
 
     /// Conveys the selected project to the `selectedProject` property.
     private let _selectedProject = MutableProperty<Project?>(nil)
@@ -222,7 +222,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let item = collectionView.makeItem(withIdentifier: ProjectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
         projectItem.connectOnceInLifecycle(runningEntry: runningEntry.producer,
-                                           now: now.producer.skipNil())
+                                           currentDate: currentDate.producer.skipNil())
 
         let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
 

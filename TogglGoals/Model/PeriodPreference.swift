@@ -14,16 +14,20 @@ enum PeriodPreference {
 }
 
 extension PeriodPreference {
-    func currentPeriod(for calendar: Calendar, now: Date) -> Period {
+    func currentPeriod(in calendar: Calendar, for currentDate: Date) -> Period {
         switch self {
         case .monthly:
-            let first = calendar.firstDayOfMonth(for: now)
-            let last = calendar.lastDayOfMonth(for: now)
+            let first = calendar.firstDayOfMonth(for: currentDate)
+            let last = calendar.lastDayOfMonth(for: currentDate)
             return Period(start: first, end: last)
         case .weekly(let startWeekday):
             let endWeekday = startWeekday.previous
-            return Period(start: calendar.findClosestDay(matching: startWeekday, startingFrom: now, direction: .backward),
-                          end: calendar.findClosestDay(matching: endWeekday, startingFrom: now, direction: .forward))
+            return Period(start: calendar.findClosestDay(matching: startWeekday,
+                                                         startingFrom: currentDate,
+                                                         direction: .backward),
+                          end: calendar.findClosestDay(matching: endWeekday,
+                                                       startingFrom: currentDate,
+                                                       direction: .forward))
         }
     }
 }

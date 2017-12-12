@@ -24,30 +24,30 @@ class ReportPeriodsProducer {
 
     var reportPeriod: BindingTarget<Period> { return _reportPeriod.deoptionalizedBindingTarget }
     var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
+    var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
 
 
     // MARK: - Backing properties
 
     private let _reportPeriod = MutableProperty<Period?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
-    private let _now = MutableProperty<Date?>(nil)
+    private let _currentDate = MutableProperty<Date?>(nil)
 
 
     // MARK: - Intermediate signals
 
     private lazy var todayProducer: SignalProducer<DayComponents, NoError>
-        = SignalProducer.combineLatest(_calendar.producer.skipNil(), _now.producer.skipNil())
-            .map { (calendar, now) in
-                return calendar.dayComponents(from: now)
+        = SignalProducer.combineLatest(_calendar.producer.skipNil(), _currentDate.producer.skipNil())
+            .map { (calendar, currentDate) in
+                return calendar.dayComponents(from: currentDate)
     }
 
     private lazy var yesterdayProducer: SignalProducer<DayComponents?, NoError>
         = SignalProducer.combineLatest(_calendar.producer.skipNil(),
-                                       _now.producer.skipNil(),
+                                       _currentDate.producer.skipNil(),
                                        _reportPeriod.producer.skipNil())
-            .map { (calendar, now, reportPeriod) in
-                return try? calendar.previousDay(for: now, notBefore: reportPeriod.start)
+            .map { (calendar, currentDate, reportPeriod) in
+                return try? calendar.previousDay(for: currentDate, notBefore: reportPeriod.start)
     }
 
     // MARK: - Exposed output

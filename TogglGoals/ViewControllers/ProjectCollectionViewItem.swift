@@ -16,10 +16,10 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
     // MARK: Connections to be established once in lifetime
 
     private let runningEntry = MutableProperty<RunningEntry?>(nil)
-    private let now = MutableProperty<Date?>(nil)
+    private let currentDate = MutableProperty<Date?>(nil)
 
     func connectOnceInLifecycle(runningEntry: SignalProducer<RunningEntry?, NoError>,
-                                now: SignalProducer<Date, NoError>) {
+                                currentDate: SignalProducer<Date, NoError>) {
         guard Thread.current.isMainThread else {
             assert(false)
             return
@@ -28,7 +28,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
             return
         }
         self.runningEntry <~ runningEntry
-        self.now <~ now
+        self.currentDate <~ currentDate
         areOnceConnectionsPerformed = true
     }
     private var areOnceConnectionsPerformed = false
@@ -111,15 +111,15 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
         }
         let workedTimeFromRunningEntry = SignalProducer.combineLatest(project.producer.skipNil(),
                                                                       runningEntry.producer,
-                                                                      now.producer.skipNil())
-            .map { (project, runningEntryOrNil, now) -> TimeInterval in
+                                                                      currentDate.producer.skipNil())
+            .map { (project, runningEntryOrNil, currentDate) -> TimeInterval in
                 guard let runningEntry = runningEntryOrNil else {
                     return 0.0
                 }
                 guard runningEntry.projectId == project.id else {
                     return 0.0
                 }
-                return runningEntry.runningTime(at: now)
+                return runningEntry.runningTime(at: currentDate)
         }
         let totalWorkedTime = SignalProducer.combineLatest(workedTimeFromReport, workedTimeFromRunningEntry)
             .map { (t0, t1) in return t0 + t1 }

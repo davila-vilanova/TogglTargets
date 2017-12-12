@@ -25,14 +25,14 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     var report: BindingTarget<TwoPartTimeReport?> { return goalProgress.report.bindingTarget }
     var runningEntry: BindingTarget<RunningEntry?> { return goalProgress.runningEntry.bindingTarget }
     var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    var now: BindingTarget<Date> { return _now.deoptionalizedBindingTarget }
+    var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
     var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
 
 
     // MARK: - Properties
 
     private let _calendar = MutableProperty<Calendar?>(nil)
-    private let _now = MutableProperty<Date?>(nil)
+    private let _currentDate = MutableProperty<Date?>(nil)
     private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
 
     private let computeStrategyFrom = MutableProperty<DayComponents?>(nil)
@@ -45,8 +45,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
 
     private lazy var goalPeriod: SignalProducer<Period, NoError> =
         SignalProducer.combineLatest(_periodPreference.producer.skipNil(),
-                                     _calendar.producer.skipNil(), _now.producer.skipNil())
-            .map { $0.currentPeriod(for: $1, now: $2) }
+                                     _calendar.producer.skipNil(), _currentDate.producer.skipNil())
+            .map { $0.currentPeriod(in: $1, for: $2) }
 
 
     // MARK: - Outlets
@@ -189,15 +189,16 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         selectedComputeStrategyFrom <~ computeStrategyFromButton.reactive.selectedItems
 
         computeStrategyFrom <~ SignalProducer.combineLatest(selectedComputeStrategyFrom.producer.skipNil(),
-                                                            _now.producer.skipNil(),
+                                                            _currentDate.producer.skipNil(),
                                                             _calendar.producer.skipNil())
-            .map { [fromTodayItem, fromNextWorkDayItem] (menuItem, now, calendar) -> DayComponents? in
+            .map { [fromTodayItem, fromNextWorkDayItem] (menuItem, currentDate, calendar) -> DayComponents? in
                 guard let fromTodayItem = fromTodayItem, let fromNextWorkDayItem = fromNextWorkDayItem else {
                     return nil
                 }
                 switch menuItem {
-                case fromTodayItem: return calendar.dayComponents(from: now)
-                case fromNextWorkDayItem: return try! calendar.nextDay(for: now, notAfter: calendar.lastDayOfMonth(for: now))
+                case fromTodayItem: return calendar.dayComponents(from: currentDate)
+                case fromNextWorkDayItem: return try! calendar.nextDay(for: currentDate,
+                                                                       notAfter: calendar.lastDayOfMonth(for: currentDate))
                 default: return nil
                 }
         }
@@ -206,10 +207,11 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
             menuItem.isEnabled = !isLastDayOfMonth
         }
         
-        let isLastDayOfMonth = SignalProducer.combineLatest(_now.producer.skipNil(), _calendar.producer.skipNil()).map { (now, calendar) -> Bool in
-            return calendar.dayComponents(from: now) == calendar.lastDayOfMonth(for: now)
+        let isLastDayOfMonth = SignalProducer.combineLatest(_currentDate.producer.skipNil(), _calendar.producer.skipNil())
+            .map { (currentDate, calendar) -> Bool in
+                return calendar.dayComponents(from: currentDate) == calendar.lastDayOfMonth(for: currentDate)
         }
-        
+
         enabledTarget <~ isLastDayOfMonth
     }
     
@@ -217,7 +219,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         goalProgress.startGoalDay <~ goalPeriod.map { $0.start }
         goalProgress.endGoalDay <~ goalPeriod.map { $0.end }
         goalProgress.startStrategyDay <~ computeStrategyFrom.producer.skipNil()
-        goalProgress.now <~ _now.producer.skipNil()
+        goalProgress.currentDate <~ _currentDate.producer.skipNil()
         goalProgress.calendar <~ _calendar.producer.skipNil()
     }
 }

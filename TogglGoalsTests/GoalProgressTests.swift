@@ -10,7 +10,7 @@ import XCTest
 import ReactiveSwift
 import Result
 
-fileprivate var now = Date(timeIntervalSince1970: 1507731805) // 11. Oct 2017, 16:23 in Berlin
+fileprivate var currentDate = Date(timeIntervalSince1970: 1507731805) // 11. Oct 2017, 16:23 in Berlin
 fileprivate let projectIdA: Int64 = 310
 fileprivate let projectIdB: Int64 = 311
 fileprivate let timeRunningEntryA = TimeInterval.from(hours: 1.5)
@@ -29,7 +29,7 @@ fileprivate let report = TwoPartTimeReport(projectId: projectIdA,
                                            workedTimeToday: .from(hours: 3))
 
 func makeRunningEntry(projectId: Int64, runningTime: TimeInterval) -> RunningEntry {
-    return RunningEntry(id: 0, projectId: projectId, start: now.addingTimeInterval(-runningTime), retrieved: now)
+    return RunningEntry(id: 0, projectId: projectId, start: currentDate.addingTimeInterval(-runningTime), retrieved: currentDate)
 }
 
 
@@ -44,7 +44,7 @@ class GoalProgressTests: XCTestCase {
         super.setUp()
         goalProgress = GoalProgress()
         goalProgress.projectId <~ SignalProducer(value: projectIdA)
-        goalProgress.now <~ SignalProducer(value: now)
+        goalProgress.currentDate <~ SignalProducer(value: currentDate)
         let berlinCalendar: Calendar = {
             var cal = Calendar(identifier: .iso8601)
             let ber = TimeZone(identifier: "Europe/Berlin")!
@@ -116,7 +116,7 @@ class GoalProgressWorkedTimeTests: GoalProgressTests {
     }
 
     func testWorkedTimeStartingStrategyToday() {
-        // Calculating strategy from same day as now (that is, "today", which also is the end date for the report)
+        // Calculating strategy from same day as currentDate (that is, "today", which also is the end date for the report)
         // should yield the time worked until yesterday according to the report ...
         goalProgress.startStrategyDay <~ SignalProducer(value: todayComponents)
         XCTAssertEqual(workedTimeResult.value, report.workedTimeUntilYesterday)
@@ -170,7 +170,7 @@ class GoalProgressRemainingTimeTests: GoalProgressTests {
     }
 
     func testRemainingTimeStartingStrategyToday() {
-        // Calculating strategy from same day as now (that is, "today", which also is the end date for the report)
+        // Calculating strategy from same day as currentDate (that is, "today", which also is the end date for the report)
         // should result in the goal time minus the time worked until yesterday according to the report
         // because today's time is already part of the execution of the current strategy.
         // runningEntry should be ignored

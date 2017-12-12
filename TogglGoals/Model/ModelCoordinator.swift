@@ -26,10 +26,10 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Current time and calendar
 
-    internal lazy var now = Property(_now)
+    private let currentDateGenerator: CurrentDateGeneratorProtocol
+
     internal lazy var calendar = Property(_calendar)
 
-    private lazy var _now = MutableProperty(scheduler.currentDate)
     private lazy var _calendar: MutableProperty<Calendar> = {
         var cal = Calendar(identifier: .iso8601)
         cal.locale = Locale.current // TODO: get from user profile
@@ -40,14 +40,14 @@ internal class ModelCoordinator: NSObject {
     // MARK: Working dates
 
     private lazy var reportsPeriod: SignalProducer<Period, NoError> =
-        SignalProducer.combineLatest(_periodPreference.producer.skipNil(), calendar.producer, now.producer)
-            .map { $0.currentPeriod(for: $1, now: $2) }
+        SignalProducer.combineLatest(_periodPreference.producer.skipNil(), calendar.producer, currentDateGenerator.producer)
+            .map { $0.currentPeriod(in: $1, for: $2) }
 
     private lazy var reportPeriodsProducer: ReportPeriodsProducer = {
         let p = ReportPeriodsProducer()
         p.reportPeriod <~ reportsPeriod
         p.calendar <~ calendar
-        p.now <~ now
+        p.currentDate <~ currentDateGenerator.currentDate
         return p
     }()
 
@@ -117,7 +117,7 @@ internal class ModelCoordinator: NSObject {
     private lazy var runningEntryUpdateTimer: RunningEntryUpdateTimer = {
         let t = RunningEntryUpdateTimer()
         t.runningEntryStart <~ runningEntry.map { $0?.start }
-        updateNow <~ t.updateRunningEntry
+        currentDateGenerator.updateTrigger <~ t.updateRunningEntry
         return t
     }()
 
@@ -130,9 +130,7 @@ internal class ModelCoordinator: NSObject {
             .map { _, session in session }
     }
 
-    private lazy var updateNow = BindingTarget<()>(on: scheduler, lifetime: lifetime) { [_now, scheduler] in
-        _now <~ SignalProducer(value: scheduler.currentDate)
-    }
+    
 
 
     // MARK: - Goals
@@ -157,14 +155,15 @@ internal class ModelCoordinator: NSObject {
     private let scheduler = QueueScheduler.init(name: "ModelCoordinator-scheduler")
     private let (lifetime, token) = Lifetime.make()
 
-    internal init(retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
+    internal init(currentDateGenerator: CurrentDateGeneratorProtocol,
+                  retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
                   retrieveProfileCacheAction: RetrieveProfileCacheAction,
                   storeProfileCacheAction: StoreProfileCacheAction,
                   retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction,
                   retrieveReportsNetworkAction: RetrieveReportsNetworkAction,
                   retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction,
                   goalsStore: ProjectIDsByGoalsProducingGoalsStore) {
-
+        self.currentDateGenerator = currentDateGenerator
         self.retrieveProfileNetworkAction = retrieveProfileNetworkAction
         self.retrieveProfileCacheAction = retrieveProfileCacheAction
         self.storeProfileCacheAction = storeProfileCacheAction

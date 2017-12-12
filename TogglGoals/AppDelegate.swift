@@ -20,6 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let modelCoordinator: ModelCoordinator
     private let userDefaults = Property(value: UserDefaults.standard)
     private let scheduler = QueueScheduler()
+    private let currentDateGenerator = CurrentDateGenerator.shared
 
     private lazy var credentialStore =
         PreferenceStore<TogglAPITokenCredential>(userDefaults: userDefaults, scheduler: scheduler)
@@ -37,7 +38,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         if let goalsStore = SQLiteGoalsStore(baseDirectory: supportDir) {
             modelCoordinator =
-                ModelCoordinator(retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
+                ModelCoordinator(currentDateGenerator: currentDateGenerator,
+                                 retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
                                  retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),
                                  storeProfileCacheAction: makeStoreProfileCacheAction(),
                                  retrieveProjectsNetworkAction: makeRetrieveProjectsNetworkAction(),
@@ -59,7 +61,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         mainWindow!.makeKeyAndOrderFront(nil)
 
         if let controller = mainWindowController.window?.contentViewController as? ProjectsMasterDetailController {
-            controller.now <~ modelCoordinator.now
+            controller.currentDate <~ currentDateGenerator.currentDate
             controller.calendar <~ modelCoordinator.calendar
             controller.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
             controller.runningEntry <~ modelCoordinator.runningEntry
@@ -92,7 +94,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         preferencesController.userDefaults <~ userDefaults
         credentialStore.input <~ SignalProducer(value: preferencesController.resolvedCredential.skipNil())
         preferencesController.calendar <~ modelCoordinator.calendar
-        preferencesController.now <~ modelCoordinator.now
+        preferencesController.currentDate <~ currentDateGenerator.currentDate
         periodPreferenceStore.input <~ SignalProducer(value: preferencesController.updatedGoalPeriodPreference)
         preferencesController.existingGoalPeriodPreference <~ periodPreferenceStore.output.producer.skipNil()
     }
