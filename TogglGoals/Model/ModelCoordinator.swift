@@ -10,6 +10,9 @@ import Foundation
 import Result
 import ReactiveSwift
 
+typealias ReadProjectAction = Action<ProjectID, Property<Project?>, NoError>
+typealias ReadReportAction = Action<ProjectID, Property<TwoPartTimeReport?>, NoError>
+
 
 internal class ModelCoordinator: NSObject {
 

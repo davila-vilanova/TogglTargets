@@ -21,8 +21,8 @@ protocol CurrentDateGeneratorProtocol: class {
     var updateTrigger: BindingTarget<Void> { get }
 }
 
-/// Implements `CurrentDateProducerProtocol` as a singleton to ensure the whole application
-/// gets the same updates to the current date.
+/// Publishes `Date` values representing the current date, updated on demand.
+/// It's a singleton to ensure the whole application gets the same updates to the current date.
 class CurrentDateGenerator: CurrentDateGeneratorProtocol {
     static var shared: CurrentDateGenerator = CurrentDateGenerator()
 

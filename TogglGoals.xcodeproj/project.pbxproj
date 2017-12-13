@@ -527,6 +527,7 @@
 				63A67F2E1FCD9A35004BEFC6 /* APIAccess */,
 				63A67F4E1FCDA18F004BEFC6 /* OfflineCache */,
 				63D4BBA01F7D80FC00B87298 /* ModelCoordinator.swift */,
+				6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */,
 				63D4BB9D1F7D80FC00B87298 /* GoalsStore.swift */,
 				635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */,
 				63D4BB9C1F7D80FC00B87298 /* GoalProgress.swift */,
@@ -541,7 +542,6 @@
 				63AB08121FB6305200565D87 /* PreferenceStore.swift */,
 				63B1BBE61FBE2570001E9FBE /* ReportPeriodsProducer.swift */,
 				6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */,
-				6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
