@@ -16,47 +16,18 @@ typealias ReadReportAction = Action<ProjectID, Property<TwoPartTimeReport?>, NoE
 
 internal class ModelCoordinator: NSObject {
 
-    // MARK: - Exposed binding targets
-
-    internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
-    internal var twoPartReportPeriod: BindingTarget<TwoPartTimeReportPeriod> { return _twoPartReportPeriod.deoptionalizedBindingTarget }
-
-
-    // MARK: - Target backing properties
-
-    private let _apiCredential = MutableProperty<TogglAPICredential?>(nil)
-    private let _twoPartReportPeriod = MutableProperty<TwoPartTimeReportPeriod?>(nil)
-
-    // MARK: - Current date
-
     private let currentDateGenerator: CurrentDateGeneratorProtocol
+    private let togglDataRetriever: TogglDataRetriever
+    private let goalsStore: ProjectIDsByGoalsProducingGoalsStore
 
 
-    // MARK: - URLSession derived from TogglAPICredential
+    var twoPartReportPeriod: BindingTarget<TwoPartTimeReportPeriod> { return togglDataRetriever.twoPartReportPeriod }
+    var apiCredential: BindingTarget<TogglAPICredential?> { return togglDataRetriever.apiCredential }
 
-    private lazy var urlSession: MutableProperty<URLSession?> = {
-        let p = MutableProperty<URLSession?>(nil)
-        p <~ _apiCredential.map(URLSession.init)
-        return p
-    }()
-
-
-    // MARK: - Profile
-
-    private let retrieveProfileNetworkAction: RetrieveProfileNetworkAction
-    private let retrieveProfileCacheAction: RetrieveProfileCacheAction
-    private let storeProfileCacheAction: StoreProfileCacheAction
-
-    private lazy var _profile = MutableProperty<Profile?>(nil)
-    internal lazy var profile = Property(_profile)
+    var profile: Property<Profile?> { return togglDataRetriever.profile }
 
 
     // MARK: - Projects
-
-    private let retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction
-
-    private lazy var _projects = MutableProperty(IndexedProjects())
-    internal lazy var projects = Property(_projects)
 
     lazy var fetchProjectIDsByGoalsAction = FetchProjectIDsByGoalsAction { [unowned self] in
         return self.goalsStore.fetchProjectIDsByGoalsAction.applySerially()
@@ -64,56 +35,35 @@ internal class ModelCoordinator: NSObject {
 
     internal lazy var readProjectAction =
         ReadProjectAction { [unowned self] projectId in
-            let projectProperty = self.projects.map { $0[projectId] }
+            let projectProperty = self.togglDataRetriever.projects.map { $0[projectId] }
             return SignalProducer(value: projectProperty)
     }
 
     // MARK: - Reports
 
-    private let retrieveReportsNetworkAction: RetrieveReportsNetworkAction
-
-    private let _reports = MutableProperty(IndexedTwoPartTimeReports())
-    private lazy var reports = Property(_reports)
-
     /// Action which takes a project ID as input and returns a producer that sends a single
     /// Property value corresponding to the report associated with the project ID.
     internal lazy var readReportAction = ReadReportAction { [unowned self] projectId in
-        let reportProperty = self.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
+        let reportProperty = self.togglDataRetriever.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
         return SignalProducer(value: reportProperty)
     }
 
 
     // MARK: - RunningEntry
 
-    private let retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction
-
-    private lazy var _runningEntry: MutableProperty<RunningEntry?> = {
-        let m = MutableProperty<RunningEntry?>(nil)
-        m <~ retrieveRunningEntryNetworkAction.values
-        return m
-    }()
-    internal lazy var runningEntry = Property(_runningEntry)
+    var runningEntry: Property<RunningEntry?> { return togglDataRetriever.runningEntry }
+    var updateRunningEntry: RefreshAction { return togglDataRetriever.updateRunningEntry }
 
     private lazy var runningEntryUpdateTimer: RunningEntryUpdateTimer = {
         let t = RunningEntryUpdateTimer()
         t.runningEntryStart <~ runningEntry.map { $0?.start }
         currentDateGenerator.updateTrigger <~ t.updateRunningEntry
+        updateRunningEntry <~ t.updateRunningEntry.producer.map { _ in () }
         return t
     }()
 
 
-    // Connected outside the scope of property initializers to avoid a dependency cycle
-    // between the initializers of apiAccess and runningEntryUpdateTimer
-    private func connectRunningEntryUpdateTimer() {
-        retrieveRunningEntryNetworkAction <~ runningEntryUpdateTimer.updateRunningEntry.producer
-            .combineLatest(with: urlSession)
-            .map { _, session in session }
-    }
-
-
     // MARK: - Goals
-
-    private let goalsStore: ProjectIDsByGoalsProducingGoalsStore
 
     /// Action which takes a project ID as input and returns a producer that sends a single
     /// Property value corresponding to the goal associated with the project ID.
@@ -130,46 +80,17 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: -
 
-    private let scheduler = QueueScheduler.init(name: "ModelCoordinator-scheduler")
 
-    internal init(currentDateGenerator: CurrentDateGeneratorProtocol,
-                  retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
-                  retrieveProfileCacheAction: RetrieveProfileCacheAction,
-                  storeProfileCacheAction: StoreProfileCacheAction,
-                  retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction,
-                  retrieveReportsNetworkAction: RetrieveReportsNetworkAction,
-                  retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction,
-                  goalsStore: ProjectIDsByGoalsProducingGoalsStore) {
-        self.currentDateGenerator = currentDateGenerator
-        self.retrieveProfileNetworkAction = retrieveProfileNetworkAction
-        self.retrieveProfileCacheAction = retrieveProfileCacheAction
-        self.storeProfileCacheAction = storeProfileCacheAction
-        self.retrieveProjectsNetworkAction = retrieveProjectsNetworkAction
-        self.retrieveReportsNetworkAction = retrieveReportsNetworkAction
-        self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkAction
+    internal init(togglDataRetriever: TogglDataRetriever,
+                  goalsStore: ProjectIDsByGoalsProducingGoalsStore,
+                  currentDateGenerator: CurrentDateGeneratorProtocol) {
+        self.togglDataRetriever = togglDataRetriever
         self.goalsStore = goalsStore
+        self.currentDateGenerator = currentDateGenerator
+
         super.init()
 
-        goalsStore.projectIDs <~ projects.map { [ProjectID]($0.keys) }
-
-        retrieveProfileNetworkAction <~ urlSession.signal.throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
-        _profile <~ Signal.merge(retrieveProfileNetworkAction.values,
-                                 retrieveProfileCacheAction.values.skipNil())
-        storeProfileCacheAction <~ retrieveProfileNetworkAction.values.throttle(while: storeProfileCacheAction.isExecuting, on: scheduler)
-
-        let workspaceIDs = _profile.producer.skipNil().map { $0.workspaces.map { $0.id } }
-
-        retrieveProjectsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(), workspaceIDs)
-            .throttle(while: retrieveProjectsNetworkAction.isExecuting, on: scheduler)
-        _projects <~ retrieveProjectsNetworkAction.values
-
-        retrieveReportsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(),
-                                                                     workspaceIDs,
-                                                                     _twoPartReportPeriod.producer.skipNil())
-            .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
-        _reports <~ retrieveReportsNetworkAction.values
-
-        connectRunningEntryUpdateTimer()
+        self.goalsStore.projectIDs <~ self.togglDataRetriever.projects.map { [ProjectID]($0.keys) }
     }
 }
 

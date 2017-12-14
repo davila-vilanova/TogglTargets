@@ -41,15 +41,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         if let goalsStore = SQLiteGoalsStore(baseDirectory: supportDir) {
-            modelCoordinator =
-                ModelCoordinator(currentDateGenerator: currentDateGenerator,
-                                 retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
-                                 retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),
-                                 storeProfileCacheAction: makeStoreProfileCacheAction(),
-                                 retrieveProjectsNetworkAction: makeRetrieveProjectsNetworkAction(),
-                                 retrieveReportsNetworkAction: makeRetrieveReportsNetworkAction(),
-                                 retrieveRunningEntryNetworkAction: makeRetrieveRunningEntryNetworkAction(),
-                                 goalsStore: goalsStore)
+            let togglAPIDataRetriever = TogglAPIDataRetriever(retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
+                                                              retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),
+                                                              storeProfileCacheAction: makeStoreProfileCacheAction(),
+                                                              retrieveProjectsNetworkAction: makeRetrieveProjectsNetworkAction(),
+                                                              retrieveReportsNetworkAction: makeRetrieveReportsNetworkAction(),
+                                                              retrieveRunningEntryNetworkAction: makeRetrieveRunningEntryNetworkAction())
+            modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
+                                                goalsStore: goalsStore,
+                                                currentDateGenerator: currentDateGenerator)
         } else {
             fatalError("Goals store failed to initialize")
         }
@@ -61,7 +61,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
 
         modelCoordinator.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod
-
         modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
     }
 

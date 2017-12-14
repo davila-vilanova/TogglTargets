@@ -10,7 +10,7 @@ import Foundation
 import Result
 import ReactiveSwift
 
-typealias RefreshAction = Action<Void, Void, APIAccessError>
+typealias RefreshAction = Action<Void, Void, NoError>
 
 protocol TogglDataRetriever: class {
     // MARK: - Exposed binding targets
@@ -29,8 +29,13 @@ protocol TogglDataRetriever: class {
 
     // MARK: - Refresh actions
 
-    var refreshAllData: BindingTarget<Void> { get }
-    var updateRunningEntry: Action<Void, Void, APIAccessError> { get }
+    var refreshAllData: RefreshAction { get }
+    var updateRunningEntry: RefreshAction { get }
+
+
+    // MARK: - Errors
+
+    var errors: Signal<APIAccessError, NoError> { get }
 }
 
 class TogglAPIDataRetriever: TogglDataRetriever {
@@ -38,6 +43,8 @@ class TogglAPIDataRetriever: TogglDataRetriever {
     internal let lifetime: Lifetime
 
     private let lifetimeToken: Lifetime.Token
+
+    private let scheduler = QueueScheduler.init(name: "TogglAPIDataRetriever-scheduler")
 
 
     // MARK: - API credential and URL session
@@ -58,55 +65,94 @@ class TogglAPIDataRetriever: TogglDataRetriever {
     private let retrieveProfileCacheAction: RetrieveProfileCacheAction
     private let storeProfileCacheAction: StoreProfileCacheAction
 
-    private lazy var _profile = MutableProperty<Profile?>(nil)
-    internal lazy var profile = Property(_profile)
+    internal lazy var profile =
+        Property<Profile?>(initial: nil, then: Signal.merge(retrieveProfileNetworkAction.values,
+                                                            retrieveProfileCacheAction.values.skipNil()))
 
 
     // MARK: - Projects
 
     private let retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction
 
-    private lazy var _projects = MutableProperty(IndexedProjects())
-    internal lazy var projects = Property(_projects)
+    internal lazy var projects = Property(initial: IndexedProjects(), then: retrieveProjectsNetworkAction.values)
 
 
     // MARK: - Reports
 
-    internal var twoPartReportPeriod: BindingTarget<TwoPartTimeReportPeriod> { return _twoPartReportPeriod.deoptionalizedBindingTarget }
+    internal var twoPartReportPeriod: BindingTarget<TwoPartTimeReportPeriod> {
+        return _twoPartReportPeriod.deoptionalizedBindingTarget
+    }
 
     private let _twoPartReportPeriod = MutableProperty<TwoPartTimeReportPeriod?>(nil)
 
     private let retrieveReportsNetworkAction: RetrieveReportsNetworkAction
 
-    private let _reports = MutableProperty(IndexedTwoPartTimeReports())
-    internal lazy var reports = Property(_reports)
+    internal lazy var reports = Property(initial: IndexedTwoPartTimeReports(), then: retrieveReportsNetworkAction.values.logEvents(identifier: "report values"))
 
 
     // MARK: - RunningEntry
 
     private let retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction
 
-    private lazy var _runningEntry: MutableProperty<RunningEntry?> = {
-        let m = MutableProperty<RunningEntry?>(nil)
-        m <~ retrieveRunningEntryNetworkAction.values
-        return m
-    }()
-
-    internal lazy var runningEntry = Property(_runningEntry)
+    internal lazy var runningEntry = Property<RunningEntry?>(initial: nil, then: retrieveRunningEntryNetworkAction.values)
 
     // MARK: - Refresh actions
 
-    func stateForRefreshAction(with underlyingAction: Action<)
-
-    lazy var updateRunningEntry = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveRunningEntryNetworkAction.isEnabled)) { [weak self] in
-        if let retriever = self {
-            retriever.retrieveRunningEntryNetworkAction <~ retriever.urlSession.producer.take(first: 1)
-
+    /// Applying this action will start an attempt to grab from the Toggl API the currently running entry
+    /// by executing the underlying retrieveRunningEntryNetworkAction.
+    /// This action is only enabled if an API credential is available and if the underlying action is enabled.
+    lazy var updateRunningEntry: RefreshAction = {
+        let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveRunningEntryNetworkAction.isEnabled)) { _ in
+            SignalProducer(value: ())
         }
-        return SignalProducer.empty
-    }
+        retrieveRunningEntryNetworkAction <~ urlSession.producer.sample(on: action.values)
+        return action
+    }()
 
-    init() {
+    lazy var refreshAllData: RefreshAction = {
+        let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveProfileNetworkAction.isEnabled)) { _ in
+            SignalProducer(value: ())
+        }
+        retrieveProfileNetworkAction <~ urlSession.producer.sample(on: action.values)
+        return action
+    }()
 
+
+    // MARK: - Errors
+
+    lazy var errors: Signal<APIAccessError, NoError> = Signal.merge(retrieveProfileNetworkAction.errors,
+                                                                    retrieveProjectsNetworkAction.errors,
+                                                                    retrieveReportsNetworkAction.errors.logEvents(identifier: "report errors"),
+                                                                    retrieveRunningEntryNetworkAction.errors)
+
+    init(retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
+         retrieveProfileCacheAction: RetrieveProfileCacheAction,
+         storeProfileCacheAction: StoreProfileCacheAction,
+         retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction,
+         retrieveReportsNetworkAction: RetrieveReportsNetworkAction,
+         retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction) {
+
+        (lifetime, lifetimeToken) = Lifetime.make()
+
+        self.retrieveProfileNetworkAction = retrieveProfileNetworkAction
+        self.retrieveProfileCacheAction = retrieveProfileCacheAction
+        self.storeProfileCacheAction = storeProfileCacheAction
+        self.retrieveProjectsNetworkAction = retrieveProjectsNetworkAction
+        self.retrieveReportsNetworkAction = retrieveReportsNetworkAction
+        self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkAction
+
+        retrieveProfileNetworkAction <~ urlSession.signal
+            .throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
+        storeProfileCacheAction <~ retrieveProfileNetworkAction.values
+            .throttle(while: storeProfileCacheAction.isExecuting, on: scheduler)
+
+        let workspaceIDs = profile.producer.skipNil().map { $0.workspaces.map { $0.id } }
+        retrieveProjectsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(), workspaceIDs)
+            .throttle(while: retrieveProjectsNetworkAction.isExecuting, on: scheduler)
+
+        retrieveReportsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(),
+                                                                     workspaceIDs,
+                                                                     _twoPartReportPeriod.producer.skipNil())
+            .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
     }
 }

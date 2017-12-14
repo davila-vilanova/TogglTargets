@@ -14,7 +14,7 @@ struct TwoPartTimeReportPeriod {
     let full: Period
     let previousToToday: Period?
     let today: Period?
-} // TODO
+}
 
 /// ReportPeriodsProducer contains logic to calculate one to two subperiods given a start and and an end date
 /// represented by DayComponents...
