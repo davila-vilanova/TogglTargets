@@ -26,6 +26,8 @@ internal class ModelCoordinator: NSObject {
 
     var profile: Property<Profile?> { return togglDataRetriever.profile }
 
+    var apiAccessErrors: Signal<APIAccessError, NoError> { return togglDataRetriever.errors }
+
 
     // MARK: - Projects
 

@@ -18,6 +18,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
     internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
+    internal var apiAccessErrors: BindingTarget<APIAccessError> { return _apiAccessErrors.deoptionalizedBindingTarget }
 
 
     // MARK: - Backing properties
@@ -26,6 +27,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
+    private let _apiAccessErrors = MutableProperty<APIAccessError?>(nil)
 
 
     // MARK: - Projects, goals and reports providing
