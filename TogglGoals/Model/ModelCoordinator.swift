@@ -19,7 +19,7 @@ typealias ReadReportAction = Action<ProjectID, Property<TwoPartTimeReport?>, NoE
 internal class ModelCoordinator: NSObject {
 
     private let currentDateGenerator: CurrentDateGeneratorProtocol
-    private let togglDataRetriever: TogglDataRetriever
+    private let togglDataRetriever: TogglAPIDataRetriever
     private let goalsStore: ProjectIDsByGoalsProducingGoalsStore
 
     // TODO: move reportPeriodsProducer inside MC?
@@ -87,7 +87,7 @@ internal class ModelCoordinator: NSObject {
     // MARK: -
 
 
-    internal init(togglDataRetriever: TogglDataRetriever,
+    internal init(togglDataRetriever: TogglAPIDataRetriever,
                   goalsStore: ProjectIDsByGoalsProducingGoalsStore,
                   currentDateGenerator: CurrentDateGeneratorProtocol) {
         self.togglDataRetriever = togglDataRetriever

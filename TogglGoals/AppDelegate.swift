@@ -41,12 +41,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         if let goalsStore = SQLiteGoalsStore(baseDirectory: supportDir) {
-            let togglAPIDataRetriever = TogglAPIDataRetriever(retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
-                                                              retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),
-                                                              storeProfileCacheAction: makeStoreProfileCacheAction(),
-                                                              retrieveProjectsNetworkAction: makeRetrieveProjectsNetworkAction(),
-                                                              retrieveReportsNetworkAction: makeRetrieveReportsNetworkAction(),
-                                                              retrieveRunningEntryNetworkAction: makeRetrieveRunningEntryNetworkAction())
+            let togglAPIDataRetriever =
+                CachedTogglAPIDataRetriever(retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
+                                            retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),
+                                            storeProfileCacheAction: makeStoreProfileCacheAction(),
+                                            retrieveProjectsNetworkAction: makeRetrieveProjectsNetworkAction(),
+                                            retrieveReportsNetworkAction: makeRetrieveReportsNetworkAction(),
+                                            retrieveRunningEntryNetworkAction: makeRetrieveRunningEntryNetworkAction())
+
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
                                                 goalsStore: goalsStore,
                                                 currentDateGenerator: currentDateGenerator)
