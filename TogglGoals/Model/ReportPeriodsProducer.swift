@@ -18,6 +18,7 @@ struct TwoPartTimeReportPeriod {
 
 /// ReportPeriodsProducer contains logic to calculate one to two subperiods given a start and and an end date
 /// represented by DayComponents...
+/// Determines the dates of the periods to retrieve based on the user's period preference current date
 class ReportPeriodsProducer {
 
     // MARK: - Exposed inputs

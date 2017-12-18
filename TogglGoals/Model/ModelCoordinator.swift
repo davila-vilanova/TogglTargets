@@ -13,14 +13,16 @@ import ReactiveSwift
 typealias ReadProjectAction = Action<ProjectID, Property<Project?>, NoError>
 typealias ReadReportAction = Action<ProjectID, Property<TwoPartTimeReport?>, NoError>
 
-
+/// Combines data from the Toggl API and the user's goals
+/// Determines the dates of the periods to retrieve based on the user's period preference current date
+/// Keeps the running entry up to date and triggers updates to the current date generator
 internal class ModelCoordinator: NSObject {
 
     private let currentDateGenerator: CurrentDateGeneratorProtocol
     private let togglDataRetriever: TogglDataRetriever
     private let goalsStore: ProjectIDsByGoalsProducingGoalsStore
 
-
+    // TODO: move reportPeriodsProducer inside MC?
     var twoPartReportPeriod: BindingTarget<TwoPartTimeReportPeriod> { return togglDataRetriever.twoPartReportPeriod }
     var apiCredential: BindingTarget<TogglAPICredential?> { return togglDataRetriever.apiCredential }
 
@@ -31,10 +33,12 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Projects
 
+    /// Combines the project IDs from the toggl API and the user's goals
     lazy var fetchProjectIDsByGoalsAction = FetchProjectIDsByGoalsAction { [unowned self] in
         return self.goalsStore.fetchProjectIDsByGoalsAction.applySerially()
     }
 
+    /// Accesses one particular project, returns a property whose value can be tracked over time
     internal lazy var readProjectAction =
         ReadProjectAction { [unowned self] projectId in
             let projectProperty = self.togglDataRetriever.projects.map { $0[projectId] }

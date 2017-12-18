@@ -12,6 +12,18 @@ import ReactiveSwift
 
 typealias RefreshAction = Action<Void, Void, NoError>
 
+/// Retrieves user data from the Toggl API keeping data that has dependencies up to date with the state of its
+/// parent data:
+/// * Attempts to retrieve the user profile from the Toggl API corresponding to the input values received through
+///   the `apiCredential` binding target. (All the other API operations also depend on the availability of a valid
+///   API credential and some of them need the credential to be a token credential, `TogglAPITokenCredential`)
+/// * Retrieves the user's projects whenever the workspace ID values from the user profile become available or change,
+///   or when the `refreshAllData` action is applied. Combines the projects from all workspaces.
+/// * Retrieves time reports from the Toggl API corresponding to the workspace IDs from the user profile and delimited
+///   by the periods of time represented by the `TwoPartTimeReportPeriod` values received through the `twoPartReportPeriod`
+///   binding target. The reports are fetched the first time the workspace IDs and the
+/// * whenever the workspace ID values from the user profile become available or change.
+///   Combines the projects from all workspaces.
 protocol TogglDataRetriever: class {
     // MARK: - Exposed binding targets
 
