@@ -123,7 +123,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     // MARK: - Projects
 
     /// The `Action` used to retrieve projects from the Toggl API.
-    private let retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction
+    private var retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction!
 
     /// Holds and publishes `IndexedProjects` values, or projects indexed by project ID, as they
     /// become available.
@@ -142,7 +142,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     private let _twoPartReportPeriod = MutableProperty<TwoPartTimeReportPeriod?>(nil)
 
     /// The `Action` used to retrieve reports from the Toggl API.
-    private let retrieveReportsNetworkAction: RetrieveReportsNetworkAction
+    private var retrieveReportsNetworkAction: RetrieveReportsNetworkAction!
 
     /// Holds and publishes `IndexedTwoPartTimeReports` values, or two-part time reports indexed by
     /// project ID, as they become available.
@@ -204,8 +204,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     init(retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
          retrieveProfileCacheAction: RetrieveProfileCacheAction,
          storeProfileCacheAction: StoreProfileCacheAction,
-         retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction,
-         retrieveReportsNetworkAction: RetrieveReportsNetworkAction,
+         retrieveProjectsNetworkActionMaker: RetrieveProjectsNetworkActionMaker,
+         retrieveReportsNetworkActionMaker: RetrieveReportsNetworkActionMaker,
          retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction) {
 
         (lifetime, lifetimeToken) = Lifetime.make()
@@ -213,9 +213,9 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         self.retrieveProfileNetworkAction = retrieveProfileNetworkAction
         self.retrieveProfileCacheAction = retrieveProfileCacheAction
         self.storeProfileCacheAction = storeProfileCacheAction
-        self.retrieveProjectsNetworkAction = retrieveProjectsNetworkAction
-        self.retrieveReportsNetworkAction = retrieveReportsNetworkAction
         self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkAction
+        self.retrieveProjectsNetworkAction = retrieveProjectsNetworkActionMaker(urlSession)
+        self.retrieveReportsNetworkAction = retrieveReportsNetworkActionMaker(urlSession)
 
         retrieveProfileNetworkAction <~ urlSession.signal
             .throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
@@ -223,11 +223,10 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
             .throttle(while: storeProfileCacheAction.isExecuting, on: scheduler)
 
         let workspaceIDs = profile.producer.skipNil().map { $0.workspaces.map { $0.id } }
-        retrieveProjectsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(), workspaceIDs)
+        retrieveProjectsNetworkAction <~ workspaceIDs
             .throttle(while: retrieveProjectsNetworkAction.isExecuting, on: scheduler)
 
-        retrieveReportsNetworkAction <~ SignalProducer.combineLatest(urlSession.producer.skipNil(),
-                                                                     workspaceIDs,
+        retrieveReportsNetworkAction <~ SignalProducer.combineLatest(workspaceIDs,
                                                                      _twoPartReportPeriod.producer.skipNil())
             .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
     }

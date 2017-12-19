@@ -11,10 +11,12 @@ import ReactiveSwift
 
 typealias IndexedTwoPartTimeReports = [ProjectID : TwoPartTimeReport]
 typealias RetrieveReportsNetworkAction =
-    Action<(URLSession, [WorkspaceID], TwoPartTimeReportPeriod), IndexedTwoPartTimeReports, APIAccessError>
+    Action<([WorkspaceID], TwoPartTimeReportPeriod), IndexedTwoPartTimeReports, APIAccessError>
+typealias RetrieveReportsNetworkActionMaker = (Property<URLSession?>) -> RetrieveReportsNetworkAction
 
-func makeRetrieveReportsNetworkAction() -> RetrieveReportsNetworkAction {
-    return RetrieveReportsNetworkAction { (session, workspaceIDs, period) in
+func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>) -> RetrieveReportsNetworkAction {
+    return RetrieveReportsNetworkAction(unwrapping: urlSession) { (session, inputs) in
+        let (workspaceIDs, period) = inputs
         let workedUntilYesterday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: period.previousToDayOfRequest)
         let workedToday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: period.forDayOfRequest)
         return SignalProducer.combineLatest(workedUntilYesterday, workedToday, SignalProducer(value: period.scope))

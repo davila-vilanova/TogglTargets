@@ -44,8 +44,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 CachedTogglAPIDataRetriever(retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
                                             retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),
                                             storeProfileCacheAction: makeStoreProfileCacheAction(),
-                                            retrieveProjectsNetworkAction: makeRetrieveProjectsNetworkAction(),
-                                            retrieveReportsNetworkAction: makeRetrieveReportsNetworkAction(),
+                                            retrieveProjectsNetworkActionMaker: makeRetrieveProjectsNetworkAction,
+                                            retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
                                             retrieveRunningEntryNetworkAction: makeRetrieveRunningEntryNetworkAction())
 
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
