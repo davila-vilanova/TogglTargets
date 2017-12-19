@@ -67,7 +67,7 @@ class GoalProgress {
                                             runningEntryTime)
             .map { (reportOrNil, strategyStartsToday, runningEntryTime) -> TimeInterval in
                 if strategyStartsToday {
-                    return reportOrNil?.workedTimeUntilYesterday ?? 0
+                    return reportOrNil?.workedTimeUntilDayBeforeRequest ?? 0
                 } else {
                     return (reportOrNil?.workedTime ?? 0) + runningEntryTime
                 }
@@ -133,7 +133,7 @@ class GoalProgress {
         return SignalProducer.combineLatest(_report,
                                             runningEntryTime)
             .map { (report, runningEntryTime) in
-                let workedTimeToday = report?.workedTimeToday ?? 0
+                let workedTimeToday = report?.workedTimeOnDayOfRequest ?? 0
                 return workedTimeToday + runningEntryTime
         }
     }()

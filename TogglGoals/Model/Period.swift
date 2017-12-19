@@ -12,3 +12,10 @@ struct Period {
     let start: DayComponents
     let end: DayComponents
 }
+
+extension Period: Equatable {
+    static func ==(lhs: Period, rhs: Period) -> Bool {
+        return lhs.start == rhs.start
+            && lhs.end == rhs.end
+    }
+}

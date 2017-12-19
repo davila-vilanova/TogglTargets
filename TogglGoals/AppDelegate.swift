@@ -21,7 +21,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     private let currentDateGenerator = CurrentDateGenerator.shared
     private let calendar = Property(value: Calendar.iso8601)
-    private let reportPeriodsProducer = ReportPeriodsProducer()
 
     private let userDefaults = Property(value: UserDefaults.standard)
     private lazy var credentialStore = PreferenceStore<TogglAPITokenCredential>(userDefaults: userDefaults,
@@ -51,18 +50,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
                                                 goalsStore: goalsStore,
-                                                currentDateGenerator: currentDateGenerator)
+                                                currentDateGenerator: currentDateGenerator,
+                                                reportPeriodsProducer: ReportPeriodsProducer())
         } else {
             fatalError("Goals store failed to initialize")
         }
 
         super.init()
 
-        reportPeriodsProducer.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
-        reportPeriodsProducer.calendar <~ calendar
-        reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
-
-        modelCoordinator.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod
+        modelCoordinator.calendar <~ calendar
+        modelCoordinator.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
         modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
     }
 

@@ -10,49 +10,43 @@ import Foundation
 
 typealias WorkedTime = TimeInterval
 
-protocol TimeReport {
-    var projectId: Int64 { get }
-    var since: DayComponents { get }
-    var until: DayComponents { get }
-    var workedTime: WorkedTime { get }
-}
+/// Represents a report of time worked in a single `Project` during a defined `Period`,
+/// divided in two parts:
+/// 1: The time worked from the start of the `Period` until the day before the report is requested,
+/// 2: The time worked on the day the report is requested.
+struct TwoPartTimeReport {
 
-struct SingleTimeReport: TimeReport {
-    let projectId: Int64
-    let since: DayComponents
-    let until: DayComponents
-    let workedTime: WorkedTime
-}
+    /// The ID of the project corresponding to this report
+    let projectId: ProjectID
 
-struct TwoPartTimeReport: TimeReport {
-    let projectId: Int64
-    let since: DayComponents
-    let until: DayComponents
+    /// The `Period` of time to which this report is scoped.
+    let period: Period
+
+    /// The total worked time represented by this report.
     var workedTime: WorkedTime {
-        return workedTimeUntilYesterday + workedTimeToday
+        return workedTimeUntilDayBeforeRequest + workedTimeOnDayOfRequest
     }
-    let workedTimeUntilYesterday: WorkedTime
-    let workedTimeToday: WorkedTime
-}
 
-extension SingleTimeReport: CustomDebugStringConvertible {
-    var debugDescription: String {
-        return "SingleTimeReport(workedTime: \(workedTime))";
-    }
+    /// The time worked from the start of the `Period` until the day before requesting the report,
+    /// that is, until 'yesterday'.
+    let workedTimeUntilDayBeforeRequest: WorkedTime
+
+    /// The time worked on the day the report is requested, that is, 'today'.
+    let workedTimeOnDayOfRequest: WorkedTime
 }
 
 extension TwoPartTimeReport: CustomDebugStringConvertible {
     var debugDescription: String {
-        return "TwoPartTimeReport(untilYesterday: \(workedTimeUntilYesterday), today: \(workedTimeToday)";
+        return "TwoPartTimeReport(workedTimeUntilDayBeforeRequest: \(workedTimeUntilDayBeforeRequest), "
+            + "workedTimeOnDayOfRequest: \(workedTimeOnDayOfRequest))";
     }
 }
 
 extension TwoPartTimeReport: Equatable {
     static func ==(lhs: TwoPartTimeReport, rhs: TwoPartTimeReport) -> Bool {
         return lhs.projectId == rhs.projectId
-            && lhs.since == rhs.since
-            && lhs.until == rhs.until
-            && lhs.workedTimeUntilYesterday == rhs.workedTimeUntilYesterday
-            && lhs.workedTimeToday == rhs.workedTimeToday
+            && lhs.period == rhs.period
+            && lhs.workedTimeUntilDayBeforeRequest == rhs.workedTimeUntilDayBeforeRequest
+            && lhs.workedTimeOnDayOfRequest == rhs.workedTimeOnDayOfRequest
     }
 }

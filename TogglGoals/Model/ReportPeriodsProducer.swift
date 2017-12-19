@@ -10,21 +10,58 @@ import Foundation
 import Result
 import ReactiveSwift
 
+/// Represents a time period for which a two part time report is scoped, itself divided in
+/// two parts:
+/// 1. the `Period` from the start of the overall period until the day before the
+///    corresponding time report report is requested,
+/// 2. the `Period` corresponding to the day on which the time reports are requested.
 struct TwoPartTimeReportPeriod {
-    let full: Period
-    let previousToToday: Period?
-    let today: Period?
+
+    /// The full `Period` for which two part time report is scoped.
+    let scope: Period
+
+    /// The `Period` corresponding to the beginning of `full` until the day before the
+    /// day on which the report is requested.
+    /// It shold be `nil` if the report is requested on the first day of `full` and non-`nil` in
+    /// any other case.
+    let previousToDayOfRequest: Period?
+
+    /// The `DayComponents` corresponding to the day in which the time period will be requested.
+    /// The day of request is expected to be inside the range defined by `full.start` start and
+    /// `full.end`.
+    /// It is used to generate the second part (`forDayOfRequest`) of the period represented by
+    /// this instance.
+    private let dayOfRequest: DayComponents
+
+    /// The `Period` corresponding to the day in which the time report is requested.
+    /// Both `start` and `end` properties will correspond to the same day.
+    /// The day can be any value between `full.start` and `full.end`.
+    var forDayOfRequest: Period { return Period(start: dayOfRequest, end: dayOfRequest) }
+
+    /// Initializes a new value.
+    init(scope: Period, previousToDayOfRequest: Period?, dayOfRequest: DayComponents) {
+        self.scope = scope
+        self.previousToDayOfRequest = previousToDayOfRequest
+        self.dayOfRequest = dayOfRequest
+    }
 }
 
-/// ReportPeriodsProducer contains logic to calculate one to two subperiods given a start and and an end date
-/// represented by DayComponents...
-/// Determines the dates of the periods to retrieve based on the user's period preference current date
+/// Produces `TwoPartTimeReportPeriod` values based on the incoming `PeriodPreference`, `currentDate`
+/// and `calendar` values.
 class ReportPeriodsProducer {
 
     // MARK: - Exposed inputs
 
+    /// Binding target for `PeriodPreference` representing the user preference
+    /// corresponding to how to determine the current period for scoping the
+    /// requested time reports. E.g., monthly, or weekly starting on Monday.
     var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
+
+    /// Binding target for the current `Calendar` used to perform calendrical
+    /// computations.
     var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
+
+    /// Binding target for the application-wide `currentDate` values.
     var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
 
 
@@ -37,39 +74,42 @@ class ReportPeriodsProducer {
 
     // MARK: - Intermediate signals
 
-    private lazy var fullPeriodProducer: SignalProducer<Period, NoError> =
+    /// Produces `Period` values representing the full scope of the current period.
+    private lazy var fullPeriod: SignalProducer<Period, NoError> =
         SignalProducer.combineLatest(_periodPreference.producer.skipNil(),
                                      _calendar.producer.skipNil(),
                                      _currentDate.producer.skipNil())
             .map { $0.currentPeriod(in: $1, for: $2) }
 
-    private lazy var todayProducer: SignalProducer<DayComponents, NoError>
+
+    /// Produces `DayComponents` values representing the day corresponding to `currentDate`
+    private lazy var today: SignalProducer<DayComponents, NoError>
         = SignalProducer.combineLatest(_calendar.producer.skipNil(), _currentDate.producer.skipNil())
             .map { (calendar, currentDate) in
                 return calendar.dayComponents(from: currentDate)
     }
 
-    private lazy var yesterdayProducer: SignalProducer<DayComponents?, NoError>
+    /// Produces `DayComponents` values representing the day previous to the day corresponding to
+    /// `currentDate`, as long as that day is not earlier than the start of the current full period value,
+    /// and produces `nil` otherwise.
+    private lazy var periodUntilYesterday: SignalProducer<Period?, NoError>
         = SignalProducer.combineLatest(_calendar.producer.skipNil(),
                                        _currentDate.producer.skipNil(),
-                                       fullPeriodProducer)
-            .map { (calendar, currentDate, reportPeriod) in
-                return try? calendar.previousDay(for: currentDate, notBefore: reportPeriod.start)
+                                       fullPeriod)
+            .map { (calendar, currentDate, fullPeriod) in
+                if let yesterday = try? calendar.previousDay(for: currentDate, notBefore: fullPeriod.start) {
+                    return Period(start: fullPeriod.start, end: yesterday)
+                } else {
+                    return nil
+                }
     }
+
 
     // MARK: - Exposed output
 
+    /// Emits the produced `TwoPartTimeReportPeriod` values.
     lazy var twoPartPeriod: SignalProducer<TwoPartTimeReportPeriod, NoError> =
-        SignalProducer.combineLatest(fullPeriodProducer, yesterdayProducer, todayProducer)
-            .map { (fullPeriod, yesterdayOrNil, today) in
-                let previousToToday: Period? = {
-                    if let yesterday = yesterdayOrNil {
-                        return Period(start: fullPeriod.start, end: yesterday)
-                    } else {
-                        return nil
-                    }
-                }()
-                let todayPeriod = Period(start: today, end: today)
-                return TwoPartTimeReportPeriod(full: fullPeriod, previousToToday: previousToToday, today: todayPeriod)
+        SignalProducer.combineLatest(fullPeriod, periodUntilYesterday, today)
+            .map { TwoPartTimeReportPeriod(scope: $0, previousToDayOfRequest: $1, dayOfRequest: $2)
     }
 }

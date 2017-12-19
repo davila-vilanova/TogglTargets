@@ -22,11 +22,11 @@ fileprivate let hoursPerMonthGoal = 95
 fileprivate let goal = Goal(forProjectId: projectIdA, hoursPerMonth: hoursPerMonthGoal, workWeekdays: .exceptWeekend)
 fileprivate let todayComponents = DayComponents(year: 2017, month: 10, day: 11)
 fileprivate let tomorrowComponents = DayComponents(year: 2017, month: 10, day: 12)
+fileprivate let period = Period(start: DayComponents(year: 2017, month: 10, day: 1), end: todayComponents)
 fileprivate let report = TwoPartTimeReport(projectId: projectIdA,
-                                           since: DayComponents(year: 2017, month: 10, day: 1),
-                                           until: todayComponents,
-                                           workedTimeUntilYesterday: .from(hours: 26),
-                                           workedTimeToday: .from(hours: 3))
+                                           period: period,
+                                           workedTimeUntilDayBeforeRequest: .from(hours: 26),
+                                           workedTimeOnDayOfRequest: .from(hours: 3))
 
 func makeRunningEntry(projectId: Int64, runningTime: TimeInterval) -> RunningEntry {
     return RunningEntry(id: 0, projectId: projectId, start: currentDate.addingTimeInterval(-runningTime), retrieved: currentDate)
@@ -35,8 +35,8 @@ func makeRunningEntry(projectId: Int64, runningTime: TimeInterval) -> RunningEnt
 
 /// This class just serves the purpose of doing all the common setup.
 /// The other XCTestCase derived classes in this file inherit from this.
-/// Do not include tests directly in this class, or else they will be run each time
-/// the tests for any of the subclasses are run.
+/// Do not include tests directly in this class, or else they will be run each
+/// time the tests for any of the subclasses are run.
 class GoalProgressTests: XCTestCase {
     fileprivate var goalProgress: GoalProgress!
 
@@ -119,14 +119,14 @@ class GoalProgressWorkedTimeTests: GoalProgressTests {
         // Calculating strategy from same day as currentDate (that is, "today", which also is the end date for the report)
         // should yield the time worked until yesterday according to the report ...
         goalProgress.startStrategyDay <~ SignalProducer(value: todayComponents)
-        XCTAssertEqual(workedTimeResult.value, report.workedTimeUntilYesterday)
+        XCTAssertEqual(workedTimeResult.value, report.workedTimeUntilDayBeforeRequest)
     }
 
     func testWorkedTimeStartingStrategyTodayIgnoresRunningEntry() {
         // ... and that should be regardless of whether there is a running entry corresponding to the current project
         goalProgress.startStrategyDay <~ SignalProducer(value: todayComponents)
         goalProgress.runningEntry <~ SignalProducer(value: runningEntryProjectA)
-        XCTAssertEqual(workedTimeResult.value, report.workedTimeUntilYesterday)
+        XCTAssertEqual(workedTimeResult.value, report.workedTimeUntilDayBeforeRequest)
     }
 
     func testNilReportIsInterpretedAsZeroedTimeReportWhenStartingStrategyToday() {
@@ -142,13 +142,13 @@ class GoalProgressWorkedTimeTests: GoalProgressTests {
         let workedTodayResult = MutableProperty<TimeInterval?>(nil)
         workedTodayResult <~ goalProgress.timeWorkedToday
 
-        XCTAssertEqual(workedTodayResult.value, report.workedTimeToday)
+        XCTAssertEqual(workedTodayResult.value, report.workedTimeOnDayOfRequest)
 
         goalProgress.runningEntry <~ SignalProducer(value: runningEntryProjectA)
-        XCTAssertEqual(workedTodayResult.value, (report.workedTimeToday + timeRunningEntryA))
+        XCTAssertEqual(workedTodayResult.value, (report.workedTimeOnDayOfRequest + timeRunningEntryA))
 
         goalProgress.runningEntry <~ SignalProducer(value: runningEntryProjectB)
-        XCTAssertEqual(workedTodayResult.value, report.workedTimeToday)
+        XCTAssertEqual(workedTodayResult.value, report.workedTimeOnDayOfRequest)
     }
 }
 
@@ -174,9 +174,9 @@ class GoalProgressRemainingTimeTests: GoalProgressTests {
         // should result in the goal time minus the time worked until yesterday according to the report
         // because today's time is already part of the execution of the current strategy.
         // runningEntry should be ignored
-        assert(todayComponents == report.until) // internal tests consistency
+        assert(todayComponents == report.period.end) // internal tests consistency
         goalProgress.startStrategyDay <~ SignalProducer(value: todayComponents)
-        XCTAssertEqual(remainingTimeResult.value, TimeInterval.from(hours: hoursPerMonthGoal) - report.workedTimeUntilYesterday)
+        XCTAssertEqual(remainingTimeResult.value, TimeInterval.from(hours: hoursPerMonthGoal) - report.workedTimeUntilDayBeforeRequest)
     }
 }
 
@@ -220,7 +220,7 @@ class GoalProgressAdjustedDayBaselineTests: GoalProgressTests {
 
     func testAdjustedDayBaselineStartingStrategyToday() {
         goalProgress.startStrategyDay <~ SignalProducer(value: todayComponents)
-        let expectedRemainingTimeToGoal = TimeInterval.from(hours: hoursPerMonthGoal) - report.workedTimeUntilYesterday
+        let expectedRemainingTimeToGoal = TimeInterval.from(hours: hoursPerMonthGoal) - report.workedTimeUntilDayBeforeRequest
         let remainingWorkDays = 15.0
         XCTAssertEqual(adjustedBaselineResult.value, expectedRemainingTimeToGoal / remainingWorkDays)
     }

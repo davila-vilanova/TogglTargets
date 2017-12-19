@@ -14,10 +14,10 @@ typealias RetrieveReportsNetworkAction =
     Action<(URLSession, [WorkspaceID], TwoPartTimeReportPeriod), IndexedTwoPartTimeReports, APIAccessError>
 
 func makeRetrieveReportsNetworkAction() -> RetrieveReportsNetworkAction {
-    return RetrieveReportsNetworkAction { (session, workspaceIDs, periods) in
-        let workedUntilYesterday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: periods.previousToToday)
-        let workedToday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: periods.today)
-        return SignalProducer.combineLatest(workedUntilYesterday, workedToday, SignalProducer(value: periods.full))
+    return RetrieveReportsNetworkAction { (session, workspaceIDs, period) in
+        let workedUntilYesterday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: period.previousToDayOfRequest)
+        let workedToday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: period.forDayOfRequest)
+        return SignalProducer.combineLatest(workedUntilYesterday, workedToday, SignalProducer(value: period.scope))
             .map(generateIndexedReportsFromWorkedTimes)
     }
 }
@@ -69,10 +69,9 @@ fileprivate func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWo
             let timeWorkedPreviousToToday: TimeInterval = untilYesterday[id] ?? 0.0
             let timeWorkedToday: TimeInterval = today[id] ?? 0.0
             reports[id] = TwoPartTimeReport(projectId: id,
-                                            since: fullPeriod.start,
-                                            until: fullPeriod.end,
-                                            workedTimeUntilYesterday: timeWorkedPreviousToToday,
-                                            workedTimeToday: timeWorkedToday)
+                                            period: fullPeriod,
+                                            workedTimeUntilDayBeforeRequest: timeWorkedPreviousToToday,
+                                            workedTimeOnDayOfRequest: timeWorkedToday)
         }
         return reports
 }
