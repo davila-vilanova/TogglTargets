@@ -1,10 +1,20 @@
-//import Cocoa
-//import Result
-//import ReactiveSwift
-//@testable import TogglGoals_MacOS
-//import PlaygroundSupport
-//
-//PlaygroundPage.current.needsIndefiniteExecution = true
+import Cocoa
+import Result
+import ReactiveSwift
+@testable import TogglGoals_MacOS
+import PlaygroundSupport
+
+PlaygroundPage.current.needsIndefiniteExecution = true
+
+let apiToken = MutableProperty("8e536ec872a3900a616198ecb3415c03")
+let credential = apiToken.map { token -> TogglAPICredential? in TogglAPITokenCredential(apiToken: token) }
+let session = credential.map { credential -> URLSession? in URLSession(togglAPICredential: credential) }
+let action = makeRetrieveProfileNetworkAction()
+action <~ session.producer.skipNil()
+let d = action.values.on(value: { print("timezone: \(String(describing: $0.timezone))")})
+
+1315415 ^ 0
+
 //
 //
 //class NonPersistentGoalsStore: GoalsStore {
@@ -48,8 +58,6 @@
 //
 //projects <~ modelCoordinator.projects.producer.logEvents(identifier: "modelCoordinator.projects")
 //
-//let apiToken = MutableProperty("8e536ec872a3900a616198ecb3415c03")
-//let credential = apiToken.map { token -> TogglAPICredential? in TogglAPITokenCredential(apiToken: token) }
 //
 //
 //modelCoordinator.apiCredential <~ credential
@@ -58,3 +66,4 @@
 //
 //print("going for it")
 //
+

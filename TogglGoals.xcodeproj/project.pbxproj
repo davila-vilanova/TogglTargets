@@ -196,6 +196,7 @@
 		63D4FF2F1F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
 		63D4FF301F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
 		63D4FF311F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
+		63DC61981FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */; };
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
 		63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */; };
 /* End PBXBuildFile section */
@@ -329,6 +330,7 @@
 		63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProducerExtensions.swift; sourceTree = "<group>"; };
 		63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63D4FF2E1F5AD839006368A3 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataRetrieverTest.swift; sourceTree = "<group>"; };
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
 		63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindClosestMatchingWeekdayTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -421,6 +423,7 @@
 				63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */,
 				634396891F80456200FDADE3 /* GoalProgressTests.swift */,
 				637485601FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift */,
+				63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */,
 			);
 			path = TogglGoalsTests;
 			sourceTree = "<group>";
@@ -811,6 +814,7 @@
 				63AB08141FB6305200565D87 /* PreferenceStore.swift in Sources */,
 				6333B6CF1F974690002CF189 /* Profile.swift in Sources */,
 				636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */,
+				63DC61981FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift in Sources */,
 				63A67F411FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
 				63A67F321FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
 				63B1BBE81FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,

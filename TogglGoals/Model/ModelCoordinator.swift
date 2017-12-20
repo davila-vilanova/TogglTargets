@@ -72,7 +72,7 @@ internal class ModelCoordinator: NSObject {
     /// whose value can be tracked over time.
     internal lazy var readProjectAction =
         ReadProjectAction { [unowned self] projectId in
-            let projectProperty = self.togglDataRetriever.projects.map { $0[projectId] }
+            let projectProperty = self.togglDataRetriever.projects.map { $0?[projectId] }
             return SignalProducer(value: projectProperty)
     }
 
@@ -82,7 +82,7 @@ internal class ModelCoordinator: NSObject {
     /// Accesses one particular `TwoPartTimeReport` by its project ID, returns a
     /// property whose value can be tracked over time.
     internal lazy var readReportAction = ReadReportAction { [unowned self] projectId in
-        let reportProperty = self.togglDataRetriever.reports.map { $0[projectId] }.skipRepeats { $0 == $1 }
+        let reportProperty = self.togglDataRetriever.reports.map { $0?[projectId] }.skipRepeats { $0 == $1 }
         return SignalProducer(value: reportProperty)
     }
 
@@ -157,7 +157,7 @@ internal class ModelCoordinator: NSObject {
 
         super.init()
 
-        self.goalsStore.projectIDs <~ self.togglDataRetriever.projects.map { [ProjectID]($0.keys) }
+        self.goalsStore.projectIDs <~ self.togglDataRetriever.projects.producer.skipNil().map { [ProjectID]($0.keys) }
         reportPeriodsProducer.calendar <~ _calendar.producer.skipNil()
         reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
         togglDataRetriever.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod

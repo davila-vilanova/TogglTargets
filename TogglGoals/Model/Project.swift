@@ -25,3 +25,12 @@ struct Project: Decodable {
 }
 
 typealias IndexedProjects = [ProjectID : Project]
+
+extension Project: Equatable {
+    static func ==(lhs: Project, rhs: Project) -> Bool {
+        return lhs.id == rhs.id
+            && lhs.name == rhs.name
+            && lhs.active == rhs.active
+            && lhs.workspaceId == rhs.workspaceId
+    }
+}

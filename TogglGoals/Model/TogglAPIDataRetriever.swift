@@ -46,11 +46,11 @@ protocol TogglAPIDataRetriever: class {
 
     /// Holds and publishes `IndexedProjects` values, or projects indexed by project ID, as they
     /// become available.
-    var projects: Property<IndexedProjects> { get }
+    var projects: Property<IndexedProjects?> { get }
 
     /// Holds and publishes `IndexedTwoPartTimeReports` values, or two-part time reports indexed by
     /// project ID, as they become available.
-    var reports: Property<IndexedTwoPartTimeReports> { get }
+    var reports: Property<IndexedTwoPartTimeReports?> { get }
 
     /// Holds and publishes the current time entry or `nil` for no time entry whenever it is retrieved.
     var runningEntry: Property<RunningEntry?> { get }
@@ -127,7 +127,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Holds and publishes `IndexedProjects` values, or projects indexed by project ID, as they
     /// become available.
-    internal lazy var projects = Property(initial: IndexedProjects(), then: retrieveProjectsNetworkAction.values)
+    internal lazy var projects = Property<IndexedProjects?>(initial: nil, then: retrieveProjectsNetworkAction.values)
 
 
     // MARK: - Reports
@@ -146,7 +146,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Holds and publishes `IndexedTwoPartTimeReports` values, or two-part time reports indexed by
     /// project ID, as they become available.
-    internal lazy var reports = Property(initial: IndexedTwoPartTimeReports(), then: retrieveReportsNetworkAction.values.logEvents(identifier: "report values"))
+    internal lazy var reports = Property<IndexedTwoPartTimeReports?>(initial: nil, then: retrieveReportsNetworkAction.values)
 
 
     // MARK: - RunningEntry
