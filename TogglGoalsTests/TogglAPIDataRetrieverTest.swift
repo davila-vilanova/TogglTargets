@@ -13,6 +13,11 @@ import ReactiveSwift
 fileprivate let dummyAPIToken = "8a7f2049ed"
 fileprivate let testCredential = TogglAPITokenCredential(apiToken: dummyAPIToken)!
 fileprivate let testReportPeriod = Period(start: DayComponents(year: 2017, month: 12, day: 1), end: DayComponents(year: 2017, month: 12, day: 31))
+fileprivate let firstDayOfPeriod = DayComponents(year: 2017, month: 12, day: 1)
+fileprivate let yesterday = DayComponents(year: 2017, month: 12, day: 14)
+fileprivate let today = DayComponents(year: 2017, month: 12, day: 15)
+fileprivate let twoPartReportPeriods = TwoPartTimeReportPeriod(scope: testReportPeriod, previousToDayOfRequest: Period(start: firstDayOfPeriod, end: yesterday), dayOfRequest: today)
+
 
 fileprivate let testProfile = Profile(id: 118030,
                                       name: "Ardilla Squirrel",
@@ -24,7 +29,7 @@ fileprivate let testProfile = Profile(id: 118030,
                                       apiToken: dummyAPIToken)
 
 fileprivate let testProjects: IndexedProjects = [100 : Project(id: 100, name: "first", active: true, workspaceId: 1),
-                                                 200: Project(id: 200, name: "second", active: true, workspaceId: 1),
+                                                 200 : Project(id: 200, name: "second", active: true, workspaceId: 1),
                                                  300 : Project(id: 300, name: "third", active: true, workspaceId: 2)]
 
 fileprivate let testReports: IndexedTwoPartTimeReports =
@@ -32,7 +37,25 @@ fileprivate let testReports: IndexedTwoPartTimeReports =
       200 : TwoPartTimeReport(projectId: 200, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 3812, workedTimeOnDayOfRequest: 0),
       300 : TwoPartTimeReport(projectId: 300, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 0, workedTimeOnDayOfRequest: 1800)]
 
-let expectationsTimeout = TimeInterval(1.0)
+fileprivate let testRunningEntry: RunningEntry = {
+    let todayDate = try! Calendar.iso8601.date(from: today)
+    let hour: TimeInterval = 3600
+    return RunningEntry(id: 8110, projectId: 200, start: todayDate + (8 * hour), retrieved: todayDate + (9 * hour))
+}()
+
+fileprivate let testUnderlyingError = NSError(domain: "TogglAPIDataRetrieverTest", code: -4, userInfo: nil)
+fileprivate let testError = APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError)
+fileprivate func equalsTestError(_ candidate: APIAccessError) -> Bool {
+    switch candidate {
+    case .loadingSubsystemError(let underlying):
+        let nsError = underlying as NSError
+        return nsError.domain == testUnderlyingError.domain
+            && nsError.code == testUnderlyingError.code
+    default: return false
+    }
+}
+
+fileprivate let expectationsTimeout = TimeInterval(1.0)
 
 class TogglAPIDataRetrieverTest: XCTestCase {
 
@@ -52,10 +75,13 @@ class TogglAPIDataRetrieverTest: XCTestCase {
     var retrievedRunningEntry: Property<RunningEntry?>!
     var lastError: Property<APIAccessError?>!
 
+
+    // MARK: - Set up
+
     override func setUp() {
         super.setUp()
 
-        // Set up default actions
+        // Set up default mock actions
 
         retrieveProfileNetworkAction = RetrieveProfileNetworkAction { _ in
             return SignalProducer(value: testProfile)
@@ -79,7 +105,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             return SignalProducer(value: testReports)
         }
 
-        retrieveRunningEntryAction = RetrieveRunningEntryNetworkAction { _ in SignalProducer(value: nil) }
+        retrieveRunningEntryAction = RetrieveRunningEntryNetworkAction { _ in SignalProducer(value: testRunningEntry) }
 
 
         // Clear data retriever and properties that must be reset by `makeDataRetriever()`
@@ -111,29 +137,206 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         dataRetriever.apiCredential <~ SignalProducer<TogglAPICredential, NoError>(value: testCredential)
     }
 
+    private func feedTwoPartPeriodIntoDataRetriever() {
+        self.dataRetriever.twoPartReportPeriod <~ SignalProducer(value: twoPartReportPeriods)
+    }
+
+
+    // MARK: - Test basic retrieval
+
     func testProfileIsRetrievedWhenAPICredentialBecomesAvailable() {
-        makeDataRetriever()
-        XCTAssertNil(retrievedProfile.value)
-        let retrievalExpectation = expectation(description: "Profile must be retrieved.")
-        retrievedProfile.producer.skipNil().startWithValues {
-            XCTAssertEqual(testProfile, $0)
-            retrievalExpectation.fulfill()
-        }
-        feedAPICredentialIntoDataRetriever()
-        wait(for: [retrievalExpectation], timeout: expectationsTimeout)
+        testRetrieval(of: retrievedProfile, satisfying: { XCTAssertEqual($0, testProfile) }, after: feedAPICredentialIntoDataRetriever)
     }
 
     func testProjectsAreRetrievedWhenWorkspaceIDsBecomeAvailable() {
-        makeDataRetriever()
-        XCTAssertNil(retrievedProjects.value)
-        let retrievalExpectation = expectation(description: "Projects must be retrieved.")
-        retrievedProjects.producer.skipNil().startWithValues {
-            XCTAssertEqual(testProjects, $0)
-            retrievalExpectation.fulfill()
-        }
-        feedAPICredentialIntoDataRetriever()
-        wait(for: [retrievalExpectation], timeout: expectationsTimeout)
+        testRetrieval(of: retrievedProjects, satisfying: { XCTAssertEqual($0, testProjects) }, after: feedAPICredentialIntoDataRetriever)
     }
 
-}
+    func testReportsAreRetrievedWhenWorkspaceIDsAndPeriodsBecomeAvailable() {
+        testRetrieval(of: retrievedReports, satisfying: { XCTAssertEqual($0, testReports) }) { [unowned self] in
+            self.feedAPICredentialIntoDataRetriever()
+            self.feedTwoPartPeriodIntoDataRetriever()
+        }
+    }
 
+    func testRetrieveTimeEntryOnDemand() {
+        testRetrieval(of: retrievedRunningEntry, satisfying: {
+            XCTAssertEqual($0.id, testRunningEntry.id)
+            XCTAssertEqual($0.projectId, testRunningEntry.projectId)
+            XCTAssertEqual($0.start, testRunningEntry.start)
+            XCTAssertEqual($0.retrieved, testRunningEntry.retrieved)
+        }) { [unowned self] in
+            self.dataRetriever.updateRunningEntry <~ SignalProducer(value: ())
+        }
+    }
+
+    private func testRetrieval<T>(of propertyProvider: @autoclosure () -> Property<T?>, satisfying test: @escaping (T) -> (), after trigger: () -> ()) {
+        makeDataRetriever()
+        // Property is inside an autoclosure because it becomes non-nil only after `makeDataRetriever()` is invoked.
+        let property = propertyProvider()
+        XCTAssertNil(property.value)
+        XCTAssertNil(lastError.value)
+        let retrievalExpectation = expectation(description: "Expecting incoming non-nil value for \(property)")
+        property.producer.skipNil().startWithValues {
+            test($0)
+            retrievalExpectation.fulfill()
+        }
+
+        trigger()
+
+        wait(for: [retrievalExpectation], timeout: expectationsTimeout)
+        XCTAssertNil(lastError.value)
+    }
+
+    func testRefreshAllData() {
+        makeDataRetriever()
+        XCTAssertNil(retrievedProfile.value)
+        XCTAssertNil(retrievedProjects.value)
+        XCTAssertNil(retrievedReports.value)
+        XCTAssertNil(retrievedRunningEntry.value)
+        XCTAssertNil(lastError.value)
+
+        func retrieveTwiceExpectations(for entityName: String) -> (first: XCTestExpectation, second: XCTestExpectation) {
+            let once = XCTestExpectation(description: "\(entityName) must be retrieved at least once.")
+            once.expectedFulfillmentCount = 1
+            once.assertForOverFulfill = false
+
+            let twice = XCTestExpectation(description: "\(entityName) must be retrieved exactly twice.")
+            twice.expectedFulfillmentCount = 2
+            twice.assertForOverFulfill = true
+
+            return (first: once, second: twice)
+        }
+
+        let profileExpectations = retrieveTwiceExpectations(for: "Profile")
+        let projectsExpectations = retrieveTwiceExpectations(for: "Projects")
+        let reportsExpectations = retrieveTwiceExpectations(for: "Reports")
+        let runningEntryExpectations = retrieveTwiceExpectations(for: "Running Entry")
+
+        retrievedProfile.producer.skipNil().startWithValues {
+            XCTAssertEqual($0, testProfile)
+            profileExpectations.first.fulfill()
+            profileExpectations.second.fulfill()
+        }
+
+        retrievedProjects.producer.skipNil().startWithValues {
+            XCTAssertEqual($0, testProjects)
+            projectsExpectations.first.fulfill()
+            projectsExpectations.second.fulfill()
+        }
+
+        retrievedReports.producer.skipNil().startWithValues {
+            XCTAssertEqual($0, testReports)
+            reportsExpectations.first.fulfill()
+            reportsExpectations.second.fulfill()
+        }
+
+        retrievedRunningEntry.producer.skipNil().startWithValues {
+            XCTAssertEqual($0.id, testRunningEntry.id)
+            runningEntryExpectations.first.fulfill()
+            runningEntryExpectations.second.fulfill()
+        }
+
+        feedAPICredentialIntoDataRetriever()
+        feedTwoPartPeriodIntoDataRetriever()
+
+        wait(for: [profileExpectations.first, projectsExpectations.first, reportsExpectations.first], timeout: expectationsTimeout)
+
+        dataRetriever.refreshAllData <~ SignalProducer(value: ())
+
+        wait(for: [profileExpectations.second, projectsExpectations.second, reportsExpectations.second], timeout: expectationsTimeout)
+        XCTAssertNil(lastError.value)
+    }
+
+
+    // MARK: - Test error propagation
+
+    func testErrorWhenRetrievingProfileIsMadeAvailable() {
+        retrieveProfileNetworkAction = RetrieveProfileNetworkAction { _ in
+            SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
+        }
+
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) } ) { [unowned self] in
+            self.feedAPICredentialIntoDataRetriever()
+        }
+    }
+
+    func testErrorWhenRetrievingProjectsIsMadeAvailable() {
+        retrieveProjectsNetworkAction = RetrieveProjectsNetworkAction { _ in
+            SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
+        }
+
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) } ) { [unowned self] in
+            self.feedAPICredentialIntoDataRetriever()
+        }
+    }
+
+    func testErrorWhenRetrievingReportsIsMadeAvailable() {
+        retrieveReportsNetworkAction = RetrieveReportsNetworkAction { _ in
+            SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
+        }
+
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) } ) { [unowned self] in
+            self.feedAPICredentialIntoDataRetriever()
+            self.feedTwoPartPeriodIntoDataRetriever()
+        }
+    }
+
+    func testErrorWhenRetrievingRunningEntryIsMadeAvailable() {
+        retrieveRunningEntryAction = RetrieveRunningEntryNetworkAction { _ in
+            SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
+        }
+
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) } ) { [unowned self] in
+            self.dataRetriever.updateRunningEntry <~ SignalProducer(value: ())
+        }
+    }
+
+    private func testError(satisfies test: @escaping (APIAccessError) -> (), after trigger: () -> ()) {
+        makeDataRetriever()
+        XCTAssertNil(lastError.value)
+        let errorExpectation = expectation(description: "Expecting error value.")
+        lastError.producer.skipNil().startWithValues {
+            test($0)
+            errorExpectation.fulfill()
+        }
+
+        trigger()
+
+        wait(for: [errorExpectation], timeout: expectationsTimeout)
+    }
+
+
+    // MARK: - Test cache
+
+    func testProfileIsRetrievedFromCache() {
+        retrieveProfileNetworkAction = RetrieveProfileNetworkAction { _ in
+            return SignalProducer.empty
+        }
+
+        retrieveProfileCacheAction = RetrieveProfileCacheAction { _ in
+            XCTAssertFalse(Thread.current.isMainThread)
+            Thread.sleep(forTimeInterval: 0.250)
+            return SignalProducer(value: testProfile)
+        }
+
+        testRetrieval(of: retrievedProfile, satisfying: { XCTAssertEqual($0, testProfile) }, after: { })
+    }
+
+    func testProfileFromNetworkIsStoredInCache() {
+        let cacheStoreExpectation = expectation(description: "Expecting incoming Profile value to be stored in cache.")
+
+        storeProfileCacheAction = StoreProfileCacheAction {
+            XCTAssertEqual($0, testProfile)
+            cacheStoreExpectation.fulfill()
+            return SignalProducer.empty
+        }
+
+        makeDataRetriever()
+
+        // trigger retrieval of profile from the "network"
+        feedAPICredentialIntoDataRetriever()
+
+        wait(for: [cacheStoreExpectation], timeout: expectationsTimeout)
+    }
+}

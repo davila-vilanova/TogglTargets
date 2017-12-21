@@ -58,7 +58,8 @@ protocol TogglAPIDataRetriever: class {
 
     // MARK: - Refresh actions
 
-    /// Triggers an attempt to retrieve the user profile, projects and reports.
+    /// Triggers an attempt to retrieve the user profile, projects, reports and
+    /// currently running entry.
     var refreshAllData: RefreshAction { get }
 
     /// Triggers and attempt to retrieve the currently running time entry.
@@ -172,12 +173,14 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     }()
 
 
-    /// Triggers an attempt to retrieve the user profile, projects and reports.
+    /// Triggers an attempt to retrieve the user profile, projects, reports and
+    /// currently running entry.
     lazy var refreshAllData: RefreshAction = {
         let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveProfileNetworkAction.isEnabled)) { _ in
             SignalProducer(value: ())
         }
         retrieveProfileNetworkAction <~ urlSession.producer.sample(on: action.values)
+        retrieveRunningEntryNetworkAction <~ urlSession.producer.sample(on: action.values)
         return action
     }()
 
@@ -186,9 +189,9 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Publishes `APIAccessError` values as they happen.
     lazy var errors: Signal<APIAccessError, NoError> = Signal.merge(
-        retrieveProfileNetworkAction.errors,
+        retrieveProfileNetworkAction.errors.logEvents(identifier: "profile errors"),
         retrieveProjectsNetworkAction.errors,
-        retrieveReportsNetworkAction.errors.logEvents(identifier: "report errors"),
+        retrieveReportsNetworkAction.errors,
         retrieveRunningEntryNetworkAction.errors)
 
     /// Initializes a `CachedTogglAPIDataRetriever` that will use the provided actions to fetch data from
@@ -229,5 +232,10 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         retrieveReportsNetworkAction <~ SignalProducer.combineLatest(workspaceIDs,
                                                                      _twoPartReportPeriod.producer.skipNil())
             .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
+
+        // This action needs a little nudge because its input is not connected
+        // to anything and we want to retrieve the cached profile right after
+        // starting up.
+        retrieveProfileCacheAction <~ SignalProducer(value: ()).start(on: scheduler)
     }
 }
