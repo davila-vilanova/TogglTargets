@@ -197,13 +197,21 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// Initializes a `CachedTogglAPIDataRetriever` that will use the provided actions to fetch data from
     /// the Toggl API and from the local cache, and to store data into the local cache.
     /// - parameters:
-    ///   - retrieveProfileNetworkAction: The `Action` used to retrieve profiles from the Toggl API.
-    ///   - retrieveProfileCacheAction: The `Action` used to retrieve profiles from the local cache.
-    ///   - storeProfileCacheAction: The `Action` used to store profiles into the local cache.
-    ///   - retrieveProjectsNetworkAction: The `Action` used to retrieve projects from the Toggl API.
-    ///   - retrieveReportsNetworkAction: The `Action` used to retrieve reports from the Toggl API.
-    ///   - retrieveRunningEntryNetworkAction: The `Action` used to retrieve the currently running time
-    ///     entry from the Toggl API.
+    ///   - retrieveProfileNetworkAction: The `Action` used to retrieve profiles
+    ///                                   from the Toggl API.
+    ///   - retrieveProfileCacheAction: The `Action` used to retrieve profiles
+    ///                                 from the local cache.
+    ///   - storeProfileCacheAction: The `Action` used to store profiles into the
+    ///                              local cache.
+    ///   - retrieveProjectsNetworkActionMaker: A `RetrieveProjectsNetworkActionMaker`
+    ///                                         to generate the `Action` used to
+    ///                                         retrieve projects from the Toggl API.
+    ///   - retrieveReportsNetworkActionMaker: A `RetrieveProjectsNetworkActionMaker`
+    ///                                        to generate the `Action` used to
+    ///                                        retrieve reports from the Toggl API.
+    ///   - retrieveRunningEntryNetworkAction: The `Action` used to retrieve the
+    ///                                        currently running time entry from
+    ///                                        the Toggl API.
     init(retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
          retrieveProfileCacheAction: RetrieveProfileCacheAction,
          storeProfileCacheAction: StoreProfileCacheAction,
