@@ -9,16 +9,55 @@
 import Foundation
 import ReactiveSwift
 
+/// A dictionary of `TwoPartTimeReport` values indexed by their corresponding
+/// project ID.
 typealias IndexedTwoPartTimeReports = [ProjectID : TwoPartTimeReport]
+
+/// Action that takes an array of `WorkspaceID` values and a two-part period,
+/// retrieves from the Toggl API the corresponding time reports and merges them
+/// in an `IndexedTwoPartTimeReports` dictionary.
 typealias RetrieveReportsNetworkAction =
     Action<([WorkspaceID], TwoPartTimeReportPeriod), IndexedTwoPartTimeReports, APIAccessError>
+
+
+/// A function or closure that takes a `Property` that holds and tracks changes
+/// to a `URLSession` optional value and generates a `RetrieveReportsNetworkAction`
+/// that is enabled whenever the the provided `Property` holds a non-`nil` value.
+///
+/// This can be used to inject a `RetrieveReportsNetworkAction` into an entity
+/// that needs to make the `Action` depend from the state of its `URLSession`.
 typealias RetrieveReportsNetworkActionMaker = (Property<URLSession?>) -> RetrieveReportsNetworkAction
 
+/// A concrete, non-mock implementation of `RetrieveReportsNetworkActionMaker`.
 func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>) -> RetrieveReportsNetworkAction {
+    let networkRetriever = { (endpoint: String, session: URLSession) in
+        session.togglAPIRequestProducer(for: endpoint, decoder: ReportsService.decodeReportEntries)
+    }
+    return makeRetrieveReportsNetworkAction(urlSession, networkRetriever)
+}
+
+/// Takes a property holding an optional `URLSession` and a `TogglAPINetworkRetriever`
+/// that retrieves one array of `ReportEntry` values for one endpoint and a `URLSession`
+/// value, and returns a `RetrieveProjectsNetworkAction` that applies request
+/// splitting, reports combining and indexing logic on top of them.
+///
+/// - parameters:
+///   - urlSession: A `Property` that holds and tracks changes to a `URLSession`
+///                 optional value and is used as the state of the returned `Action`
+///   - networkRetriever: A `TogglAPINetworkRetriever` that retrieves an array of
+///                       `ReportEntry` values from an input Toggl API endpoint.
+///
+/// - returns: A `RetrieveReportsNetworkAction` that applies request splitting,
+///            projects combining and indexing logic on top of the provided
+///            `URLSession` and `TogglAPINetworkRetriever`.
+
+func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>, _ networkRetriever: @escaping TogglAPINetworkRetriever<[ReportEntry]>) -> RetrieveReportsNetworkAction {
+
     return RetrieveReportsNetworkAction(unwrapping: urlSession) { (session, inputs) in
         let (workspaceIDs, period) = inputs
-        let workedUntilYesterday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: period.previousToDayOfRequest)
-        let workedToday = workedTimesProducer(session: session, workspaceIDs: workspaceIDs, period: period.forDayOfRequest)
+        let reportEntriesRetriever = { (endpoint: String) in networkRetriever(endpoint, session) }
+        let workedUntilYesterday = workedTimesProducer(workspaceIDs: workspaceIDs, period: period.previousToDayOfRequest, reportEntriesRetriever: reportEntriesRetriever)
+        let workedToday = workedTimesProducer(workspaceIDs: workspaceIDs, period: period.forDayOfRequest, reportEntriesRetriever: reportEntriesRetriever)
         return SignalProducer.combineLatest(workedUntilYesterday, workedToday, SignalProducer(value: period.scope))
             .map(generateIndexedReportsFromWorkedTimes)
     }
@@ -26,14 +65,9 @@ func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>) -> Re
 
 fileprivate let UserAgent = "david@davi.la"
 
-typealias IndexedWorkedTimes = [ProjectID : WorkedTime]
+fileprivate typealias IndexedWorkedTimes = [ProjectID : WorkedTime]
 
-fileprivate func workedTimesProducer(session: URLSession, workspaceIDs: [WorkspaceID], period: Period?)
-    -> SignalProducer<IndexedWorkedTimes, APIAccessError> {
-        guard session.canAccessTogglReportsAPI else {
-            assert(false, "Session is not suitable for accessing the Toggl API") // TODO: codify in type?
-            return SignalProducer(value: IndexedWorkedTimes()) // empty
-        }
+fileprivate func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period?, reportEntriesRetriever: @escaping (String) -> SignalProducer<[ReportEntry], APIAccessError>) -> SignalProducer<IndexedWorkedTimes, APIAccessError> {
         guard let period = period else {
             return SignalProducer(value: IndexedWorkedTimes()) // empty
         }
@@ -43,7 +77,7 @@ fileprivate func workedTimesProducer(session: URLSession, workspaceIDs: [Workspa
                 ReportsService.endpoint(workspaceId: workspaceID,
                                         since: period.start.iso8601String, until: period.end.iso8601String,
                                         userAgent: UserAgent)
-            return session.togglAPIRequestProducer(for: endpoint, decoder: ReportsService.decodeReportEntries)
+            return reportEntriesRetriever(endpoint)
                 .reduce(into: IndexedWorkedTimes()) { (indexedWorkedTimeEntries, reportEntries) in
                     for entry in reportEntries {
                         indexedWorkedTimeEntries[entry.id] = WorkedTime.from(milliseconds: entry.time)
@@ -84,16 +118,12 @@ fileprivate struct ReportsService: Decodable {
     }
 
     let reportEntries: [ReportEntry]
-    struct ReportEntry: Decodable {
-        let id: Int64
-        let time: TimeInterval
-    }
 
     private enum CodingKeys: String, CodingKey {
         case reportEntries = "data"
     }
 
-    static func decodeReportEntries(data: Data, response: URLResponse) throws -> [ReportsService.ReportEntry] {
+    static func decodeReportEntries(data: Data, response: URLResponse) throws -> [ReportEntry] {
         return try JSONDecoder().decode(ReportsService.self, from: data).reportEntries
     }
 }

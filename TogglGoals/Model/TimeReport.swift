@@ -50,3 +50,8 @@ extension TwoPartTimeReport: Equatable {
             && lhs.workedTimeOnDayOfRequest == rhs.workedTimeOnDayOfRequest
     }
 }
+
+struct ReportEntry: Decodable {
+    let id: Int64
+    let time: TimeInterval
+}
