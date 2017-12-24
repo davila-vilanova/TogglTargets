@@ -98,9 +98,9 @@ fileprivate func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period
 fileprivate func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorkedTimes,
                                            today: IndexedWorkedTimes,
                                            fullPeriod: Period)
-    -> [Int64 : TwoPartTimeReport] {
-        var reports = [Int64 : TwoPartTimeReport]()
-        let ids: Set<Int64> = Set<Int64>(untilYesterday.keys).union(today.keys)
+    -> [ProjectID : TwoPartTimeReport] {
+        var reports = [ProjectID : TwoPartTimeReport]()
+        let ids: Set<ProjectID> = Set<ProjectID>(untilYesterday.keys).union(today.keys)
         for id in ids {
             let timeWorkedPreviousToToday: TimeInterval = untilYesterday[id] ?? 0.0
             let timeWorkedToday: TimeInterval = today[id] ?? 0.0
@@ -113,7 +113,7 @@ fileprivate func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWo
 }
 
 fileprivate struct ReportsService: Decodable {
-    static func endpoint(workspaceId: Int64, since: String, until: String, userAgent: String) -> String {
+    static func endpoint(workspaceId: WorkspaceID, since: String, until: String, userAgent: String) -> String {
         return "/reports/api/v2/summary?workspace_id=\(workspaceId)&since=\(since)&until=\(until)&grouping=projects&subgrouping=users&user_agent=\(userAgent)"
     }
 
@@ -129,7 +129,7 @@ fileprivate struct ReportsService: Decodable {
 }
 
 fileprivate extension ReportsService {
-    static func endpoint(with userAgent: String) -> (Int64, DayComponents, DayComponents) -> String {
+    static func endpoint(with userAgent: String) -> (WorkspaceID, DayComponents, DayComponents) -> String {
         return { (workspaceId, since, until) in
             ReportsService.endpoint(workspaceId: workspaceId, since: since.iso8601String, until: until.iso8601String, userAgent: userAgent)
         }

@@ -14,7 +14,7 @@ struct Project: Decodable {
     let id: ProjectID
     let name: String?
     let active: Bool?
-    let workspaceId: Int64?
+    let workspaceId: WorkspaceID?
 
     private enum CodingKeys: String, CodingKey {
         case id
