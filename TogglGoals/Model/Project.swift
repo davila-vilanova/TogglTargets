@@ -34,3 +34,11 @@ extension Project: Equatable {
             && lhs.workspaceId == rhs.workspaceId
     }
 }
+
+extension Project: Hashable {
+    var hashValue: Int {
+        return id.hashValue ^ (name?.hashValue ?? 0) ^ (active?.hashValue ?? 0)
+            ^ (workspaceId?.hashValue ?? 0) &* 16779163
+    }
+}
+
