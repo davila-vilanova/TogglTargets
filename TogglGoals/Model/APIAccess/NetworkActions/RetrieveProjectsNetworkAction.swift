@@ -51,8 +51,7 @@ func makeRetrieveProjectsNetworkAction(_ urlSession: Property<URLSession?>, _ ne
         let projectsProducer: SignalProducer<[Project], APIAccessError> =
             workspaceIDsProducer
                 .map(ProjectsService.endpoint)
-                .combineLatest(with: SignalProducer(value: session))
-                .map(networkRetriever) // will emit one [Project] producer per endpoint, then complete
+                .map { [networkRetriever, session] endpoint in networkRetriever(endpoint, session) }
                 .flatten(.concat)
 
         return projectsProducer.reduce(into: IndexedProjects()) { (indexedProjects, projects) in
