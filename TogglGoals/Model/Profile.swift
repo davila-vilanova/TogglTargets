@@ -57,6 +57,4 @@ extension Workspace: Hashable {
     var hashValue: Int {
         return id.hashValue ^ (name?.hashValue ?? 0) &* 16779163
     }
-
-
 }
