@@ -477,6 +477,7 @@
 		63A67F2E1FCD9A35004BEFC6 /* APIAccess */ = {
 			isa = PBXGroup;
 			children = (
+				63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */,
 				63A67F441FCD9C77004BEFC6 /* URLSessionExtensions.swift */,
 				63A67F491FCD9D42004BEFC6 /* APIAccessError.swift */,
 				63A67F2F1FCD9A5D004BEFC6 /* NetworkActions */,
@@ -546,7 +547,6 @@
 				63D4BB9D1F7D80FC00B87298 /* GoalsStore.swift */,
 				635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */,
 				63D4BB9C1F7D80FC00B87298 /* GoalProgress.swift */,
-				63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */,
 				63D4BB9B1F7D80FC00B87298 /* DateTimeExtensions.swift */,
 				63D4BBA21F7D80FC00B87298 /* PropertyExtensions.swift */,
 				63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */,
