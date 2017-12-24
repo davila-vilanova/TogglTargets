@@ -260,7 +260,8 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
         // TODO: synchronize periodically instead of writing immediately
     }
 
-    /// Deletes the provided goal from the database synchronously.
+    /// Deletes synchronously from the database the goal corresponding to the
+    /// provided project ID.
     private func deleteGoal(for projectId: ProjectID) {
         let q = goalsTable.filter(projectIdExpression == projectId)
         try! db.run(q.delete())
