@@ -480,7 +480,6 @@
 				63A67F441FCD9C77004BEFC6 /* URLSessionExtensions.swift */,
 				63A67F491FCD9D42004BEFC6 /* APIAccessError.swift */,
 				63A67F2F1FCD9A5D004BEFC6 /* NetworkActions */,
-				63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */,
 			);
 			path = APIAccess;
 			sourceTree = "<group>";
@@ -488,6 +487,7 @@
 		63A67F2F1FCD9A5D004BEFC6 /* NetworkActions */ = {
 			isa = PBXGroup;
 			children = (
+				63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */,
 				63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */,
 				63A67F351FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift */,
 				63A67F3A1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift */,
