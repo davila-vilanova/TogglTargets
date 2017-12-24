@@ -19,6 +19,7 @@
 		631E46401F97CB730012E491 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631E463E1F97CB730012E491 /* LoginViewController.swift */; };
 		631E46421F97CB980012E491 /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631E46411F97CB980012E491 /* PreferencesViewController.swift */; };
 		631E46431F97CB980012E491 /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631E46411F97CB980012E491 /* PreferencesViewController.swift */; };
+		6323099A1FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */; };
 		632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957451DBA99F000E11A10 /* AppDelegate.swift */; };
 		6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 632957491DBA99F000E11A10 /* Assets.xcassets */; };
 		6329574D1DBA99F000E11A10 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6329574B1DBA99F000E11A10 /* Main.storyboard */; };
@@ -264,6 +265,7 @@
 		631E462F1F9799190012E491 /* Preferences.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Preferences.storyboard; sourceTree = "<group>"; };
 		631E463E1F97CB730012E491 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = ViewControllers/LoginViewController.swift; sourceTree = "<group>"; };
 		631E46411F97CB980012E491 /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesViewController.swift; path = ViewControllers/PreferencesViewController.swift; sourceTree = "<group>"; };
+		632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveProjectsNetworkActionTest.swift; sourceTree = "<group>"; };
 		632957421DBA99F000E11A10 /* TogglGoals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TogglGoals.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957451DBA99F000E11A10 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		632957491DBA99F000E11A10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -429,6 +431,7 @@
 				634396891F80456200FDADE3 /* GoalProgressTests.swift */,
 				637485601FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift */,
 				63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */,
+				632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */,
 			);
 			path = TogglGoalsTests;
 			sourceTree = "<group>";
@@ -844,6 +847,7 @@
 				6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */,
 				63A67F3C1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
 				635DCE161FD326ED006FED93 /* ActionExtensions.swift in Sources */,
+				6323099A1FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift in Sources */,
 				63A67F371FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				6333B6E31F974763002CF189 /* Goal.swift in Sources */,
 				6355C5B81FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
