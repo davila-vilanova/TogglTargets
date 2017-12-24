@@ -13,7 +13,7 @@ fileprivate let timeoutForExpectations = TimeInterval(1.0)
 
 class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
 
-    private let projectsFixture = projectsByWorkspaces()
+    private let projectsFixture = makeProjectsFixture()
 
     private var networkRetriever: TogglAPINetworkRetriever<[Project]>!
     
@@ -22,11 +22,11 @@ class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
         return indexedNetworkRetrieverExpectations.map { $1 }
     }
 
-    var retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction!
+    private var retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction!
 
     // The exact URLSession value does not matter for the scope of this test case,
     // only whether it's a nil value or some URLSession value.
-    let urlSession = MutableProperty<URLSession?>(URLSession.shared)
+    private let urlSession = MutableProperty<URLSession?>(URLSession.shared)
 
 
     override func setUp() {
@@ -35,6 +35,7 @@ class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
         for wid in workspaceIDs {
             indexedNetworkRetrieverExpectations[wid] = expectation(description: "networkRetriever invocation expectation for workspace ID: \(wid)")
         }
+
         networkRetriever = { [projectsFixture, expectations = indexedNetworkRetrieverExpectations] (endpoint, _) in
             guard let wid = endpoint.containedWorkspaceID() else {
                 XCTFail("Endpoint does not include any of the workspace IDs in the fixture.")
@@ -68,7 +69,7 @@ class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
     }
 
     func testProjectsFromAllWorkspacesAreCombinedAndIndexed() {
-        let indexedFixtureProjects: IndexedProjects = { [projectsFixture] in
+        let indexedCombinedFixtureProjects: IndexedProjects = { [projectsFixture] in
             var indexed = IndexedProjects()
             for (_, projects) in projectsFixture {
                 for project in projects {
@@ -80,16 +81,16 @@ class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
 
         let valueExpectation = expectation(description: "retrieveProjectsNetworkAction value emitted")
 
-        retrieveProjectsNetworkAction.values.producer.startWithValues { [projectsFixture, indexedFixtureProjects] (indexedOutputProjects) in
+        retrieveProjectsNetworkAction.values.producer.startWithValues { [projectsFixture, indexedCombinedFixtureProjects] (indexedOutputProjects) in
             defer {
                 valueExpectation.fulfill()
             }
 
-            XCTAssertEqual(indexedOutputProjects.count, indexedFixtureProjects.count)
+            XCTAssertEqual(indexedOutputProjects.count, indexedCombinedFixtureProjects.count)
 
             for (outputProjectId, outputProject) in indexedOutputProjects {
                 XCTAssertEqual(outputProjectId, outputProject.id)
-                guard let fixtureProject = indexedFixtureProjects[outputProjectId] else {
+                guard let fixtureProject = indexedCombinedFixtureProjects[outputProjectId] else {
                     XCTFail("No corresponding fixture project found for output project ID \(outputProjectId)")
                     break
                 }
@@ -183,23 +184,24 @@ fileprivate let jsonStringWid200 = """
 ]
 """
 
-fileprivate func projectsByWorkspaces() -> [WorkspaceID : [Project]] {
-    let jsonStringsByWorkspaces: [WorkspaceID : String] = [823 : jsonStringWid823,
-                                                           172 : jsonStringWid172,
-                                                           200 : jsonStringWid200]
-    var projectsByWorkspaces = [WorkspaceID : [Project]]()
+fileprivate func makeProjectsFixture() -> [WorkspaceID : [Project]] {
+    let mappedJSONStrings: [WorkspaceID : String] = [823 : jsonStringWid823,
+                                                     172 : jsonStringWid172,
+                                                     200 : jsonStringWid200]
+    var constructedFixture = [WorkspaceID : [Project]]()
+    let decoder = JSONDecoder()
     for wid in workspaceIDs {
-        guard let jsonString = jsonStringsByWorkspaces[wid],
+        guard let jsonString = mappedJSONStrings[wid],
             let jsonData = jsonString.data(using: .utf8),
-            let projects = try? JSONDecoder().decode([Project].self, from: jsonData) else {
+            let projects = try? decoder.decode([Project].self, from: jsonData) else {
                 XCTFail("Fixture data is not properly set up.")
                 fatalError()
         }
         for project in projects {
             XCTAssertEqual(project.workspaceId, wid as WorkspaceID?, "Fixture is not congruent.")
         }
-        projectsByWorkspaces[wid] = projects
+        constructedFixture[wid] = projects
     }
-    return projectsByWorkspaces
+    return constructedFixture
 }
 
