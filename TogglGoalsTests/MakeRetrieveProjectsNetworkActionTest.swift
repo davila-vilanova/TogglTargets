@@ -9,7 +9,7 @@
 import XCTest
 import ReactiveSwift
 
-let timeoutForExpectations = TimeInterval(1.0)
+fileprivate let timeoutForExpectations = TimeInterval(1.0)
 
 class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
 
