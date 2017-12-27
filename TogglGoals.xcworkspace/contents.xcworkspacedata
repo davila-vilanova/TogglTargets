@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:DataRetrieverPlayground.playground">
+      location = "group:ActivityIndication.playground">
    </FileRef>
    <FileRef
       location = "group:ApplyActionSerially.playground">

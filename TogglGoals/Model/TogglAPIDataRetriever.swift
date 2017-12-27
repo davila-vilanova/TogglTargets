@@ -66,11 +66,24 @@ protocol TogglAPIDataRetriever: class {
     var updateRunningEntry: RefreshAction { get }
 
 
-    // MARK: - Errors
+    // MARK: - Activity and Errors
 
     /// Publishes `APIAccessError` values as they happen.
     var errors: Signal<APIAccessError, NoError> { get }
+
+    /// Publishes the activities with which that this retrievar is engaged
+    /// at any given time.
+    var currentActivities: Property<Set<RetrievalActivity>> { get }
 }
+
+/// Represents a type of retrieval activity that can be driven by a TogglAPIDataRetriever.
+enum RetrievalActivity {
+    case profile
+    case projects
+    case reports
+    case runningEntry
+}
+
 
 /// `CachedTogglAPIDataRetriever` is a `TogglAPIDataRetriever` that relies on locally stored data to
 /// return cached results when running on a device that happens to be offline, or to return preliminary
@@ -193,6 +206,23 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         retrieveProjectsNetworkAction.errors,
         retrieveReportsNetworkAction.errors,
         retrieveRunningEntryNetworkAction.errors)
+
+
+    /// Publishes the activities with which that this retriever is engaged
+    /// at any given time.
+    lazy var currentActivities: Property<Set<RetrievalActivity>> =
+        Property(initial: Set<RetrievalActivity>(),
+                 then: SignalProducer.combineLatest(retrieveProfileNetworkAction.isExecuting,
+                                                    retrieveProjectsNetworkAction.isExecuting,
+                                                    retrieveReportsNetworkAction.isExecuting,
+                                                    retrieveRunningEntryNetworkAction.isExecuting)
+                    .map { (isExecuting) -> [RetrievalActivity : Bool] in
+                        [.profile : isExecuting.0, .projects : isExecuting.1, .reports : isExecuting.2, .runningEntry : isExecuting.3]
+                    }.map {
+                        let filtered = $0.filter { (_, isExecuting) in isExecuting }
+                        return Set<RetrievalActivity>(filtered.keys)
+    })
+
 
     /// Initializes a `CachedTogglAPIDataRetriever` that will use the provided actions to fetch data from
     /// the Toggl API and from the local cache, and to store data into the local cache.
