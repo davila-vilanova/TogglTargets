@@ -72,6 +72,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             controller.calendar <~ calendar
             controller.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
             controller.runningEntry <~ modelCoordinator.runningEntry
+            controller.runningActivities <~ modelCoordinator.currentActivities
             controller.apiAccessErrors <~ modelCoordinator.apiAccessErrors.logEvents(identifier: "apiAccessErrors")
 
             controller.setActions(fetchProjectIDs: modelCoordinator.fetchProjectIDsByGoalsAction,

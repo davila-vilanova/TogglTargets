@@ -7,8 +7,8 @@
 //
 
 import Cocoa
-import ReactiveSwift
 import Result
+import ReactiveSwift
 
 class ProjectsMasterDetailController: NSSplitViewController {
 
@@ -18,6 +18,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
     internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
+    internal var runningActivities: BindingTarget<Set<RetrievalActivity>> { return _runningActivities.bindingTarget }
     internal var apiAccessErrors: BindingTarget<APIAccessError> { return _apiAccessErrors.deoptionalizedBindingTarget }
 
 
@@ -27,6 +28,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
+    private let _runningActivities = MutableProperty(Set<RetrievalActivity>())
     private let _apiAccessErrors = MutableProperty<APIAccessError?>(nil)
 
 
@@ -61,8 +63,8 @@ class ProjectsMasterDetailController: NSSplitViewController {
         case selectionDetail
     }
 
-    private var projectsListViewController: ProjectsListViewController {
-        return splitViewItem(.projectsList).viewController as! ProjectsListViewController
+    private var projectsListViewController: ProjectsListActivitySplitViewController {
+        return splitViewItem(.projectsList).viewController as! ProjectsListActivitySplitViewController
     }
 
     private var selectionDetailViewController: SelectionDetailViewController {
@@ -75,13 +77,15 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     private let areChildrenControllersAvailable = MutableProperty(false)
 
+
     // MARK: -
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         projectsListViewController.connectInputs(runningEntry: _runningEntry.producer,
-                                                 currentDate: _currentDate.producer.skipNil())
+                                                 currentDate: _currentDate.producer.skipNil(),
+                                                 runningActivities: _runningActivities.producer)
 
         let detailController = selectionDetailViewController
 

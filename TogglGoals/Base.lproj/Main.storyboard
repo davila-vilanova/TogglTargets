@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -36,8 +36,8 @@
             <objects>
                 <splitViewController id="ak2-zI-3MP" customClass="ProjectsMasterDetailController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <splitViewItems>
-                        <splitViewItem id="UZA-Se-y7j"/>
-                        <splitViewItem id="rd1-o7-1As"/>
+                        <splitViewItem id="Gd7-84-BIq"/>
+                        <splitViewItem id="hPg-w3-Q5a"/>
                     </splitViewItems>
                     <splitView key="splitView" dividerStyle="thin" vertical="YES" id="Tyn-3W-UrQ">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
@@ -48,8 +48,8 @@
                     </splitView>
                     <connections>
                         <outlet property="splitView" destination="Tyn-3W-UrQ" id="uTn-6r-1OP"/>
-                        <segue destination="uJx-25-i9K" kind="relationship" relationship="splitItems" id="saQ-Co-8OQ"/>
-                        <segue destination="6zN-45-ObM" kind="relationship" relationship="splitItems" id="iTG-aM-h6s"/>
+                        <segue destination="K4p-5x-O6K" kind="relationship" relationship="splitItems" id="JIb-uN-McO"/>
+                        <segue destination="6zN-45-ObM" kind="relationship" relationship="splitItems" id="e2k-xt-1sA"/>
                     </connections>
                 </splitViewController>
                 <customObject id="qEG-eu-hIH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -64,7 +64,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kat-8d-Ff9">
+                            <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kat-8d-Ff9">
                                 <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
                                 <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="V9W-AF-Ttj">
                                     <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
@@ -95,7 +95,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="Kat-8d-Ff9" firstAttribute="leading" secondItem="0s5-6J-xQn" secondAttribute="leading" id="BvF-3z-5zZ"/>
-                            <constraint firstAttribute="bottom" secondItem="Kat-8d-Ff9" secondAttribute="bottom" id="Qx3-YV-hSl"/>
+                            <constraint firstAttribute="bottom" secondItem="Kat-8d-Ff9" secondAttribute="bottom" id="LwZ-zu-qUo"/>
                             <constraint firstAttribute="trailing" secondItem="Kat-8d-Ff9" secondAttribute="trailing" id="fN0-n8-mrT"/>
                             <constraint firstItem="Kat-8d-Ff9" firstAttribute="top" secondItem="0s5-6J-xQn" secondAttribute="top" id="qte-el-R2z"/>
                         </constraints>
@@ -106,7 +106,64 @@
                 </viewController>
                 <customObject id="rJd-f4-lqu" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-77" y="1137"/>
+            <point key="canvasLocation" x="-131" y="1635"/>
+        </scene>
+        <!--Activity View Controller-->
+        <scene sceneID="mbv-uH-b3T">
+            <objects>
+                <viewController id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Zto-kN-hsB">
+                        <rect key="frame" x="0.0" y="0.0" width="180" height="24"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6AA-cu-KDc">
+                                <rect key="frame" x="4" y="5" width="172" height="14"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Activity" id="HNE-uY-GyZ">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="6AA-cu-KDc" firstAttribute="centerX" secondItem="Zto-kN-hsB" secondAttribute="centerX" id="4ps-Pj-hfm"/>
+                            <constraint firstAttribute="trailing" secondItem="6AA-cu-KDc" secondAttribute="trailing" constant="6" id="c5V-lh-sBS"/>
+                            <constraint firstItem="6AA-cu-KDc" firstAttribute="leading" secondItem="Zto-kN-hsB" secondAttribute="leading" constant="6" id="dGt-UV-xoR"/>
+                            <constraint firstItem="6AA-cu-KDc" firstAttribute="centerY" secondItem="Zto-kN-hsB" secondAttribute="centerY" id="kAH-Su-WuZ"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="label" destination="6AA-cu-KDc" id="v57-RN-YB2"/>
+                    </connections>
+                </viewController>
+                <customObject id="ytj-7m-2MR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="65" y="1773"/>
+        </scene>
+        <!--Projects List Activity Split View Controller-->
+        <scene sceneID="KNa-QW-hF3">
+            <objects>
+                <splitViewController id="K4p-5x-O6K" customClass="ProjectsListActivitySplitViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <splitViewItems>
+                        <splitViewItem id="Fyf-E5-abV"/>
+                        <splitViewItem id="cRZ-A3-cSS"/>
+                    </splitViewItems>
+                    <splitView key="splitView" dividerStyle="thin" id="iFB-Xu-vqF">
+                        <rect key="frame" x="0.0" y="0.0" width="159" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <connections>
+                            <outlet property="delegate" destination="K4p-5x-O6K" id="xHW-lP-Esm"/>
+                        </connections>
+                    </splitView>
+                    <connections>
+                        <outlet property="splitView" destination="iFB-Xu-vqF" id="kum-YR-fFI"/>
+                        <segue destination="uJx-25-i9K" kind="relationship" relationship="splitItems" id="2Lp-pc-Jog"/>
+                        <segue destination="tS7-EF-bJw" kind="relationship" relationship="splitItems" id="uBJ-0r-mPQ"/>
+                    </connections>
+                </splitViewController>
+                <customObject id="YbL-ce-m3R" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-71.5" y="1137"/>
         </scene>
         <!--Project Details View Controller-->
         <scene sceneID="huO-mY-84c">
@@ -196,7 +253,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CBy-PQ-RVY" userLabel="hours goal field">
-                                        <rect key="frame" x="90" y="0.0" width="50" height="22"/>
+                                        <rect key="frame" x="76" y="0.0" width="64" height="22"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="0" drawsBackground="YES" id="fF3-3F-u0v">
                                             <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="Mc7-ow-3HZ"/>
                                             <font key="font" metaFont="system"/>
@@ -218,7 +275,7 @@
                                 </customSpacing>
                             </stackView>
                             <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DU9-Bc-oT1" userLabel="Work Days Per Week Stack View">
-                                <rect key="frame" x="0.0" y="0.0" width="278" height="21"/>
+                                <rect key="frame" x="0.0" y="0.0" width="280" height="21"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0IY-al-1Yv">
                                         <rect key="frame" x="-2" y="4" width="108" height="17"/>
@@ -229,7 +286,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xET-i9-eZV">
-                                        <rect key="frame" x="110" y="-2" width="170" height="24"/>
+                                        <rect key="frame" x="110" y="-2" width="172" height="24"/>
                                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="nzj-nl-MDn">
                                             <font key="font" metaFont="system"/>
                                             <segments>
