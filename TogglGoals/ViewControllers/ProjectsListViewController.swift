@@ -63,6 +63,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// - note: This method must be called exactly once during the life of this instance.
     internal func connectInputs(runningEntry: SignalProducer<RunningEntry?, NoError>,
                                 currentDate: SignalProducer<Date, NoError>) {
+        guard areInputsConnected == false else {
+            assert(false, "ProjectsListViewController's inputs must be connected exactly once.")
+            return
+        }
         self.runningEntry <~ runningEntry
         self.currentDate <~ currentDate
         self.areInputsConnected = true
@@ -94,7 +98,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - Actions
 
     /// The action used to retrieve the project IDs sorted by goals as full values and
-    /// as incremental updates. Delives a full value first.
+    /// as incremental updates. Delivers a full value first.
     private var fetchProjectIDsByGoalsAction: FetchProjectIDsByGoalsAction! {
         didSet {
             projectIDsByGoals <~ fetchProjectIDsByGoalsAction.values
