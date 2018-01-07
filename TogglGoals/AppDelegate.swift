@@ -107,6 +107,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         preferencesController.existingGoalPeriodPreference <~ periodPreferenceStore.output.producer.skipNil()
     }
 
+    @IBAction func refreshAllData(_ sender: Any) {
+        modelCoordinator.refreshAllData <~ SignalProducer(value: ())
+    }
 
     // MARK: - NSWindowDelegate
 
