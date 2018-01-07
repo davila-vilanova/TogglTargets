@@ -16,7 +16,8 @@ extension URLSession {
             return nil
         }
         let authHeaders: [String: String] = [ credential.authHeaderKey : credential.authHeaderValue ]
-        let config = URLSessionConfiguration.default
+        let config = URLSessionConfiguration.ephemeral
+//        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         config.httpAdditionalHeaders = authHeaders
         self.init(configuration: config)
     }
@@ -32,7 +33,7 @@ extension URLSession {
 
     func togglAPIRequestProducer(for endpoint: String) -> SignalProducer<(Data, URLResponse), APIAccessError> {
         func resourceURL(for endpoint: String) -> URL {
-            let rootAPIURLString = "https://www.toggl.com"
+            let rootAPIURLString = "http://davi.la:8080/toggl"
             let resourceURLString = rootAPIURLString + endpoint
             return URL(string: resourceURLString)!
         }

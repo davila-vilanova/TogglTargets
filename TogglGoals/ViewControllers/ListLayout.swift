@@ -12,7 +12,10 @@ internal class ListLayout: NSCollectionViewLayout {
     private var itemRects = Dictionary<IndexPath, CGRect>()
     private var headerRects = Dictionary<IndexPath, CGRect>()
 
-    var contentSize = NSZeroSize
+    private var contentSize = NSZeroSize
+
+    var itemHeight = CGFloat(80)
+    var itemMargin = NSEdgeInsets(top: -4, left: -2, bottom: -4, right: -2)
 
     override func prepare() {
         guard let collectionView = collectionView else {
@@ -20,8 +23,7 @@ internal class ListLayout: NSCollectionViewLayout {
         }
 
         let width = collectionView.bounds.size.width
-        let itemSize = CGSize(width: width, height: 80)
-        let itemMargin = NSEdgeInsets(top: -4, left: -2, bottom: -4, right: -2)
+        let itemSize = CGSize(width: width, height: itemHeight)
         let headerSize = CGSize(width: width, height: 25)
         let headerMargin = NSEdgeInsets(top: -8, left: -2, bottom: -4, right: -2)
 

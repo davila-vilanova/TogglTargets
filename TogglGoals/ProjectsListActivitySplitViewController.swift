@@ -14,13 +14,13 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
 
     internal func connectInputs(runningEntry: SignalProducer<RunningEntry?, NoError>,
                                 currentDate: SignalProducer<Date, NoError>,
-                                runningActivities: SignalProducer<Set<RetrievalActivity>, NoError>) {
+                                modelRetrievalStatus: SignalProducer<(RetrievalActivity, ActivityStatus), NoError>) {
         isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
             self.projectsListViewController.connectInputs(runningEntry: runningEntry, currentDate: currentDate)
         }
 
         isActivityViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
-            self.activityViewController.connectInputs(activities: runningActivities)
+            self.activityViewController.connectInputs(modelRetrievalStatus: modelRetrievalStatus)
         }
     }
 
@@ -41,40 +41,48 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
 
     // MARK: - Contained view controllers
 
-    /// Represents the two split items this controller contains
-    private enum SplitItemIndex: Int {
-        case projectsList = 0
-        case activity
-    }
-
-    // MARK: -
-
-    private var projectsListViewController: ProjectsListViewController {
-        let vc = splitViewItem(.projectsList).viewController as! ProjectsListViewController
-        isProjectsListViewControllerAvailable.value = true
-        return vc
-    }
-
-    private var activityViewController: ActivityViewController {
-        let vc = splitViewItem(.activity).viewController as! ActivityViewController
-        isActivityViewControllerAvailable.value = true
-        return vc
-    }
-
-    private func splitViewItem(_ index: SplitItemIndex) -> NSSplitViewItem {
-        return splitViewItems[index.rawValue]
-    }
+    private var projectsListViewController: ProjectsListViewController!
+    private var activityViewController: ActivityViewController!
 
     private let isProjectsListViewControllerAvailable = MutableProperty(false)
     private let isActivityViewControllerAvailable = MutableProperty(false)
 
     // MARK: -
 
+    var keepAround = [BindingTarget<Void>]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        for item in splitViewItems {
+            let controller = item.viewController
+            if let projects = controller as? ProjectsListViewController {
+                projectsListViewController = projects
+                isProjectsListViewControllerAvailable.value = true
+            } else if let activity = controller as? ActivityViewController {
+                activityViewController = activity
+                isActivityViewControllerAvailable.value = true
+            }
+        }
+
         _selectedProject <~ projectsListViewController.selectedProject
-        _ = activityViewController // make it explicitly available
+
+        let expandActivity: BindingTarget<Void> = splitViewItem(for: activityViewController)!.reactive.makeBindingTarget { (splitItem, Void) in
+            splitItem.animator().isCollapsed = false
+        }
+        let collapseActivity: BindingTarget<Void> = splitViewItem(for: activityViewController)!.reactive.makeBindingTarget { (splitItem, Void) in
+            splitItem.animator().isCollapsed = true
+        }
+
+        expandActivity <~ activityViewController.wantsDisplay.producer.logEvents(identifier: "wantsDisplay", events: [.value]).filter { $0 }.map { _ in () }
+        collapseActivity <~ activityViewController.wantsDisplay.producer.filter { !$0 }.map { _ in () }
+
+        keepAround.append(expandActivity)
+        keepAround.append(collapseActivity)
     }
-    
+
+    func expandActivity() {
+        splitViewItem(for: activityViewController)!.animator().isCollapsed = false
+    }
+
 }

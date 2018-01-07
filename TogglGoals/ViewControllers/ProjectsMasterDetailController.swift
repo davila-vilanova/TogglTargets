@@ -18,8 +18,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
     internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
-    internal var runningActivities: BindingTarget<Set<RetrievalActivity>> { return _runningActivities.bindingTarget }
-    internal var apiAccessErrors: BindingTarget<APIAccessError> { return _apiAccessErrors.deoptionalizedBindingTarget }
+    internal var modelRetrievalStatus: BindingTarget<(RetrievalActivity, ActivityStatus)> { return _modelRetrievalStatus.deoptionalizedBindingTarget }
 
 
     // MARK: - Backing properties
@@ -28,8 +27,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
-    private let _runningActivities = MutableProperty(Set<RetrievalActivity>())
-    private let _apiAccessErrors = MutableProperty<APIAccessError?>(nil)
+    private let _modelRetrievalStatus = MutableProperty<(RetrievalActivity, ActivityStatus)?>(nil)
 
 
     // MARK: - Projects, goals and reports providing
@@ -85,7 +83,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
         projectsListViewController.connectInputs(runningEntry: _runningEntry.producer,
                                                  currentDate: _currentDate.producer.skipNil(),
-                                                 runningActivities: _runningActivities.producer)
+                                                 modelRetrievalStatus: _modelRetrievalStatus.producer.skipNil())
 
         let detailController = selectionDetailViewController
 

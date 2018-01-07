@@ -76,6 +76,10 @@
                                             <collectionViewLayout key="collectionViewLayout" id="tRH-Rt-gTE" customClass="ListLayout" customModule="TogglGoals" customModuleProvider="target"/>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
+                                            <connections>
+                                                <outlet property="dataSource" destination="uJx-25-i9K" id="gHp-yR-3ye"/>
+                                                <outlet property="delegate" destination="uJx-25-i9K" id="7P4-bb-f6u"/>
+                                            </connections>
                                         </collectionView>
                                     </subviews>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -113,32 +117,52 @@
             <objects>
                 <viewController id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Zto-kN-hsB">
-                        <rect key="frame" x="0.0" y="0.0" width="180" height="24"/>
+                        <rect key="frame" x="0.0" y="0.0" width="180" height="95"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6AA-cu-KDc">
-                                <rect key="frame" x="4" y="5" width="172" height="14"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Activity" id="HNE-uY-GyZ">
-                                    <font key="font" metaFont="smallSystem"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ll7-RC-aOj">
+                                <rect key="frame" x="0.0" y="0.0" width="180" height="95"/>
+                                <clipView key="contentView" drawsBackground="NO" id="l89-Cs-Kal">
+                                    <rect key="frame" x="1" y="1" width="178" height="93"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <collectionView id="6hX-sj-cqp">
+                                            <rect key="frame" x="0.0" y="0.0" width="178" height="158"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <collectionViewGridLayout key="collectionViewLayout" maximumNumberOfColumns="1" id="65e-jk-VLl"/>
+                                            <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="secondaryBackgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                            <connections>
+                                                <outlet property="dataSource" destination="tS7-EF-bJw" id="mpQ-YP-GCJ"/>
+                                            </connections>
+                                        </collectionView>
+                                    </subviews>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="iDL-6d-dKe">
+                                    <rect key="frame" x="1" y="78" width="158" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="qiz-c6-WkS">
+                                    <rect key="frame" x="163" y="1" width="16" height="93"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="6AA-cu-KDc" firstAttribute="centerX" secondItem="Zto-kN-hsB" secondAttribute="centerX" id="4ps-Pj-hfm"/>
-                            <constraint firstAttribute="trailing" secondItem="6AA-cu-KDc" secondAttribute="trailing" constant="6" id="c5V-lh-sBS"/>
-                            <constraint firstItem="6AA-cu-KDc" firstAttribute="leading" secondItem="Zto-kN-hsB" secondAttribute="leading" constant="6" id="dGt-UV-xoR"/>
-                            <constraint firstItem="6AA-cu-KDc" firstAttribute="centerY" secondItem="Zto-kN-hsB" secondAttribute="centerY" id="kAH-Su-WuZ"/>
+                            <constraint firstAttribute="trailing" secondItem="ll7-RC-aOj" secondAttribute="trailing" id="DeG-s0-jLG"/>
+                            <constraint firstItem="ll7-RC-aOj" firstAttribute="leading" secondItem="Zto-kN-hsB" secondAttribute="leading" id="fBl-2x-q39"/>
+                            <constraint firstAttribute="bottom" secondItem="ll7-RC-aOj" secondAttribute="bottom" id="sk9-Ez-GZG"/>
+                            <constraint firstItem="ll7-RC-aOj" firstAttribute="top" secondItem="Zto-kN-hsB" secondAttribute="top" id="sq9-hE-ggv"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="label" destination="6AA-cu-KDc" id="v57-RN-YB2"/>
+                        <outlet property="collectionView" destination="6hX-sj-cqp" id="eue-XN-ro3"/>
                     </connections>
                 </viewController>
                 <customObject id="ytj-7m-2MR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="65" y="1773"/>
+            <point key="canvasLocation" x="69" y="1737.5"/>
         </scene>
         <!--Projects List Activity Split View Controller-->
         <scene sceneID="KNa-QW-hF3">
@@ -146,7 +170,7 @@
                 <splitViewController id="K4p-5x-O6K" customClass="ProjectsListActivitySplitViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <splitViewItems>
                         <splitViewItem id="Fyf-E5-abV"/>
-                        <splitViewItem id="cRZ-A3-cSS"/>
+                        <splitViewItem collapsed="YES" id="cRZ-A3-cSS"/>
                     </splitViewItems>
                     <splitView key="splitView" dividerStyle="thin" id="iFB-Xu-vqF">
                         <rect key="frame" x="0.0" y="0.0" width="159" height="300"/>

@@ -9,9 +9,20 @@
 import Foundation
 import ReactiveSwift
 
-typealias RetrieveProfileNetworkAction = Action<URLSession?, Profile, APIAccessError>
-func makeRetrieveProfileNetworkAction() -> RetrieveProfileNetworkAction {
-    return RetrieveProfileNetworkAction { sessionOrNil in
+typealias RetrieveProfileNetworkAction = Action<Void, Profile, APIAccessError>
+
+typealias RetrieveProfileNetworkActionMaker = (Property<URLSession?>) -> RetrieveProfileNetworkAction
+
+func makeRetrieveProfileNetworkAction(_ urlSession: Property<URLSession?>) -> RetrieveProfileNetworkAction {
+    return RetrieveProfileNetworkAction(unwrapping: urlSession) { (session, _) in
+        session.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
+    }
+}
+
+typealias TestURLSessionAction = Action<URLSession?, Profile, APIAccessError>
+
+func makeTestURLSessionNetworkAction() -> TestURLSessionAction {
+    return TestURLSessionAction { sessionOrNil in
         guard let session = sessionOrNil else {
             return SignalProducer(error: APIAccessError.noCredentials)
         }

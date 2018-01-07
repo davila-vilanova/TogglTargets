@@ -131,9 +131,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        projectsCollectionView.dataSource = self
-        projectsCollectionView.delegate = self
-
         let itemNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewItem"), bundle: nil)!
         projectsCollectionView.register(itemNib, forItemWithIdentifier: ProjectItemIdentifier)
 

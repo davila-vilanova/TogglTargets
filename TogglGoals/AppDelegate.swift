@@ -41,12 +41,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         if let goalsStore = SQLiteGoalsStore(baseDirectory: supportDir) {
             let togglAPIDataRetriever =
-                CachedTogglAPIDataRetriever(retrieveProfileNetworkAction: makeRetrieveProfileNetworkAction(),
+                CachedTogglAPIDataRetriever(retrieveProfileNetworkActionMaker: makeRetrieveProfileNetworkAction,
                                             retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),
                                             storeProfileCacheAction: makeStoreProfileCacheAction(),
                                             retrieveProjectsNetworkActionMaker: makeRetrieveProjectsNetworkAction,
                                             retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
-                                            retrieveRunningEntryNetworkAction: makeRetrieveRunningEntryNetworkAction())
+                                            retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
 
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
                                                 goalsStore: goalsStore,
@@ -72,8 +72,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             controller.calendar <~ calendar
             controller.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
             controller.runningEntry <~ modelCoordinator.runningEntry
-            controller.runningActivities <~ modelCoordinator.currentActivities
-            controller.apiAccessErrors <~ modelCoordinator.apiAccessErrors.logEvents(identifier: "apiAccessErrors")
+            controller.modelRetrievalStatus <~ modelCoordinator.retrievalStatus
 
             controller.setActions(fetchProjectIDs: modelCoordinator.fetchProjectIDsByGoalsAction,
                                   readProject: modelCoordinator.readProjectAction,

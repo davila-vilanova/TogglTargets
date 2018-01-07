@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ActivityCollectionViewProgressItem" customModule="TogglGoals" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="170" height="40"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <stackView orientation="horizontal" alignment="centerY" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eHS-BL-Ym9">
+                    <rect key="frame" x="4" y="4" width="162" height="32"/>
+                    <beginningViews>
+                        <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" maxValue="100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="1UV-OA-QBx">
+                            <rect key="frame" x="0.0" y="8" width="16" height="16"/>
+                        </progressIndicator>
+                    </beginningViews>
+                    <middleViews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uh4-KR-8oa" userLabel="Retrieving item">
+                            <rect key="frame" x="40" y="9" width="83" height="14"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Retrieving item" id="9yL-OH-8Cc">
+                                <font key="font" metaFont="smallSystem"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </middleViews>
+                    <visibilityPriorities>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                    </visibilityPriorities>
+                    <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                    </customSpacing>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="eHS-BL-Ym9" secondAttribute="bottom" constant="4" id="CNi-AY-0Q9"/>
+                <constraint firstItem="eHS-BL-Ym9" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="4" id="fnp-tq-2l4"/>
+                <constraint firstAttribute="trailing" secondItem="eHS-BL-Ym9" secondAttribute="trailing" constant="4" id="m9I-Mw-g8e"/>
+                <constraint firstItem="eHS-BL-Ym9" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="4" id="tIZ-dX-lzr"/>
+            </constraints>
+        </customView>
+        <collectionViewItem id="k4Q-Mu-pql" customClass="ActivityCollectionViewProgressItem" customModule="TogglGoals" customModuleProvider="target">
+            <connections>
+                <outlet property="progressDescriptionTextField" destination="uh4-KR-8oa" id="JxT-9O-apS"/>
+                <outlet property="progressIndicator" destination="1UV-OA-QBx" id="0W4-i5-frU"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="v3B-aZ-q0B"/>
+            </connections>
+        </collectionViewItem>
+    </objects>
+</document>

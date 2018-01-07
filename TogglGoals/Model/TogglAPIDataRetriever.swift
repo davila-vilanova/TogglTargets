@@ -68,12 +68,9 @@ protocol TogglAPIDataRetriever: class {
 
     // MARK: - Activity and Errors
 
-    /// Publishes `APIAccessError` values as they happen.
-    var errors: Signal<APIAccessError, NoError> { get }
-
-    /// Publishes the activities with which that this retrievar is engaged
-    /// at any given time.
-    var currentActivities: Property<Set<RetrievalActivity>> { get }
+    // Publishes updates to the status of this data retriever. Each update
+    /// consists of a `RetrievalActivity` and its corresponding `ActivityStatus`
+    var status: SignalProducer<(RetrievalActivity, ActivityStatus), NoError> { get }
 }
 
 /// Represents a type of retrieval activity that can be driven by a TogglAPIDataRetriever.
@@ -82,6 +79,15 @@ enum RetrievalActivity {
     case projects
     case reports
     case runningEntry
+}
+
+typealias RetryAction = Action<Void, Void, NoError>
+
+// Represents the status of a given activity
+enum ActivityStatus {
+    case executing
+    case succeeded
+    case error(APIAccessError, RetryAction)
 }
 
 
@@ -119,7 +125,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     // MARK: - Profile
 
     /// The `Action` used to retrieve profiles from the Toggl API.
-    private let retrieveProfileNetworkAction: RetrieveProfileNetworkAction
+    private var retrieveProfileNetworkAction: RetrieveProfileNetworkAction!
 
     /// The `Action` used to retrieve profiles from the local cache.
     private let retrieveProfileCacheAction: RetrieveProfileCacheAction
@@ -130,8 +136,12 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// Holds and publishes `Profile` values as they become available, that is, as they are retrieved
     /// from the Toggl API or from the local cache.
     internal lazy var profile =
-        Property<Profile?>(initial: nil, then: Signal.merge(retrieveProfileNetworkAction.values,
+        Property<Profile?>(initial: nil, then: Signal.merge(retrieveProfileNetworkAction.values.logEvents(identifier: "retrieveProfileNetworkAction"),
                                                             retrieveProfileCacheAction.values.skipNil()))
+
+
+    /// Publishes an array of `WorkspaceID` values derived from the latest `Profile`.
+    private lazy var workspaceIDs: SignalProducer<[WorkspaceID], NoError> = profile.producer.skipNil().map { $0.workspaces.map { $0.id } }
 
 
     // MARK: - Projects
@@ -166,7 +176,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     // MARK: - RunningEntry
 
     /// The `Action` used to retrieve the currently running time entry from the Toggl API.
-    private let retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction
+    private var retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction!
 
     /// Holds and publishes the current time entry or `nil` for no time entry whenever it is retrieved.
     internal lazy var runningEntry = Property<RunningEntry?>(initial: nil, then: retrieveRunningEntryNetworkAction.values)
@@ -181,7 +191,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveRunningEntryNetworkAction.isEnabled)) { _ in
             SignalProducer(value: ())
         }
-        retrieveRunningEntryNetworkAction <~ urlSession.producer.sample(on: action.values)
+        retrieveRunningEntryNetworkAction <~ SignalProducer(value: ())
         return action
     }()
 
@@ -192,36 +202,44 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveProfileNetworkAction.isEnabled)) { _ in
             SignalProducer(value: ())
         }
-        retrieveProfileNetworkAction <~ urlSession.producer.sample(on: action.values)
-        retrieveRunningEntryNetworkAction <~ urlSession.producer.sample(on: action.values)
+        retrieveProfileNetworkAction <~ SignalProducer(value: ())
+        updateRunningEntry <~ SignalProducer(value: ())
         return action
     }()
 
 
-    // MARK: - Errors
+    // MARK: - Activity and Errors
 
-    /// Publishes `APIAccessError` values as they happen.
-    lazy var errors: Signal<APIAccessError, NoError> = Signal.merge(
-        retrieveProfileNetworkAction.errors.logEvents(identifier: "profile errors"),
-        retrieveProjectsNetworkAction.errors,
-        retrieveReportsNetworkAction.errors,
-        retrieveRunningEntryNetworkAction.errors)
+    lazy var status: SignalProducer<(RetrievalActivity, ActivityStatus), NoError> = {
+        func extractStatus<ActionInput, ActionOutput>
+            (from action: Action<ActionInput, ActionOutput, APIAccessError>,
+             for activity: RetrievalActivity,
+             retryErrorsWith inputForRetries: SignalProducer<ActionInput, NoError>)
+            -> SignalProducer<(RetrievalActivity, ActivityStatus), NoError> {
 
+                let executing = action.isExecuting.producer.filter { $0 }.map { _ in (activity, ActivityStatus.executing) }
+                let succeeded = action.values.producer.map { _ in (activity, ActivityStatus.succeeded) }
+                let heldInputForRetries = Property<ActionInput?>(initial: nil, then: inputForRetries)
+                let retry = RetryAction(unwrapping: heldInputForRetries) { (inputValueForRetry, _) in
+                    _ = action.apply(inputValueForRetry)
+                    return SignalProducer.empty
+                }
+                let error = action.errors.producer.map { (activity, ActivityStatus.error($0, retry)) }
 
-    /// Publishes the activities with which that this retriever is engaged
-    /// at any given time.
-    lazy var currentActivities: Property<Set<RetrievalActivity>> =
-        Property(initial: Set<RetrievalActivity>(),
-                 then: SignalProducer.combineLatest(retrieveProfileNetworkAction.isExecuting,
-                                                    retrieveProjectsNetworkAction.isExecuting,
-                                                    retrieveReportsNetworkAction.isExecuting,
-                                                    retrieveRunningEntryNetworkAction.isExecuting)
-                    .map { (isExecuting) -> [RetrievalActivity : Bool] in
-                        [.profile : isExecuting.0, .projects : isExecuting.1, .reports : isExecuting.2, .runningEntry : isExecuting.3]
-                    }.map {
-                        let filtered = $0.filter { (_, isExecuting) in isExecuting }
-                        return Set<RetrievalActivity>(filtered.keys)
-    })
+                return SignalProducer.merge(executing, succeeded, error)
+        }
+
+        func extractStatus<ActionOutput>(from action: Action<Void, ActionOutput, APIAccessError>,
+                                         for activity: RetrievalActivity)
+            -> SignalProducer<(RetrievalActivity, ActivityStatus), NoError> {
+                return extractStatus(from: action, for: activity, retryErrorsWith: SignalProducer(value: ()))
+        }
+
+        return SignalProducer.merge(extractStatus(from: retrieveProfileNetworkAction, for: .profile),
+                                    extractStatus(from: retrieveProjectsNetworkAction, for: .projects, retryErrorsWith: workspaceIDs),
+                                    extractStatus(from: retrieveReportsNetworkAction, for: .reports, retryErrorsWith: SignalProducer.combineLatest(workspaceIDs, _twoPartReportPeriod.producer.skipNil())),
+                                    extractStatus(from: retrieveRunningEntryNetworkAction, for: .runningEntry))
+    }()
 
 
     /// Initializes a `CachedTogglAPIDataRetriever` that will use the provided actions to fetch data from
@@ -242,28 +260,31 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     ///   - retrieveRunningEntryNetworkAction: The `Action` used to retrieve the
     ///                                        currently running time entry from
     ///                                        the Toggl API.
-    init(retrieveProfileNetworkAction: RetrieveProfileNetworkAction,
+    init(retrieveProfileNetworkActionMaker: RetrieveProfileNetworkActionMaker,
          retrieveProfileCacheAction: RetrieveProfileCacheAction,
          storeProfileCacheAction: StoreProfileCacheAction,
          retrieveProjectsNetworkActionMaker: RetrieveProjectsNetworkActionMaker,
          retrieveReportsNetworkActionMaker: RetrieveReportsNetworkActionMaker,
-         retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction) {
+         retrieveRunningEntryNetworkActionMaker: RetrieveRunningEntryNetworkActionMaker) {
 
         (lifetime, lifetimeToken) = Lifetime.make()
 
-        self.retrieveProfileNetworkAction = retrieveProfileNetworkAction
         self.retrieveProfileCacheAction = retrieveProfileCacheAction
         self.storeProfileCacheAction = storeProfileCacheAction
-        self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkAction
+        self.retrieveProfileNetworkAction = retrieveProfileNetworkActionMaker(urlSession)
         self.retrieveProjectsNetworkAction = retrieveProjectsNetworkActionMaker(urlSession)
         self.retrieveReportsNetworkAction = retrieveReportsNetworkActionMaker(urlSession)
+        self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkActionMaker(urlSession)
 
-        retrieveProfileNetworkAction <~ urlSession.signal
-            .throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
+        let refreshProfileWhenOnURLSessionChange: Signal<Void, NoError> =
+            urlSession.signal.skipNil()
+                .throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
+                .map { _ in () }
+        retrieveProfileNetworkAction <~ refreshProfileWhenOnURLSessionChange
+
         storeProfileCacheAction <~ retrieveProfileNetworkAction.values
             .throttle(while: storeProfileCacheAction.isExecuting, on: scheduler)
 
-        let workspaceIDs = profile.producer.skipNil().map { $0.workspaces.map { $0.id } }
         retrieveProjectsNetworkAction <~ workspaceIDs
             .throttle(while: retrieveProjectsNetworkAction.isExecuting, on: scheduler)
 

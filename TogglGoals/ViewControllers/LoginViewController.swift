@@ -163,15 +163,15 @@ class LoginViewController: NSViewController, ViewControllerContaining {
 
         return Action<(), CredentialValidationResult, NoError>(
             state: latestSeenCredential,
-            enabledIf: { [retrieveProfileNetworkAction] in $0 != nil && retrieveProfileNetworkAction.isEnabled.value },
-            execute: { [retrieveProfileNetworkAction] (credentialOrNil, _) -> SignalProducer<CredentialValidationResult, NoError> in
+            enabledIf: { [testURLSessionAction] in $0 != nil && testURLSessionAction.isEnabled.value },
+            execute: { [testURLSessionAction] (credentialOrNil, _) -> SignalProducer<CredentialValidationResult, NoError> in
                 guard let credential = credentialOrNil else {
                     assert(false, "credential should not be nil if the action is enabled")
                     return SignalProducer(value: CredentialValidationResult.other)
                 }
                 let session = URLSession(togglAPICredential: credential)
                 // profileProducer generates a single value of type profile or triggers an error
-                let profileProducer = retrieveProfileNetworkAction.apply(session)
+                let profileProducer = testURLSessionAction.apply(session)
                 // profileOrErrorProducer generates a single value of type Result that can contain a profile value or an error
                 let profileOrErrorProducer = profileProducer.materialize().map { event -> Result<Profile, ActionError<APIAccessError>>? in
                     switch event {
@@ -193,7 +193,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         })
     }()
 
-    private let retrieveProfileNetworkAction = makeRetrieveProfileNetworkAction()
+    private let testURLSessionAction = makeTestURLSessionNetworkAction()
 
     private lazy var displaySpinner =
         BindingTarget<Bool>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (spin: Bool) -> Void in

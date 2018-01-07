@@ -130,12 +130,7 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Activity and Errors
 
-    /// Publishes `APIAccessError` values as they happen.
-    internal var apiAccessErrors: Signal<APIAccessError, NoError> { return togglDataRetriever.errors }
-
-    /// Publishes the activities with which that this retrievar is engaged
-    /// at any given time.
-    var currentActivities: Property<Set<RetrievalActivity>> { return togglDataRetriever.currentActivities }
+    var retrievalStatus: SignalProducer<(RetrievalActivity, ActivityStatus), NoError> { return togglDataRetriever.status }
 
 
     // MARK: -

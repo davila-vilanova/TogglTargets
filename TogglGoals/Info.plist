@@ -26,6 +26,21 @@
 	<string>Copyright © 2016 davi. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+	  <key>NSAllowsArbitraryLoads</key>
+	  <false/>
+	  <key>NSExceptionDomains</key>
+	  <dict>
+	    <key>davi.la</key>
+	    <dict>
+	      <key>NSIncludesSubdomains</key>
+	      <false/>
+	      <key>NSExceptionAllowsInsecureHTTPLoads</key>
+	      <true/>
+	    </dict>
+	  </dict>
+	</dict>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 </dict>
