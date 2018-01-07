@@ -29,8 +29,7 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
 
     internal func connectInputs(modelRetrievalStatus: SignalProducer<(RetrievalActivity, ActivityStatus), NoError>) {
         updateState <~ modelRetrievalStatus
-        removeActivityDelayer <~ modelRetrievalStatus.filter { $0.1.isSuccess }.map { $0.0 }
-        removeActivityDelayer.resetBindingTarget <~ modelRetrievalStatus.filter { !$0.1.isSuccess }.map { $0.0 }
+        removeActivityDelayer <~ modelRetrievalStatus.filter { $0.1.isSuccess }.map { _ in () }
     }
 
 
@@ -46,7 +45,7 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
         }
     }
     private var statuses = [RetrievalActivity : ActivityStatus]()
-    private let removeActivityDelayer = CancellableDelayer<RetrievalActivity>(with: ActivityRemovalDelay)
+    private let removeActivityDelayer = ResetableDelayer(with: ActivityRemovalDelay)
 
     private lazy var updateState = BindingTarget<(RetrievalActivity, ActivityStatus)>(on: UIScheduler(), lifetime: lifetime) { [weak self] update in
         guard let vc = self else {
@@ -78,16 +77,27 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
         }
     }
 
-    lazy var removeActivity = BindingTarget<RetrievalActivity>(on: UIScheduler(), lifetime: lifetime) { [weak self] activity in
-        guard let vc = self,
-            let index = vc.activities.index(of: activity),
-            let status = vc.statuses[activity],
-            status.isSuccess else {
-                return
+    private lazy var removeSucceededActivities = BindingTarget<Void>(on: UIScheduler(), lifetime: lifetime) { [weak self] in
+        guard let vc = self else {
+            return
         }
-        vc.activities.remove(at: index)
-        vc.statuses.removeValue(forKey: activity)
-        vc.collectionView.animator().deleteItems(at: index.asIndexPaths)
+
+        var toRemove = [Int]()
+        for index in vc.activities.startIndex ..< vc.activities.endIndex {
+            let activity = vc.activities[index]
+            if let status = vc.statuses[activity], status.isSuccess {
+                toRemove.append(index)
+            }
+        }
+
+        for index in toRemove.reversed() {
+            let activity = vc.activities.remove(at: index)
+            vc.statuses.removeValue(forKey: activity)
+        }
+
+        if let collectionView = vc.collectionView {
+            collectionView.animator().deleteItems(at: Set(toRemove.map { $0.asIndexPath }))
+        }
      }
 
     @IBOutlet weak var collectionView: NSCollectionView!
@@ -100,7 +110,7 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
             collectionView.register(nib, forItemWithIdentifier: identifier)
         }
 
-        removeActivity <~ removeActivityDelayer
+        removeSucceededActivities <~ removeActivityDelayer
 
         (collectionView.collectionViewLayout as! NSCollectionViewGridLayout).maximumNumberOfColumns = 1
         collectionView.reloadData()
@@ -168,22 +178,25 @@ fileprivate extension ActivityStatus {
 fileprivate extension Array.Index {
     /// CollectionView with a single section, such as the activity collection view
     var asIndexPaths: Set<IndexPath> {
-        return Set([IndexPath(item: self, section: 0)])
+        return Set([asIndexPath])
+    }
+
+    var asIndexPath: IndexPath {
+        return IndexPath(item: self, section: 0)
     }
 }
 
-fileprivate class CancellableDelayer<Value: Hashable>: BindingTargetProvider, BindingSource {
-
+fileprivate class ResetableDelayer: BindingTargetProvider, BindingSource {
+    typealias Value = Void
     typealias Error = NoError
 
     let delay: TimeInterval
     let lifetime: Lifetime
     private let lifetimeToken: Lifetime.Token
     var valueBindingTarget: BindingTarget<Value>!
-    var resetBindingTarget: BindingTarget<Value>!
     let producer: SignalProducer<Value, NoError>
     var bindingTarget: BindingTarget<Value> { return valueBindingTarget }
-    private var disposables = [Value : Disposable]()
+    private var delayDisposable: Disposable?
 
     init(with delay: TimeInterval) {
         self.delay = delay
@@ -193,18 +206,13 @@ fileprivate class CancellableDelayer<Value: Hashable>: BindingTargetProvider, Bi
         let scheduler = QueueScheduler()
         let pipe = Signal<Value, NoError>.pipe()
         producer = SignalProducer(pipe.output)
-        valueBindingTarget = BindingTarget(on: scheduler, lifetime: lifetime) { [unowned self] value in
-            if let previousDisposable = self.disposables[value] {
+        valueBindingTarget = BindingTarget(on: scheduler, lifetime: lifetime) { [unowned self] in
+            if let previousDisposable = self.delayDisposable {
                 previousDisposable.dispose()
             }
-            self.disposables[value] = scheduler.schedule(after: Date().addingTimeInterval(delay)) {
-                pipe.input.send(value: value)
-                self.disposables.removeValue(forKey: value)
-            }
-        }
-        resetBindingTarget = BindingTarget(on: scheduler, lifetime: lifetime) { [unowned self] value in
-            if let disposable = self.disposables.removeValue(forKey: value) {
-                disposable.dispose()
+            self.delayDisposable = scheduler.schedule(after: Date().addingTimeInterval(delay)) {
+                pipe.input.send(value: ())
+                self.delayDisposable = nil
             }
         }
     }
