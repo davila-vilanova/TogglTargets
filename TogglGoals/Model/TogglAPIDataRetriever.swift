@@ -136,7 +136,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// Holds and publishes `Profile` values as they become available, that is, as they are retrieved
     /// from the Toggl API or from the local cache.
     internal lazy var profile =
-        Property<Profile?>(initial: nil, then: Signal.merge(retrieveProfileNetworkAction.values.logEvents(identifier: "retrieveProfileNetworkAction"),
+        Property<Profile?>(initial: nil, then: Signal.merge(retrieveProfileNetworkAction.values,
                                                             retrieveProfileCacheAction.values.skipNil()))
 
 

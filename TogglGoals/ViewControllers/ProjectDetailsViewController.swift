@@ -70,7 +70,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     private func setupConnectionsWithActions() {
         // This ensures that goalDownstream will only listen to values associated with the current project
-        goalDownstream <~ readGoalAction!.values.flatten(.latest).logEvents()
+        goalDownstream <~ readGoalAction!.values.flatten(.latest)
         goalReportViewController.report <~ readReportAction!.values.flatten(.latest)
 
         // Retrieve corresponding goal and report when project ID changes

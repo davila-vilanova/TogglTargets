@@ -74,7 +74,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
             splitItem.animator().isCollapsed = true
         }
 
-        expandActivity <~ activityViewController.wantsDisplay.producer.logEvents(identifier: "wantsDisplay", events: [.value]).filter { $0 }.map { _ in () }
+        expandActivity <~ activityViewController.wantsDisplay.producer.filter { $0 }.map { _ in () }
         collapseActivity <~ activityViewController.wantsDisplay.producer.filter { !$0 }.map { _ in () }
 
         keepAround.append(expandActivity)
