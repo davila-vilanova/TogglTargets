@@ -221,7 +221,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
                 let succeeded = action.values.producer.map { _ in (activity, ActivityStatus.succeeded) }
                 let heldInputForRetries = Property<ActionInput?>(initial: nil, then: inputForRetries)
                 let retry = RetryAction(unwrapping: heldInputForRetries) { (inputValueForRetry, _) in
-                    _ = action.apply(inputValueForRetry)
+                    _ = action.apply(inputValueForRetry).start()
                     return SignalProducer.empty
                 }
                 let error = action.errors.producer.map { (activity, ActivityStatus.error($0, retry)) }
