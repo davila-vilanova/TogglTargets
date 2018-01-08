@@ -68,8 +68,7 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="Ww3-eD-T8i">
                         <items>
-                            <menuItem title="Reload Data from Toggl" id="adQ-LM-TqZ">
-                                <modifierMask key="keyEquivalentModifierMask"/>
+                            <menuItem title="Reload Data from Toggl" keyEquivalent="r" id="adQ-LM-TqZ">
                                 <connections>
                                     <action selector="refreshAllData:" target="Mk7-Bv-jsF" id="f5m-uy-jMf"/>
                                 </connections>
