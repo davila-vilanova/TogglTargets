@@ -198,14 +198,18 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Triggers an attempt to retrieve the user profile, projects, reports and
     /// currently running entry.
-    lazy var refreshAllData: RefreshAction = {
-        let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveProfileNetworkAction.isEnabled)) { _ in
-            SignalProducer(value: ())
+    lazy var refreshAllData = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveProfileNetworkAction.isEnabled)) { [weak self] _ in
+        // TODO revisit all weak and unowned references to self inside closures
+        guard let retriever = self else {
+            return SignalProducer.empty
         }
-        retrieveProfileNetworkAction <~ SignalProducer(value: ())
-        updateRunningEntry <~ SignalProducer(value: ())
-        return action
-    }()
+
+        retriever.retrieveProfileNetworkAction <~ SignalProducer(value: ())
+        retriever.updateRunningEntry <~ SignalProducer(value: ())
+
+        return SignalProducer.empty
+    }
+
 
 
     // MARK: - Activity and Errors
