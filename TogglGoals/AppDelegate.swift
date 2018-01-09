@@ -60,7 +60,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         modelCoordinator.calendar <~ calendar
         modelCoordinator.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
-        modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -80,8 +79,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                   writeGoal: modelCoordinator.writeGoalAction,
                                   deleteGoal: modelCoordinator.deleteGoalAction,
                                   readReport: modelCoordinator.readReportAction)
-            
         }
+
+        modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
