@@ -22,8 +22,6 @@ extension URLSession {
         self.init(configuration: config)
     }
 
-    //    static func mapFromCredentialsProducer
-
     var canAccessTogglReportsAPI: Bool {
         guard let headers = configuration.httpAdditionalHeaders else {
             return false
