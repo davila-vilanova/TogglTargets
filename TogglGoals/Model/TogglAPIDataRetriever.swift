@@ -280,11 +280,11 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         self.retrieveReportsNetworkAction = retrieveReportsNetworkActionMaker(urlSession)
         self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkActionMaker(urlSession)
 
-        let refreshProfileWhenOnURLSessionChange: Signal<Void, NoError> =
+        let refreshOnURLSessionChange: Signal<Void, NoError> =
             urlSession.signal.skipNil()
                 .throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
                 .map { _ in () }
-        retrieveProfileNetworkAction <~ refreshProfileWhenOnURLSessionChange
+        refreshAllData <~ refreshOnURLSessionChange
 
         storeProfileCacheAction <~ retrieveProfileNetworkAction.values
             .throttle(while: storeProfileCacheAction.isExecuting, on: scheduler)
@@ -295,10 +295,5 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         retrieveReportsNetworkAction <~ SignalProducer.combineLatest(workspaceIDs,
                                                                      _twoPartReportPeriod.producer.skipNil())
             .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
-
-        // This action needs a little nudge because its input is not connected
-        // to anything and we want to retrieve the cached profile right after
-        // starting up.
-        retrieveProfileCacheAction <~ SignalProducer(value: ()).start(on: scheduler)
     }
 }
