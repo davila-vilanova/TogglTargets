@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import PureLayout
 import ReactiveSwift
 import ReactiveCocoa
 import Result

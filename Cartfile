@@ -1,3 +1,2 @@
-github "tuchangwei/SQLite.swift" "swift-4"
-github "PureLayout/PureLayout"
 github "ReactiveCocoa/ReactiveCocoa" "master"
+github "tuchangwei/SQLite.swift" "swift-4"

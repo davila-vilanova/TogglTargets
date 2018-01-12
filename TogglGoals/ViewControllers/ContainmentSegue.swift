@@ -33,11 +33,18 @@ class ContainmentSegue: NSStoryboardSegue { // TODO: it's too eager
 }
 
 func displayController(_ controller: NSViewController, in parentView: NSView) {
-    guard parentView.subviews.first != controller.view else {
+    let childView = controller.view
+    guard parentView.subviews.first != childView else {
         return
     }
-    parentView.substituteSubviews(with: controller.view)
-    controller.view.autoPinEdgesToSuperviewEdges()
+    parentView.substituteSubviews(with: childView)
+    childView.translatesAutoresizingMaskIntoConstraints = false
+
+    // Pin edges to superview's edges
+    childView.topAnchor.constraint(equalTo: parentView.topAnchor).isActive = true
+    childView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor).isActive = true
+    childView.leadingAnchor.constraint(equalTo: parentView.leadingAnchor).isActive = true
+    childView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor).isActive = true
 }
 
 extension NSViewController { // TODO: 'where NSViewController is ViewControlelrContaining'
