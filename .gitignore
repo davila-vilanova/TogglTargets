@@ -2,6 +2,5 @@
 /Carthage
 /build
 Cartfile.resolved
-xcuserdata
-/TogglGoals.xcworkspace/xcuserdata
+*xcuserdata*
 *.xctimeline

@@ -1,2 +1,2 @@
-github "ReactiveCocoa/ReactiveCocoa" "master"
-github "tuchangwei/SQLite.swift" "swift-4"
+github "ReactiveCocoa/ReactiveCocoa"  ~> 7.0.1
+github "stephencelis/SQLite.swift" ~> 0.11.4

@@ -353,9 +353,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63D7EA9B2008C2BB00635AD1 /* ReactiveCocoa.framework in Frameworks */,
-				63D7EA9C2008C2BB00635AD1 /* ReactiveSwift.framework in Frameworks */,
 				63D7EA9D2008C2BB00635AD1 /* Result.framework in Frameworks */,
+				63D7EA9C2008C2BB00635AD1 /* ReactiveSwift.framework in Frameworks */,
+				63D7EA9B2008C2BB00635AD1 /* ReactiveCocoa.framework in Frameworks */,
 				63D7EA9E2008C2BB00635AD1 /* SQLite.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
