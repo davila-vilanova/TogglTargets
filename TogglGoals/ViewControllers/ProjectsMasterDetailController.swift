@@ -18,7 +18,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
     internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
     internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
     internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
-    internal var modelRetrievalStatus: BindingTarget<(RetrievalActivity, ActivityStatus)> { return _modelRetrievalStatus.deoptionalizedBindingTarget }
+    internal var modelRetrievalStatus: BindingTarget<ActivityStatus> { return _modelRetrievalStatus.deoptionalizedBindingTarget }
 
 
     // MARK: - Backing properties
@@ -27,7 +27,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
-    private let _modelRetrievalStatus = MutableProperty<(RetrievalActivity, ActivityStatus)?>(nil)
+    private let _modelRetrievalStatus = MutableProperty<ActivityStatus?>(nil)
 
 
     // MARK: - Projects, goals and reports providing

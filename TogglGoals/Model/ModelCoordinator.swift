@@ -130,7 +130,7 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Activity and Errors
 
-    var retrievalStatus: SignalProducer<(RetrievalActivity, ActivityStatus), NoError> { return togglDataRetriever.status }
+    var retrievalStatus: SignalProducer<ActivityStatus, NoError> { return togglDataRetriever.status }
 
 
     // MARK: -

@@ -17,14 +17,14 @@ class ActivityCollectionViewErrorItem: NSCollectionViewItem, ActivityDisplaying 
     @IBOutlet weak var recoveryButton: NSButton!
 
 
-    func setDisplayActivity(_ activity: RetrievalActivity) {
+    func setDisplayActivity(_ activity: ActivityStatus.Activity) {
         let retrieveWhat: String
 
         switch activity {
-        case .profile: retrieveWhat = "profile"
-        case .projects: retrieveWhat = "projects"
-        case .reports: retrieveWhat = "reports"
-        case .runningEntry: retrieveWhat = "running entry"
+        case .retrieveProfile: retrieveWhat = "profile"
+        case .retrieveProjects: retrieveWhat = "projects"
+        case .retrieveReports: retrieveWhat = "reports"
+        case .retrieveRunningEntry: retrieveWhat = "running entry"
         }
 
         failureDescriptionTextField.stringValue = "Failed to retrieve \(retrieveWhat)"

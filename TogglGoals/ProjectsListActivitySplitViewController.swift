@@ -14,7 +14,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
 
     internal func connectInputs(runningEntry: SignalProducer<RunningEntry?, NoError>,
                                 currentDate: SignalProducer<Date, NoError>,
-                                modelRetrievalStatus: SignalProducer<(RetrievalActivity, ActivityStatus), NoError>) {
+                                modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>) {
         isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
             self.projectsListViewController.connectInputs(runningEntry: runningEntry, currentDate: currentDate)
         }

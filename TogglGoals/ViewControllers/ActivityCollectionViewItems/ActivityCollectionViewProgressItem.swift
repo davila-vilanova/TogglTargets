@@ -13,16 +13,16 @@ class ActivityCollectionViewProgressItem: NSCollectionViewItem, ActivityDisplayi
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var progressDescriptionTextField: NSTextField!
 
-    func setDisplayActivity(_ activity: RetrievalActivity) {
+    func setDisplayActivity(_ activity: ActivityStatus.Activity) {
         progressIndicator.startAnimation(nil)
         
         let retrievingWhat: String
 
         switch activity {
-        case .profile: retrievingWhat = "profile"
-        case .projects: retrievingWhat = "projects"
-        case .reports: retrievingWhat = "reports"
-        case .runningEntry: retrievingWhat = "running entry"
+        case .retrieveProfile: retrievingWhat = "profile"
+        case .retrieveProjects: retrievingWhat = "projects"
+        case .retrieveReports: retrievingWhat = "reports"
+        case .retrieveRunningEntry: retrievingWhat = "running entry"
         }
 
         progressDescriptionTextField.stringValue = "Retrieving \(retrievingWhat)"

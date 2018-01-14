@@ -68,26 +68,33 @@ protocol TogglAPIDataRetriever: class {
 
     // MARK: - Activity and Errors
 
-    // Publishes updates to the status of this data retriever. Each update
-    /// consists of a `RetrievalActivity` and its corresponding `ActivityStatus`
-    var status: SignalProducer<(RetrievalActivity, ActivityStatus), NoError> { get }
+    // Publishes updates to the status of this data retriever.
+    var status: SignalProducer<ActivityStatus, NoError> { get }
 }
 
-/// Represents a type of retrieval activity that can be driven by a TogglAPIDataRetriever.
-enum RetrievalActivity {
-    case profile
-    case projects
-    case reports
-    case runningEntry
-}
 
 typealias RetryAction = Action<Void, Void, NoError>
 
 // Represents the status of a given activity
 enum ActivityStatus {
-    case executing
-    case succeeded
-    case error(APIAccessError, RetryAction)
+    enum Activity {
+        case retrieveProfile
+        case retrieveProjects
+        case retrieveReports
+        case retrieveRunningEntry
+    }
+
+    case executing(Activity)
+    case succeeded(Activity)
+    case error(Activity, APIAccessError, RetryAction)
+
+    var activity: Activity {
+        switch self {
+        case .executing(let activity): return activity
+        case .succeeded(let activity): return activity
+        case .error(let activity, _, _): return activity
+        }
+    }
 }
 
 
@@ -214,35 +221,35 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     // MARK: - Activity and Errors
 
-    lazy var status: SignalProducer<(RetrievalActivity, ActivityStatus), NoError> = {
+    lazy var status: SignalProducer<ActivityStatus, NoError> = {
         func extractStatus<ActionInput, ActionOutput>
             (from action: Action<ActionInput, ActionOutput, APIAccessError>,
-             for activity: RetrievalActivity,
+             for activity: ActivityStatus.Activity,
              retryErrorsWith inputForRetries: SignalProducer<ActionInput, NoError>)
-            -> SignalProducer<(RetrievalActivity, ActivityStatus), NoError> {
+            -> SignalProducer<ActivityStatus, NoError> {
 
-                let executing = action.isExecuting.producer.filter { $0 }.map { _ in (activity, ActivityStatus.executing) }
-                let succeeded = action.values.producer.map { _ in (activity, ActivityStatus.succeeded) }
+                let executing = action.isExecuting.producer.filter { $0 }.map { _ in ActivityStatus.executing(activity) }
+                let succeeded = action.values.producer.map { _ in ActivityStatus.succeeded(activity) }
                 let heldInputForRetries = Property<ActionInput?>(initial: nil, then: inputForRetries)
                 let retry = RetryAction(unwrapping: heldInputForRetries) { (inputValueForRetry, _) in
                     _ = action.apply(inputValueForRetry).start()
                     return SignalProducer.empty
                 }
-                let error = action.errors.producer.map { (activity, ActivityStatus.error($0, retry)) }
+                let error = action.errors.producer.map { ActivityStatus.error(activity, $0, retry) }
 
                 return SignalProducer.merge(executing, succeeded, error)
         }
 
         func extractStatus<ActionOutput>(from action: Action<Void, ActionOutput, APIAccessError>,
-                                         for activity: RetrievalActivity)
-            -> SignalProducer<(RetrievalActivity, ActivityStatus), NoError> {
+                                         for activity: ActivityStatus.Activity)
+            -> SignalProducer<ActivityStatus, NoError> {
                 return extractStatus(from: action, for: activity, retryErrorsWith: SignalProducer(value: ()))
         }
 
-        return SignalProducer.merge(extractStatus(from: retrieveProfileNetworkAction, for: .profile),
-                                    extractStatus(from: retrieveProjectsNetworkAction, for: .projects, retryErrorsWith: workspaceIDs),
-                                    extractStatus(from: retrieveReportsNetworkAction, for: .reports, retryErrorsWith: SignalProducer.combineLatest(workspaceIDs, _twoPartReportPeriod.producer.skipNil())),
-                                    extractStatus(from: retrieveRunningEntryNetworkAction, for: .runningEntry))
+        return SignalProducer.merge(extractStatus(from: retrieveProfileNetworkAction, for: .retrieveProfile),
+                                    extractStatus(from: retrieveProjectsNetworkAction, for: .retrieveProjects, retryErrorsWith: workspaceIDs),
+                                    extractStatus(from: retrieveReportsNetworkAction, for: .retrieveReports, retryErrorsWith: SignalProducer.combineLatest(workspaceIDs, _twoPartReportPeriod.producer.skipNil())),
+                                    extractStatus(from: retrieveRunningEntryNetworkAction, for: .retrieveRunningEntry))
     }()
 
 

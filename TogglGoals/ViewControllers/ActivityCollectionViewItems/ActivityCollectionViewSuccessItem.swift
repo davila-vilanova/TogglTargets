@@ -12,14 +12,14 @@ class ActivityCollectionViewSuccessItem: NSCollectionViewItem, ActivityDisplayin
 
     @IBOutlet weak var successDescriptionTextField: NSTextField!
 
-    func setDisplayActivity(_ activity: RetrievalActivity) {
+    func setDisplayActivity(_ activity: ActivityStatus.Activity) {
         let retrievedWhat: String
 
         switch activity {
-        case .profile: retrievedWhat = "profile"
-        case .projects: retrievedWhat = "projects"
-        case .reports: retrievedWhat = "reports"
-        case .runningEntry: retrievedWhat = "running entry"
+        case .retrieveProfile: retrievedWhat = "profile"
+        case .retrieveProjects: retrievedWhat = "projects"
+        case .retrieveReports: retrievedWhat = "reports"
+        case .retrieveRunningEntry: retrievedWhat = "running entry"
         }
 
         successDescriptionTextField.stringValue = "Successfully retrieved \(retrievedWhat)"

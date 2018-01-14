@@ -23,82 +23,97 @@ fileprivate let RawNibNamesToIdentifiers = [ RetrievalInProgressItem : Retrieval
                                              RetrievalSuccessItem : RetrievalSuccessItemIdentifier,
                                              RetrievalErrorItem : RetrievalErrorItemIdentifier ]
 
-fileprivate let ActivityRemovalDelay = TimeInterval(3.0)
+fileprivate let ActivityRemovalDelay = TimeInterval(2.0)
 
 class ActivityViewController: NSViewController, NSCollectionViewDataSource {
 
-    internal func connectInputs(modelRetrievalStatus: SignalProducer<(RetrievalActivity, ActivityStatus), NoError>) {
-        updateState <~ modelRetrievalStatus
-        removeActivityDelayer <~ modelRetrievalStatus.filter { $0.1.isSuccess }.map { _ in () }
+    private var inputsConnected = false
+
+    private let backgroundScheduler = QueueScheduler()
+
+    internal func connectInputs(modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>) {
+        UIScheduler().schedule { [unowned self] in
+            guard !self.inputsConnected else {
+                fatalError("Inputs must not be connected more than once.")
+            }
+            self.activityStatuses <~ Signal.merge(self.updateActivityStatuses.values.map { $0.0 },
+                                                  self.cleanUpSuccessfulStatuses.values.map { $0.0 })
+
+            self.updateActivityStatuses.serialInput <~ modelRetrievalStatus.observe(on: self.backgroundScheduler)
+            self.cleanUpSuccessfulStatuses.serialInput <~ modelRetrievalStatus.filter { $0.isSuccessful }.debounce(ActivityRemovalDelay, on: self.backgroundScheduler).map { _ in () }
+
+            self.inputsConnected = true
+        }
     }
 
 
-    internal lazy var wantsDisplay = Property<Bool>(initial: false, then: requestDisplay.output.producer)
-
-    private let requestDisplay = Signal<Bool, NoError>.pipe()
+    internal lazy var wantsDisplay = Property<Bool>(initial: false, then: activityStatuses.producer.map { !$0.isEmpty })
 
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
-    private var activities = [RetrievalActivity]() {
-        didSet {
-            requestDisplay.input.send(value: activities.count > 0)
-        }
+    private let activityStatuses = MutableProperty([ActivityStatus]())
+
+    enum ActivityStatusChange {
+        case update(at: Int)
+        case addition(at: Int)
     }
-    private var statuses = [RetrievalActivity : ActivityStatus]()
-    private let removeActivityDelayer = ResetableDelayer(with: ActivityRemovalDelay)
 
-    private lazy var updateState = BindingTarget<(RetrievalActivity, ActivityStatus)>(on: UIScheduler(), lifetime: lifetime) { [weak self] update in
-        guard let vc = self else {
-            return
-        }
-        let (activity, status) = update
-        vc.statuses[activity] = status
+    private lazy var updateActivityStatuses = Action<ActivityStatus, ([ActivityStatus], ActivityStatusChange), NoError>(state: activityStatuses) { (currentActivityStatuses, newStatus) in
 
-        enum Change {
-            case update(at: Int)
-            case addition(at: Int)
-        }
+        var updatedStatuses = currentActivityStatuses
+        let changeInStatuses: ActivityStatusChange
 
-        let changeInActivities: Change
-
-        if let index = vc.activities.index(of: activity) {
-            changeInActivities = .update(at: index)
+        if let index = updatedStatuses.index(where: { $0.activity == newStatus.activity }) {
+            updatedStatuses[index] = newStatus
+            changeInStatuses = .update(at: index)
         } else {
-            let index = vc.activities.endIndex
-            vc.activities.insert(activity, at: index)
-            changeInActivities = .addition(at: index)
+            let index = updatedStatuses.endIndex
+            updatedStatuses.insert(newStatus, at: index)
+            changeInStatuses = .addition(at: index)
         }
 
-        if let collectionView = vc.collectionView {
-            switch changeInActivities {
-            case .update(let index): vc.collectionView.reloadItems(at: index.asIndexPaths)
-            case .addition(let index): vc.collectionView.animator().insertItems(at: index.asIndexPaths)
-            }
-        }
+        return SignalProducer(value: (updatedStatuses, changeInStatuses))
     }
 
-    private lazy var removeSucceededActivities = BindingTarget<Void>(on: UIScheduler(), lifetime: lifetime) { [weak self] in
-        guard let vc = self else {
-            return
-        }
-
-        var toRemove = [Int]()
-        for index in vc.activities.startIndex ..< vc.activities.endIndex {
-            let activity = vc.activities[index]
-            if let status = vc.statuses[activity], status.isSuccess {
-                toRemove.append(index)
+    private lazy var cleanUpSuccessfulStatuses = Action<Void, ([ActivityStatus], [Int]), NoError>(state: activityStatuses) { currentStatuses in
+        var cleanedUpStatuses = [ActivityStatus]()
+        var indexesToRemove = [Int]()
+        for index in currentStatuses.startIndex ..< currentStatuses.endIndex {
+            let status = currentStatuses[index]
+            if status.isSuccessful {
+                indexesToRemove.append(index)
+            } else {
+                cleanedUpStatuses.append(status)
             }
         }
 
-        for index in toRemove.reversed() {
-            let activity = vc.activities.remove(at: index)
-            vc.statuses.removeValue(forKey: activity)
+        return SignalProducer(value: (cleanedUpStatuses, indexesToRemove))
+    }
+
+    private lazy var updateCollectionView = Action<ActivityStatusChange, Void, NoError> { [weak self] activityChange in
+        guard let vc = self,
+            let collectionView = vc.collectionView else {
+                return SignalProducer.empty
         }
 
-        if let collectionView = vc.collectionView {
-            collectionView.animator().deleteItems(at: Set(toRemove.map { $0.asIndexPath }))
+        switch activityChange {
+        case .update(let index): collectionView.reloadItems(at: index.asIndexPaths)
+        case .addition(let index): collectionView.animator().insertItems(at: index.asIndexPaths)
         }
-     }
+
+        return SignalProducer.empty
+    }
+
+    private lazy var removeItemsFromCollectionView = Action<[Int], Void, NoError> { [weak self] indexesToRemove in
+        guard let vc = self,
+            let collectionView = vc.collectionView else {
+                return SignalProducer.empty
+        }
+
+        let indexPaths = indexesToRemove.map { $0.asIndexPath }
+        collectionView.animator().deleteItems(at: Set(indexPaths))
+        return SignalProducer.empty
+    }
 
     @IBOutlet weak var collectionView: NSCollectionView!
 
@@ -110,7 +125,8 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
             collectionView.register(nib, forItemWithIdentifier: identifier)
         }
 
-        removeSucceededActivities <~ removeActivityDelayer
+        updateCollectionView.serialInput <~ updateActivityStatuses.values.map { $0.1 }.observe(on: UIScheduler())
+        removeItemsFromCollectionView.serialInput <~ cleanUpSuccessfulStatuses.values.map { $0.1 }.observe(on: UIScheduler())
 
         (collectionView.collectionViewLayout as! NSCollectionViewGridLayout).maximumNumberOfColumns = 1
         collectionView.reloadData()
@@ -124,24 +140,19 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        return activities.count
+        return activityStatuses.value.count
     }
 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        let activity = activities[indexPath.item]
-        guard let status = statuses[activity] else {
-            // Should never happen because the status for a given activity is
-            // always added to the `statuses` Dictionary upon reception.
-            fatalError("ActivityViewController error: status for activity \(String(describing: activity)) is not available at display time.")
-        }
+        let activityStatus = activityStatuses.value[indexPath.item]
 
         let item: NSCollectionViewItem
-        switch status {
+        switch activityStatus {
         case .executing:
             item = collectionView.makeItem(withIdentifier: RetrievalInProgressItemIdentifier, for: indexPath)
         case .succeeded:
             item = collectionView.makeItem(withIdentifier: RetrievalSuccessItemIdentifier, for: indexPath)
-        case .error(let error, let retryAction):
+        case .error(_, let error, let retryAction):
            item = collectionView.makeItem(withIdentifier: RetrievalErrorItemIdentifier, for: indexPath)
 
            if let errorItem = item as? ActivityCollectionViewErrorItem {
@@ -153,9 +164,9 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
         }
 
         if let activityDisplayingItem = item as? ActivityDisplaying {
-            activityDisplayingItem.setDisplayActivity(activity)
+            activityDisplayingItem.setDisplayActivity(activityStatus.activity)
         } else {
-            assert(false, "ActivityViewController error: expected an ActivityDisplayingItem registered to display items with \(status) status. Got (\(String(describing: item)) instead.")
+            assert(false, "ActivityViewController error: expected an ActivityDisplayingItem registered to display items with \(activityStatus) status. Got (\(String(describing: item)) instead.")
         }
 
         return item
@@ -163,11 +174,11 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
 }
 
 protocol ActivityDisplaying {
-    func setDisplayActivity(_ activity: RetrievalActivity)
+    func setDisplayActivity(_ activity: ActivityStatus.Activity)
 }
 
 fileprivate extension ActivityStatus {
-    var isSuccess: Bool {
+    var isSuccessful: Bool {
         switch self {
         case .succeeded: return true
         default: return false
@@ -186,34 +197,5 @@ fileprivate extension Array.Index {
     }
 }
 
-fileprivate class ResetableDelayer: BindingTargetProvider, BindingSource {
-    typealias Value = Void
-    typealias Error = NoError
-
-    let delay: TimeInterval
-    let lifetime: Lifetime
-    private let lifetimeToken: Lifetime.Token
-    var valueBindingTarget: BindingTarget<Value>!
-    let producer: SignalProducer<Value, NoError>
-    var bindingTarget: BindingTarget<Value> { return valueBindingTarget }
-    private var delayDisposable: Disposable?
-
-    init(with delay: TimeInterval) {
-        self.delay = delay
-        let (lifetime, token) = Lifetime.make()
-        self.lifetime = lifetime
-        lifetimeToken = token
-        let scheduler = QueueScheduler()
-        let pipe = Signal<Value, NoError>.pipe()
-        producer = SignalProducer(pipe.output)
-        valueBindingTarget = BindingTarget(on: scheduler, lifetime: lifetime) { [unowned self] in
-            if let previousDisposable = self.delayDisposable {
-                previousDisposable.dispose()
-            }
-            self.delayDisposable = scheduler.schedule(after: Date().addingTimeInterval(delay)) {
-                pipe.input.send(value: ())
-                self.delayDisposable = nil
-            }
-        }
     }
 }

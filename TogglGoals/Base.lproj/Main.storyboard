@@ -129,7 +129,7 @@
                                         <collectionView id="6hX-sj-cqp">
                                             <rect key="frame" x="0.0" y="0.0" width="178" height="158"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
-                                            <collectionViewGridLayout key="collectionViewLayout" maximumNumberOfColumns="1" id="65e-jk-VLl"/>
+                                            <collectionViewGridLayout key="collectionViewLayout" id="65e-jk-VLl"/>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="secondaryBackgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                             <connections>
