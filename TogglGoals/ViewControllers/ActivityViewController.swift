@@ -37,11 +37,9 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
                 fatalError("Inputs must not be connected more than once.")
             }
             self.activityStatuses <~ Signal.merge(self.updateActivityStatuses.values.map { $0.0 },
-                                                  self.cleanUpSuccessfulStatuses.values.map { $0.0 })
+                                                  self.cleanUpSuccessfulStatuses.values.map { $0.0 }).observe(on: UIScheduler())
 
             self.updateActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler)
-
-
 
             self.cleanUpSuccessfulStatuses.serialInput <~ source.filter { $0.isSuccessful }
                 .debounce(ActivityRemovalDelay, on: self.backgroundScheduler)
