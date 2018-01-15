@@ -31,7 +31,7 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
 
     private let backgroundScheduler = QueueScheduler()
 
-    internal func connectInputs(modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>) {
+    internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
         UIScheduler().schedule { [unowned self] in
             guard !self.inputsConnected else {
                 fatalError("Inputs must not be connected more than once.")
@@ -39,8 +39,17 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
             self.activityStatuses <~ Signal.merge(self.updateActivityStatuses.values.map { $0.0 },
                                                   self.cleanUpSuccessfulStatuses.values.map { $0.0 })
 
-            self.updateActivityStatuses.serialInput <~ modelRetrievalStatus.observe(on: self.backgroundScheduler)
-            self.cleanUpSuccessfulStatuses.serialInput <~ modelRetrievalStatus.filter { $0.isSuccessful }.debounce(ActivityRemovalDelay, on: self.backgroundScheduler).map { _ in () }
+            self.updateActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler)
+
+
+
+            self.cleanUpSuccessfulStatuses.serialInput <~ source.filter { $0.isSuccessful }
+                .debounce(ActivityRemovalDelay, on: self.backgroundScheduler)
+                .map { _ in () }
+
+            self.updateCollectionView.serialInput <~ Signal.merge(self.updateActivityStatuses.values.map { $0.1 },
+//                                                                  self.collapseSuccessfulStatuses.values.map { $0.1 }.skipNil(),
+                                                                  self.cleanUpSuccessfulStatuses.values.map { $0.1 }).observe(on: UIScheduler())
 
             self.inputsConnected = true
         }
@@ -52,70 +61,58 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
     private let activityStatuses = MutableProperty([ActivityStatus]())
-
-    enum ActivityStatusChange {
+    
+    private enum CollectionViewUpdate {
         case update(at: Int)
         case addition(at: Int)
+        case removal(of: Set<Int>)
     }
 
-    private lazy var updateActivityStatuses = Action<ActivityStatus, ([ActivityStatus], ActivityStatusChange), NoError>(state: activityStatuses) { (currentActivityStatuses, newStatus) in
+    private lazy var updateActivityStatuses = Action<ActivityStatus, ([ActivityStatus], CollectionViewUpdate), NoError>(state: activityStatuses) { (currentActivityStatuses, newStatus) in
 
         var updatedStatuses = currentActivityStatuses
-        let changeInStatuses: ActivityStatusChange
+        let change: CollectionViewUpdate
 
         if let index = updatedStatuses.index(where: { $0.activity == newStatus.activity }) {
             updatedStatuses[index] = newStatus
-            changeInStatuses = .update(at: index)
+            change = .update(at: index)
         } else {
             let index = updatedStatuses.endIndex
             updatedStatuses.insert(newStatus, at: index)
-            changeInStatuses = .addition(at: index)
+            change = .addition(at: index)
         }
 
-        return SignalProducer(value: (updatedStatuses, changeInStatuses))
+        return SignalProducer(value: (updatedStatuses, change))
     }
 
-    private lazy var cleanUpSuccessfulStatuses = Action<Void, ([ActivityStatus], [Int]), NoError>(state: activityStatuses) { currentStatuses in
+    private lazy var cleanUpSuccessfulStatuses = Action<Void, ([ActivityStatus], CollectionViewUpdate), NoError>(state: activityStatuses) { currentStatuses in
         var cleanedUpStatuses = [ActivityStatus]()
-        var indexesToRemove = [Int]()
+        var indexes = Set<Int>()
         for index in currentStatuses.startIndex ..< currentStatuses.endIndex {
             let status = currentStatuses[index]
             if status.isSuccessful {
-                indexesToRemove.append(index)
+                indexes.insert(index)
             } else {
                 cleanedUpStatuses.append(status)
             }
         }
 
-        return SignalProducer(value: (cleanedUpStatuses, indexesToRemove))
+        return SignalProducer(value: (cleanedUpStatuses, .removal(of: indexes)))
     }
 
-    private lazy var updateCollectionView = Action<ActivityStatusChange, Void, NoError> { [weak self] activityChange in
-        guard let vc = self,
-            let collectionView = vc.collectionView else {
-                return SignalProducer.empty
-        }
-
-        switch activityChange {
+    private lazy var updateCollectionView = Action<CollectionViewUpdate, Void, NoError>(unwrapping: collectionViewProperty) { (collectionView, collectionViewUpdate) in
+        switch collectionViewUpdate {
         case .update(let index): collectionView.reloadItems(at: index.asIndexPaths)
         case .addition(let index): collectionView.animator().insertItems(at: index.asIndexPaths)
+        case .removal(let indexes): collectionView.animator().deleteItems(at: indexes.asIndexPaths)
         }
 
-        return SignalProducer.empty
-    }
-
-    private lazy var removeItemsFromCollectionView = Action<[Int], Void, NoError> { [weak self] indexesToRemove in
-        guard let vc = self,
-            let collectionView = vc.collectionView else {
-                return SignalProducer.empty
-        }
-
-        let indexPaths = indexesToRemove.map { $0.asIndexPath }
-        collectionView.animator().deleteItems(at: Set(indexPaths))
         return SignalProducer.empty
     }
 
     @IBOutlet weak var collectionView: NSCollectionView!
+
+    let collectionViewProperty = MutableProperty<NSCollectionView?>(nil)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,8 +122,7 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
             collectionView.register(nib, forItemWithIdentifier: identifier)
         }
 
-        updateCollectionView.serialInput <~ updateActivityStatuses.values.map { $0.1 }.observe(on: UIScheduler())
-        removeItemsFromCollectionView.serialInput <~ cleanUpSuccessfulStatuses.values.map { $0.1 }.observe(on: UIScheduler())
+        collectionViewProperty.value = collectionView
 
         (collectionView.collectionViewLayout as! NSCollectionViewGridLayout).maximumNumberOfColumns = 1
         collectionView.reloadData()
@@ -201,5 +197,9 @@ fileprivate extension Array.Index {
     }
 }
 
+fileprivate extension Set where Element == Int {
+    var asIndexPaths: Set<IndexPath> {
+        return Set<IndexPath>(self.map { $0.asIndexPath })
     }
 }
+
