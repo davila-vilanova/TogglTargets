@@ -36,37 +36,54 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
             guard !self.inputsConnected else {
                 fatalError("Inputs must not be connected more than once.")
             }
-            self.activityStatuses <~ Signal.merge(self.updateActivityStatuses.values.map { $0.0 },
-                                                  self.cleanUpSuccessfulStatuses.values.map { $0.0 }).observe(on: UIScheduler())
 
-            self.updateActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler)
+            self.collectActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler).logEvents(identifier: "input", events: [.value])
+            self.collectedStatuses <~ self.collectActivityStatuses.values.map { $0.0 }
+
+            self.collapseAllStatusesIntoSuccess.serialInput <~ self.collectedStatuses.producer.filter {
+                let countAllActivities = 4
+                if $0.count < countAllActivities {
+                    return false
+                }
+                let areAllSuccessful = ($0.filter { $0.isSuccessful }.count) == $0.count
+                return areAllSuccessful
+                }
+                .map { _ in () }
 
             self.cleanUpSuccessfulStatuses.serialInput <~ source.filter { $0.isSuccessful }
                 .debounce(ActivityRemovalDelay, on: self.backgroundScheduler)
                 .map { _ in () }
 
-            self.updateCollectionView.serialInput <~ Signal.merge(self.updateActivityStatuses.values.map { $0.1 },
-//                                                                  self.collapseSuccessfulStatuses.values.map { $0.1 }.skipNil(),
-                                                                  self.cleanUpSuccessfulStatuses.values.map { $0.1 }).observe(on: UIScheduler())
+            self.displayStatuses <~ Signal.merge(self.collectActivityStatuses.values.map { $0.0 }.logEvents(identifier: "collect", events: [.value]),
+                                                 self.collapseAllStatusesIntoSuccess.values.map { $0.0 }.logEvents(identifier: "collapse", events: [.value]),
+                                                 self.cleanUpSuccessfulStatuses.values.map { $0.0 }.logEvents(identifier: "cleanup", events: [.value]))
+                .observe(on: UIScheduler())
+
+            self.updateCollectionView.serialInput <~ Signal.merge(self.collectActivityStatuses.values.map { $0.1 },
+                                                                  self.collapseAllStatusesIntoSuccess.values.map { $0.1 }.skipNil()
+                                                                    .map { SignalProducer($0) }.flatten(.concat),
+                                                                  self.cleanUpSuccessfulStatuses.values.map { $0.1 })
+                .observe(on: UIScheduler())
 
             self.inputsConnected = true
         }
     }
 
 
-    internal lazy var wantsDisplay = Property<Bool>(initial: false, then: activityStatuses.producer.map { !$0.isEmpty })
+    internal lazy var wantsDisplay = Property<Bool>(initial: false, then: displayStatuses.producer.map { !$0.isEmpty })
 
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
-    private let activityStatuses = MutableProperty([ActivityStatus]())
-    
+    private let collectedStatuses = MutableProperty([ActivityStatus]())
+    private let displayStatuses = MutableProperty([ActivityStatus]())
+
     private enum CollectionViewUpdate {
         case update(at: Int)
         case addition(at: Int)
         case removal(of: Set<Int>)
     }
 
-    private lazy var updateActivityStatuses = Action<ActivityStatus, ([ActivityStatus], CollectionViewUpdate), NoError>(state: activityStatuses) { (currentActivityStatuses, newStatus) in
+    private lazy var collectActivityStatuses = Action<ActivityStatus, ([ActivityStatus], CollectionViewUpdate), NoError>(state: collectedStatuses) { (currentActivityStatuses, newStatus) in
 
         var updatedStatuses = currentActivityStatuses
         let change: CollectionViewUpdate
@@ -83,7 +100,25 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
         return SignalProducer(value: (updatedStatuses, change))
     }
 
-    private lazy var cleanUpSuccessfulStatuses = Action<Void, ([ActivityStatus], CollectionViewUpdate), NoError>(state: activityStatuses) { currentStatuses in
+    private lazy var collapseAllStatusesIntoSuccess = Action<Void, ([ActivityStatus], [CollectionViewUpdate]?), NoError>(state: displayStatuses){ statuses in
+
+        var collectionViewUpdates = [CollectionViewUpdate]()
+
+        if statuses.endIndex > 1 {
+            var indexesToDelete = Set<Int>()
+            for index in 1 ..< statuses.endIndex {
+                indexesToDelete.insert(index)
+            }
+            collectionViewUpdates.append(.removal(of: indexesToDelete))
+        }
+
+        collectionViewUpdates.append(.update(at: 0))
+
+        return SignalProducer(value: ([ActivityStatus.allSuccessful], collectionViewUpdates))
+    }
+
+
+    private lazy var cleanUpSuccessfulStatuses = Action<Void, ([ActivityStatus], CollectionViewUpdate), NoError>(state: displayStatuses) { currentStatuses in
         var cleanedUpStatuses = [ActivityStatus]()
         var indexes = Set<Int>()
         for index in currentStatuses.startIndex ..< currentStatuses.endIndex {
@@ -134,11 +169,11 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        return activityStatuses.value.count
+        return displayStatuses.value.count
     }
 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        let activityStatus = activityStatuses.value[indexPath.item]
+        let activityStatus = displayStatuses.value[indexPath.item]
 
         let item: NSCollectionViewItem
         switch activityStatus {
