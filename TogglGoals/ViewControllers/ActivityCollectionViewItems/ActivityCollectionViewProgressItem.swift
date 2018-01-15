@@ -23,8 +23,9 @@ class ActivityCollectionViewProgressItem: NSCollectionViewItem, ActivityDisplayi
         case .retrieveProjects: retrievingWhat = "projects"
         case .retrieveReports: retrievingWhat = "reports"
         case .retrieveRunningEntry: retrievingWhat = "running entry"
+        case .retrieveAll: retrievingWhat = "data"
         }
 
-        progressDescriptionTextField.stringValue = "Retrieving \(retrievingWhat)"
+        progressDescriptionTextField.stringValue = "Synchronizing \(retrievingWhat)"
     }
 }

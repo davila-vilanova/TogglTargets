@@ -184,6 +184,10 @@ fileprivate extension ActivityStatus {
         default: return false
         }
     }
+
+    static var allSuccessful: ActivityStatus {
+        return ActivityStatus.succeeded(.retrieveAll)
+    }
 }
 
 fileprivate extension Array.Index {

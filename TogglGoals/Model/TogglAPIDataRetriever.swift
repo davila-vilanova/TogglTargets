@@ -82,6 +82,7 @@ enum ActivityStatus {
         case retrieveProjects
         case retrieveReports
         case retrieveRunningEntry
+        case retrieveAll
     }
 
     case executing(Activity)
