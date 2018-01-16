@@ -83,6 +83,8 @@ enum ActivityStatus {
         case retrieveReports
         case retrieveRunningEntry
         case retrieveAll
+
+        static var individualActivityCount = 4
     }
 
     case executing(Activity)

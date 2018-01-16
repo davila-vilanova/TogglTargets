@@ -37,29 +37,31 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
                 fatalError("Inputs must not be connected more than once.")
             }
 
-            self.collectActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler).logEvents(identifier: "input", events: [.value])
-            self.collectedStatuses <~ self.collectActivityStatuses.values.map { $0.0 }
-
-            self.collapseAllStatusesIntoSuccess.serialInput <~ self.collectedStatuses.producer.filter {
-                let countAllActivities = 4
-                if $0.count < countAllActivities {
+            func areStatusesCollapsable(_ statuses: [ActivityStatus]) -> Bool {
+                if statuses.count < ActivityStatus.Activity.individualActivityCount {
                     return false
                 }
-                let areAllSuccessful = ($0.filter { $0.isSuccessful }.count) == $0.count
-                return areAllSuccessful
-                }
-                .map { _ in () }
+                return (statuses.filter { $0.isSuccessful }.count) == statuses.count
+            }
+
+            let unfilteredCollectStatusesOutput = self.collectActivityStatuses.values
+            let filteredCollectStatusesOutput = unfilteredCollectStatusesOutput.filter { !areStatusesCollapsable($0.0) }
+
+            self.collectActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler)
+            self.collectedStatuses <~ unfilteredCollectStatusesOutput.map { $0.0 }
+
+            self.collapseAllStatusesIntoSuccess.serialInput <~ self.collectedStatuses.producer.filter(areStatusesCollapsable).map { _ in () }
 
             self.cleanUpSuccessfulStatuses.serialInput <~ source.filter { $0.isSuccessful }
                 .debounce(ActivityRemovalDelay, on: self.backgroundScheduler)
                 .map { _ in () }
 
-            self.displayStatuses <~ Signal.merge(self.collectActivityStatuses.values.map { $0.0 }.logEvents(identifier: "collect", events: [.value]),
-                                                 self.collapseAllStatusesIntoSuccess.values.map { $0.0 }.logEvents(identifier: "collapse", events: [.value]),
-                                                 self.cleanUpSuccessfulStatuses.values.map { $0.0 }.logEvents(identifier: "cleanup", events: [.value]))
+            self.displayStatuses <~ Signal.merge(filteredCollectStatusesOutput.map { $0.0 },
+                                                 self.collapseAllStatusesIntoSuccess.values.map { $0.0 },
+                                                 self.cleanUpSuccessfulStatuses.values.map { $0.0 })
                 .observe(on: UIScheduler())
 
-            self.updateCollectionView.serialInput <~ Signal.merge(self.collectActivityStatuses.values.map { $0.1 },
+            self.updateCollectionView.serialInput <~ Signal.merge(filteredCollectStatusesOutput.map { $0.1 },
                                                                   self.collapseAllStatusesIntoSuccess.values.map { $0.1 }.skipNil()
                                                                     .map { SignalProducer($0) }.flatten(.concat),
                                                                   self.cleanUpSuccessfulStatuses.values.map { $0.1 })
