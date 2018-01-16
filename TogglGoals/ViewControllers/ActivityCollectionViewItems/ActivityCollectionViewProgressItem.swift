@@ -19,11 +19,11 @@ class ActivityCollectionViewProgressItem: NSCollectionViewItem, ActivityDisplayi
         let retrievingWhat: String
 
         switch activity {
-        case .retrieveProfile: retrievingWhat = "profile"
-        case .retrieveProjects: retrievingWhat = "projects"
-        case .retrieveReports: retrievingWhat = "reports"
-        case .retrieveRunningEntry: retrievingWhat = "running entry"
-        case .retrieveAll: retrievingWhat = "data"
+        case .syncProfile: retrievingWhat = "profile"
+        case .syncProjects: retrievingWhat = "projects"
+        case .syncReports: retrievingWhat = "reports"
+        case .syncRunningEntry: retrievingWhat = "running entry"
+        case .all: retrievingWhat = "data"
         }
 
         progressDescriptionTextField.stringValue = "Synchronizing \(retrievingWhat)"

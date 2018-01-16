@@ -21,11 +21,11 @@ class ActivityCollectionViewErrorItem: NSCollectionViewItem, ActivityDisplaying 
         let retrieveWhat: String
 
         switch activity {
-        case .retrieveProfile: retrieveWhat = "profile"
-        case .retrieveProjects: retrieveWhat = "projects"
-        case .retrieveReports: retrieveWhat = "reports"
-        case .retrieveRunningEntry: retrieveWhat = "running entry"
-        case .retrieveAll: retrieveWhat = "data from Toggl"
+        case .syncProfile: retrieveWhat = "profile"
+        case .syncProjects: retrieveWhat = "projects"
+        case .syncReports: retrieveWhat = "reports"
+        case .syncRunningEntry: retrieveWhat = "running entry"
+        case .all: retrieveWhat = "data from Toggl"
         }
 
         failureDescriptionTextField.stringValue = "Failed to retrieve \(retrieveWhat)"

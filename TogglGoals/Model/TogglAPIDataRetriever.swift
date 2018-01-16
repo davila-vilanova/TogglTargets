@@ -78,11 +78,11 @@ typealias RetryAction = Action<Void, Void, NoError>
 // Represents the status of a given activity
 enum ActivityStatus {
     enum Activity {
-        case retrieveProfile
-        case retrieveProjects
-        case retrieveReports
-        case retrieveRunningEntry
-        case retrieveAll
+        case syncProfile
+        case syncProjects
+        case syncReports
+        case syncRunningEntry
+        case all
 
         static var individualActivityCount = 4
     }
@@ -249,10 +249,10 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
                 return extractStatus(from: action, for: activity, retryErrorsWith: SignalProducer(value: ()))
         }
 
-        return SignalProducer.merge(extractStatus(from: retrieveProfileNetworkAction, for: .retrieveProfile),
-                                    extractStatus(from: retrieveProjectsNetworkAction, for: .retrieveProjects, retryErrorsWith: workspaceIDs),
-                                    extractStatus(from: retrieveReportsNetworkAction, for: .retrieveReports, retryErrorsWith: SignalProducer.combineLatest(workspaceIDs, _twoPartReportPeriod.producer.skipNil())),
-                                    extractStatus(from: retrieveRunningEntryNetworkAction, for: .retrieveRunningEntry))
+        return SignalProducer.merge(extractStatus(from: retrieveProfileNetworkAction, for: .syncProfile),
+                                    extractStatus(from: retrieveProjectsNetworkAction, for: .syncProjects, retryErrorsWith: workspaceIDs),
+                                    extractStatus(from: retrieveReportsNetworkAction, for: .syncReports, retryErrorsWith: SignalProducer.combineLatest(workspaceIDs, _twoPartReportPeriod.producer.skipNil())),
+                                    extractStatus(from: retrieveRunningEntryNetworkAction, for: .syncRunningEntry))
     }()
 
 

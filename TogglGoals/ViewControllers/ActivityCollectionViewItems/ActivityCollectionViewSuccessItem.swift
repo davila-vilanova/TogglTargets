@@ -16,11 +16,11 @@ class ActivityCollectionViewSuccessItem: NSCollectionViewItem, ActivityDisplayin
         let retrievedWhat: String
 
         switch activity {
-        case .retrieveProfile: retrievedWhat = "Profile"
-        case .retrieveProjects: retrievedWhat = "Projects"
-        case .retrieveReports: retrievedWhat = "Reports"
-        case .retrieveRunningEntry: retrievedWhat = "Running entry"
-        case .retrieveAll: retrievedWhat = "All data"
+        case .syncProfile: retrievedWhat = "Profile"
+        case .syncProjects: retrievedWhat = "Projects"
+        case .syncReports: retrievedWhat = "Reports"
+        case .syncRunningEntry: retrievedWhat = "Running entry"
+        case .all: retrievedWhat = "All data"
         }
 
         successDescriptionTextField.stringValue = "\(retrievedWhat) synchronized"

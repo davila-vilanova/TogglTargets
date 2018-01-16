@@ -217,7 +217,7 @@ fileprivate extension ActivityStatus {
     }
 
     static var allSuccessful: ActivityStatus {
-        return ActivityStatus.succeeded(.retrieveAll)
+        return ActivityStatus.succeeded(.all)
     }
 }
 
