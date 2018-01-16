@@ -32,11 +32,8 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
     private let backgroundScheduler = QueueScheduler()
 
     internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
-        UIScheduler().schedule { [unowned self] in
-            guard !self.inputsConnected else {
-                fatalError("Inputs must not be connected more than once.")
-            }
 
+        func setUpInternalConnections() {
             func areStatusesCollapsable(_ statuses: [ActivityStatus]) -> Bool {
                 if statuses.count < ActivityStatus.Activity.individualActivityCount {
                     return false
@@ -44,36 +41,44 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
                 return (statuses.filter { $0.isSuccessful }.count) == statuses.count
             }
 
-            let unfilteredCollectStatusesOutput = self.collectActivityStatuses.values
+            let unfilteredCollectStatusesOutput = collectActivityStatuses.values
             let filteredCollectStatusesOutput = unfilteredCollectStatusesOutput.filter { !areStatusesCollapsable($0.0) }
 
+            collectedStatuses <~ Signal.merge(unfilteredCollectStatusesOutput.map { $0.0 },
+                                              cleanUpCollectedSuccessfulStatuses.values)
+
+            collapseAllStatusesIntoSuccess.serialInput <~ collectedStatuses.producer.logEvents(identifier: "collected", events: [.value]).filter(areStatusesCollapsable).map { _ in () }
+
+
+            cleanUpCollectedSuccessfulStatuses <~ cleanUpDisplayedSuccessfulStatuses.values.map { _ in ()}
+
+            displayStatuses <~ Signal.merge(filteredCollectStatusesOutput.map { $0.0 },
+                                            collapseAllStatusesIntoSuccess.values.map { $0.0 },
+                                            cleanUpDisplayedSuccessfulStatuses.values.map { $0.0 })
+                .observe(on: UIScheduler())
+
+            updateCollectionView.serialInput <~ Signal.merge(filteredCollectStatusesOutput.map { $0.1 },
+                                                             collapseAllStatusesIntoSuccess.values.map { $0.1 }.skipNil()
+                                                                .map { SignalProducer($0) }.flatten(.concat),
+                                                             cleanUpDisplayedSuccessfulStatuses.values.map { $0.1 })
+                .observe(on: UIScheduler())
+
+        }
+
+        UIScheduler().schedule { [unowned self] in
+            guard !self.inputsConnected else {
+                fatalError("Inputs must not be connected more than once.")
+            }
+            setUpInternalConnections()
+
             self.collectActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler)
-            self.collectedStatuses <~ Signal.merge(unfilteredCollectStatusesOutput.map { $0.0 },
-                                                   self.cleanUpCollectedSuccessfulStatuses.values)
-
-            self.collapseAllStatusesIntoSuccess.serialInput <~ self.collectedStatuses.producer.logEvents(identifier: "collected", events: [.value]).filter(areStatusesCollapsable).map { _ in () }
-
             self.cleanUpDisplayedSuccessfulStatuses.serialInput <~ source.filter { $0.isSuccessful }
                 .debounce(ActivityRemovalDelay, on: self.backgroundScheduler)
                 .map { _ in () }
 
-            self.cleanUpCollectedSuccessfulStatuses <~ self.cleanUpDisplayedSuccessfulStatuses.values.map { _ in ()}
-
-            self.displayStatuses <~ Signal.merge(filteredCollectStatusesOutput.map { $0.0 },
-                                                 self.collapseAllStatusesIntoSuccess.values.map { $0.0 },
-                                                 self.cleanUpDisplayedSuccessfulStatuses.values.map { $0.0 })
-                .observe(on: UIScheduler())
-
-            self.updateCollectionView.serialInput <~ Signal.merge(filteredCollectStatusesOutput.map { $0.1 },
-                                                                  self.collapseAllStatusesIntoSuccess.values.map { $0.1 }.skipNil()
-                                                                    .map { SignalProducer($0) }.flatten(.concat),
-                                                                  self.cleanUpDisplayedSuccessfulStatuses.values.map { $0.1 })
-                .observe(on: UIScheduler())
-
             self.inputsConnected = true
         }
     }
-
 
     internal lazy var wantsDisplay = Property<Bool>(initial: false, then: displayStatuses.producer.map { !$0.isEmpty })
 
