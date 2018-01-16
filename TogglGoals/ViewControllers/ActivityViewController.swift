@@ -47,7 +47,7 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
             collectedStatuses <~ Signal.merge(unfilteredCollectStatusesOutput.map { $0.0 },
                                               cleanUpCollectedSuccessfulStatuses.values)
 
-            collapseAllStatusesIntoSuccess.serialInput <~ collectedStatuses.producer.logEvents(identifier: "collected", events: [.value]).filter(areStatusesCollapsable).map { _ in () }
+            collapseAllStatusesIntoSuccess.serialInput <~ collectedStatuses.producer.filter(areStatusesCollapsable).map { _ in () }
 
 
             cleanUpCollectedSuccessfulStatuses <~ cleanUpDisplayedSuccessfulStatuses.values.map { _ in ()}
