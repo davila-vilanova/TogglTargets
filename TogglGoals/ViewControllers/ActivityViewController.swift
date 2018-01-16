@@ -48,23 +48,26 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
             let filteredCollectStatusesOutput = unfilteredCollectStatusesOutput.filter { !areStatusesCollapsable($0.0) }
 
             self.collectActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler)
-            self.collectedStatuses <~ unfilteredCollectStatusesOutput.map { $0.0 }
+            self.collectedStatuses <~ Signal.merge(unfilteredCollectStatusesOutput.map { $0.0 },
+                                                   self.cleanUpCollectedSuccessfulStatuses.values)
 
-            self.collapseAllStatusesIntoSuccess.serialInput <~ self.collectedStatuses.producer.filter(areStatusesCollapsable).map { _ in () }
+            self.collapseAllStatusesIntoSuccess.serialInput <~ self.collectedStatuses.producer.logEvents(identifier: "collected", events: [.value]).filter(areStatusesCollapsable).map { _ in () }
 
-            self.cleanUpSuccessfulStatuses.serialInput <~ source.filter { $0.isSuccessful }
+            self.cleanUpDisplayedSuccessfulStatuses.serialInput <~ source.filter { $0.isSuccessful }
                 .debounce(ActivityRemovalDelay, on: self.backgroundScheduler)
                 .map { _ in () }
 
+            self.cleanUpCollectedSuccessfulStatuses <~ self.cleanUpDisplayedSuccessfulStatuses.values.map { _ in ()}
+
             self.displayStatuses <~ Signal.merge(filteredCollectStatusesOutput.map { $0.0 },
                                                  self.collapseAllStatusesIntoSuccess.values.map { $0.0 },
-                                                 self.cleanUpSuccessfulStatuses.values.map { $0.0 })
+                                                 self.cleanUpDisplayedSuccessfulStatuses.values.map { $0.0 })
                 .observe(on: UIScheduler())
 
             self.updateCollectionView.serialInput <~ Signal.merge(filteredCollectStatusesOutput.map { $0.1 },
                                                                   self.collapseAllStatusesIntoSuccess.values.map { $0.1 }.skipNil()
                                                                     .map { SignalProducer($0) }.flatten(.concat),
-                                                                  self.cleanUpSuccessfulStatuses.values.map { $0.1 })
+                                                                  self.cleanUpDisplayedSuccessfulStatuses.values.map { $0.1 })
                 .observe(on: UIScheduler())
 
             self.inputsConnected = true
@@ -119,12 +122,15 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
         return SignalProducer(value: ([ActivityStatus.allSuccessful], collectionViewUpdates))
     }
 
+    private lazy var cleanUpCollectedSuccessfulStatuses = Action<Void, [ActivityStatus], NoError>(state: collectedStatuses) { statuses in
+        return SignalProducer(value: statuses.filter { !$0.isSuccessful })
+    }
 
-    private lazy var cleanUpSuccessfulStatuses = Action<Void, ([ActivityStatus], CollectionViewUpdate), NoError>(state: displayStatuses) { currentStatuses in
+    private lazy var cleanUpDisplayedSuccessfulStatuses = Action<Void, ([ActivityStatus], CollectionViewUpdate), NoError>(state: displayStatuses) { statuses in
         var cleanedUpStatuses = [ActivityStatus]()
         var indexes = Set<Int>()
-        for index in currentStatuses.startIndex ..< currentStatuses.endIndex {
-            let status = currentStatuses[index]
+        for index in statuses.startIndex ..< statuses.endIndex {
+            let status = statuses[index]
             if status.isSuccessful {
                 indexes.insert(index)
             } else {
