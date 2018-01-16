@@ -198,10 +198,14 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// by executing the underlying retrieveRunningEntryNetworkAction.
     /// This `Action` is only enabled if an API credential is available and if the underlying action is enabled.
     lazy var updateRunningEntry: RefreshAction = {
-        let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveRunningEntryNetworkAction.isEnabled)) { _ in
-            SignalProducer(value: ())
+        let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveRunningEntryNetworkAction.isEnabled)) { [weak self] _ in
+            guard let retriever = self else {
+                return SignalProducer.empty
+            }
+
+            retriever.retrieveRunningEntryNetworkAction <~ SignalProducer(value: ())
+            return SignalProducer.empty
         }
-        retrieveRunningEntryNetworkAction <~ SignalProducer(value: ())
         return action
     }()
 
