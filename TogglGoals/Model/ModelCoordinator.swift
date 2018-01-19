@@ -97,13 +97,7 @@ internal class ModelCoordinator: NSObject {
     var updateRunningEntry: RefreshAction { return togglDataRetriever.updateRunningEntry }
 
     /// Used to schedule the next automatic refresh of the currently running entry.
-    private lazy var runningEntryUpdateTimer: RunningEntryUpdateTimer = {
-        let t = RunningEntryUpdateTimer()
-        t.runningEntryStart <~ runningEntry.map { $0?.start }
-        currentDateGenerator.updateTrigger <~ t.updateRunningEntry
-        updateRunningEntry <~ t.updateRunningEntry.producer.map { _ in () }
-        return t
-    }()
+    private lazy var runningEntryUpdateTimer: RunningEntryUpdateTimer = RunningEntryUpdateTimer()
 
 
     // MARK: - Goals
@@ -161,6 +155,9 @@ internal class ModelCoordinator: NSObject {
         reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
         togglDataRetriever.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod.skipRepeats()
         currentDateGenerator.updateTrigger <~ retrievalStatus.map { _ in () }.throttle(1.0, on: QueueScheduler())
+
+        runningEntryUpdateTimer.lastEntryStart <~ runningEntry.map { $0?.start }
+        updateRunningEntry <~ runningEntryUpdateTimer.trigger
     }
 }
 
@@ -173,7 +170,7 @@ fileprivate class RunningEntryUpdateTimer {
 
     /// Binding target to receive the start date of the currently running entry,
     /// or `nil` if there is no running entry currently running.
-    lazy var runningEntryStart: BindingTarget<Date?> = BindingTarget(on: scheduler, lifetime: lifetime) { [unowned self] (runningEntryStartDate: Date?) in
+    lazy var lastEntryStart: BindingTarget<Date?> = BindingTarget(on: scheduler, lifetime: lifetime) { [unowned self] (runningEntryStartDate: Date?) in
         let oneMinute = TimeInterval.from(minutes: 1)
         let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
 
@@ -195,7 +192,7 @@ fileprivate class RunningEntryUpdateTimer {
     }
 
     /// Emits empty values that act as triggers to update the currently running entry
-    var updateRunningEntry: Signal<(), NoError> { return updateRunningEntryPipe.output }
+    var trigger: Signal<(), NoError> { return updateRunningEntryPipe.output }
 
     /// The pipe used to convey values to `updateRunningEntry`
     private let updateRunningEntryPipe = Signal<(), NoError>.pipe()
