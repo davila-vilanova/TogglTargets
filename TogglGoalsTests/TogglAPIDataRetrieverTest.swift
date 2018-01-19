@@ -150,6 +150,10 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         testRetrieval(of: retrievedProfile, satisfying: { XCTAssertEqual($0, testProfile) }, after: feedAPICredentialIntoDataRetriever)
     }
 
+    func testRunningEntryIsRetrievedWhenAPICredentialBecomesAvailable() {
+        testRetrieval(of: retrievedRunningEntry, satisfying: { XCTAssertEqual($0, testRunningEntry) }, after: feedAPICredentialIntoDataRetriever)
+    }
+
     func testProjectsAreRetrievedWhenWorkspaceIDsBecomeAvailable() {
         testRetrieval(of: retrievedProjects, satisfying: { XCTAssertEqual($0, testProjects) }, after: feedAPICredentialIntoDataRetriever)
     }
@@ -161,7 +165,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         }
     }
 
-    func testRetrieveTimeEntryOnDemand() {
+    func testRetrieveRunningEntryOnDemand() {
         testRetrieval(of: retrievedRunningEntry, satisfying: {
             XCTAssertEqual($0.id, testRunningEntry.id)
             XCTAssertEqual($0.projectId, testRunningEntry.projectId)
