@@ -159,7 +159,8 @@ internal class ModelCoordinator: NSObject {
         self.goalsStore.projectIDs <~ self.togglDataRetriever.projects.producer.skipNil().map { [ProjectID]($0.keys) }
         reportPeriodsProducer.calendar <~ _calendar.producer.skipNil()
         reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
-        togglDataRetriever.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod
+        togglDataRetriever.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod.skipRepeats()
+        currentDateGenerator.updateTrigger <~ retrievalStatus.map { _ in () }.throttle(1.0, on: QueueScheduler())
     }
 }
 

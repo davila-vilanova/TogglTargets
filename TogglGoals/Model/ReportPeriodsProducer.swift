@@ -46,6 +46,12 @@ struct TwoPartTimeReportPeriod {
     }
 }
 
+extension TwoPartTimeReportPeriod: Equatable {
+    static func ==(lhs: TwoPartTimeReportPeriod, rhs: TwoPartTimeReportPeriod) -> Bool {
+        return lhs.scope == rhs.scope && lhs.previousToDayOfRequest == rhs.previousToDayOfRequest && lhs.dayOfRequest == rhs.dayOfRequest
+    }
+}
+
 /// Produces `TwoPartTimeReportPeriod` values based on the incoming `PeriodPreference`, `currentDate`
 /// and `calendar` values.
 class ReportPeriodsProducer {
