@@ -73,8 +73,9 @@ class TogglAPIDataRetrieverTest: XCTestCase {
     var retrievedProjects: Property<IndexedProjects?>!
     var retrievedReports: Property<IndexedTwoPartTimeReports?>!
     var retrievedRunningEntry: Property<RunningEntry?>!
+    var lastActivity: Property<ActivityStatus?>!
     var lastError: Property<APIAccessError?>!
-    var currentActivities: Property<Set<RetrievalActivity>>!
+
 
     // MARK: - Set up
 
@@ -115,23 +116,23 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         retrievedProjects = nil
         retrievedReports = nil
         retrievedRunningEntry = nil
+        lastActivity = nil
         lastError = nil
-        currentActivities = nil
     }
 
     private func makeDataRetriever() {
-        dataRetriever = CachedTogglAPIDataRetriever(retrieveProfileNetworkAction: retrieveProfileNetworkAction,
+        dataRetriever = CachedTogglAPIDataRetriever(retrieveProfileNetworkActionMaker: { [action = retrieveProfileNetworkAction!] _ in action },
                                                     retrieveProfileCacheAction: retrieveProfileCacheAction,
                                                     storeProfileCacheAction: storeProfileCacheAction,
-                                                    retrieveProjectsNetworkActionMaker: { [unowned self] _ in self.retrieveProjectsNetworkAction },
-                                                    retrieveReportsNetworkActionMaker: { [unowned self] _ in self.retrieveReportsNetworkAction },
-                                                    retrieveRunningEntryNetworkAction: retrieveRunningEntryAction)
+                                                    retrieveProjectsNetworkActionMaker: { [action = retrieveProjectsNetworkAction!] _ in action },
+                                                    retrieveReportsNetworkActionMaker: { [action = retrieveReportsNetworkAction!] _ in action },
+                                                    retrieveRunningEntryNetworkActionMaker: { [action = retrieveRunningEntryAction!] _ in action })
         retrievedProfile = Property(initial: nil, then: dataRetriever.profile.producer)
         retrievedProjects = Property(initial: nil, then: dataRetriever.projects.producer)
         retrievedReports = Property(initial: nil, then: dataRetriever.reports.producer)
         retrievedRunningEntry = Property(initial: nil, then: dataRetriever.runningEntry.producer)
-        lastError = Property(initial: nil, then: dataRetriever.errors.producer)
-        currentActivities = Property(initial: Set<RetrievalActivity>(), then: dataRetriever.currentActivities.producer)
+        lastActivity = Property(initial: nil, then: dataRetriever.status)
+        lastError = Property(initial: nil, then: dataRetriever.status.map { $0.error }.skipNil())
     }
 
     private func feedAPICredentialIntoDataRetriever() {
@@ -357,18 +358,57 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         setUpExpectationFulfillment(for: retrieveReportsNetworkAction, start: reportsActionExecutionStartedExpectation, end: reportsActionExecutionEndedExpectation)
         setUpExpectationFulfillment(for: retrieveRunningEntryAction, start: runningEntryActionExecutionStartedExpectation, end: runningEntryActionExecutionEndedExpectation)
 
-        XCTAssertEqual(currentActivities.value, Set<RetrievalActivity>())
+        let profileActivityStatus = Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncProfile })
+        let projectsActivityStatus = Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncProjects })
+        let reportsActivityStatus = Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncReports })
+        let runningEntryActivityStatus = Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncRunningEntry })
+
+        XCTAssertNil(lastActivity.value)
+        XCTAssertNil(profileActivityStatus.value)
+        XCTAssertNil(projectsActivityStatus.value)
+        XCTAssertNil(reportsActivityStatus.value)
+        XCTAssertNil(runningEntryActivityStatus.value)
+
+        feedTwoPartPeriodIntoDataRetriever()
+
+
+        // First stage: feed API credentials, retrieve profile and running entry
 
         feedAPICredentialIntoDataRetriever()
-        feedTwoPartPeriodIntoDataRetriever()
         wait(for: [profileActionExecutionStartedExpectation], timeout: timeoutForExpectations)
-        XCTAssertEqual(currentActivities.value, Set<RetrievalActivity>([.profile]))
+        wait(for: [runningEntryActionExecutionStartedExpectation], timeout: timeoutForExpectations)
+
+        XCTAssertNotNil(profileActivityStatus.value)
+        XCTAssertEqual(profileActivityStatus.value?.isExecuting, true)
+        XCTAssertNotNil(runningEntryActivityStatus.value)
+        XCTAssertEqual(runningEntryActivityStatus.value?.isExecuting, true)
+        XCTAssertNil(projectsActivityStatus.value)
+        XCTAssertNil(reportsActivityStatus.value)
+
+
+        // Second stage: profile retrieved, retrieve projects and reports
 
         profilePipe.input.send(value: testProfile)
         profilePipe.input.sendCompleted()
         wait(for: [profileActionExecutionEndedExpectation, projectsActionExecutionStartedExpectation, reportsActionExecutionStartedExpectation], timeout: timeoutForExpectations)
 
-        XCTAssertEqual(currentActivities.value, Set<RetrievalActivity>([.projects, .reports]))
+        XCTAssertEqual(profileActivityStatus.value?.isSuccessful, true) // profile value fed means profile retrieval successful
+        XCTAssertEqual(runningEntryActivityStatus.value?.isExecuting, true) // no running entry value fed means still executing
+        XCTAssertNotNil(projectsActivityStatus.value)
+        XCTAssertEqual(projectsActivityStatus.value?.isExecuting, true)
+        XCTAssertNotNil(reportsActivityStatus.value)
+        XCTAssertEqual(reportsActivityStatus.value?.isExecuting, true)
+
+
+        // Feed running entry at this point and assess activity is successfully completed
+
+        runningEntryPipe.input.send(value: testRunningEntry)
+        runningEntryPipe.input.sendCompleted()
+        wait(for: [runningEntryActionExecutionEndedExpectation], timeout: timeoutForExpectations)
+        XCTAssertEqual(runningEntryActivityStatus.value?.isSuccessful, true)
+
+        
+        // Third stage: project and reports retrieved
 
         projectsPipe.input.send(value: testProjects)
         projectsPipe.input.sendCompleted()
@@ -376,16 +416,10 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         reportsPipe.input.sendCompleted()
 
         wait(for: [projectsActionExecutionEndedExpectation, reportsActionExecutionEndedExpectation], timeout: timeoutForExpectations)
-        XCTAssertEqual(currentActivities.value, Set<RetrievalActivity>())
-
-        dataRetriever.updateRunningEntry <~ SignalProducer(value: ())
-        wait(for: [runningEntryActionExecutionStartedExpectation], timeout: timeoutForExpectations)
-        XCTAssertEqual(currentActivities.value, Set<RetrievalActivity>([.runningEntry]))
-
-        runningEntryPipe.input.send(value: testRunningEntry)
-        runningEntryPipe.input.sendCompleted()
-        wait(for: [runningEntryActionExecutionEndedExpectation], timeout: timeoutForExpectations)
-        XCTAssertEqual(currentActivities.value, Set<RetrievalActivity>())
+        XCTAssertNotNil(projectsActivityStatus.value)
+        XCTAssertEqual(projectsActivityStatus.value?.isSuccessful, true)
+        XCTAssertNotNil(reportsActivityStatus.value)
+        XCTAssertEqual(reportsActivityStatus.value?.isSuccessful, true)
     }
 
 
@@ -397,9 +431,12 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         }
 
         retrieveProfileCacheAction = RetrieveProfileCacheAction { _ in
-            XCTAssertFalse(Thread.current.isMainThread)
-            Thread.sleep(forTimeInterval: 0.250)
-            return SignalProducer(value: testProfile)
+            let scheduler = QueueScheduler()
+            let pipe = Signal<Profile, NoError>.pipe()
+            scheduler.schedule(after: Date().addingTimeInterval(0.250)) {
+                pipe.input.send(value: testProfile)
+            }
+            return pipe.output.producer.map { Optional($0) }
         }
 
         testRetrieval(of: retrievedProfile, satisfying: { XCTAssertEqual($0, testProfile) }, after: { })

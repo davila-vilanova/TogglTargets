@@ -220,13 +220,6 @@ protocol ActivityDisplaying {
 }
 
 fileprivate extension ActivityStatus {
-    var isSuccessful: Bool {
-        switch self {
-        case .succeeded: return true
-        default: return false
-        }
-    }
-
     static var allSuccessful: ActivityStatus {
         return ActivityStatus.succeeded(.all)
     }

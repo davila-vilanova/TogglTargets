@@ -98,6 +98,56 @@ enum ActivityStatus {
         case .error(let activity, _, _): return activity
         }
     }
+
+    var isExecuting: Bool {
+        switch self {
+        case .executing(_): return true
+        default: return false
+        }
+    }
+
+    var isSuccessful: Bool {
+        switch self {
+        case .succeeded: return true
+        default: return false
+        }
+    }
+
+    var isError: Bool {
+        switch self {
+        case .error(_, _, _): return true
+        default: return false
+        }
+    }
+
+    var error: APIAccessError? {
+        switch self {
+        case .error(_, let err, _): return err
+        default: return nil
+        }
+    }
+}
+
+extension ActivityStatus: Hashable {
+    static func ==(lhs: ActivityStatus, rhs: ActivityStatus) -> Bool {
+        if lhs.activity != rhs.activity {
+            return false
+        }
+
+        switch lhs {
+        case .executing(_): return rhs.isExecuting
+        case .succeeded(_): return rhs.isSuccessful
+        case .error(_, _, _): return rhs.isError // Error and retryAction themselves don't contribute to equality
+        }
+    }
+
+    var hashValue: Int {
+        switch self {
+        case .executing(let activity): return activity.hashValue &* 829601
+        case .succeeded(let activity): return activity.hashValue &* 829613
+        case .error(let activity, _, _): return activity.hashValue &* 829627
+        }
+    }
 }
 
 
@@ -263,8 +313,10 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// Initializes a `CachedTogglAPIDataRetriever` that will use the provided actions to fetch data from
     /// the Toggl API and from the local cache, and to store data into the local cache.
     /// - parameters:
-    ///   - retrieveProfileNetworkAction: The `Action` used to retrieve profiles
-    ///                                   from the Toggl API.
+    ///   - retrieveProfileNetworkActionMaker: A `RetrieveProfileNetworkActionMaker`
+    ///                                        to generate the `Action` used to
+    ///                                        retrieve the user profile from the
+    ///                                        Toggl API.
     ///   - retrieveProfileCacheAction: The `Action` used to retrieve profiles
     ///                                 from the local cache.
     ///   - storeProfileCacheAction: The `Action` used to store profiles into the
@@ -275,9 +327,10 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     ///   - retrieveReportsNetworkActionMaker: A `RetrieveProjectsNetworkActionMaker`
     ///                                        to generate the `Action` used to
     ///                                        retrieve reports from the Toggl API.
-    ///   - retrieveRunningEntryNetworkAction: The `Action` used to retrieve the
-    ///                                        currently running time entry from
-    ///                                        the Toggl API.
+    ///   - retrieveRunningEntryNetworkActionMaker: A `RetrieveRunningEntryNetworkActionMaker`
+    ///                                             to generate the `Action` used
+    ///                                             to retrieve the currently running
+    ///                                             time entry from the Toggl API.
     init(retrieveProfileNetworkActionMaker: RetrieveProfileNetworkActionMaker,
          retrieveProfileCacheAction: RetrieveProfileCacheAction,
          storeProfileCacheAction: StoreProfileCacheAction,
@@ -309,5 +362,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         retrieveReportsNetworkAction <~ SignalProducer.combineLatest(workspaceIDs,
                                                                      _twoPartReportPeriod.producer.skipNil())
             .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
+
+        // Nudge retrieve cache actions to pump the pipes
+        retrieveProfileCacheAction <~ SignalProducer(value: ())
     }
 }
