@@ -8,9 +8,6 @@
          location = "group:ActionChaining.playground">
       </FileRef>
       <FileRef
-         location = "group:ActivityIndication.playground">
-      </FileRef>
-      <FileRef
          location = "group:ApplyActionSerially.playground">
       </FileRef>
       <FileRef
