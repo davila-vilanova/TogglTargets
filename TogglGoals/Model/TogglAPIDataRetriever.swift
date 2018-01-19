@@ -65,6 +65,8 @@ protocol TogglAPIDataRetriever: class {
     /// Triggers and attempt to retrieve the currently running time entry.
     var updateRunningEntry: RefreshAction { get }
 
+    /// Triggers and attempt to refresh the reports from the Toggl API.
+    var refreshReports: RefreshAction { get }
 
     // MARK: - Activity and Errors
 
@@ -274,6 +276,29 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         return SignalProducer.empty
     }
 
+    /// Triggers and attempt to refresh the reports from the Toggl API.
+    lazy var refreshReports: RefreshAction = {
+        let state = Property.combineLatest(retrieveReportsNetworkAction.isEnabled,
+                                           Property(initial: nil, then: workspaceIDs),
+                                           _twoPartReportPeriod)
+            .map { (input: (Bool, [WorkspaceID]?, TwoPartTimeReportPeriod?)) -> ([WorkspaceID], TwoPartTimeReportPeriod)? in
+                let (isUnderlyingEnabled, workspaceIDsOrNil, periodOrNil) = input
+                guard isUnderlyingEnabled,
+                    let workspaceIDs = workspaceIDsOrNil,
+                    let period = periodOrNil else {
+                        return nil
+                }
+                return (workspaceIDs, period)
+        }
+        return RefreshAction(unwrapping: state) { [weak self] state in
+            guard let retriever = self else {
+                return SignalProducer.empty
+            }
+            retriever.retrieveReportsNetworkAction.apply(state).start()
+
+            return SignalProducer.empty
+        }
+    }()
 
 
     // MARK: - Activity and Errors

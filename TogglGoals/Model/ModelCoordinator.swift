@@ -158,6 +158,13 @@ internal class ModelCoordinator: NSObject {
 
         runningEntryUpdateTimer.lastEntryStart <~ runningEntry.map { $0?.start }
         updateRunningEntry <~ runningEntryUpdateTimer.trigger
+
+        let someRunningEntryStopped = runningEntry.producer
+            .skipRepeats { $0 == $1 }
+            .combinePrevious().skip { $0.0 == nil } // Skip when it goes from nil to something else, only the stop event matters.
+            .map { _ in () }
+
+        togglDataRetriever.refreshReports.serialInput <~ someRunningEntryStopped
     }
 }
 
