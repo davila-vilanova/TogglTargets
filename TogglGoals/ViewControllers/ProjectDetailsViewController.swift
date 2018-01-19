@@ -112,7 +112,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
                 controller.goal <~ goalDownstream.producer.skipNil()
                 controller.calendar <~ _calendar.producer.skipNil()
                 controller.periodPreference <~ _periodPreference.producer.skipNil()
-                controller.runningEntry <~ _runningEntry.producer.skipNil()
+                controller.runningEntry <~ _runningEntry.producer
             }
         }
     }
