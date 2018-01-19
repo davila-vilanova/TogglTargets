@@ -367,11 +367,19 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
         self.retrieveProfileCacheAction = retrieveProfileCacheAction
         self.storeProfileCacheAction = storeProfileCacheAction
+
         self.retrieveProfileNetworkAction = retrieveProfileNetworkActionMaker(urlSession)
         self.retrieveProjectsNetworkAction = retrieveProjectsNetworkActionMaker(urlSession)
         self.retrieveReportsNetworkAction = retrieveReportsNetworkActionMaker(urlSession)
         self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkActionMaker(urlSession)
 
+        // Get those `Properties` inside lazy properties initialized so they don't miss the first value
+        _ = profile
+        _ = projects
+        _ = reports
+        _ = runningEntry
+
+        
         let refreshOnURLSessionChange: Signal<Void, NoError> =
             urlSession.signal.skipNil()
                 .throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
