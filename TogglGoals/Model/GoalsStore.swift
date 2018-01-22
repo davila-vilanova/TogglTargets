@@ -110,7 +110,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
     /// Action which accepts new (or edited) goal values and stores them.
     lazy var writeGoalAction = WriteGoalAction(enabledIf: modifyGoalAction.isEnabled) {
         [modifyGoalAction] goal in
-        _ = modifyGoalAction.applySerially((goal, goal.projectId)).start()
+        modifyGoalAction.serialInput <~ SignalProducer(value: (Optional(goal), goal.projectId))
         return SignalProducer.empty
     }
 
