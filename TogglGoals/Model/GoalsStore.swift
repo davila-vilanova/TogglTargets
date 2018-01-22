@@ -90,6 +90,8 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
         } catch {
             return nil
         }
+        _ = storedGoalUpdates // nudge it
+
         ensureSchemaCreated()
         connectInputsToAllGoals()
         connectInputsToMGActionState()
