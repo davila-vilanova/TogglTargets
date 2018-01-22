@@ -90,11 +90,11 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
         } catch {
             return nil
         }
-        _ = storedGoalUpdates // nudge it
 
         ensureSchemaCreated()
         connectInputsToAllGoals()
         connectInputsToMGActionState()
+        connectInputToStoreGoalUpdate()
         retrieveAllGoals()
     }
 
@@ -134,7 +134,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
     /// Keeps the values of all goals indexed by project ID.
     private let allGoals = MutableProperty<ProjectIndexedGoals?>(nil)
 
-    /// Connect `modifyGoalAction`'s output to allGoals outside of the lazy initialization process
+    /// Connect `modifyGoalAction`'s output to `allGoals` outside of the lazy initialization process
     /// to avoid a dependency cycle.
     private func connectInputsToAllGoals() {
         allGoals <~ modifyGoalAction.values.map { $0.3 }
@@ -142,15 +142,14 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
 
     /// Produces a new `ProjectIDsByGoals` value each time a value is sent to the `projectIDs` target
     /// that contains a different set of unique IDs than the last seen one.
-    private lazy var fullRefreshUpdateProducer: SignalProducer<ProjectIDsByGoals, NoError> = {
-        return _projectIDs.producer.skipNil().combineLatest(with: allGoals.producer.skipNil())
+    private lazy var fullRefreshUpdateProducer: SignalProducer<ProjectIDsByGoals, NoError> =
+        _projectIDs.producer.skipNil().combineLatest(with: allGoals.producer.skipNil())
             .skipRepeats { (old, new) -> Bool in // let through only changes in project IDs, order insensitive
                 let oldIds = Set(old.0)
                 let newIds = Set(new.0)
                 return oldIds == newIds
             }
             .map(ProjectIDsByGoals.init)
-    }()
 
     /// The type of the state representing the context for the `modifyGoalAction`.
     private typealias MGActionState = (ProjectIndexedGoals, ProjectIDsByGoals)
@@ -237,8 +236,8 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
 
     /// Accepts goal updates outputted from the `modifyGoalAction` and persists the changes
     /// in the database.
-    private lazy var storedGoalUpdates: BindingTarget<StoredGoalUpdate> = {
-        let target = BindingTarget<StoredGoalUpdate>(on: scheduler, lifetime: lifetime) {
+    private lazy var storeGoalUpdate: BindingTarget<StoredGoalUpdate> =
+        BindingTarget<StoredGoalUpdate>(on: scheduler, lifetime: lifetime) {
             [unowned self] update in
             switch update {
             case .create(let goal):
@@ -248,10 +247,14 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             case .delete(let projectId):
                 self.deleteGoal(for: projectId)
             }
-        }
-        target <~ modifyGoalAction.values.map { $0.0 }
-        return target
-    }()
+    }
+
+    /// Connect the `StoreGoalUpdate` part of the output of `modifyGoalAction`
+    /// to the input of `storeGoalUpdate`. This also triggers the initialization
+    /// of the corresponding lazy property.
+    private func connectInputToStoreGoalUpdate() {
+        storeGoalUpdate <~ modifyGoalAction.values.map { $0.0 }
+    }
 
     /// Stores the provided goal into the database synchronously.
     private func storeGoal(_ goal: Goal) {
