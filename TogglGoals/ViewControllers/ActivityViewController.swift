@@ -52,9 +52,10 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
 
             cleanUpCollectedSuccessfulStatuses <~ cleanUpDisplayedSuccessfulStatuses.values.map { _ in ()}
 
-            displayStatuses <~ Signal.merge(filteredCollectStatusesOutput.map { $0.0 },
-                                            collapseAllStatusesIntoSuccess.values.map { $0.0 },
-                                            cleanUpDisplayedSuccessfulStatuses.values.map { $0.0 })
+            displayStatuses <~ Signal.merge(filteredCollectStatusesOutput.map { $0.0 }.logEvents(identifier: "filteredCollectStatusesOutput"),
+                                            collapseAllStatusesIntoSuccess.values.map { $0.0 }.logEvents(identifier: "collapseAllStatusesIntoSuccess"),
+                                            cleanUpDisplayedSuccessfulStatuses.values.map { $0.0 }.logEvents(identifier: "cleanUpDisplayedSuccessfulStatuses"))
+                .logEvents(identifier: "displayStatuses")
                 .observe(on: UIScheduler())
 
             updateCollectionView.serialInput <~ Signal.merge(filteredCollectStatusesOutput.map { $0.1 },
@@ -80,7 +81,7 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
         }
     }
 
-    internal lazy var wantsDisplay = Property<Bool>(initial: false, then: displayStatuses.producer.map { !$0.isEmpty })
+    internal lazy var wantsDisplay = Property<Bool>(initial: false, then: displayStatuses.producer.map { !$0.isEmpty }.logEvents(identifier: "wantsDisplay"))
 
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
