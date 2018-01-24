@@ -37,13 +37,13 @@ func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>) -> Re
 }
 
 /// Takes a property holding an optional `URLSession` and a `TogglAPINetworkRetriever`
-/// that retrieves one array of `ReportEntry` values for one endpoint and a `URLSession`
-/// value, and returns a `RetrieveProjectsNetworkAction` that applies request
-/// splitting, reports combining and indexing logic on top of them.
+/// that retrieves one array of `ReportEntry` values for one endpoint, and returns
+/// a `RetrieveProjectsNetworkAction` that applies request splitting and reports
+/// combining and indexing logic on top of them.
 ///
 /// - parameters:
 ///   - urlSession: A `Property` that holds and tracks changes to a `URLSession`
-///                 optional value and is used as the state of the returned `Action`
+///                 optional value and is used as the state of the returned `Action`.
 ///   - networkRetriever: A `TogglAPINetworkRetriever` that retrieves an array of
 ///                       `ReportEntry` values from an input Toggl API endpoint.
 ///

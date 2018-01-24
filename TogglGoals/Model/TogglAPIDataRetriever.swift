@@ -77,22 +77,46 @@ protocol TogglAPIDataRetriever: class {
 
 typealias RetryAction = Action<Void, Void, NoError>
 
-// Represents the status of a given activity
+/// Represents the status of execution of an operation against the Toggl API.
 enum ActivityStatus {
+
+    /// Represents the kinds of operations against the Toggl API that
+    /// `TogglAPIDataRetriever` supports.
     enum Activity {
+        /// Retrieve the user profile from Toggl.
         case syncProfile
+
+        /// Retrieve the user's projects.
         case syncProjects
+
+        /// Retrieve the user's reports.
         case syncReports
+
+        /// Retrieve the currently running time entry.
         case syncRunningEntry
+
+        /// Represents all other `Activity` cases. Useful when combined with
+        /// `ActivityStatus.succeeded` to denote that all data was successfully
+        /// synchronized against the Toggl API.
         case all
 
+        /// Count of `Activity` cases not including `all`.
         static var individualActivityCount = 4
     }
 
+    /// The underlying `Activity` is executing. The result of this execution can
+    /// be either the `succeeded` or the `error` case.
     case executing(Activity)
+
+    /// The underlying `Activity` completed its execution successfully.
     case succeeded(Activity)
+
+    /// The underlying `Activity` completed its execution with a failure.
+    /// This case encloses in addition to the `Activity` the nature of the
+    /// failure (`APIAccessError`) and the recovery action (`RetryAction`).
     case error(Activity, APIAccessError, RetryAction)
 
+    /// Returns this case's underlying `Activity`.
     var activity: Activity {
         switch self {
         case .executing(let activity): return activity
@@ -101,6 +125,7 @@ enum ActivityStatus {
         }
     }
 
+    /// Returns whether this is the `.executing` case.
     var isExecuting: Bool {
         switch self {
         case .executing(_): return true
@@ -108,6 +133,7 @@ enum ActivityStatus {
         }
     }
 
+    /// Returns whether this is the `.succeeded` case.
     var isSuccessful: Bool {
         switch self {
         case .succeeded: return true
@@ -115,6 +141,7 @@ enum ActivityStatus {
         }
     }
 
+    /// Returns whether this is the `.error` case.
     var isError: Bool {
         switch self {
         case .error(_, _, _): return true
@@ -122,6 +149,8 @@ enum ActivityStatus {
         }
     }
 
+    /// If this is the `.error` case, returns the `APIAccessError` that
+    /// triggered it. Returns `nil` otherwise.
     var error: APIAccessError? {
         switch self {
         case .error(_, let err, _): return err
@@ -246,9 +275,9 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     // MARK: - Refresh actions
 
-    /// Applying this `Action` will start an attempt to grab from the Toggl API the currently running entry
+    /// Applying this `Action` will start an attempt to fetch the currently running entry from the Toggl API
     /// by executing the underlying retrieveRunningEntryNetworkAction.
-    /// This `Action` is only enabled if an API credential is available and if the underlying action is enabled.
+    /// This `Action` is enabled if an API credential is available and if the underlying action is enabled.
     lazy var updateRunningEntry: RefreshAction = {
         let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveRunningEntryNetworkAction.isEnabled)) { [weak self] _ in
             guard let retriever = self else {
@@ -276,7 +305,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         return SignalProducer.empty
     }
 
-    /// Triggers and attempt to refresh the reports from the Toggl API.
+    /// Triggers an attempt to refresh the reports from the Toggl API.
     lazy var refreshReports: RefreshAction = {
         let state = Property.combineLatest(retrieveReportsNetworkAction.isEnabled,
                                            Property(initial: nil, then: workspaceIDs),

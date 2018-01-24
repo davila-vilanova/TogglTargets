@@ -176,7 +176,7 @@ internal class ModelCoordinator: NSObject {
 fileprivate class RunningEntryUpdateTimer {
 
     /// Binding target to receive the start date of the currently running entry,
-    /// or `nil` if there is no running entry currently running.
+    /// or `nil` if there is no time entry currently running.
     lazy var lastEntryStart: BindingTarget<Date?> = BindingTarget(on: scheduler, lifetime: lifetime) { [unowned self] (runningEntryStartDate: Date?) in
         let oneMinute = TimeInterval.from(minutes: 1)
         let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
