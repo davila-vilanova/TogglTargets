@@ -323,7 +323,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
             guard let retriever = self else {
                 return SignalProducer.empty
             }
-            retriever.retrieveReportsNetworkAction.apply(state).start()
+
+            retriever.retrieveReportsNetworkAction <~ SignalProducer(value: state)
 
             return SignalProducer.empty
         }
