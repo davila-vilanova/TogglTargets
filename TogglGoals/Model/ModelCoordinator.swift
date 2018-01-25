@@ -164,7 +164,7 @@ internal class ModelCoordinator: NSObject {
             .combinePrevious().skip { $0.0 == nil } // Skip when it goes from nil to something else, only the stop event matters.
             .map { _ in () }
 
-        togglDataRetriever.refreshReports.serialInput <~ someRunningEntryStopped
+        togglDataRetriever.refreshReports <~ someRunningEntryStopped
     }
 }
 
