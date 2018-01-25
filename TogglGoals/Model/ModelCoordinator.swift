@@ -159,12 +159,13 @@ internal class ModelCoordinator: NSObject {
         runningEntryUpdateTimer.lastEntryStart <~ runningEntry.map { $0?.start }
         updateRunningEntry <~ runningEntryUpdateTimer.trigger
 
-        let someRunningEntryStopped = runningEntry.producer
+        let runningEntryStopped = runningEntry.producer
             .skipRepeats { $0 == $1 }
-            .combinePrevious().skip { $0.0 == nil } // Skip when it goes from nil to something else, only the stop event matters.
+            .combinePrevious()
+            .filter { $0.0 != nil } // If it was `nil` it was not 'stopped'.
             .map { _ in () }
 
-        togglDataRetriever.refreshReports <~ someRunningEntryStopped
+        togglDataRetriever.refreshReports <~ runningEntryStopped
     }
 }
 
