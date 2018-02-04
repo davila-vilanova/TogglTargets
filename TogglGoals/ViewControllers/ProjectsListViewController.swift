@@ -31,15 +31,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     internal func setActions(readProject: ReadProjectAction,
                              readGoal: ReadGoalAction,
                              readReport: ReadReportAction) {
-        UIScheduler().schedule { [weak self] in
-            guard let controller = self else {
-                return
-            }
-            assert(controller.readProjectAction == nil,
-                   "ProjectsListViewController's actions must be set exactly once.")
-            controller.readProjectAction = readProject
-            controller.readGoalAction = readGoal
-            controller.readReportAction = readReport
+        enforceOnce(for: "ProjectsListViewController.setActions()") {
+            self.readProjectAction = readProject
+            self.readGoalAction = readGoal
+            self.readReportAction = readReport
         }
     }
 
