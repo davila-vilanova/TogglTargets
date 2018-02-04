@@ -90,8 +90,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
 
     var dayProgressViewController: DayProgressViewController! {
         didSet {
-            dayProgressViewController.timeWorkedToday <~ goalProgress.timeWorkedToday
-            dayProgressViewController.remainingTimeToDayBaseline <~ goalProgress.remainingTimeToDayBaseline
+            dayProgressViewController.connectInputs(timeWorkedToday: goalProgress.timeWorkedToday.producer,
+                                                    remainingTimeToDayBaseline: goalProgress.remainingTimeToDayBaseline.producer)
         }
     }
     
