@@ -15,11 +15,21 @@ internal let DefaultPeriodPreference = PeriodPreference.monthly
 
 class GoalPeriodsPreferencesViewController: NSViewController {
 
-    // MARK: - Reactive interface
+    // MARK: - Inputs
 
-    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    internal var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
-    internal var existingPreference: BindingTarget<PeriodPreference> { return _existingPreference.bindingTarget }
+    internal func connectInputs(calendar: SignalProducer<Calendar, NoError>,
+                                currentDate: SignalProducer<Date, NoError>,
+                                periodPreference: SignalProducer<PeriodPreference, NoError>) {
+        enforceOnce(for: "GoalPeriodsPreferencesViewController") {
+            self.calendar <~ calendar
+            self.currentDate <~ currentDate
+            self.existingPreference <~ periodPreference
+        }
+    }
+
+
+    // MARK: - Outputs
+
     internal var updatedPreference: Signal<PeriodPreference, NoError> {
         return Signal.merge(generateMonthlyPeriodPreference.values,
                             generateWeeklyPeriodPreference.values)
@@ -28,9 +38,9 @@ class GoalPeriodsPreferencesViewController: NSViewController {
 
     // MARK: - Backing properties
 
-    private let _calendar = MutableProperty<Calendar?>(nil)
-    private let _currentDate = MutableProperty<Date?>(nil)
-    private let _existingPreference = MutableProperty<PeriodPreference>(DefaultPeriodPreference)
+    private let calendar = MutableProperty<Calendar?>(nil)
+    private let currentDate = MutableProperty<Date?>(nil)
+    private let existingPreference = MutableProperty<PeriodPreference>(DefaultPeriodPreference)
 
 
     // MARK: - IBOutlets
@@ -47,18 +57,18 @@ class GoalPeriodsPreferencesViewController: NSViewController {
 
 
     private lazy var isWeeklyPreferenceSelectedProperty =
-        Property<Bool>(initial: isWeeklyPreference(DefaultPeriodPreference),                            // default value
-                       then: SignalProducer.merge(_existingPreference.producer.map(isWeeklyPreference), // value from upstream
-                       weeklyButtonPress.values.producer.map { _ in true },                             // value from user input
+        Property<Bool>(initial: DefaultPeriodPreference.isWeekly,                 // default value
+            then: SignalProducer.merge(existingPreference.producer.map(isWeekly), // value from upstream
+                       weeklyButtonPress.values.producer.map { _ in true },       // value from user input
                        generateMonthlyPeriodPreference.values.producer.map { _ in false }))
 
     private lazy var selectedWeekdayProperty: MutableProperty<Weekday> = {
         // default value
         let p = MutableProperty(
-            selectedWeekday(in: DefaultPeriodPreference) ?? (Weekday.fromIndexInGregorianCalendarSymbolsArray(0)!))
+            DefaultPeriodPreference.selectedWeekday ?? (Weekday.fromIndexInGregorianCalendarSymbolsArray(0)!))
 
         // value from upstream
-        p <~ _existingPreference.map(selectedWeekday).producer.skipNil()
+        p <~ existingPreference.map(selectedWeekday).producer.skipNil()
 
         // value from user input
         p <~ weeklyGoalStartDayPopUp.reactive.selectedIndexes
@@ -106,19 +116,19 @@ class GoalPeriodsPreferencesViewController: NSViewController {
                 }
         }
 
-        populateDaysTarget <~ _calendar.producer.skipNil().map { $0.weekdaySymbols }
+        populateDaysTarget <~ calendar.producer.skipNil().map { $0.weekdaySymbols }
     }
 
     private func reflectExistingPreference() {
-        preferMonthlyGoalPeriodsButton.reactive.state <~ _existingPreference
-            .map(isMonthlyPreference)
+        preferMonthlyGoalPeriodsButton.reactive.state <~ existingPreference
+            .map(isMonthly)
             .map(boolToControlStateValue)
 
-        preferWeeklyGoalPeriodsButton.reactive.state <~ _existingPreference
-            .map(isWeeklyPreference)
+        preferWeeklyGoalPeriodsButton.reactive.state <~ existingPreference
+            .map(isWeekly)
             .map(boolToControlStateValue)
 
-        weeklyGoalStartDayPopUp.reactive.selectedIndex <~ _existingPreference
+        weeklyGoalStartDayPopUp.reactive.selectedIndex <~ existingPreference
             .map(selectedWeekday)
             .producer.skipNil()
             .map { $0.rawValue }
@@ -135,13 +145,12 @@ class GoalPeriodsPreferencesViewController: NSViewController {
     }
 
     private func reflectCurrentPeriod() {
-        let existingPreference = _existingPreference
         let userModifiedPreference = updatedPreference
 
         let currentPeriod =
             SignalProducer.combineLatest(SignalProducer.merge(existingPreference.producer, userModifiedPreference.producer),
-                                                              _calendar.producer.skipNil(),
-                                                              _currentDate.producer.skipNil())
+                                                              calendar.producer.skipNil(),
+                                                              currentDate.producer.skipNil())
             .map { (preference, calendar, currentDate) in
                 preference.currentPeriod(in: calendar, for: currentDate)
         }
@@ -155,7 +164,7 @@ class GoalPeriodsPreferencesViewController: NSViewController {
 
         func formattedDayComponents(_ dayComponents: SignalProducer<DayComponents, NoError>)
             -> SignalProducer<String, NoError> {
-                return dayComponents.combineLatest(with: _calendar.producer.skipNil())
+                return dayComponents.combineLatest(with: calendar.producer.skipNil())
                     .map { (dayComponents, calendar) in
                         // try! because the components are trusted, generated by PeriodPreference
                         try! calendar.date(from: dayComponents)
@@ -189,24 +198,38 @@ fileprivate func weekdayFromSelection(in popup: NSPopUpButton) -> Weekday {
     return Weekday.fromIndexInGregorianCalendarSymbolsArray(popup.indexOfSelectedItem)!
 }
 
-// TODO: verbose and messy. What did I not get about enumerations?
-fileprivate func isMonthlyPreference(_ pref: PeriodPreference) -> Bool {
-    switch pref {
-    case .monthly: return true
-    default: return false
+fileprivate extension PeriodPreference {
+    var isMonthly: Bool {
+        switch self {
+        case .monthly: return true
+        default: return false
+        }
+    }
+
+    var isWeekly: Bool {
+        switch self {
+        case .weekly: return true
+        default: return false
+        }
+    }
+
+    var selectedWeekday: Weekday? {
+        switch self {
+        case .weekly(let weekday): return weekday
+        default: return nil
+        }
     }
 }
 
-fileprivate func isWeeklyPreference(_ pref: PeriodPreference) -> Bool {
-    switch pref {
-    case .weekly: return true
-    default: return false
-    }
+fileprivate func isMonthly(_ p: PeriodPreference) -> Bool {
+    return p.isMonthly
 }
 
-fileprivate func selectedWeekday(in preference: PeriodPreference) -> Weekday? {
-    switch preference {
-    case .weekly(let weekday): return weekday
-    default: return nil
-    }
+fileprivate func isWeekly(_ p: PeriodPreference) -> Bool {
+    return p.isWeekly
 }
+
+fileprivate func selectedWeekday(_ p: PeriodPreference) -> Weekday? {
+    return p.selectedWeekday
+}
+

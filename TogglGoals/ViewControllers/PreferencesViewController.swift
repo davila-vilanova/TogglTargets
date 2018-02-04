@@ -59,9 +59,9 @@ class PreferencesViewController: NSTabViewController {
         loginViewController.userDefaults <~ _userDefaults.producer.skipNil()
         _resolvedCredential <~ loginViewController.resolvedCredential
         
-        goalPeriodsController.existingPreference <~ _existingGoalPeriodPreference.producer.skipNil()
         _updatedGoalPeriodPreference <~ goalPeriodsController.updatedPreference
-        goalPeriodsController.calendar <~ _calendar.producer.skipNil()
-        goalPeriodsController.currentDate <~ _currentDate.producer.skipNil()
+        goalPeriodsController.connectInputs(calendar: _calendar.producer.skipNil(),
+                                            currentDate: _currentDate.producer.skipNil(),
+                                            periodPreference: _existingGoalPeriodPreference.producer.skipNil())
     }
 }
