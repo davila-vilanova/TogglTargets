@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Result
 import ReactiveSwift
 import ReactiveCocoa
 
@@ -14,22 +15,31 @@ class TimeProgressViewController: NSViewController {
 
     // MARK: Exposed targets
 
-    internal var timeGoal: BindingTarget<TimeInterval> { return _timeGoal.bindingTarget }
-    internal var totalWorkDays: BindingTarget<Int?> { return _totalWorkDays.bindingTarget }
-    internal var remainingWorkDays: BindingTarget<Int?> { return _remainingWorkDays.bindingTarget }
-    internal var workedTime: BindingTarget<TimeInterval> { return _workedTime.bindingTarget }
-    internal var remainingTimeToGoal: BindingTarget<TimeInterval> { return _remainingTimeToGoal.bindingTarget }
-    internal var strategyStartsToday: BindingTarget<Bool> { return _strategyStartsToday.deoptionalizedBindingTarget }
+    internal func connectInputs(timeGoal: SignalProducer<TimeInterval, NoError>,
+                                totalWorkDays: SignalProducer<Int?, NoError>,
+                                remainingWorkDays: SignalProducer<Int?, NoError>,
+                                workedTime: SignalProducer<TimeInterval, NoError>,
+                                remainingTimeToGoal: SignalProducer<TimeInterval, NoError>,
+                                strategyStartsToday: SignalProducer<Bool, NoError>) {
+        enforceOnce(for: "TimeProgressViewController.connectInputs()") {
+            self.timeGoal <~ timeGoal
+            self.totalWorkDays <~ totalWorkDays
+            self.remainingWorkDays <~ remainingWorkDays
+            self.workedTime <~ workedTime
+            self.remainingTimeToGoal <~ remainingTimeToGoal
+            self.strategyStartsToday <~ strategyStartsToday
+        }
+    }
 
 
     // MARK: - Backing properties
 
-    private let _timeGoal = MutableProperty<TimeInterval>(0)
-    private let _totalWorkDays = MutableProperty<Int?>(nil)
-    private let _remainingWorkDays = MutableProperty<Int?>(nil)
-    private let _workedTime = MutableProperty<TimeInterval>(0)
-    private let _remainingTimeToGoal = MutableProperty<TimeInterval>(0)
-    private let _strategyStartsToday = MutableProperty<Bool?>(nil)
+    private let timeGoal = MutableProperty<TimeInterval>(0)
+    private let totalWorkDays = MutableProperty<Int?>(nil)
+    private let remainingWorkDays = MutableProperty<Int?>(nil)
+    private let workedTime = MutableProperty<TimeInterval>(0)
+    private let remainingTimeToGoal = MutableProperty<TimeInterval>(0)
+    private let strategyStartsToday = MutableProperty<Bool?>(nil)
 
 
     // MARK: - Formatter
@@ -47,17 +57,17 @@ class TimeProgressViewController: NSViewController {
 
     @IBOutlet weak var totalWorkdaysLabel: NSTextField! {
         didSet {
-            totalWorkdaysLabel.reactive.stringValue <~ _totalWorkDays.producer.mapToString()
+            totalWorkdaysLabel.reactive.stringValue <~ totalWorkDays.producer.mapToString()
         }
     }
     @IBOutlet weak var remainingWorkdaysAmountLabel: NSTextField! {
         didSet {
-            remainingWorkdaysAmountLabel.reactive.stringValue <~ _remainingWorkDays.producer.mapToString()
+            remainingWorkdaysAmountLabel.reactive.stringValue <~ remainingWorkDays.producer.mapToString()
         }
     }
     @IBOutlet weak var remainingWorkdaysTextLabel: NSTextField! {
         didSet {
-            remainingWorkdaysTextLabel.reactive.text <~ _strategyStartsToday.producer.skipNil()
+            remainingWorkdaysTextLabel.reactive.text <~ strategyStartsToday.producer.skipNil()
                 .map { (isTodayIncluded) -> String in
                     return isTodayIncluded ? "work days left (including today)" : "work days left from tomorrow"
             }
@@ -65,12 +75,12 @@ class TimeProgressViewController: NSViewController {
     }
     @IBOutlet weak var hoursWorkedAmountLabel: NSTextField! {
         didSet {
-            hoursWorkedAmountLabel.reactive.text <~ _workedTime.producer.mapToString(timeFormatter: timeFormatter)
+            hoursWorkedAmountLabel.reactive.text <~ workedTime.producer.mapToString(timeFormatter: timeFormatter)
         }
     }
     @IBOutlet weak var hoursWorkedTextLabel: NSTextField! {
         didSet {
-            hoursWorkedTextLabel.reactive.text <~ _strategyStartsToday.producer.skipNil()
+            hoursWorkedTextLabel.reactive.text <~ strategyStartsToday.producer.skipNil()
                 .map { (strategyStartsToday) -> String in
                     return strategyStartsToday ? "worked (not including today)" : "worked (including today)"
             }
@@ -78,14 +88,14 @@ class TimeProgressViewController: NSViewController {
     }
     @IBOutlet weak var hoursLeftAmountLabel: NSTextField! {
         didSet {
-            hoursLeftAmountLabel.reactive.text <~ _remainingTimeToGoal.producer.mapToString(timeFormatter: timeFormatter)
+            hoursLeftAmountLabel.reactive.text <~ remainingTimeToGoal.producer.mapToString(timeFormatter: timeFormatter)
         }
     }
 
     @IBOutlet weak var workDaysProgressIndicator: NSProgressIndicator! {
         didSet {
-            SignalProducer.combineLatest(_totalWorkDays.producer.map(intToDouble),
-                                         _remainingWorkDays.producer.map(intToDouble))
+            SignalProducer.combineLatest(totalWorkDays.producer.map(intToDouble),
+                                         remainingWorkDays.producer.map(intToDouble))
                 .observe(on: UIScheduler())
                 .startWithValues { [indicator = workDaysProgressIndicator] (totalOrNil, remainingOrNil) in
                     let total = totalOrNil ?? 0.0
@@ -98,7 +108,7 @@ class TimeProgressViewController: NSViewController {
     }
     @IBOutlet weak var workHoursProgressIndicator: NSProgressIndicator! {
         didSet {
-            SignalProducer.combineLatest(_timeGoal.producer, _workedTime.producer)
+            SignalProducer.combineLatest(timeGoal.producer, workedTime.producer)
                 .skipRepeats { $0 == $1 }
                 .observe(on: UIScheduler())
                 .startWithValues { [indicator = workHoursProgressIndicator] (timeGoal, workedTime) in

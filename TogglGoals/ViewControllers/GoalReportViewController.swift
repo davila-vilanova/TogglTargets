@@ -64,12 +64,12 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     var timeProgressViewController: TimeProgressViewController! {
         didSet {
-            timeProgressViewController.timeGoal <~ goalProgress.timeGoal
-            timeProgressViewController.totalWorkDays <~ goalProgress.totalWorkDays
-            timeProgressViewController.remainingWorkDays <~ goalProgress.remainingWorkDays
-            timeProgressViewController.workedTime <~ goalProgress.workedTime
-            timeProgressViewController.remainingTimeToGoal <~ goalProgress.remainingTimeToGoal
-            timeProgressViewController.strategyStartsToday <~ goalProgress.strategyStartsToday
+            timeProgressViewController.connectInputs(timeGoal: goalProgress.timeGoal,
+                                                     totalWorkDays: goalProgress.totalWorkDays,
+                                                     remainingWorkDays: goalProgress.remainingWorkDays,
+                                                     workedTime: goalProgress.workedTime,
+                                                     remainingTimeToGoal: goalProgress.remainingTimeToGoal,
+                                                     strategyStartsToday: goalProgress.strategyStartsToday)
         }
     }
     
