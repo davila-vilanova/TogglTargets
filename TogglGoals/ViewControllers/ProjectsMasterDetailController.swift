@@ -29,17 +29,19 @@ class ProjectsMasterDetailController: NSSplitViewController {
                                 runningEntry: SignalProducer<RunningEntry?, NoError>,
                                 currentDate: SignalProducer<Date, NoError>,
                                 modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>) {
-        areChildrenControllersAvailable.firstTrue.startWithValues {
-            self.projectsListViewController.connectInputs(projectIDsByGoals: projectIDsByGoals,
-                                                          runningEntry: runningEntry,
-                                                          currentDate: currentDate,
-                                                          modelRetrievalStatus: modelRetrievalStatus)
+        enforceOnce(for: "ProjectsMasterDetailController.connectInputs()") {
+            self.areChildrenControllersAvailable.firstTrue.startWithValues {
+                self.projectsListViewController.connectInputs(projectIDsByGoals: projectIDsByGoals,
+                                                              runningEntry: runningEntry,
+                                                              currentDate: currentDate,
+                                                              modelRetrievalStatus: modelRetrievalStatus)
+            }
+            self.selectionDetailViewController.connectInputs(project: self.projectsListViewController.selectedProject.producer,
+                                                             currentDate: currentDate,
+                                                             calendar: calendar,
+                                                             periodPreference: periodPreference,
+                                                             runningEntry: runningEntry)
         }
-        self.selectionDetailViewController.connectInputs(project: projectsListViewController.selectedProject.producer,
-                                                         currentDate: currentDate,
-                                                         calendar: calendar,
-                                                         periodPreference: periodPreference,
-                                                         runningEntry: runningEntry)
     }
 
     internal func setActions(readProject: ReadProjectAction,
@@ -47,16 +49,18 @@ class ProjectsMasterDetailController: NSSplitViewController {
                              writeGoal: WriteGoalAction,
                              deleteGoal: DeleteGoalAction,
                              readReport: ReadReportAction) {
-        areChildrenControllersAvailable.firstTrue.startWithValues { [unowned self] _ in
-            self.projectsListViewController
-                .setActions(readProject: readProject,
-                            readGoal: readGoal,
-                            readReport: readReport)
-            self.selectionDetailViewController
-                .setActions(readGoal: readGoal,
-                            writeGoal: writeGoal,
-                            deleteGoal: deleteGoal,
-                            readReport: readReport)
+        enforceOnce(for: "ProjectsMasterDetailController.setActions()") {
+            self.areChildrenControllersAvailable.firstTrue.startWithValues { [unowned self] _ in
+                self.projectsListViewController
+                    .setActions(readProject: readProject,
+                                readGoal: readGoal,
+                                readReport: readReport)
+                self.selectionDetailViewController
+                    .setActions(readGoal: readGoal,
+                                writeGoal: writeGoal,
+                                deleteGoal: deleteGoal,
+                                readReport: readReport)
+            }
         }
     }
 
