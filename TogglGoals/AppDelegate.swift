@@ -99,12 +99,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         preferencesWindow.delegate = self
         let preferencesController = preferencesWindowController!.contentViewController! as! PreferencesViewController
 
-        preferencesController.userDefaults <~ userDefaults
+        preferencesController.connectInputs(existingGoalPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
+                                            userDefaults: userDefaults.producer,
+                                            calendar: calendar.producer,
+                                            currentDate: currentDateGenerator.currentDate.producer)
         credentialStore.input <~ SignalProducer(value: preferencesController.resolvedCredential.skipNil())
-        preferencesController.calendar <~ calendar
-        preferencesController.currentDate <~ currentDateGenerator.currentDate
         periodPreferenceStore.input <~ SignalProducer(value: preferencesController.updatedGoalPeriodPreference)
-        preferencesController.existingGoalPeriodPreference <~ periodPreferenceStore.output.producer.skipNil()
     }
 
     @IBAction func refreshAllData(_ sender: Any) {

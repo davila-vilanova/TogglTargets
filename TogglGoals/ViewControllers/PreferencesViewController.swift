@@ -12,23 +12,31 @@ import Result
 
 class PreferencesViewController: NSTabViewController {
 
-    // MARK: - Exposed reactive interface
+    // MARK: - Inputs
+
+    internal func connectInputs(existingGoalPeriodPreference: SignalProducer<PeriodPreference, NoError>,
+                                userDefaults: SignalProducer<UserDefaults, NoError>,
+                                calendar: SignalProducer<Calendar, NoError>,
+                                currentDate: SignalProducer<Date, NoError>) {
+        enforceOnce(for: "PreferencesViewController.connectInputs()") {
+            self.areChildrenControllersAvailable.firstTrue.startWithValues {
+                self.loginViewController.connectInputs(userDefaults: userDefaults)
+                self.goalPeriodsController.connectInputs(calendar: calendar,
+                                                         currentDate: currentDate,
+                                                         periodPreference: existingGoalPeriodPreference)
+            }
+        }
+    }
+
+    // MARK: - Outputs
 
     internal var resolvedCredential: Signal<TogglAPITokenCredential?, NoError> { return _resolvedCredential.signal }
-    internal var existingGoalPeriodPreference: BindingTarget<PeriodPreference> { return _existingGoalPeriodPreference.deoptionalizedBindingTarget }
     internal var updatedGoalPeriodPreference: Signal<PeriodPreference, NoError> { return _updatedGoalPeriodPreference.signal.skipNil() }
-    internal var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
-    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    internal var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
 
     // MARK: - Backing of reactive interface
 
     private let _resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
-    private let _existingGoalPeriodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _updatedGoalPeriodPreference = MutableProperty<PeriodPreference?>(nil)
-    private let _userDefaults = MutableProperty<UserDefaults?>(nil)
-    private let _calendar = MutableProperty<Calendar?>(nil)
-    private let _currentDate = MutableProperty<Date?>(nil)
 
 
     // MARK: - Contained view controllers
@@ -51,17 +59,17 @@ class PreferencesViewController: NSTabViewController {
         return tabViewItems[index.rawValue]
     }
 
+    private let areChildrenControllersAvailable = MutableProperty(false)
+
+
     // MARK: -
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        loginViewController.connectInputs(userDefaults: _userDefaults.producer.skipNil())
-        _resolvedCredential <~ loginViewController.resolvedCredential
+        areChildrenControllersAvailable.value = true
 
-        goalPeriodsController.connectInputs(calendar: _calendar.producer.skipNil(),
-                                            currentDate: _currentDate.producer.skipNil(),
-                                            periodPreference: _existingGoalPeriodPreference.producer.skipNil())
+        _resolvedCredential <~ loginViewController.resolvedCredential
         _updatedGoalPeriodPreference <~ goalPeriodsController.updatedPreference
     }
 }
