@@ -307,7 +307,7 @@
 		637A32541EE1727600667FC3 /* ProjectCollectionViewItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectCollectionViewItem.swift; path = ViewControllers/ProjectCollectionViewItem.swift; sourceTree = "<group>"; };
 		637A32551EE1727600667FC3 /* ProjectCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectCollectionViewItem.xib; path = ViewControllers/ProjectCollectionViewItem.xib; sourceTree = "<group>"; };
 		637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ContainmentSegue.swift; path = ViewControllers/ContainmentSegue.swift; sourceTree = "<group>"; };
-		637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnforceOnce.swift; path = ViewControllers/EnforceOnce.swift; sourceTree = "<group>"; };
+		637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnforceOnce.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProfileNetworkAction.swift; sourceTree = "<group>"; };
 		63A67F351FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProjectsNetworkAction.swift; sourceTree = "<group>"; };
@@ -476,9 +476,17 @@
 				631E46411F97CB980012E491 /* PreferencesViewController.swift */,
 				631E463E1F97CB730012E491 /* LoginViewController.swift */,
 				63AB08161FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift */,
-				637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */,
+				637DA20120279230000D7EB8 /* Util */,
 			);
 			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		637DA20120279230000D7EB8 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 		63A67F2E1FCD9A35004BEFC6 /* APIAccess */ = {
