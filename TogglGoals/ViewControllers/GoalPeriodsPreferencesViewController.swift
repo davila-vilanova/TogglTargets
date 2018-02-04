@@ -20,7 +20,7 @@ class GoalPeriodsPreferencesViewController: NSViewController {
     internal func connectInputs(calendar: SignalProducer<Calendar, NoError>,
                                 currentDate: SignalProducer<Date, NoError>,
                                 periodPreference: SignalProducer<PeriodPreference, NoError>) {
-        enforceOnce(for: "GoalPeriodsPreferencesViewController") {
+        enforceOnce(for: "GoalPeriodsPreferencesViewController.connectInputs()") {
             self.calendar <~ calendar
             self.currentDate <~ currentDate
             self.existingPreference <~ periodPreference

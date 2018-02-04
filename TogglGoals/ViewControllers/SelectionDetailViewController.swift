@@ -22,14 +22,17 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
                                 calendar: SignalProducer<Calendar, NoError>,
                                 periodPreference: SignalProducer<PeriodPreference, NoError>,
                                 runningEntry: SignalProducer<RunningEntry?, NoError>) {
-        selectedProject <~ project
 
-        areChildrenControllersAvailable.firstTrue.startWithValues {
-            self.projectDetailsViewController.project <~ self.selectedProject.producer.skipNil()
-            self.projectDetailsViewController.currentDate <~ currentDate
-            self.projectDetailsViewController.calendar <~ calendar
-            self.projectDetailsViewController.periodPreference <~ periodPreference
-            self.projectDetailsViewController.runningEntry <~ runningEntry
+        enforceOnce(for: "SelectionDetailViewController.connectInputs()") {
+            self.selectedProject <~ project
+
+            self.areChildrenControllersAvailable.firstTrue.startWithValues {
+                self.projectDetailsViewController.project <~ self.selectedProject.producer.skipNil()
+                self.projectDetailsViewController.currentDate <~ currentDate
+                self.projectDetailsViewController.calendar <~ calendar
+                self.projectDetailsViewController.periodPreference <~ periodPreference
+                self.projectDetailsViewController.runningEntry <~ runningEntry
+            }
         }
     }
 
@@ -37,13 +40,15 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
                              writeGoal: WriteGoalAction,
                              deleteGoal: DeleteGoalAction,
                              readReport: ReadReportAction) {
-        areChildrenControllersAvailable.firstTrue.startWithValues {
-            [unowned self] in
-            self.projectDetailsViewController
-                .setActions(readGoal: readGoal,
-                            writeGoal: writeGoal,
-                            deleteGoal: deleteGoal,
-                            readReport: readReport)
+        enforceOnce(for: "SelectionDetailViewController.setActions()") {
+            self.areChildrenControllersAvailable.firstTrue.startWithValues {
+                [unowned self] in
+                self.projectDetailsViewController
+                    .setActions(readGoal: readGoal,
+                                writeGoal: writeGoal,
+                                deleteGoal: deleteGoal,
+                                readReport: readReport)
+            }
         }
     }
 

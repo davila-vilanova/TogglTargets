@@ -16,24 +16,28 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
                                 runningEntry: SignalProducer<RunningEntry?, NoError>,
                                 currentDate: SignalProducer<Date, NoError>,
                                 modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>) {
-        isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
-            self.projectsListViewController.connectInputs(projectIDsByGoals: projectIDsByGoals,
-                                                          runningEntry: runningEntry,
-                                                          currentDate: currentDate)
-        }
+        enforceOnce(for: "ProjectsListActivitySplitViewController.connectInputs()") {
+            self.isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
+                self.projectsListViewController.connectInputs(projectIDsByGoals: projectIDsByGoals,
+                                                              runningEntry: runningEntry,
+                                                              currentDate: currentDate)
+            }
 
-        isActivityViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
-            self.activityViewController.connectInputs(modelRetrievalStatus: modelRetrievalStatus)
+            self.isActivityViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
+                self.activityViewController.connectInputs(modelRetrievalStatus: modelRetrievalStatus)
+            }
         }
     }
 
     internal func setActions(readProject: ReadProjectAction,
                              readGoal: ReadGoalAction,
                              readReport: ReadReportAction) {
-        isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
-            self.projectsListViewController.setActions(readProject: readProject,
-                                                       readGoal: readGoal,
-                                                       readReport: readReport)
+        enforceOnce(for: "ProjectsListActivitySplitViewController.setActions()") {
+            self.isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
+                self.projectsListViewController.setActions(readProject: readProject,
+                                                           readGoal: readGoal,
+                                                           readReport: readReport)
+            }
         }
     }
 

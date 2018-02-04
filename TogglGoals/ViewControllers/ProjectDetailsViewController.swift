@@ -52,13 +52,13 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
                              writeGoal: WriteGoalAction,
                              deleteGoal: DeleteGoalAction,
                              readReport: ReadReportAction) {
-        assert(readGoalAction == nil,
-               "ProjectDetailsViewController's actions must be set exactly once.")
 
-        readGoalAction = readGoal
-        writeGoalAction = writeGoal
-        deleteGoalAction = deleteGoal
-        readReportAction = readReport
+        enforceOnce(for: "ProjectDetailsViewController.setActions()") {
+            self.readGoalAction = readGoal
+            self.writeGoalAction = writeGoal
+            self.deleteGoalAction = deleteGoal
+            self.readReportAction = readReport
+        }
     }
 
     private var readGoalAction: ReadGoalAction?
