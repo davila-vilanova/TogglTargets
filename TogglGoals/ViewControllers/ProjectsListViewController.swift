@@ -59,7 +59,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     internal func connectInputs(projectIDsByGoals: ProjectIDsByGoalsProducer,
                                 runningEntry: SignalProducer<RunningEntry?, NoError>,
                                 currentDate: SignalProducer<Date, NoError>) {
-        enforceOnce(for: "ProjectsListViewController") {
+        enforceOnce(for: "ProjectsListViewController.connectInputs()") {
             self.runningEntry <~ runningEntry
             self.currentDate <~ currentDate
 

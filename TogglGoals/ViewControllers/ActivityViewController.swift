@@ -63,7 +63,7 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
 
         }
 
-        enforceOnce(for: "ActivityViewController") {
+        enforceOnce(for: "ActivityViewController.connectInputs()") {
             setUpInternalConnections()
 
             self.collectActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler)
