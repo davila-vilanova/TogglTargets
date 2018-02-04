@@ -15,27 +15,23 @@ fileprivate let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
 
 class SelectionDetailViewController: NSViewController, ViewControllerContaining {
 
-    // MARK: - Exposed targets
+    // MARK: - Inputs and Actions
 
-    internal var project: BindingTarget<Project?> { return _project.bindingTarget }
+    internal func connectInputs(project: SignalProducer<Project?, NoError>,
+                                currentDate: SignalProducer<Date, NoError>,
+                                calendar: SignalProducer<Calendar, NoError>,
+                                periodPreference: SignalProducer<PeriodPreference, NoError>,
+                                runningEntry: SignalProducer<RunningEntry?, NoError>) {
+        selectedProject <~ project
 
-    internal var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
-    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
-    internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
-
-
-    // MARK: - Backing properties
-
-    private let _project = MutableProperty<Project?>(nil)
-
-    private let _currentDate = MutableProperty<Date?>(nil)
-    private let _calendar = MutableProperty<Calendar?>(nil)
-    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
-    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
-
-
-    // MARK: - Actions
+        areChildrenControllersAvailable.firstTrue.startWithValues {
+            self.projectDetailsViewController.project <~ self.selectedProject.producer.skipNil()
+            self.projectDetailsViewController.currentDate <~ currentDate
+            self.projectDetailsViewController.calendar <~ calendar
+            self.projectDetailsViewController.periodPreference <~ periodPreference
+            self.projectDetailsViewController.runningEntry <~ runningEntry
+        }
+    }
 
     internal func setActions(readGoal: ReadGoalAction,
                              writeGoal: WriteGoalAction,
@@ -54,8 +50,10 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
 
     // MARK: - Local use of project
 
+    private let selectedProject = MutableProperty<Project?>(nil)
+
     private func setupContainedViewControllerVisibility() {
-        _project.producer.map { $0 != nil }.observe(on: UIScheduler())
+        selectedProject.producer.map { $0 != nil }.observe(on: UIScheduler())
             .startWithValues { [projectDetailsViewController, emptySelectionViewController, view] projectAvailable in
                 guard let projectDetailsViewController = projectDetailsViewController,
                     let emptySelectionViewController = emptySelectionViewController else {
@@ -69,17 +67,7 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
 
     // MARK: - Contained view controllers
 
-    var projectDetailsViewController: ProjectDetailsViewController! {
-        didSet {
-            if let controller = projectDetailsViewController {
-                controller.project <~ _project.producer.skipNil()
-                controller.currentDate <~ _currentDate.producer.skipNil()
-                controller.calendar <~ _calendar.producer.skipNil()
-                controller.periodPreference <~ _periodPreference.producer.skipNil()
-                controller.runningEntry <~ _runningEntry
-            }
-        }
-    }
+    var projectDetailsViewController: ProjectDetailsViewController!
 
     var emptySelectionViewController: EmptySelectionViewController!
 

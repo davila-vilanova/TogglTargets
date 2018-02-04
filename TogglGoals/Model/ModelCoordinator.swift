@@ -64,8 +64,8 @@ internal class ModelCoordinator: NSObject {
     // MARK: - Projects
 
     /// Combines the project IDs from the Toggl API and the user's goals.
-    lazy var fetchProjectIDsByGoalsAction = FetchProjectIDsByGoalsAction { [unowned self] in
-        return self.goalsStore.fetchProjectIDsByGoalsAction.applySerially()
+    var projectIDsByGoals: ProjectIDsByGoalsProducer {
+        return self.goalsStore.projectIDsByGoalsProducer
     }
 
     /// Accesses one particular `Project` by its project ID, returns a property

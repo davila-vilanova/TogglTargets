@@ -12,11 +12,14 @@ import ReactiveSwift
 
 class ProjectsListActivitySplitViewController: NSSplitViewController {
 
-    internal func connectInputs(runningEntry: SignalProducer<RunningEntry?, NoError>,
+    internal func connectInputs(projectIDsByGoals: ProjectIDsByGoalsProducer,
+                                runningEntry: SignalProducer<RunningEntry?, NoError>,
                                 currentDate: SignalProducer<Date, NoError>,
                                 modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>) {
         isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
-            self.projectsListViewController.connectInputs(runningEntry: runningEntry, currentDate: currentDate)
+            self.projectsListViewController.connectInputs(projectIDsByGoals: projectIDsByGoals,
+                                                          runningEntry: runningEntry,
+                                                          currentDate: currentDate)
         }
 
         isActivityViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
@@ -24,13 +27,11 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
         }
     }
 
-    internal func setActions(fetchProjectIDs: FetchProjectIDsByGoalsAction,
-                             readProject: ReadProjectAction,
+    internal func setActions(readProject: ReadProjectAction,
                              readGoal: ReadGoalAction,
                              readReport: ReadReportAction) {
         isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
-            self.projectsListViewController.setActions(fetchProjectIDs: fetchProjectIDs,
-                                                       readProject: readProject,
+            self.projectsListViewController.setActions(readProject: readProject,
                                                        readGoal: readGoal,
                                                        readReport: readReport)
         }

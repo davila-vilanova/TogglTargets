@@ -67,14 +67,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         mainWindow!.makeKeyAndOrderFront(nil)
 
         if let controller = mainWindowController.window?.contentViewController as? ProjectsMasterDetailController {
-            controller.currentDate <~ currentDateGenerator.currentDate
-            controller.calendar <~ calendar
-            controller.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
-            controller.runningEntry <~ modelCoordinator.runningEntry
-            controller.modelRetrievalStatus <~ modelCoordinator.retrievalStatus
+            controller.connectInputs(calendar: calendar.producer,
+                                     periodPreference: periodPreferenceStore.output.producer.skipNil(),
+                                     projectIDsByGoals: modelCoordinator.projectIDsByGoals,
+                                     runningEntry: modelCoordinator.runningEntry.producer,
+                                     currentDate: currentDateGenerator.currentDate.producer,
+                                     modelRetrievalStatus: modelCoordinator.retrievalStatus)
 
-            controller.setActions(fetchProjectIDs: modelCoordinator.fetchProjectIDsByGoalsAction,
-                                  readProject: modelCoordinator.readProjectAction,
+            controller.setActions(readProject: modelCoordinator.readProjectAction,
                                   readGoal: modelCoordinator.readGoalAction,
                                   writeGoal: modelCoordinator.writeGoalAction,
                                   deleteGoal: modelCoordinator.deleteGoalAction,

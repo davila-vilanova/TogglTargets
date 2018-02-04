@@ -12,15 +12,6 @@ import ReactiveSwift
 
 class ProjectsMasterDetailController: NSSplitViewController {
 
-    // MARK: - Exposed targets
-
-    internal var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
-    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
-    internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
-    internal var modelRetrievalStatus: BindingTarget<ActivityStatus> { return _modelRetrievalStatus.deoptionalizedBindingTarget }
-
-
     // MARK: - Backing properties
 
     private let _currentDate = MutableProperty<Date?>(nil)
@@ -30,18 +21,35 @@ class ProjectsMasterDetailController: NSSplitViewController {
     private let _modelRetrievalStatus = MutableProperty<ActivityStatus?>(nil)
 
 
-    // MARK: - Projects, goals and reports providing
+    // MARK: - Inputs and actions
 
-    internal func setActions(fetchProjectIDs: FetchProjectIDsByGoalsAction,
-                             readProject: ReadProjectAction,
+    internal func connectInputs(calendar: SignalProducer<Calendar, NoError>,
+                                periodPreference: SignalProducer<PeriodPreference, NoError>,
+                                projectIDsByGoals: ProjectIDsByGoalsProducer,
+                                runningEntry: SignalProducer<RunningEntry?, NoError>,
+                                currentDate: SignalProducer<Date, NoError>,
+                                modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>) {
+        areChildrenControllersAvailable.firstTrue.startWithValues {
+            self.projectsListViewController.connectInputs(projectIDsByGoals: projectIDsByGoals,
+                                                          runningEntry: runningEntry,
+                                                          currentDate: currentDate,
+                                                          modelRetrievalStatus: modelRetrievalStatus)
+        }
+        self.selectionDetailViewController.connectInputs(project: projectsListViewController.selectedProject.producer,
+                                                         currentDate: currentDate,
+                                                         calendar: calendar,
+                                                         periodPreference: periodPreference,
+                                                         runningEntry: runningEntry)
+    }
+
+    internal func setActions(readProject: ReadProjectAction,
                              readGoal: ReadGoalAction,
                              writeGoal: WriteGoalAction,
                              deleteGoal: DeleteGoalAction,
                              readReport: ReadReportAction) {
         areChildrenControllersAvailable.firstTrue.startWithValues { [unowned self] _ in
             self.projectsListViewController
-                .setActions(fetchProjectIDs: fetchProjectIDs,
-                            readProject: readProject,
+                .setActions(readProject: readProject,
                             readGoal: readGoal,
                             readReport: readReport)
             self.selectionDetailViewController
@@ -80,19 +88,6 @@ class ProjectsMasterDetailController: NSSplitViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        projectsListViewController.connectInputs(runningEntry: _runningEntry.producer,
-                                                 currentDate: _currentDate.producer.skipNil(),
-                                                 modelRetrievalStatus: _modelRetrievalStatus.producer.skipNil())
-
-        let detailController = selectionDetailViewController
-
-        detailController.currentDate <~ _currentDate.producer.skipNil()
-        detailController.calendar <~ _calendar.producer.skipNil()
-        detailController.periodPreference <~ _periodPreference.producer.skipNil()
-        detailController.runningEntry <~ _runningEntry
-
-        detailController.project <~ projectsListViewController.selectedProject
 
         areChildrenControllersAvailable.value = true
     }

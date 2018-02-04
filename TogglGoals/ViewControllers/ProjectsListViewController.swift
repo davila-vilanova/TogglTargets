@@ -20,8 +20,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// Sets the actions used by this controller.
     ///
     /// - parameters:
-    ///   - fetchProjectIDs: An `Action` this controller will apply to obtain a signal producer that emits
-    ///     `ProjectIDsByGoals` values and incremental updates.
     ///   - readProject: An `Action` this controller will apply to obtain project `Property` instances
     ///     corresponding to its input project IDs.
     ///   - readGoal: An `Action` this controller will apply to obtain goal `Property` instances corresponding
@@ -30,30 +28,27 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     instances corresponding to its input project IDs.
     ///
     /// - note: This method must be called exactly once during the life of this instance.
-    internal func setActions(fetchProjectIDs: FetchProjectIDsByGoalsAction,
-                             readProject: ReadProjectAction,
+    internal func setActions(readProject: ReadProjectAction,
                              readGoal: ReadGoalAction,
                              readReport: ReadReportAction) {
         UIScheduler().schedule { [weak self] in
             guard let controller = self else {
                 return
             }
-            assert(controller.fetchProjectIDsByGoalsAction == nil,
+            assert(controller.readProjectAction == nil,
                    "ProjectsListViewController's actions must be set exactly once.")
-            controller.fetchProjectIDsByGoalsAction = fetchProjectIDs
             controller.readProjectAction = readProject
             controller.readGoalAction = readGoal
             controller.readReportAction = readReport
-
-            controller.isReadyToDisplayCollection.firstTrue.startWithValues {
-                controller.fetchProjectIDsByGoalsAction.applySerially().start()
-            }
         }
     }
 
     /// Connects the provided signal producers to the this controller's reactive inputs.
     ///
     /// - parameters:
+    ///   - projectIDsByGoals: a producer of `ProjectIDsByGoals.Update` values
+    ///     that when started emits a `full(ProjectIDsByGoals)` value which can
+    ///     be followed by full or incremental updates.
     ///   - runningEntry: A signal producer that emits `RunningEntry` or `nil` values depending on whether
     ///     a time entry is currently active. This is used to add the currently running time to the reported
     ///     worked time for the corresponding project.
@@ -61,15 +56,21 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     This is useful to calculate the elapsed running time of the active time entry provided by `runningEntry`.
     ///
     /// - note: This method must be called exactly once during the life of this instance.
-    internal func connectInputs(runningEntry: SignalProducer<RunningEntry?, NoError>,
+    internal func connectInputs(projectIDsByGoals: ProjectIDsByGoalsProducer,
+                                runningEntry: SignalProducer<RunningEntry?, NoError>,
                                 currentDate: SignalProducer<Date, NoError>) {
         guard areInputsConnected == false else {
             assert(false, "ProjectsListViewController's inputs must be connected exactly once.")
             return
         }
+        areInputsConnected = true
+
         self.runningEntry <~ runningEntry
         self.currentDate <~ currentDate
-        self.areInputsConnected = true
+
+        isReadyToDisplayCollection.firstTrue.startWithValues {
+            self.projectIDsByGoals <~ projectIDsByGoals
+        }
     }
 
     /// Use to enforce that the inputs cannot be connected more than once.
@@ -96,14 +97,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
 
     // MARK: - Actions
-
-    /// The action used to retrieve the project IDs sorted by goals as full values and
-    /// as incremental updates. Delivers a full value first.
-    private var fetchProjectIDsByGoalsAction: FetchProjectIDsByGoalsAction! {
-        didSet {
-            projectIDsByGoals <~ fetchProjectIDsByGoalsAction.values
-        }
-    }
 
     /// The action used to read projects by project ID.
     private var readProjectAction: ReadProjectAction!
