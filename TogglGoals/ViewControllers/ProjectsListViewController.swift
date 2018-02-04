@@ -59,24 +59,17 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     internal func connectInputs(projectIDsByGoals: ProjectIDsByGoalsProducer,
                                 runningEntry: SignalProducer<RunningEntry?, NoError>,
                                 currentDate: SignalProducer<Date, NoError>) {
-        guard areInputsConnected == false else {
-            assert(false, "ProjectsListViewController's inputs must be connected exactly once.")
-            return
-        }
-        areInputsConnected = true
+        enforceOnce(for: "ProjectsListViewController") {
+            self.runningEntry <~ runningEntry
+            self.currentDate <~ currentDate
 
-        self.runningEntry <~ runningEntry
-        self.currentDate <~ currentDate
-
-        isReadyToDisplayCollection.firstTrue.startWithValues {
-            self.projectIDsByGoals <~ projectIDsByGoals
+            self.isReadyToDisplayCollection.firstTrue.startWithValues {
+                self.projectIDsByGoals <~ projectIDsByGoals
+            }
         }
     }
 
-    /// Use to enforce that the inputs cannot be connected more than once.
-    private var areInputsConnected = false
 
-    
     // MARK: - Exposed reactive output
 
     /// Emits `Project` values whenever a project is selected or `nil` when no project is selected.
