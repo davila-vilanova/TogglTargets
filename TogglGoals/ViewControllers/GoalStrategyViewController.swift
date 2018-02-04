@@ -7,25 +7,32 @@
 //
 
 import Cocoa
+import Result
 import ReactiveSwift
 import ReactiveCocoa
 
 class GoalStrategyViewController: NSViewController {
 
-    // MARK: Exposed targets
+    // MARK: Inputs
 
-    internal var timeGoal: BindingTarget<TimeInterval> { return _timeGoal.bindingTarget }
-    internal var dayBaseline: BindingTarget<TimeInterval?> { return _dayBaseline.bindingTarget }
-    internal var dayBaselineAdjustedToProgress: BindingTarget<TimeInterval?> { return _dayBaselineAdjustedToProgress.bindingTarget }
-    internal var dayBaselineDifferential: BindingTarget<Double?> { return _dayBaselineDifferential.bindingTarget }
-
+    internal func connectInputs(timeGoal: SignalProducer<TimeInterval, NoError>,
+                                dayBaseline: SignalProducer<TimeInterval?, NoError>,
+                                dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError>,
+                                dayBaselineDifferential: SignalProducer<Double?, NoError>) {
+        enforceOnce(for: "GoalStrategyViewController.connectInputs()") {
+            self.timeGoal <~ timeGoal
+            self.dayBaseline <~ dayBaseline
+            self.dayBaselineAdjustedToProgress <~ dayBaselineAdjustedToProgress
+            self.dayBaselineDifferential <~ dayBaselineDifferential
+        }
+    }
 
     // MARK: - Backing properties
 
-    private let _timeGoal = MutableProperty<TimeInterval>(0)
-    private let _dayBaseline = MutableProperty<TimeInterval?>(nil)
-    private let _dayBaselineAdjustedToProgress = MutableProperty<TimeInterval?>(nil)
-    private let _dayBaselineDifferential = MutableProperty<Double?>(nil)
+    private let timeGoal = MutableProperty<TimeInterval>(0)
+    private let dayBaseline = MutableProperty<TimeInterval?>(nil)
+    private let dayBaselineAdjustedToProgress = MutableProperty<TimeInterval?>(nil)
+    private let dayBaselineDifferential = MutableProperty<Double?>(nil)
 
 
     // MARK: - Formatters
@@ -58,10 +65,10 @@ class GoalStrategyViewController: NSViewController {
         super.viewDidLoad()
 
         // Update total hours and hours per day with the values of the corresponding signals, formatted to a time string
-        totalHoursStrategyLabel.reactive.text <~ _timeGoal.producer.mapToString(timeFormatter: timeFormatter)
-        hoursPerDayLabel.reactive.text <~ _dayBaselineAdjustedToProgress.producer.mapToString(timeFormatter: timeFormatter)
+        totalHoursStrategyLabel.reactive.text <~ timeGoal.producer.mapToString(timeFormatter: timeFormatter)
+        hoursPerDayLabel.reactive.text <~ dayBaselineAdjustedToProgress.producer.mapToString(timeFormatter: timeFormatter)
 
-        let formattedDifferential = _dayBaselineDifferential.producer
+        let formattedDifferential = dayBaselineDifferential.producer
             .map { $0?.magnitude }
             .map { (differential) -> NSNumber? in
             guard let differential = differential else { return nil }
@@ -70,10 +77,10 @@ class GoalStrategyViewController: NSViewController {
             .mapToNumberFormattedString(numberFormatter: percentFormatter)
 
         baselineDifferentialLabel.reactive.text <~
-            SignalProducer.combineLatest(_dayBaselineDifferential.producer,
+            SignalProducer.combineLatest(dayBaselineDifferential.producer,
                                          formattedDifferential,
-                                         _dayBaseline.producer,
-                                         _dayBaseline.producer.mapToString(timeFormatter: timeFormatter))
+                                         dayBaseline.producer,
+                                         dayBaseline.producer.mapToString(timeFormatter: timeFormatter))
                 .map { (differential, formattedDifferential, baseline, formattedBaseline) -> String in
                     guard let differential = differential,
                         baseline != nil else {

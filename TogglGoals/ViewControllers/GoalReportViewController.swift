@@ -75,10 +75,10 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     var goalStrategyViewController: GoalStrategyViewController! {
         didSet {
-            goalStrategyViewController.timeGoal <~ goalProgress.timeGoal
-            goalStrategyViewController.dayBaseline <~ goalProgress.dayBaseline
-            goalStrategyViewController.dayBaselineAdjustedToProgress <~ goalProgress.dayBaselineAdjustedToProgress
-            goalStrategyViewController.dayBaselineDifferential <~ goalProgress.dayBaselineDifferential
+            goalStrategyViewController.connectInputs(timeGoal: goalProgress.timeGoal,
+                                                     dayBaseline: goalProgress.dayBaseline,
+                                                     dayBaselineAdjustedToProgress: goalProgress.dayBaselineAdjustedToProgress,
+                                                     dayBaselineDifferential: goalProgress.dayBaselineDifferential)
         }
     }
 
