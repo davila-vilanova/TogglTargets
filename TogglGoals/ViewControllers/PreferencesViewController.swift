@@ -56,12 +56,12 @@ class PreferencesViewController: NSTabViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        loginViewController.userDefaults <~ _userDefaults.producer.skipNil()
+        loginViewController.connectInputs(userDefaults: _userDefaults.producer.skipNil())
         _resolvedCredential <~ loginViewController.resolvedCredential
-        
-        _updatedGoalPeriodPreference <~ goalPeriodsController.updatedPreference
+
         goalPeriodsController.connectInputs(calendar: _calendar.producer.skipNil(),
                                             currentDate: _currentDate.producer.skipNil(),
                                             periodPreference: _existingGoalPeriodPreference.producer.skipNil())
+        _updatedGoalPeriodPreference <~ goalPeriodsController.updatedPreference
     }
 }

@@ -38,9 +38,15 @@ fileprivate enum CredentialValidationResult {
 
 class LoginViewController: NSViewController, ViewControllerContaining {
 
-    // MARK: - Exposed reactive interface
+    // MARK: - Inputs
 
-    internal var userDefaults: BindingTarget<UserDefaults> { return _userDefaults.deoptionalizedBindingTarget }
+    internal func connectInputs(userDefaults: SignalProducer<UserDefaults, NoError>) {
+        enforceOnce(for: "LoginViewController.connectInputs()") {
+            self.userDefaults <~ userDefaults
+        }
+    }
+
+    // MARK: - Outputs
 
     internal lazy var resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
         credentialValidatingAction.values.map { validationResult -> TogglAPITokenCredential? in
@@ -51,21 +57,21 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         }.skipNil()
 
 
-    // MARK: - Backing of exposed reactive interface
+    // MARK: - Backing properties
 
-    private var _userDefaults = MutableProperty<UserDefaults?>(nil)
+    private var userDefaults = MutableProperty<UserDefaults?>(nil)
 
 
     // MARK: - Contained view controllers
 
     private var emailPasswordViewController: EmailPasswordViewController! {
         didSet {
-            emailPasswordViewController.userDefaults <~ _userDefaults.producer.skipNil()
+            emailPasswordViewController.userDefaults <~ userDefaults.producer.skipNil()
         }
     }
     private var apiTokenViewController: APITokenViewController! {
         didSet {
-            apiTokenViewController.userDefaults <~ _userDefaults.producer.skipNil()
+            apiTokenViewController.userDefaults <~ userDefaults.producer.skipNil()
         }
     }
 
@@ -220,7 +226,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         super.viewDidLoad()
         initializeControllerContainment(containmentIdentifiers: [UsernamePasswordVCContainment, APITokenVCContainment])
 
-        let persistedLoginMethod = _userDefaults.producer.skipNil()
+        let persistedLoginMethod = userDefaults.producer.skipNil()
             .map { $0.string(forKey: PersistenceKeys.selectedLoginMethod.rawValue) }
             .map { methodOrNil -> LoginMethod in
                 if let methodString = methodOrNil,
@@ -241,7 +247,7 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         displayViewForLoginMethod <~ persistedLoginMethod.take(first: 1)
         selectLoginMethodButton <~ persistedLoginMethod.take(first: 1)
         displayViewForLoginMethod <~ loginMethodFromButton // This will only fire when the user themselves select a login method from the popup menu
-        persistLoginMethod <~ _userDefaults.producer.skipNil().combineLatest(with: loginMethodFromButton)
+        persistLoginMethod <~ userDefaults.producer.skipNil().combineLatest(with: loginMethodFromButton)
 
         resultLabel.reactive.stringValue <~ credentialValidatingAction.values.map { (result) -> String in
             switch result {
