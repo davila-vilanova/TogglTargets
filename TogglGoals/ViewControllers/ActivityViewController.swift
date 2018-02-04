@@ -27,12 +27,9 @@ fileprivate let ActivityRemovalDelay = TimeInterval(2.0)
 
 class ActivityViewController: NSViewController, NSCollectionViewDataSource {
 
-    private var inputsConnected = false
-
     private let backgroundScheduler = QueueScheduler()
 
     internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
-
         func setUpInternalConnections() {
             func areStatusesCollapsable(_ statuses: [ActivityStatus]) -> Bool {
                 if statuses.count < ActivityStatus.Activity.individualActivityCount {
@@ -66,10 +63,7 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
 
         }
 
-        UIScheduler().schedule { [unowned self] in
-            guard !self.inputsConnected else {
-                fatalError("Inputs must not be connected more than once.")
-            }
+        enforceOnce(for: "ActivityViewController") {
             setUpInternalConnections()
 
             self.collectActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler)
@@ -77,7 +71,6 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
                 .debounce(ActivityRemovalDelay, on: self.backgroundScheduler)
                 .map { _ in () }
 
-            self.inputsConnected = true
         }
     }
 
