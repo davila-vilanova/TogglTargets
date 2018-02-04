@@ -97,6 +97,7 @@
 		637DA1FE202766C7000D7EB8 /* EnforceOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */; };
 		637DA1FF202766C7000D7EB8 /* EnforceOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */; };
 		637DA20020277F86000D7EB8 /* EnforceOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */; };
+		637DA203202797E0000D7EB8 /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
@@ -306,7 +307,7 @@
 		637A32531EE1727600667FC3 /* ProjectCollectionViewHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectCollectionViewHeader.xib; path = ViewControllers/ProjectCollectionViewHeader.xib; sourceTree = "<group>"; };
 		637A32541EE1727600667FC3 /* ProjectCollectionViewItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectCollectionViewItem.swift; path = ViewControllers/ProjectCollectionViewItem.swift; sourceTree = "<group>"; };
 		637A32551EE1727600667FC3 /* ProjectCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectCollectionViewItem.xib; path = ViewControllers/ProjectCollectionViewItem.xib; sourceTree = "<group>"; };
-		637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ContainmentSegue.swift; path = ViewControllers/ContainmentSegue.swift; sourceTree = "<group>"; };
+		637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainmentSegue.swift; sourceTree = "<group>"; };
 		637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnforceOnce.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProfileNetworkAction.swift; sourceTree = "<group>"; };
@@ -471,7 +472,6 @@
 				637A32361EE16FD600667FC3 /* TimeProgressViewController.swift */,
 				637A32381EE16FD600667FC3 /* GoalStrategyViewController.swift */,
 				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
-				637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */,
 				637DA202202797AF000D7EB8 /* CollectionViewLayout */,
 				631E46411F97CB980012E491 /* PreferencesViewController.swift */,
 				631E463E1F97CB730012E491 /* LoginViewController.swift */,
@@ -484,6 +484,7 @@
 		637DA20120279230000D7EB8 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */,
 				637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */,
 			);
 			path = Util;
@@ -891,6 +892,7 @@
 				63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */,
 				6333B6CB1F974348002CF189 /* ListLayout.swift in Sources */,
 				639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
+				637DA203202797E0000D7EB8 /* ContainmentSegue.swift in Sources */,
 				63D4BBB31F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				6333B6D71F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				63A67F521FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift in Sources */,
