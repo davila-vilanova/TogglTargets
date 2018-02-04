@@ -278,7 +278,7 @@
 		6329575E1DBA99F000E11A10 /* TogglGoalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglGoalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglGoalsUITests.swift; sourceTree = "<group>"; };
 		632957641DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6333B6C91F974348002CF189 /* ListLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ListLayout.swift; path = ViewControllers/ListLayout.swift; sourceTree = "<group>"; };
+		6333B6C91F974348002CF189 /* ListLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListLayout.swift; sourceTree = "<group>"; };
 		6333B6CD1F974690002CF189 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		6333B6D11F9746E6002CF189 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		6333B6D51F9746FD002CF189 /* WeekdaySelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySelection.swift; sourceTree = "<group>"; };
@@ -472,7 +472,7 @@
 				637A32381EE16FD600667FC3 /* GoalStrategyViewController.swift */,
 				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
 				637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */,
-				6333B6C91F974348002CF189 /* ListLayout.swift */,
+				637DA202202797AF000D7EB8 /* CollectionViewLayout */,
 				631E46411F97CB980012E491 /* PreferencesViewController.swift */,
 				631E463E1F97CB730012E491 /* LoginViewController.swift */,
 				63AB08161FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift */,
@@ -487,6 +487,14 @@
 				637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */,
 			);
 			path = Util;
+			sourceTree = "<group>";
+		};
+		637DA202202797AF000D7EB8 /* CollectionViewLayout */ = {
+			isa = PBXGroup;
+			children = (
+				6333B6C91F974348002CF189 /* ListLayout.swift */,
+			);
+			path = CollectionViewLayout;
 			sourceTree = "<group>";
 		};
 		63A67F2E1FCD9A35004BEFC6 /* APIAccess */ = {
