@@ -27,11 +27,11 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
             self.selectedProject <~ project
 
             self.areChildrenControllersAvailable.firstTrue.startWithValues {
-                self.projectDetailsViewController.project <~ self.selectedProject.producer.skipNil()
-                self.projectDetailsViewController.currentDate <~ currentDate
-                self.projectDetailsViewController.calendar <~ calendar
-                self.projectDetailsViewController.periodPreference <~ periodPreference
-                self.projectDetailsViewController.runningEntry <~ runningEntry
+                self.projectDetailsViewController.connectInputs(project: project.skipNil(),
+                                                                currentDate: currentDate,
+                                                                calendar: calendar,
+                                                                periodPreference: periodPreference,
+                                                                runningEntry: runningEntry)
             }
         }
     }

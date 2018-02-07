@@ -13,30 +13,41 @@ import Result
 
 class GoalViewController: NSViewController {
 
-    // MARK: Exposed targets and source
+    // MARK: - Input
 
-    internal var goal: BindingTarget<Goal?> { return _goal.bindingTarget }
+    internal func connectInputs(goal: SignalProducer<Goal?, NoError>,
+                                calendar: SignalProducer<Calendar, NoError>) {
+        enforceOnce(for: "GoalViewController.connectInputs()") {
+            self.didLoadViewProperty.firstTrue.startWithValues {
+                self.goal <~ goal
+                self.calendar <~ calendar
+            }
+        }
+    }
+
+    // MARK: - Output
+
     internal var userUpdates: Signal<Goal?, NoError> { return _userUpdates.output }
-
-    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
+    private var _userUpdates = Signal<Goal?, NoError>.pipe()
 
 
     // MARK: - Backing properties
 
-    private let _goal = MutableProperty<Goal?>(nil)
-    private var _userUpdates = Signal<Goal?, NoError>.pipe()
-    private var _calendar = MutableProperty<Calendar?>(nil)
+    private let goal = MutableProperty<Goal?>(nil)
+    private var calendar = MutableProperty<Calendar?>(nil)
 
 
     // MARK: - Outlets
 
     @IBOutlet weak var monthlyHoursGoalField: NSTextField!
     @IBOutlet weak var monthlyHoursGoalFormatter: NumberFormatter!
-    @IBOutlet weak var weekWorkDaysControl: NSSegmentedControl!
+    @IBOutlet weak var weekWorkdaysControl: NSSegmentedControl!
     @IBOutlet weak var deleteGoalButton: NSButton!
 
 
     // MARK: -
+
+    private let didLoadViewProperty = MutableProperty(false)
 
     private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
@@ -45,24 +56,21 @@ class GoalViewController: NSViewController {
         super.viewDidLoad()
 
         // Set up view
-        _calendar.producer.skipNil().startWithValues { [unowned self] (cal) in
+        calendar.producer.skipNil().observe(on: UIScheduler()).startWithValues { [unowned self] (cal) in
             self.populateWeekWorkDaysControl(calendar: cal)
         }
 
         // Bind input to UI
-        let goalExists = _goal.producer.map { $0 != nil }.skipRepeats()
+        let goalExists = goal.producer.map { $0 != nil }.skipRepeats()
         monthlyHoursGoalField.reactive.isEnabled <~ goalExists
-        weekWorkDaysControl.reactive.isEnabled <~ goalExists
+        weekWorkdaysControl.reactive.isEnabled <~ goalExists
         deleteGoalButton.reactive.isEnabled <~ goalExists
-        goalExists.filter { $0 == false }.producer.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
-            self.setSelectedWeekDays(nil)
-        }
 
-        _goal.producer.skipNil().skipRepeats { $0 == $1 }.observe(on: UIScheduler()).startWithValues { [unowned self] goal in
-            self.setSelectedWeekDays(goal.workWeekdays)
-        }
+        selectedWeekdaySegments <~ goal.map { $0?.workWeekdays }.producer
+            .skipRepeats { $0 == $1 }
+            .throttle(while: isWeekWorkdayControlPopulated.negate(), on: UIScheduler())
 
-        monthlyHoursGoalField.reactive.text <~ _goal.map { [monthlyHoursGoalFormatter] goal in
+        monthlyHoursGoalField.reactive.text <~ goal.map { [monthlyHoursGoalFormatter] goal in
             if let formatter = monthlyHoursGoalFormatter,
                 let goal = goal,
                 let hoursString = formatter.string(from: NSNumber(value: goal.hoursPerMonth)) {
@@ -73,20 +81,20 @@ class GoalViewController: NSViewController {
         }
 
         // Bind UI to output (and to internal state)
-        weekWorkDaysControl.reactive.selectedSegmentIndexes.observeValues { [unowned self] _ in
+        weekWorkdaysControl.reactive.selectedSegmentIndexes.observeValues { [unowned self] _ in
             var newSelection = WeekdaySelection.empty
 
             for (day, segmentIndex) in self.weekdaysToSegments {
-                assert(segmentIndex < self.weekWorkDaysControl.segmentCount)
-                if self.weekWorkDaysControl.isSelected(forSegment: segmentIndex) {
+                assert(segmentIndex < self.weekWorkdaysControl.segmentCount)
+                if self.weekWorkdaysControl.isSelected(forSegment: segmentIndex) {
                     newSelection.select(day)
                 }
             }
-            guard var goalValue = self._goal.value else {
+            guard var goalValue = self.goal.value else {
                 return
             }
             goalValue.workWeekdays = newSelection
-            self._goal.value = goalValue
+            self.goal.value = goalValue
             self._userUpdates.input.send(value: goalValue)
         }
 
@@ -94,19 +102,22 @@ class GoalViewController: NSViewController {
         monthlyHoursGoalField.reactive.stringValues.observeValues { [unowned self] (text) in
             if let parsedHours = self.monthlyHoursGoalFormatter.number(from: text) {
 
-                guard var goalValue = self._goal.value else {
+                guard var goalValue = self.goal.value else {
                     return
                 }
                 goalValue.hoursPerMonth = parsedHours.intValue
-                self._goal.value = goalValue
+                self.goal.value = goalValue
                 self._userUpdates.input.send(value: goalValue)
             }
         }
+
+        didLoadViewProperty.value = true
     }
 
+    private let isWeekWorkdayControlPopulated = MutableProperty(false)
     private func populateWeekWorkDaysControl(calendar: Calendar) {
         let weekdaySymbols = calendar.veryShortWeekdaySymbols
-        weekWorkDaysControl.segmentCount = weekdaySymbols.count
+        weekWorkdaysControl.segmentCount = weekdaySymbols.count
 
         let startFrom = Weekday.monday
         var dayIndex = startFrom.rawValue
@@ -117,7 +128,7 @@ class GoalViewController: NSViewController {
 
         func addSegment(_ day: Weekday) {
             let daySymbol = weekdaySymbols[day.rawValue]
-            weekWorkDaysControl.setLabel(daySymbol, forSegment: segmentIndex)
+            weekWorkdaysControl.setLabel(daySymbol, forSegment: segmentIndex)
             segmentsToWeekdays[segmentIndex] = day
             weekdaysToSegments[day] = segmentIndex
             segmentIndex += 1
@@ -133,17 +144,22 @@ class GoalViewController: NSViewController {
             addSegment(day)
             dayIndex += 1
         }
+        isWeekWorkdayControlPopulated.value = true
     }
 
-    private func setSelectedWeekDays(_ selection: WeekdaySelection?) {
-        for (day, segmentIndex) in weekdaysToSegments {
-            weekWorkDaysControl.setSelected(selection?.isSelected(day) ?? false, forSegment: segmentIndex)
+    private let (lifetime, token) = Lifetime.make()
+    private lazy var selectedWeekdaySegments = BindingTarget<WeekdaySelection?>(on: UIScheduler(), lifetime: lifetime) { [weak self] in
+        guard let _self = self else {
+            return
+        }
+        for (day, segmentIndex) in _self.weekdaysToSegments {
+            _self.weekWorkdaysControl.setSelected($0?.isSelected(day) ?? false, forSegment: segmentIndex)
         }
     }
 
     @IBAction func deleteGoal(_ sender: Any) {
-        _goal.value = nil
-        _userUpdates.input.send(value: _goal.value)
+        goal.value = nil
+        _userUpdates.input.send(value: goal.value)
     }
 }
 
@@ -151,16 +167,24 @@ class GoalViewController: NSViewController {
 
 class NoGoalViewController: NSViewController {
 
-    // MARK: Exposed target and source
+    // MARK: Inputs
 
-    var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
-    var goalCreated: Signal<Goal, NoError> { return _goalCreated.output }
+    internal func connectInputs(projectId: SignalProducer<ProjectID, NoError>) {
+        enforceOnce(for: "NoGoalViewController.connectInputs()") {
+            self.projectId <~ projectId
+        }
+    }
+
+
+    // MARK: - Outputs
+
+    var goalCreated: Signal<Goal, NoError> { return goalCreatedPipe.output }
 
 
     // MARK: - Private
 
-    private let _projectId = MutableProperty<Int64?>(nil)
-    private let _goalCreated = Signal<Goal, NoError>.pipe()
+    private let projectId = MutableProperty<Int64?>(nil)
+    private let goalCreatedPipe = Signal<Goal, NoError>.pipe()
 
     private var createGoalAction: Action<Void, Goal, NoError>!
 
@@ -175,11 +199,11 @@ class NoGoalViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        createGoalAction = Action<Void, Goal, NoError>(unwrapping: _projectId) {
+        createGoalAction = Action<Void, Goal, NoError>(unwrapping: projectId) {
             SignalProducer(value: Goal(forProjectId: $0, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend))
         }
 
         createGoalButton.reactive.pressed = CocoaAction<NSButton>(createGoalAction)
-        createGoalAction.values.observe(_goalCreated.input)
+        createGoalAction.values.observe(goalCreatedPipe.input)
     }
 }

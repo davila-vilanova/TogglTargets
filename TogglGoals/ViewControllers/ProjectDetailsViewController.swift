@@ -17,36 +17,52 @@ fileprivate let NoGoalVCContainment = "NoGoalVCContainment"
 
 class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
-    // MARK: - Exposed targets
+    // MARK: - Inputs
 
-    internal var project: BindingTarget<Project> { return _project.deoptionalizedBindingTarget }
-    internal var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
-    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    internal var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
-    internal var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
+    internal func connectInputs(project: SignalProducer<Project, NoError>,
+                                currentDate: SignalProducer<Date, NoError>,
+                                calendar: SignalProducer<Calendar, NoError>,
+                                periodPreference: SignalProducer<PeriodPreference, NoError>,
+                                runningEntry: SignalProducer<RunningEntry?, NoError>) {
+        enforceOnce(for: "ProjectDetailsViewController.connectInputs()") {
+            self.project <~ project
+
+            self.areChildrenControllersAvailable.firstTrue.startWithValues {
+                self.goalReportViewController.connectInputs(projectId: self.projectId,
+                                                            goal: self.goal.producer.skipNil(),
+                                                            report: self.report.producer,
+                                                            runningEntry: runningEntry,
+                                                            calendar: calendar,
+                                                            currentDate: currentDate,
+                                                            periodPreference: periodPreference)
+
+                self.goalViewController.connectInputs(goal: self.goal.producer,
+                                                      calendar: calendar)
+
+                self.noGoalViewController.connectInputs(projectId: self.projectId)
+            }
+        }
+    }
 
 
     // MARK: - Private properties
 
-    private let _project = MutableProperty<Project?>(nil)
-    private let _currentDate = MutableProperty<Date?>(nil)
-    private let _calendar = MutableProperty<Calendar?>(nil)
-    private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
-    private let _runningEntry = MutableProperty<RunningEntry?>(nil)
+    /// Selected project.
+    private let project = MutableProperty<Project?>(nil)
 
+    /// Goal corresponding to the selected project.
+    private let goal = MutableProperty<Goal?>(nil)
 
-    /// goalDownstream holds and propagates the values read by this controller and subcontrollers
-    /// of the currently selected goal, if any.
-    private let goalDownstream = MutableProperty<Goal?>(nil)
+    /// Report corresponding to the selected project.
+    private let report = MutableProperty<TwoPartTimeReport?>(nil)
 
 
     // MARK: - Derived input
 
-    private lazy var projectId: SignalProducer<Int64, NoError> = _project.producer.skipNil().map { $0.id }
+    private lazy var projectId: SignalProducer<Int64, NoError> = project.producer.skipNil().map { $0.id }
 
 
-
-    // MARK: - Goal and report providing
+    // MARK: - Goal and report retrieving actions
 
     internal func setActions(readGoal: ReadGoalAction,
                              writeGoal: WriteGoalAction,
@@ -54,76 +70,48 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
                              readReport: ReadReportAction) {
 
         enforceOnce(for: "ProjectDetailsViewController.setActions()") {
-            self.readGoalAction = readGoal
-            self.writeGoalAction = writeGoal
-            self.deleteGoalAction = deleteGoal
-            self.readReportAction = readReport
+            self.areChildrenControllersAvailable.firstTrue.startWithValues {
+                self.readGoalAction = readGoal
+                self.writeGoalAction = writeGoal
+                self.deleteGoalAction = deleteGoal
+                self.readReportAction = readReport
+
+                self.setupConnectionsWithActions()
+            }
         }
     }
 
-    private var readGoalAction: ReadGoalAction?
-    private var writeGoalAction: WriteGoalAction?
-    private var deleteGoalAction: DeleteGoalAction?
-
-    internal var readReportAction: ReadReportAction?
+    private var readGoalAction: ReadGoalAction!
+    private var writeGoalAction: WriteGoalAction!
+    private var deleteGoalAction: DeleteGoalAction!
+    internal var readReportAction: ReadReportAction!
 
     private func setupConnectionsWithActions() {
-        // This ensures that goalDownstream will only listen to values associated with the current project
-        goalDownstream <~ readGoalAction!.values.flatten(.latest)
-        goalReportViewController.report <~ readReportAction!.values.flatten(.latest)
+        // `goal` and `report` will only track values associated with the current project
+        goal <~ readGoalAction.values.flatten(.latest)
+        report <~ readReportAction.values.flatten(.latest)
 
         // Retrieve corresponding goal and report when project ID changes
-        readGoalAction!.serialInput <~ projectId
-        readReportAction!.serialInput <~ projectId
+        readGoalAction.serialInput <~ projectId
+        readReportAction.serialInput <~ projectId
 
+        // Trigger `writeGoalAction` when current goal changes or a goal is created
         writeGoalAction!.serialInput <~ Signal.merge(goalViewController.userUpdates.skipNil(),
                                                      noGoalViewController.goalCreated)
 
+        // Trigger `deleteGoalAction` when a goal is deleted
         let deleteSignal = goalViewController.userUpdates.filter { $0 == nil}.map { _ in () }
         deleteGoalAction!.serialInput <~ projectId.sample(on: deleteSignal)
     }
 
 
-    // MARK: - Local use of project
-
-    private func setupLocalProjectDisplay() {
-        _project.producer.observe(on: UIScheduler()).startWithValues { [unowned self] projectOrNil in
-            self.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
-        }
-    }
-
-
     // MARK: - Contained view controllers
 
-    var goalViewController: GoalViewController! {
-        didSet {
-            if let controller = goalViewController {
-                controller.goal <~ goalDownstream
-                controller.calendar <~ _calendar.producer.skipNil()
-            }
-        }
-    }
+    var goalViewController: GoalViewController!
 
-    var goalReportViewController: GoalReportViewController! {
-        didSet {
-            if let controller = goalReportViewController {
-                controller.projectId <~ projectId
-                controller.currentDate <~ _currentDate.producer.skipNil()
-                controller.goal <~ goalDownstream.producer.skipNil()
-                controller.calendar <~ _calendar.producer.skipNil()
-                controller.periodPreference <~ _periodPreference.producer.skipNil()
-                controller.runningEntry <~ _runningEntry.producer
-            }
-        }
-    }
+    var goalReportViewController: GoalReportViewController!
 
-    var noGoalViewController: NoGoalViewController! {
-        didSet {
-            if let controller = noGoalViewController {
-                controller.projectId <~ projectId
-            }
-        }
-    }
+    var noGoalViewController: NoGoalViewController!
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
         switch controller { // TODO: rework cases
@@ -140,15 +128,16 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     private func setupContainedViewControllerVisibility() {
         displayController(goalViewController, in: goalView) // Display always
 
-        goalDownstream.producer.filter { $0 == nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
+        goal.producer.filter { $0 == nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
             displayController(self.noGoalViewController, in: self.goalReportView)
         }
 
-        goalDownstream.producer.filter { $0 != nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
+        goal.producer.filter { $0 != nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
             displayController(self.goalReportViewController, in: self.goalReportView)
         }
     }
 
+    private let areChildrenControllersAvailable = MutableProperty(false)
 
     // MARK: - Outlets
 
@@ -165,7 +154,14 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         initializeControllerContainment(containmentIdentifiers: [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment])
         setupLocalProjectDisplay()
         setupContainedViewControllerVisibility()
-        setupConnectionsWithActions()
+
+        areChildrenControllersAvailable.value = true
+    }
+
+    private func setupLocalProjectDisplay() {
+        project.producer.observe(on: UIScheduler()).startWithValues { [unowned self] projectOrNil in
+            self.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
+        }
     }
 }
 
