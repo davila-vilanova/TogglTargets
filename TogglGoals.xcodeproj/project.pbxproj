@@ -311,10 +311,10 @@
 		637A323B1EE16FD600667FC3 /* ProjectsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectsListViewController.swift; path = ViewControllers/ProjectsListViewController.swift; sourceTree = "<group>"; };
 		637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectsMasterDetailController.swift; path = ViewControllers/ProjectsMasterDetailController.swift; sourceTree = "<group>"; };
 		637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SelectionDetailViewController.swift; path = ViewControllers/SelectionDetailViewController.swift; sourceTree = "<group>"; };
-		637A32521EE1727600667FC3 /* ProjectCollectionViewHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectCollectionViewHeader.swift; path = ViewControllers/ProjectCollectionViewHeader.swift; sourceTree = "<group>"; };
-		637A32531EE1727600667FC3 /* ProjectCollectionViewHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectCollectionViewHeader.xib; path = ViewControllers/ProjectCollectionViewHeader.xib; sourceTree = "<group>"; };
-		637A32541EE1727600667FC3 /* ProjectCollectionViewItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectCollectionViewItem.swift; path = ViewControllers/ProjectCollectionViewItem.swift; sourceTree = "<group>"; };
-		637A32551EE1727600667FC3 /* ProjectCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ProjectCollectionViewItem.xib; path = ViewControllers/ProjectCollectionViewItem.xib; sourceTree = "<group>"; };
+		637A32521EE1727600667FC3 /* ProjectCollectionViewHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectCollectionViewHeader.swift; sourceTree = "<group>"; };
+		637A32531EE1727600667FC3 /* ProjectCollectionViewHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCollectionViewHeader.xib; sourceTree = "<group>"; };
+		637A32541EE1727600667FC3 /* ProjectCollectionViewItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectCollectionViewItem.swift; sourceTree = "<group>"; };
+		637A32551EE1727600667FC3 /* ProjectCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCollectionViewItem.xib; sourceTree = "<group>"; };
 		637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainmentSegue.swift; sourceTree = "<group>"; };
 		637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnforceOnce.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
@@ -466,10 +466,7 @@
 				637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */,
 				63B42E201FF54E1500BEA529 /* ProjectsListActivitySplitViewController.swift */,
 				637A323B1EE16FD600667FC3 /* ProjectsListViewController.swift */,
-				637A32531EE1727600667FC3 /* ProjectCollectionViewHeader.xib */,
-				637A32521EE1727600667FC3 /* ProjectCollectionViewHeader.swift */,
-				637A32551EE1727600667FC3 /* ProjectCollectionViewItem.xib */,
-				637A32541EE1727600667FC3 /* ProjectCollectionViewItem.swift */,
+				637DA208202B814D000D7EB8 /* ProjectCollectionViewItems */,
 				63FEAF59200009E300CA23F5 /* ActivityViewController.swift */,
 				63FEAF401FFB831800CA23F5 /* ActivityCollectionViewItems */,
 				637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */,
@@ -504,6 +501,17 @@
 				6333B6C91F974348002CF189 /* ListLayout.swift */,
 			);
 			path = CollectionViewLayout;
+			sourceTree = "<group>";
+		};
+		637DA208202B814D000D7EB8 /* ProjectCollectionViewItems */ = {
+			isa = PBXGroup;
+			children = (
+				637A32531EE1727600667FC3 /* ProjectCollectionViewHeader.xib */,
+				637A32521EE1727600667FC3 /* ProjectCollectionViewHeader.swift */,
+				637A32551EE1727600667FC3 /* ProjectCollectionViewItem.xib */,
+				637A32541EE1727600667FC3 /* ProjectCollectionViewItem.swift */,
+			);
+			path = ProjectCollectionViewItems;
 			sourceTree = "<group>";
 		};
 		63A67F2E1FCD9A35004BEFC6 /* APIAccess */ = {
