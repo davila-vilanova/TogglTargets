@@ -98,6 +98,10 @@
 		637DA1FF202766C7000D7EB8 /* EnforceOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */; };
 		637DA20020277F86000D7EB8 /* EnforceOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */; };
 		637DA203202797E0000D7EB8 /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
+		637DA204202A302A000D7EB8 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA12008C2BB00635AD1 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		637DA205202A3030000D7EB8 /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA02008C2BB00635AD1 /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		637DA206202A3037000D7EB8 /* ReactiveCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EA9F2008C2BB00635AD1 /* ReactiveCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		637DA207202A303F000D7EB8 /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA22008C2BB00635AD1 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
@@ -247,6 +251,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				637DA207202A303F000D7EB8 /* SQLite.framework in Embed Frameworks */,
+				637DA206202A3037000D7EB8 /* ReactiveCocoa.framework in Embed Frameworks */,
+				637DA205202A3030000D7EB8 /* ReactiveSwift.framework in Embed Frameworks */,
+				637DA204202A302A000D7EB8 /* Result.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
