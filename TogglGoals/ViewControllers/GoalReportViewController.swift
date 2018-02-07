@@ -95,7 +95,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
 
     var goalReachedViewController: GoalReachedViewController! {
         didSet {
-            goalReachedViewController.timeGoal <~ goalProgress.timeGoal
+            goalReachedViewController.connectInputs(timeGoal: goalProgress.timeGoal)
         }
     }
 

@@ -99,9 +99,13 @@ class GoalStrategyViewController: NSViewController {
 }
 
 class GoalReachedViewController: NSViewController {
-    internal var timeGoal: BindingTarget<TimeInterval> { return _timeGoal.bindingTarget }
+    internal func connectInputs(timeGoal: SignalProducer<TimeInterval, NoError>) {
+        enforceOnce(for: "GoalReachedViewController.connectInputs()") {
+            self.timeGoal <~ timeGoal
+        }
+    }
 
-    private let _timeGoal = MutableProperty<TimeInterval>(0)
+    private let timeGoal = MutableProperty<TimeInterval>(0)
 
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
@@ -114,6 +118,6 @@ class GoalReachedViewController: NSViewController {
     @IBOutlet weak var totalHoursLabel: NSTextField!
 
     override func viewDidLoad() {
-        totalHoursLabel.reactive.text <~ _timeGoal.producer.mapToString(timeFormatter: timeFormatter)
+        totalHoursLabel.reactive.text <~ timeGoal.producer.mapToString(timeFormatter: timeFormatter)
     }
 }
