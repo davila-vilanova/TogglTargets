@@ -39,7 +39,7 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
     internal func setActions(readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
                              writeGoal: WriteGoalAction,
                              deleteGoal: DeleteGoalAction,
-                             readReport: ReadReportAction) {
+                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
         enforceOnce(for: "SelectionDetailViewController.setActions()") {
             self.areChildrenControllersAvailable.firstTrue.startWithValues {
                 [unowned self] in

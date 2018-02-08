@@ -24,17 +24,17 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     corresponding to its input project IDs.
     ///   - readGoal: A function this controller will use to read goals corresponding
     ///     to its input project IDs.
-    ///   - readReport: An `Action` this controller will apply to obtain `TwoPartTimeReport` `Property`
-    ///     instances corresponding to its input project IDs.
+    ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s
+    ///     corresponding to its input project IDs.
     ///
     /// - note: This method must be called exactly once during the life of this instance.
     internal func setActions(readProject: ReadProjectAction,
                              readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
-                             readReport: ReadReportAction) {
+                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
         enforceOnce(for: "ProjectsListViewController.setActions()") {
             self.readProjectAction = readProject
             self.readGoal = readGoal
-            self.readReportAction = readReport
+            self.readReport = readReport
         }
     }
 
@@ -93,7 +93,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private var readGoal: ((ProjectID) -> SignalProducer<Goal?, NoError>)!
 
     /// The action used to read reports by project ID.
-    private var readReportAction: ReadReportAction!
+    private var readReport: ((ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>)!
 
 
     // MARK: - Outlets
@@ -210,7 +210,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         projectItem.setInputs(project: readProjectAction.applySerially(projectId),
                               goal: readGoal(projectId),
-                              report: readReportAction.applySerially(projectId))
+                              report: readReport(projectId))
 
         return projectItem
     }

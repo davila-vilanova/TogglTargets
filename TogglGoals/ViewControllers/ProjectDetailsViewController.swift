@@ -30,7 +30,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
             self.areChildrenControllersAvailable.firstTrue.startWithValues {
                 self.goalReportViewController.connectInputs(projectId: self.projectId,
                                                             goal: self.goalForCurrentProject.skipNil(),
-                                                            report: self.report.producer,
+                                                            report: self.reportForCurrentProject,
                                                             runningEntry: runningEntry,
                                                             calendar: calendar,
                                                             currentDate: currentDate,
@@ -50,9 +50,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     /// Selected project.
     private let project = MutableProperty<Project?>(nil)
 
-    /// Report corresponding to the selected project.
-    private let report = MutableProperty<TwoPartTimeReport?>(nil)
-
 
     // MARK: - Derived input
 
@@ -64,13 +61,13 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     internal func setActions(readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
                              writeGoal: WriteGoalAction,
                              deleteGoal: DeleteGoalAction,
-                             readReport: ReadReportAction) {
+                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
 
         enforceOnce(for: "ProjectDetailsViewController.setActions()") {
             self.readGoal.value = readGoal
             self.writeGoalAction = writeGoal
             self.deleteGoalAction = deleteGoal
-            self.readReportAction = readReport
+            self.readReport.value = readReport
 
             self.areChildrenControllersAvailable.firstTrue.startWithValues {
                 self.setupConnectionsWithActions()
@@ -90,15 +87,17 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
     private var writeGoalAction: WriteGoalAction!
     private var deleteGoalAction: DeleteGoalAction!
-    internal var readReportAction: ReadReportAction!
+    private let readReport = MutableProperty<((ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>)?>(nil)
+
+    /// Report corresponding to the selected project.
+    private lazy var reportForCurrentProject: SignalProducer<TwoPartTimeReport?, NoError> = projectId
+        .throttle(while: readReport.map { $0 == nil }, on: UIScheduler())
+        .combineLatest(with: readReport.producer.skipNil())
+        .map { projectId, readGoal in readGoal(projectId) }
+        .flatten(.latest) // TODO: generalize and reuse
+
 
     private func setupConnectionsWithActions() {
-        // `goal` and `report` will only track values associated with the current project
-        report <~ readReportAction.values.flatten(.latest)
-
-        // Retrieve corresponding goal and report when project ID changes
-        readReportAction.serialInput <~ projectId
-
         // Trigger `writeGoalAction` when current goal changes or a goal is created
         writeGoalAction!.serialInput <~ Signal.merge(goalViewController.userUpdates.skipNil(),
                                                      noGoalViewController.goalCreated)

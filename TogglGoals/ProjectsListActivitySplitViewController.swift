@@ -31,7 +31,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
 
     internal func setActions(readProject: ReadProjectAction,
                              readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
-                             readReport: ReadReportAction) {
+                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
         enforceOnce(for: "ProjectsListActivitySplitViewController.setActions()") {
             self.isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
                 self.projectsListViewController.setActions(readProject: readProject,

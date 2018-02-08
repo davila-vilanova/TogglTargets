@@ -11,8 +11,6 @@ import Result
 import ReactiveSwift
 
 typealias ReadProjectAction = Action<ProjectID, Property<Project?>, NoError>
-typealias ReadReportAction = Action<ProjectID, Property<TwoPartTimeReport?>, NoError>
-
 
 /// Combines data from the Toggl API and the user's goals.
 /// Determines the dates of the reports to retrieve based on the user's period
@@ -68,8 +66,12 @@ internal class ModelCoordinator: NSObject {
         return self.goalsStore.projectIDsByGoalsProducer
     }
 
-    /// Accesses one particular `Project` by its project ID, returns a property
-    /// whose value can be tracked over time.
+    /// Function which takes a project ID as input and returns a producer that
+    /// emits values over time corresponding to the goal associated with that
+    /// project ID.
+    ///
+    /// - note: `nil` goal values represent a goal that does not exist yet or
+    ///         that has been deleted.
     internal lazy var readProjectAction =
         ReadProjectAction { [unowned self] projectId in
             let projectProperty = self.togglDataRetriever.projects.map { $0?[projectId] }
@@ -79,11 +81,11 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Reports
 
-    /// Accesses one particular `TwoPartTimeReport` by its project ID, returns a
-    /// property whose value can be tracked over time.
-    internal lazy var readReportAction = ReadReportAction { [unowned self] projectId in
-        let reportProperty = self.togglDataRetriever.reports.map { $0?[projectId] }.skipRepeats { $0 == $1 }
-        return SignalProducer(value: reportProperty)
+    /// Function which takes a project ID as input and returns a producer that
+    /// emits values over time corresponding to the report associated with that
+    /// project ID.
+    internal lazy var readReport = { (projectID: ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError> in
+        self.togglDataRetriever.reports.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
     }
 
 
@@ -94,6 +96,8 @@ internal class ModelCoordinator: NSObject {
 
     /// Apply this action to attempt a refresh and update of the currently
     /// running entry.
+
+
     var updateRunningEntry: RefreshAction { return togglDataRetriever.updateRunningEntry }
 
     /// Used to schedule the next automatic refresh of the currently running entry.

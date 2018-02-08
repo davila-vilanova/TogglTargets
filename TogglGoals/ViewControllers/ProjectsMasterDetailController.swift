@@ -48,7 +48,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
                              readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
                              writeGoal: WriteGoalAction,
                              deleteGoal: DeleteGoalAction,
-                             readReport: ReadReportAction) {
+                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
         enforceOnce(for: "ProjectsMasterDetailController.setActions()") {
             self.areChildrenControllersAvailable.firstTrue.startWithValues { [unowned self] _ in
                 self.projectsListViewController
