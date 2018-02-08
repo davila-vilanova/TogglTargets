@@ -74,7 +74,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                      currentDate: currentDateGenerator.currentDate.producer,
                                      modelRetrievalStatus: modelCoordinator.retrievalStatus)
 
-            controller.setActions(readProject: modelCoordinator.readProjectAction,
+            controller.setActions(readProject: modelCoordinator.readProject,
                                   readGoal: modelCoordinator.readGoal,
                                   writeGoal: modelCoordinator.writeGoalAction,
                                   deleteGoal: modelCoordinator.deleteGoalAction,

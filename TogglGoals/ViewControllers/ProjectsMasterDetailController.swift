@@ -44,7 +44,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
         }
     }
 
-    internal func setActions(readProject: ReadProjectAction,
+    internal func setActions(readProject: @escaping (ProjectID) -> SignalProducer<Project?, NoError>,
                              readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
                              writeGoal: WriteGoalAction,
                              deleteGoal: DeleteGoalAction,

@@ -29,7 +29,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
         }
     }
 
-    internal func setActions(readProject: ReadProjectAction,
+    internal func setActions(readProject: @escaping (ProjectID) -> SignalProducer<Project?, NoError>,
                              readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
                              readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
         enforceOnce(for: "ProjectsListActivitySplitViewController.setActions()") {

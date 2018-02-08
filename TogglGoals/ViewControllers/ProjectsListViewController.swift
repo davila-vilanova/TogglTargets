@@ -28,11 +28,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     corresponding to its input project IDs.
     ///
     /// - note: This method must be called exactly once during the life of this instance.
-    internal func setActions(readProject: ReadProjectAction,
+    internal func setActions(readProject: @escaping (ProjectID) -> SignalProducer<Project?, NoError>,
                              readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
                              readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
         enforceOnce(for: "ProjectsListViewController.setActions()") {
-            self.readProjectAction = readProject
+            self.readProject = readProject
             self.readGoal = readGoal
             self.readReport = readReport
         }
@@ -69,7 +69,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     /// Emits `Project` values whenever a project is selected or `nil` when no project is selected.
     /// Only one project can be selected at a time.
-    internal lazy var selectedProject = Property<Project?>(_selectedProject)
+    internal lazy var selectedProject = _selectedProject.producer.flatten(.latest)
 
     
     // MARK: - Backing properties
@@ -80,14 +80,15 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// Holds the current `Date` input values.
     private let currentDate = MutableProperty<Date?>(nil)
 
-    /// Conveys the selected project to the `selectedProject` property.
-    private let _selectedProject = MutableProperty<Project?>(nil)
+    /// Holds the producer that emits a stream of values corresponding to the
+    /// selected project.
+    private let _selectedProject = MutableProperty<SignalProducer<Project?, NoError>>(SignalProducer(value: nil))
 
 
     // MARK: - Actions
 
     /// The action used to read projects by project ID.
-    private var readProjectAction: ReadProjectAction!
+    private var readProject: ((ProjectID) -> SignalProducer<Project?, NoError>)!
 
     /// The function used to read goals by project ID.
     private var readGoal: ((ProjectID) -> SignalProducer<Goal?, NoError>)!
@@ -167,13 +168,13 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     /// Sends the value of the selected project through the `selectedProject` output.
     private func sendSelectedProjectValue() {
-        _selectedProject <~ { () -> SignalProducer<Project?, NoError> in
-            guard let indexPath = projectsCollectionView.selectionIndexPaths.first,
-                let projectId = currentProjectIDs.projectId(for: indexPath) else {
-                    return SignalProducer(value: nil)
-            }
-            return readProjectAction.applySerially(projectId).flatten(.latest)
-        }()
+        if let indexPath = projectsCollectionView.selectionIndexPaths.first,
+            let projectID = currentProjectIDs.projectId(for: indexPath) {
+            let projectProducer = readProject(projectID)
+            _selectedProject.value = projectProducer
+        } else {
+            _selectedProject.value = SignalProducer<Project?, NoError>(value: nil)
+        }
     }
 
     /// Scrolls the collection view to display the currently selected item.
@@ -208,7 +209,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
 
-        projectItem.setInputs(project: readProjectAction.applySerially(projectId),
+        projectItem.setInputs(project: readProject(projectId),
                               goal: readGoal(projectId),
                               report: readReport(projectId))
 

@@ -10,8 +10,6 @@ import Foundation
 import Result
 import ReactiveSwift
 
-typealias ReadProjectAction = Action<ProjectID, Property<Project?>, NoError>
-
 /// Combines data from the Toggl API and the user's goals.
 /// Determines the dates of the reports to retrieve based on the user's period
 /// preference and the current date.
@@ -67,15 +65,10 @@ internal class ModelCoordinator: NSObject {
     }
 
     /// Function which takes a project ID as input and returns a producer that
-    /// emits values over time corresponding to the goal associated with that
+    /// emits values over time corresponding to the project associated with that
     /// project ID.
-    ///
-    /// - note: `nil` goal values represent a goal that does not exist yet or
-    ///         that has been deleted.
-    internal lazy var readProjectAction =
-        ReadProjectAction { [unowned self] projectId in
-            let projectProperty = self.togglDataRetriever.projects.map { $0?[projectId] }
-            return SignalProducer(value: projectProperty)
+    internal lazy var readProject = { (projectID: ProjectID) -> SignalProducer<Project?, NoError> in
+        self.togglDataRetriever.projects.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
     }
 
 
@@ -106,9 +99,12 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Goals
 
-    /// Use `readGoal` to access one particular `Goal` by its project ID.
-    /// Returns a signal producer that emits goal values corresponding to the
-    /// provided project ID and can be tracked over time.
+    /// Function which takes a project ID as input and returns a producer that
+    /// emits values over time corresponding to the goal associated with that
+    /// project ID.
+    ///
+    /// - note: `nil` goal values represent a goal that does not exist yet or
+    ///         that has been deleted.
     internal var readGoal: (ProjectID) -> SignalProducer<Goal?, NoError> {
         return goalsStore.readGoal
     }

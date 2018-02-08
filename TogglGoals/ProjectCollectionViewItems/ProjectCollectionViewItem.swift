@@ -42,17 +42,17 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
 
     // MARK: - Inputs
 
-    internal func setInputs(project: SignalProducer<Property<Project?>, NoError>,
+    internal func setInputs(project: SignalProducer<Project?, NoError>,
                             goal: SignalProducer<Goal?, NoError>,
                             report: SignalProducer<TwoPartTimeReport?, NoError>) {
-        projects <~ project
+        projects <~ SignalProducer(value: project)
         goals <~ SignalProducer(value: goal)
         reports <~ SignalProducer(value: report)
     }
 
     // MARK: - Backing properties
 
-    private let projects = MutableProperty<Property<Project?>?>(nil)
+    private let projects = MutableProperty<SignalProducer<Project?, NoError>?>(nil)
     private let goals = MutableProperty<SignalProducer<Goal?, NoError>?>(nil)
     private let reports = MutableProperty<SignalProducer<TwoPartTimeReport?, NoError>?>(nil)
 
