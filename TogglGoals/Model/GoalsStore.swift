@@ -13,12 +13,6 @@ import ReactiveSwift
 
 typealias ProjectIndexedGoals = [ProjectID : Goal]
 
-/// Read the goal of value associated with the provided project ID and return a `Property`
-/// representing the value of the goal over time.
-///
-/// - note: `nil` represents a goal that does not exist yet or that has been deleted.
-typealias ReadGoalAction = Action<ProjectID, Property<Goal?>, NoError>
-
 /// Update the value the goal associated to the project ID matching the provided goal's
 /// `projectId` property. Returns a producer that completes immediately.
 typealias WriteGoalAction = Action<Goal, Void, NoError>
@@ -34,9 +28,14 @@ typealias ProjectIDsByGoalsProducer = SignalProducer<ProjectIDsByGoals.Update, N
 
 /// An entity that stores and retrieves Goal values
 protocol GoalsStore {
-    /// Action which takes a project ID as input and returns a producer that emits a single
-    /// Property value corresponding to the goal associated with that project ID.
-    var readGoalAction: ReadGoalAction { get }
+
+    /// Function which takes a project ID as input and returns a producer that
+    /// emits values over time corresponding to the goal associated with that
+    /// project ID.
+    ///
+    /// - note: `nil` goal values represent a goal that does not exist yet or
+    ///         that has been deleted.
+    var readGoal: (ProjectID) -> SignalProducer<Goal?, NoError> { get }
 
     /// Action which accepts new (or edited) goal values and stores them.
     var writeGoalAction: WriteGoalAction { get }
@@ -101,14 +100,19 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
         retrieveAllGoals()
     }
 
-    // MARK: - Public actions
+    // MARK: - Goal providing
 
-    /// Action which takes a project ID as input and returns a producer that emits a single
-    /// Property value corresponding to the goal associated with that project ID.
-    lazy var readGoalAction = ReadGoalAction { [unowned self] projectId in
-        let goalProperty = self.allGoals.map { $0?[projectId] }.skipRepeats { $0 == $1 }
-        return SignalProducer(value: goalProperty)
+    /// Function which takes a project ID as input and returns a producer that
+    /// emits values over time corresponding to the goal associated with that
+    /// project ID.
+    ///
+    /// - note: `nil` goal values represent a goal that does not exist yet or
+    ///         that has been deleted.
+    lazy var readGoal = { (projectID: ProjectID) -> SignalProducer<Goal?, NoError> in
+        self.allGoals.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
     }
+
+    // MARK: - Public actions
 
     /// Action which accepts new (or edited) goal values and stores them.
     lazy var writeGoalAction = WriteGoalAction(enabledIf: modifyGoalAction.isEnabled) {

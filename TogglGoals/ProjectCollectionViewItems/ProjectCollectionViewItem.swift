@@ -40,25 +40,28 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
     @IBOutlet weak var reportLabel: NSTextField!
 
 
-    // MARK: - Exposed targets
+    // MARK: - Inputs
 
-    internal var projects: BindingTarget<Property<Project?>?> { return _projects.bindingTarget }
-    internal var goals: BindingTarget<Property<Goal?>?> { return _goals.bindingTarget }
-    internal var reports: BindingTarget<Property<TwoPartTimeReport?>?> { return _reports.bindingTarget }
+    internal func setInputs(project: SignalProducer<Property<Project?>, NoError>,
+                            goal: SignalProducer<Goal?, NoError>,
+                            report: SignalProducer<Property<TwoPartTimeReport?>, NoError>) {
+        projects <~ project
+        goals <~ SignalProducer(value: goal)
+        reports <~ report
+    }
 
-    
     // MARK: - Backing properties
 
-    private let _projects = MutableProperty<Property<Project?>?>(nil)
-    private let _goals = MutableProperty<Property<Goal?>?>(nil)
-    private let _reports = MutableProperty<Property<TwoPartTimeReport?>?>(nil)
+    private let projects = MutableProperty<Property<Project?>?>(nil)
+    private let goals = MutableProperty<SignalProducer<Goal?, NoError>?>(nil)
+    private let reports = MutableProperty<Property<TwoPartTimeReport?>?>(nil)
 
 
     // MARK: - Selection of latest binding
 
-    private lazy var project: SignalProducer<Project?, NoError> = _projects.producer.skipNil().flatten(.latest)
-    private lazy var goal: SignalProducer<Goal?, NoError> = _goals.producer.skipNil().flatten(.latest)
-    private lazy var report: SignalProducer<TwoPartTimeReport?, NoError> = _reports.producer.skipNil().flatten(.latest)
+    private lazy var project: SignalProducer<Project?, NoError> = projects.producer.skipNil().flatten(.latest)
+    private lazy var goal: SignalProducer<Goal?, NoError> = goals.producer.skipNil().flatten(.latest)
+    private lazy var report: SignalProducer<TwoPartTimeReport?, NoError> = reports.producer.skipNil().flatten(.latest)
 
 
     // MARK: - NSCollectionViewItem

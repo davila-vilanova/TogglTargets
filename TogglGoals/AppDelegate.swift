@@ -75,7 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                      modelRetrievalStatus: modelCoordinator.retrievalStatus)
 
             controller.setActions(readProject: modelCoordinator.readProjectAction,
-                                  readGoal: modelCoordinator.readGoalAction,
+                                  readGoal: modelCoordinator.readGoal,
                                   writeGoal: modelCoordinator.writeGoalAction,
                                   deleteGoal: modelCoordinator.deleteGoalAction,
                                   readReport: modelCoordinator.readReportAction)

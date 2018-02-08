@@ -22,18 +22,18 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// - parameters:
     ///   - readProject: An `Action` this controller will apply to obtain project `Property` instances
     ///     corresponding to its input project IDs.
-    ///   - readGoal: An `Action` this controller will apply to obtain goal `Property` instances corresponding
+    ///   - readGoal: A function this controller will use to read goals corresponding
     ///     to its input project IDs.
     ///   - readReport: An `Action` this controller will apply to obtain `TwoPartTimeReport` `Property`
     ///     instances corresponding to its input project IDs.
     ///
     /// - note: This method must be called exactly once during the life of this instance.
     internal func setActions(readProject: ReadProjectAction,
-                             readGoal: ReadGoalAction,
+                             readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
                              readReport: ReadReportAction) {
         enforceOnce(for: "ProjectsListViewController.setActions()") {
             self.readProjectAction = readProject
-            self.readGoalAction = readGoal
+            self.readGoal = readGoal
             self.readReportAction = readReport
         }
     }
@@ -89,8 +89,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// The action used to read projects by project ID.
     private var readProjectAction: ReadProjectAction!
 
-    /// The action used to read goals by project ID.
-    private var readGoalAction: ReadGoalAction!
+    /// The function used to read goals by project ID.
+    private var readGoal: ((ProjectID) -> SignalProducer<Goal?, NoError>)!
 
     /// The action used to read reports by project ID.
     private var readReportAction: ReadReportAction!
@@ -208,9 +208,9 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
 
-        projectItem.projects <~ readProjectAction.applySerially(projectId)
-        projectItem.goals <~ readGoalAction.applySerially(projectId)
-        projectItem.reports <~ readReportAction.applySerially(projectId)
+        projectItem.setInputs(project: readProjectAction.applySerially(projectId),
+                              goal: readGoal(projectId),
+                              report: readReportAction.applySerially(projectId))
 
         return projectItem
     }

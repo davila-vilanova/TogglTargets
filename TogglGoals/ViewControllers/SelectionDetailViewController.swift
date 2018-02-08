@@ -36,7 +36,7 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
         }
     }
 
-    internal func setActions(readGoal: ReadGoalAction,
+    internal func setActions(readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
                              writeGoal: WriteGoalAction,
                              deleteGoal: DeleteGoalAction,
                              readReport: ReadReportAction) {

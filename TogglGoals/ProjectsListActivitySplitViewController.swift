@@ -30,7 +30,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
     }
 
     internal func setActions(readProject: ReadProjectAction,
-                             readGoal: ReadGoalAction,
+                             readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
                              readReport: ReadReportAction) {
         enforceOnce(for: "ProjectsListActivitySplitViewController.setActions()") {
             self.isProjectsListViewControllerAvailable.firstTrue.startWithValues { [unowned self] in

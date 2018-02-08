@@ -102,10 +102,11 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Goals
 
-    /// Accesses one particular `Goal` by its project ID, returns a property
-    /// whose value can be tracked over time.
-    internal var readGoalAction: ReadGoalAction {
-        return goalsStore.readGoalAction
+    /// Use `readGoal` to access one particular `Goal` by its project ID.
+    /// Returns a signal producer that emits goal values corresponding to the
+    /// provided project ID and can be tracked over time.
+    internal var readGoal: (ProjectID) -> SignalProducer<Goal?, NoError> {
+        return goalsStore.readGoal
     }
 
     /// Action which accepts new (or edited) goal values and stores them.
