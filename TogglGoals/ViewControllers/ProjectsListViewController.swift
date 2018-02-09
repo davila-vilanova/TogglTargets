@@ -69,7 +69,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     /// Emits `Project` values whenever a project is selected or `nil` when no project is selected.
     /// Only one project can be selected at a time.
-    internal lazy var selectedProject = _selectedProject.producer.flatten(.latest)
+    internal lazy var selectedProjectID = _selectedProjectID.producer
 
     
     // MARK: - Backing properties
@@ -80,9 +80,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// Holds the current `Date` input values.
     private let currentDate = MutableProperty<Date?>(nil)
 
-    /// Holds the producer that emits a stream of values corresponding to the
-    /// selected project.
-    private let _selectedProject = MutableProperty<SignalProducer<Project?, NoError>>(SignalProducer(value: nil))
+    /// Holds the ID of the currently selected project, if any.
+    private let _selectedProjectID = MutableProperty<ProjectID?>(nil)
 
 
     // MARK: - Actions
@@ -170,10 +169,9 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private func sendSelectedProjectValue() {
         if let indexPath = projectsCollectionView.selectionIndexPaths.first,
             let projectID = currentProjectIDs.projectId(for: indexPath) {
-            let projectProducer = readProject(projectID)
-            _selectedProject.value = projectProducer
+            _selectedProjectID.value = projectID
         } else {
-            _selectedProject.value = SignalProducer<Project?, NoError>(value: nil)
+            _selectedProjectID.value = nil
         }
     }
 

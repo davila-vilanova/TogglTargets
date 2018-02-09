@@ -36,7 +36,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
                                                               currentDate: currentDate,
                                                               modelRetrievalStatus: modelRetrievalStatus)
             }
-            self.selectionDetailViewController.connectInputs(project: self.projectsListViewController.selectedProject.producer,
+            self.selectionDetailViewController.connectInputs(projectID: self.projectsListViewController.selectedProjectID,
                                                              currentDate: currentDate,
                                                              calendar: calendar,
                                                              periodPreference: periodPreference,
@@ -56,7 +56,8 @@ class ProjectsMasterDetailController: NSSplitViewController {
                                 readGoal: readGoal,
                                 readReport: readReport)
                 self.selectionDetailViewController
-                    .setActions(readGoal: readGoal,
+                    .setActions(readProject: readProject,
+                                readGoal: readGoal,
                                 writeGoal: writeGoal,
                                 deleteGoal: deleteGoal,
                                 readReport: readReport)

@@ -41,8 +41,8 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
         }
     }
 
-    internal lazy var selectedProject = Property(_selectedProject)
-    private let _selectedProject = MutableProperty<Project?>(nil)
+    internal lazy var selectedProjectID = _selectedProjectID.producer
+    private let _selectedProjectID = MutableProperty<ProjectID?>(nil)
 
     // MARK: - Contained view controllers
 
@@ -70,7 +70,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
             }
         }
 
-        _selectedProject <~ projectsListViewController.selectedProject
+        _selectedProjectID <~ projectsListViewController.selectedProjectID
 
         let expandActivity: BindingTarget<Void> = splitViewItem(for: activityViewController)!.reactive.makeBindingTarget { (splitItem, Void) in
             splitItem.animator().isCollapsed = false
