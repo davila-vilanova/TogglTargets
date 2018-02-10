@@ -91,35 +91,32 @@ struct ProjectIDsByGoals {
             /// with a project ID
             ///
             /// - parameters:
-            ///   - idsByGoals: The `ProjectIDsByGoals` value that will be affected by this update.
+            ///   - newGoal: The value of the affected goal after the update. Pass `nil` for a goal deletion.
             ///   - projectId: The project ID whose goal will be created, deleted or updated.
             ///                This ID must be included in the project IDs associated with the `idsByGoals`
             ///                argument. If it is not, this call will return nil.
-            ///  - oldGoal: The value of the affected goal previous to the update. Pass `nil` for a goal creation.
-            ///  - newGoal: The value of the affected goal after the update. Pass `nil` for a goal deletion.
-            ///  - newIndexedGoals: The `ProjectIndexedGoals` value that results from updating the goal.
-            ///                     This value must differ from the indexed goals used to sort the IDs enclosed
-            ///                     in the provided `idsByGoals` by no more than one goal. The return value is
-            ///                     otherwise not defined.
+            ///   - goalsPreChange: The `ProjectIndexedGoals` value previous to updating the goal.
+            ///   - idsByGoals: The `ProjectIDsByGoals` value that will be affected by this update.
             ///
-            ///  - note: The new goal value will be extracted from `newIndexedGoals`
+            ///   - note: The old goal value will be extracted from `goalsPreChange`
             ///
             ///   - returns: The update corresponding to the change in the goal associated with `projectId`,
             ///              `nil` if `projectId` is not included in `idsByGoals`
-            static func forGoalChange(affecting idsByGoals: ProjectIDsByGoals,
+            static func forGoalChange(involving newGoal: Goal?,
                                       for projectId: ProjectID,
-                                      from oldGoal: Goal?,
-                                      producing newIndexedGoals: ProjectIndexedGoals) -> Update.GoalUpdate?  {
+                                      within goalsPreChange: ProjectIndexedGoals,
+                                      affecting idsByGoals: ProjectIDsByGoals) -> Update.GoalUpdate?  {
                 let currentSortedIDs = idsByGoals.sortedProjectIDs
                 let newlySortedIDs = currentSortedIDs
-                    .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(for: newIndexedGoals))
+                    .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
+                        for: goalsPreChange.updatingValue(newGoal, forKey: projectId)))
 
                 guard let oldIndex = currentSortedIDs.index(of: projectId),
                     let newIndex = newlySortedIDs.index(of: projectId) else {
                         return nil
                 }
-                let newGoal = newIndexedGoals[projectId]
 
+                let oldGoal = goalsPreChange[projectId]
                 let indexChange = IndexChange(old: oldIndex, new: newIndex)
                 if (oldGoal == nil) && (newGoal != nil) {
                     return .create(indexChange)

@@ -80,7 +80,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
 
     /// Initialize an instance that will read and write its database in the provided base directory.
     /// If no database file exists under the provided directory it will create one.
-    /// Returns `nil` if the database file cannot be open and cannot be created.
+    /// Returns `nil` if the database file cannot be opened and cannot be created.
     ///
     /// - parameters:
     ///   - baseDirectory: The `URL` of the directory from which to read and to which to write
@@ -93,14 +93,50 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             return nil
         }
 
+        let writeGoalProducer = _writeGoal.producer.skipNil()
+        let deleteGoalProducer = _deleteGoal.producer.skipNil()
+
+        let singleGoalUpdateComputer = Property(
+            initial: nil,
+            then: SignalProducer.combineLatest(goalsRetrievedFromDatabase.output, projectIDsByGoalsFullRefresh)
+                .map { [unowned self] (indexedGoalsState, projectIDsByGoalsState) in
+                    SingleGoalUpdateComputer(initialStateIndexedGoals: indexedGoalsState,
+                                             initialStateProjectIDsByGoals: projectIDsByGoalsState,
+                                             inputWriteGoal: writeGoalProducer,
+                                             inputDeleteGoal: deleteGoalProducer,
+                                             outputProjectIDsByGoalsUpdate: self.projectIDsByGoalsLastSingleUpdate.deoptionalizedBindingTarget)
+            }
+        )
+
+        let indexedGoalsState = Property(
+            initial: nil,
+            then: goalsRetrievedFromDatabase.output.producer
+                .map { [unowned self] retrievedGoals in
+                    IndexedGoalsState(initialStateIndexedGoals: retrievedGoals,
+                                      inputWriteGoal: writeGoalProducer.logEvents(identifier: "writeGoalProducer2", events: [.value]),
+                                      inputDeleteGoal: deleteGoalProducer,
+                                      outputIndexedGoals: self.allGoals.deoptionalizedBindingTarget)
+            }
+        )
+
+        lifetime.observeEnded {
+            _ = singleGoalUpdateComputer
+            _ = indexedGoalsState
+        }
+
+        writeGoalInDatabase <~ writeGoalProducer
+        deleteGoalFromDatabase <~ deleteGoalProducer
+
         ensureSchemaCreated()
-        connectInputsToAllGoals()
-        connectInputsToMGActionState()
-        connectInputToStoreGoalUpdate()
         retrieveAllGoals()
     }
 
-    // MARK: - Goal providing
+    // MARK: - All goals kept in memory
+
+    /// Tracks the values of all goals indexed by project ID.
+    private let allGoals = MutableProperty<ProjectIndexedGoals?>(nil)
+
+    // MARK: - Goal interface
 
     /// Function which takes a project ID as input and returns a producer that
     /// emits values over time corresponding to the goal associated with that
@@ -115,41 +151,36 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
     // MARK: - Public actions
 
     /// Action which accepts new (or edited) goal values and stores them.
-    lazy var writeGoalAction = WriteGoalAction(enabledIf: modifyGoalAction.isEnabled) {
-        [modifyGoalAction] goal in
-        modifyGoalAction.serialInput <~ SignalProducer(value: (Optional(goal), goal.projectId))
+    lazy var writeGoalAction = WriteGoalAction {
+        self._writeGoal.value = $0
         return SignalProducer.empty
     }
 
     /// Action which takes a project ID as input and deletes the goal associated with that project ID.
-    lazy var deleteGoalAction = DeleteGoalAction(enabledIf: modifyGoalAction.isEnabled) {
-        [modifyGoalAction] projectId in
-        _ = modifyGoalAction.serialInput <~ SignalProducer(value: (nil, projectId))
+    lazy var deleteGoalAction = DeleteGoalAction {
+        self._deleteGoal.value = $0
         return SignalProducer.empty
     }
+
+    var writeGoal: BindingTarget<Goal> { return _writeGoal.deoptionalizedBindingTarget }
+    private let _writeGoal = MutableProperty<Goal?>(nil)
+
+    var deleteGoal: BindingTarget<ProjectID> { return _deleteGoal.deoptionalizedBindingTarget }
+    private let _deleteGoal = MutableProperty<ProjectID?>(nil)
 
 
     // MARK: - Generation of ProjectIDsByGoals
 
-    /// Target that accepts and array of unsorted project IDs that will be matched against the goals
+    /// Target that accepts an array of unsorted project IDs that will be matched against the goals
     /// that this store has knowledge of.
     var projectIDs: BindingTarget<[ProjectID]> { return _projectIDs.deoptionalizedBindingTarget }
 
     /// The value backer for the `projectIDs` target.
     private var _projectIDs = MutableProperty<[ProjectID]?>(nil)
 
-    /// Keeps the values of all goals indexed by project ID.
-    private let allGoals = MutableProperty<ProjectIndexedGoals?>(nil)
-
-    /// Connect `modifyGoalAction`'s output to `allGoals` outside of the lazy initialization process
-    /// to avoid a dependency cycle.
-    private func connectInputsToAllGoals() {
-        allGoals <~ modifyGoalAction.values.map { $0.3 }
-    }
-
     /// Produces a new `ProjectIDsByGoals` value each time a value is sent to the `projectIDs` target
     /// that contains a different set of unique IDs than the last seen one.
-    private lazy var fullRefreshUpdateProducer: SignalProducer<ProjectIDsByGoals, NoError> =
+    private lazy var projectIDsByGoalsFullRefresh: SignalProducer<ProjectIDsByGoals, NoError> =
         _projectIDs.producer.skipNil().combineLatest(with: allGoals.producer.skipNil())
             .skipRepeats { (old, new) -> Bool in // let through only changes in project IDs, order insensitive
                 let oldIds = Set(old.0)
@@ -158,114 +189,35 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             }
             .map(ProjectIDsByGoals.init)
 
-    /// The type of the state representing the context for the `modifyGoalAction`.
-    private typealias MGActionState = (ProjectIndexedGoals, ProjectIDsByGoals)
-    /// The type of the input of the `modifyGoalAction`.
-    private typealias MGActionInput = (Goal?, ProjectID)
-    /// The type of the output of the `modifyGoalAction`
-    private typealias MGActionOutput = (StoredGoalUpdate, ProjectIDsByGoals.Update.GoalUpdate, ProjectIDsByGoals, ProjectIndexedGoals)
+    /// Used to connect the output of the current `SingleGoalUpdateComputer`
+    /// to `projectIDsByGoalsProducer`.
+    private let projectIDsByGoalsLastSingleUpdate = MutableProperty<ProjectIDsByGoals.Update.GoalUpdate?>(nil)
 
-    /// Keeps the state representing the context for the `modifyGoalAction`.
-    private let mgActionState = MutableProperty<MGActionState?>(nil)
-
-    /// Feed part of `modifyGoalAction`'s output back to its state / context, together with the current
-    /// indexed goals, outside of the initialization process to avoid a dependency cycle.
-    private func connectInputsToMGActionState() {
-        let allGoalsProducer = allGoals.producer.skipNil()
-        let projectIDsByGoalsProducer = SignalProducer.merge(fullRefreshUpdateProducer,
-                                                             modifyGoalAction.values.producer.map { $0.2 })
-        mgActionState <~ allGoalsProducer.combineLatest(with: projectIDsByGoalsProducer)
-    }
-
-    /// Action that encloses a single add / update / remove goal operation. Takes a goal or `nil`
-    /// and a project ID as its input, and runs in the context determined by the value of `allGoals`
-    /// prior to the goal addition, update or removal and the last generated value of `ProjectIDsByGoals`.
-    /// It has no side effects nor does it depend on any state other than that enclosed in the
-    /// `mgaActionState` property.
-    /// Its output is:
-    /// * A `StoredGoalUpdate` value to be sent to the `storedGoalUpdates` target that
-    ///   will commit the change to the database.
-    /// * A `GoalUpdate` that will be sent to any listeners of incremental updates to the
-    ///   `ProjectIDsByGoals` value.
-    /// * The `ProjectIDsByGoals` value corresponding to applying the update to the previously seen value,
-    ///   which will be fed back into the action's state.
-    /// * A collection of ProjectID-indexed goals representing the state of the indexed goals after the
-    ///   goal addition, update or removal.
-    private lazy var modifyGoalAction = Action<MGActionInput, MGActionOutput, NoError>(unwrapping: mgActionState) {
-        (state, input) in
-        let (currentIndexedGoals, currentIDsByGoals) = state
-        let (newGoalOrNil, projectId) = input
-        let oldGoal = currentIndexedGoals[projectId]
-
-        let newIndexedGoals: ProjectIndexedGoals = {
-            var t = currentIndexedGoals
-            t[projectId] = newGoalOrNil
-            return t
-        }()
-
-        let idsByGoalsUpdate = ProjectIDsByGoals.Update.GoalUpdate.forGoalChange(affecting: currentIDsByGoals,
-                                                                                 for: projectId,
-                                                                                 from: oldGoal,
-                                                                                 producing: newIndexedGoals)!
-        let persistedGoalUpdate: StoredGoalUpdate = { [goal = newGoalOrNil] in
-            switch (idsByGoalsUpdate) {
-            case .create: return .create(goal!)
-            case .update: return .update(goal!)
-            case .remove: return .delete(projectId)
-            }
-        }()
-
-        let output = (persistedGoalUpdate, idsByGoalsUpdate, idsByGoalsUpdate.apply(to: currentIDsByGoals), newIndexedGoals)
-        return SignalProducer(value: output)
-    }
 
     /// Producer of `ProjectIDsByGoals.Update` values that when started emits a
     // `full(ProjectIDsByGoals)` value which can be followed by by full or
     /// incremental updates, corresponding to the `ProjectIDsByGoals` generated
     /// by matching project IDs provided to the `projectIDs` target against the
     /// goals this store knows about.
-    lazy var projectIDsByGoalsProducer = ProjectIDsByGoalsProducer
-        { [unowned self] (observer: Signal<ProjectIDsByGoals.Update, NoError>.Observer, lifetime: Lifetime) in
-            self.fullRefreshUpdateProducer.take(first: 1).startWithValues({ (projectIDsByGoals) in
-                observer.send(value: ProjectIDsByGoals.Update.full(projectIDsByGoals))
-                self.modifyGoalAction.values.map { ProjectIDsByGoals.Update.singleGoal($0.1) }.observe(observer)
-            })
-    }
+    lazy var projectIDsByGoalsProducer: ProjectIDsByGoalsProducer =
+        SignalProducer.merge(
+            // Send a full value and any full value updates that happen from now on
+            projectIDsByGoalsFullRefresh.map (ProjectIDsByGoals.Update.full),
+            // Send any updates to a single goal that happen from now on
+            projectIDsByGoalsLastSingleUpdate.producer.skipNil().map (ProjectIDsByGoals.Update.singleGoal)
+    )
 
-    
+
     // MARK: -
 
-    /// Represents an update to a stored goal.
-    private enum StoredGoalUpdate {
-        /// The creation of a goal. Encloses the created goal.
-        case create(Goal)
-        /// The modification of an existing goal.
-        /// The enclosed goal represents the new value.
-        case update(Goal)
-        /// The deletion of the goal associated with the enclosed project ID.
-        case delete(ProjectID)
+    private let goalsRetrievedFromDatabase = Signal<ProjectIndexedGoals, NoError>.pipe()
+
+    private lazy var writeGoalInDatabase = BindingTarget<(Goal)>(on: scheduler, lifetime: lifetime) { [weak self] in
+        self?.storeGoal($0)
     }
 
-    /// Accepts goal updates outputted from the `modifyGoalAction` and persists the changes
-    /// in the database.
-    private lazy var storeGoalUpdate: BindingTarget<StoredGoalUpdate> =
-        BindingTarget<StoredGoalUpdate>(on: scheduler, lifetime: lifetime) {
-            [unowned self] update in
-            switch update {
-            case .create(let goal):
-                self.storeGoal(goal)
-            case .update(let goal):
-                self.storeGoal(goal)
-            case .delete(let projectId):
-                self.deleteGoal(for: projectId)
-            }
-    }
-
-    /// Connect the `StoreGoalUpdate` part of the output of `modifyGoalAction`
-    /// to the input of `storeGoalUpdate`. This also triggers the initialization
-    /// of the corresponding lazy property.
-    private func connectInputToStoreGoalUpdate() {
-        storeGoalUpdate <~ modifyGoalAction.values.map { $0.0 }
+    private lazy var deleteGoalFromDatabase = BindingTarget<(ProjectID)>(on: scheduler, lifetime: lifetime) { [weak self] in
+        self?.deleteGoal(for: $0)
     }
 
     /// Stores the provided goal into the database synchronously.
@@ -294,7 +246,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
         })
     }
 
-    /// Retrieves all goals from the database and stores then in the value of the `allGoals` property.
+    /// Retrieves all goals from the database and stores them in the value of the `allGoals` property.
     private func retrieveAllGoals() {
         var retrievedGoals = ProjectIndexedGoals()
         let retrievedRows = try! db.prepare(goalsTable)
@@ -308,7 +260,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             retrievedGoals[projectIdValue] = goal
         }
 
-        allGoals <~ SignalProducer(value: retrievedGoals)
+        goalsRetrievedFromDatabase.input.send(value: retrievedGoals)
 
         // [1] Can't use subscripts with custom types.
         // https://github.com/stephencelis/SQLite.swift/blob/master/Documentation/Index.md#custom-type-caveats
@@ -335,3 +287,116 @@ extension WeekdaySelection: Value {
         }
     }
 }
+
+// MARK : -
+
+fileprivate class SingleGoalUpdateComputer {
+    private let (lifetime, token) = Lifetime.make()
+    private let scheduler = QueueScheduler()
+
+    init(initialStateIndexedGoals: ProjectIndexedGoals,
+         initialStateProjectIDsByGoals: ProjectIDsByGoals,
+         inputWriteGoal: SignalProducer<Goal, NoError>,
+         inputDeleteGoal: SignalProducer<ProjectID, NoError>,
+         outputProjectIDsByGoalsUpdate: BindingTarget<ProjectIDsByGoals.Update.GoalUpdate>) {
+
+        indexedGoals = initialStateIndexedGoals
+        projectIDsByGoals = initialStateProjectIDsByGoals
+
+        writeGoal <~ inputWriteGoal
+        deleteGoal <~ inputDeleteGoal
+
+        lifetime += outputProjectIDsByGoalsUpdate <~ projectIDsByGoalsUpdatePipe.output
+
+        let description = "\(self)"
+        print("\(description) started")
+
+        lifetime.observeEnded {
+            print("\(description) ended")
+        }
+    }
+
+    // MARK: - State
+
+    private var indexedGoals: ProjectIndexedGoals
+    private var projectIDsByGoals: ProjectIDsByGoals
+
+    // MARK: - Input
+
+    private lazy var writeGoal = BindingTarget<Goal>(on: scheduler, lifetime: lifetime) { [weak self] in
+        self?.computeAndUpdate(newGoal: $0, projectID: $0.projectId)
+    }
+
+    private lazy var deleteGoal = BindingTarget<ProjectID>(on: scheduler, lifetime: lifetime) { [weak self] in
+        self?.computeAndUpdate(newGoal: nil, projectID: $0)
+    }
+
+    private func computeAndUpdate(newGoal: Goal?, projectID: ProjectID) {
+        // Compute update
+        assert(projectIDsByGoals.sortedProjectIDs.contains(projectID), "projectID must be included in projectIDsByGoals")
+        let update = ProjectIDsByGoals.Update.GoalUpdate
+            .forGoalChange(involving: newGoal,
+                           for: projectID,
+                           within: indexedGoals,
+                           affecting: projectIDsByGoals)! // returns nil only if `projectID` is not included in `projectIDsByGoals`
+
+
+        // Update internal state
+        indexedGoals[projectID] = newGoal
+        projectIDsByGoals = update.apply(to: projectIDsByGoals)
+
+        // Send update
+        projectIDsByGoalsUpdatePipe.input.send(value: update)
+    }
+
+    // MARK: - Output
+
+    private let projectIDsByGoalsUpdatePipe = Signal<ProjectIDsByGoals.Update.GoalUpdate, NoError>.pipe()
+}
+
+// MARK: -
+
+fileprivate class IndexedGoalsState {
+    private let (lifetime, token) = Lifetime.make()
+    private let scheduler = QueueScheduler()
+
+    init(initialStateIndexedGoals: ProjectIndexedGoals,
+         inputWriteGoal: SignalProducer<Goal, NoError>,
+         inputDeleteGoal: SignalProducer<ProjectID, NoError>,
+         outputIndexedGoals: BindingTarget<ProjectIndexedGoals>) {
+
+        indexedGoals = initialStateIndexedGoals
+
+        writeGoal <~ inputWriteGoal
+        deleteGoal <~ inputDeleteGoal
+
+        lifetime += outputIndexedGoals <~ indexedGoalsUpdatePipe.output
+
+        sendUpdate()
+    }
+
+    // MARK: - State
+
+    private var indexedGoals: ProjectIndexedGoals
+
+    // MARK: - Input
+
+    private lazy var writeGoal = BindingTarget<Goal>(on: scheduler, lifetime: lifetime) { [unowned self] in
+        self.indexedGoals[$0.projectId] = $0
+        self.sendUpdate()
+    }
+
+    private lazy var deleteGoal = BindingTarget<ProjectID>(on: scheduler, lifetime: lifetime) { [unowned self] in
+        self.indexedGoals.removeValue(forKey: $0)
+        self.sendUpdate()
+    }
+
+    private func sendUpdate() {
+        indexedGoalsUpdatePipe.input.send(value: indexedGoals)
+    }
+
+    // MARK: - Output
+
+    private let indexedGoalsUpdatePipe = Signal<ProjectIndexedGoals, NoError>.pipe()
+}
+

@@ -102,6 +102,10 @@
 		637DA205202A3030000D7EB8 /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA02008C2BB00635AD1 /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		637DA206202A3037000D7EB8 /* ReactiveCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EA9F2008C2BB00635AD1 /* ReactiveCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		637DA207202A303F000D7EB8 /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA22008C2BB00635AD1 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		637DA20F202F7659000D7EB8 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */; };
+		637DA210202F7659000D7EB8 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */; };
+		637DA211202F7659000D7EB8 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */; };
+		637DA212202F7659000D7EB8 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */; };
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
@@ -317,6 +321,7 @@
 		637A32551EE1727600667FC3 /* ProjectCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCollectionViewItem.xib; sourceTree = "<group>"; };
 		637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainmentSegue.swift; sourceTree = "<group>"; };
 		637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnforceOnce.swift; sourceTree = "<group>"; };
+		637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProfileNetworkAction.swift; sourceTree = "<group>"; };
 		63A67F351FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProjectsNetworkAction.swift; sourceTree = "<group>"; };
@@ -597,6 +602,7 @@
 				63AB08121FB6305200565D87 /* PreferenceStore.swift */,
 				63B1BBE61FBE2570001E9FBE /* ReportPeriodsProducer.swift */,
 				6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */,
+				637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -865,6 +871,7 @@
 				63AB08171FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift in Sources */,
 				63D4BBAC1F7D821800B87298 /* ModelCoordinator.swift in Sources */,
 				637A325A1EE1727600667FC3 /* ProjectCollectionViewItem.swift in Sources */,
+				637DA20F202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */,
 				63D4BBAF1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */,
 				63A67F401FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
@@ -906,6 +913,7 @@
 				63D4BBBA1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				63D4BBB41F7D821800B87298 /* GoalProgress.swift in Sources */,
 				63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */,
+				637DA210202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				6333B6CB1F974348002CF189 /* ListLayout.swift in Sources */,
 				639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
 				637DA203202797E0000D7EB8 /* ContainmentSegue.swift in Sources */,
@@ -977,6 +985,7 @@
 				63D4BBC71F7D821900B87298 /* SignalProducerExtensions.swift in Sources */,
 				6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */,
 				637A32491EE16FD600667FC3 /* GoalViewController.swift in Sources */,
+				637DA211202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				63A67F421FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
 				63AB08151FB6305200565D87 /* PreferenceStore.swift in Sources */,
 				63D4BBC61F7D821900B87298 /* PropertyExtensions.swift in Sources */,
@@ -1017,6 +1026,7 @@
 				63AB08321FB77CB500565D87 /* ModelCoordinator.swift in Sources */,
 				63AB083D1FB77CB500565D87 /* PeriodPreference.swift in Sources */,
 				63AB08361FB77CB500565D87 /* TogglAPICredential.swift in Sources */,
+				637DA212202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				63AB08331FB77CB500565D87 /* GoalsStore.swift in Sources */,
 				63DC619D1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */,
 				63AB08391FB77CB500565D87 /* PropertyExtensions.swift in Sources */,
