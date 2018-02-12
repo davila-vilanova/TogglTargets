@@ -38,8 +38,8 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
 
     internal func setActions(readProject: @escaping (ProjectID) -> SignalProducer<Project?, NoError>,
                              readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
-                             writeGoal: WriteGoalAction,
-                             deleteGoal: DeleteGoalAction,
+                             writeGoal: BindingTarget<Goal>,
+                             deleteGoal: BindingTarget<ProjectID>,
                              readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
         enforceOnce(for: "SelectionDetailViewController.setActions()") {
             self.readProject.value = readProject

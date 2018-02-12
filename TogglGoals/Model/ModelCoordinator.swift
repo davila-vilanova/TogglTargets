@@ -109,12 +109,11 @@ internal class ModelCoordinator: NSObject {
         return goalsStore.readGoal
     }
 
-    /// Action which accepts new (or edited) goal values and stores them.
-    internal var writeGoalAction: WriteGoalAction { return goalsStore.writeGoalAction }
+    /// Target which accepts new (or edited) goal values.
+    internal var writeGoal: BindingTarget<Goal> { return goalsStore.writeGoal }
 
-    /// Action which takes a project ID as input and deletes the goal associated
-    /// with that project ID.
-    internal var deleteGoalAction: DeleteGoalAction { return goalsStore.deleteGoalAction }
+    /// Target which for each received project ID deletes the goal associated with that project ID.
+    internal var deleteGoal: BindingTarget<ProjectID> { return goalsStore.deleteGoal }
 
 
     // MARK: - Forcing a refresh of all data

@@ -59,18 +59,22 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     // MARK: - Goal and report retrieving actions
 
     internal func setActions(readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
-                             writeGoal: WriteGoalAction,
-                             deleteGoal: DeleteGoalAction,
+                             writeGoal: BindingTarget<Goal>,
+                             deleteGoal: BindingTarget<ProjectID>,
                              readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
 
         enforceOnce(for: "ProjectDetailsViewController.setActions()") {
             self.readGoal.value = readGoal
-            self.writeGoalAction = writeGoal
-            self.deleteGoalAction = deleteGoal
             self.readReport.value = readReport
 
             self.areChildrenControllersAvailable.firstTrue.startWithValues {
-                self.setupConnectionsWithActions()
+                // Send to `writeGoal` any goal modification or creation
+                writeGoal <~ Signal.merge(self.goalViewController.userUpdates.skipNil(),
+                                          self.noGoalViewController.goalCreated)
+
+                // Send the project ID to `deleteGoal` when a goal is to be deleted
+                let deleteSignal = self.goalViewController.userUpdates.filter { $0 == nil}.map { _ in () }
+                deleteGoal <~ self.projectId.sample(on: deleteSignal)
             }
         }
     }
@@ -85,8 +89,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         .flatten(.latest)
 
 
-    private var writeGoalAction: WriteGoalAction!
-    private var deleteGoalAction: DeleteGoalAction!
     private let readReport = MutableProperty<((ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>)?>(nil)
 
     /// Report corresponding to the selected project.
@@ -95,18 +97,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         .combineLatest(with: readReport.producer.skipNil())
         .map { projectId, readGoal in readGoal(projectId) }
         .flatten(.latest) // TODO: generalize and reuse
-
-
-    private func setupConnectionsWithActions() {
-        // Trigger `writeGoalAction` when current goal changes or a goal is created
-        writeGoalAction!.serialInput <~ Signal.merge(goalViewController.userUpdates.skipNil(),
-                                                     noGoalViewController.goalCreated)
-
-        // Trigger `deleteGoalAction` when a goal is deleted
-        let deleteSignal = goalViewController.userUpdates.filter { $0 == nil}.map { _ in () }
-        deleteGoalAction!.serialInput <~ projectId.sample(on: deleteSignal)
-    }
-
 
     // MARK: - Contained view controllers
 

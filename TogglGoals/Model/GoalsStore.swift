@@ -13,14 +13,6 @@ import ReactiveSwift
 
 typealias ProjectIndexedGoals = [ProjectID : Goal]
 
-/// Update the value the goal associated to the project ID matching the provided goal's
-/// `projectId` property. Returns a producer that completes immediately.
-typealias WriteGoalAction = Action<Goal, Void, NoError>
-
-/// Delete the goal associated to the provided project ID. Returns a producer that
-/// completes immediately.
-typealias DeleteGoalAction = Action<ProjectID, Void, NoError>
-
 /// Producer of `ProjectIDsByGoals.Update` values that when started emits a
 // `full(ProjectIDsByGoals)` value which can be followed by full or
 /// incremental updates.
@@ -37,11 +29,11 @@ protocol GoalsStore {
     ///         that has been deleted.
     var readGoal: (ProjectID) -> SignalProducer<Goal?, NoError> { get }
 
-    /// Action which accepts new (or edited) goal values and stores them.
-    var writeGoalAction: WriteGoalAction { get }
+    /// Target which accepts new (or edited) goal values.
+    var writeGoal: BindingTarget<Goal> { get }
 
-    /// Action which takes a project ID as input and deletes the goal associated with that project ID.
-    var deleteGoalAction: DeleteGoalAction { get }
+    /// Target which for each received project ID deletes the goal associated with that project ID.
+    var deleteGoal: BindingTarget<ProjectID> { get }
 }
 
 /// An entity that receives a stream of collections of project IDs and produces a stream of
@@ -149,18 +141,6 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
     }
 
     // MARK: - Public actions
-
-    /// Action which accepts new (or edited) goal values and stores them.
-    lazy var writeGoalAction = WriteGoalAction {
-        self._writeGoal.value = $0
-        return SignalProducer.empty
-    }
-
-    /// Action which takes a project ID as input and deletes the goal associated with that project ID.
-    lazy var deleteGoalAction = DeleteGoalAction {
-        self._deleteGoal.value = $0
-        return SignalProducer.empty
-    }
 
     var writeGoal: BindingTarget<Goal> { return _writeGoal.deoptionalizedBindingTarget }
     private let _writeGoal = MutableProperty<Goal?>(nil)

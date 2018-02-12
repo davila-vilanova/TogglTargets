@@ -76,8 +76,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
             controller.setActions(readProject: modelCoordinator.readProject,
                                   readGoal: modelCoordinator.readGoal,
-                                  writeGoal: modelCoordinator.writeGoalAction,
-                                  deleteGoal: modelCoordinator.deleteGoalAction,
+                                  writeGoal: modelCoordinator.writeGoal,
+                                  deleteGoal: modelCoordinator.deleteGoal,
                                   readReport: modelCoordinator.readReport)
         }
 
