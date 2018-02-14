@@ -23,10 +23,12 @@ fileprivate let RawNibNamesToIdentifiers = [ RetrievalInProgressItem : Retrieval
                                              RetrievalSuccessItem : RetrievalSuccessItemIdentifier,
                                              RetrievalErrorItem : RetrievalErrorItemIdentifier ]
 
+fileprivate let CollectionViewThrottleDelay = TimeInterval(0.5)
+
 class ActivityViewController: NSViewController, NSCollectionViewDataSource {
     internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
         func setUpInternalConnections() {
-            activityStatuses <~ activitiesState.output
+            activityStatuses <~ activitiesState.output.throttle(CollectionViewThrottleDelay, on: QueueScheduler())
             isCollectionViewAvailable.firstTrue.startWithValues { [unowned self] _ in
                 self.collectionView.reactive.reloadData <~ self.activityStatuses.producer.map { _ in () }
             }
