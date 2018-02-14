@@ -23,135 +23,47 @@ fileprivate let RawNibNamesToIdentifiers = [ RetrievalInProgressItem : Retrieval
                                              RetrievalSuccessItem : RetrievalSuccessItemIdentifier,
                                              RetrievalErrorItem : RetrievalErrorItemIdentifier ]
 
-fileprivate let ActivityRemovalDelay = TimeInterval(2.0)
+fileprivate enum CollectionViewUpdate {
+    case update(at: Int)
+    case addition(at: Int)
+    case removal(of: Set<Int>)
+    case fullRefresh
+}
 
 class ActivityViewController: NSViewController, NSCollectionViewDataSource {
-
-    private let backgroundScheduler = QueueScheduler()
+    func setUpInternalConnections() {
+        activityStatuses <~ statusesProcessor.output.map { $0.0 }
+        updateCollectionView <~ statusesProcessor.output.map { $0.1 }
+    }
 
     internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
-        func setUpInternalConnections() {
-            func areStatusesCollapsable(_ statuses: [ActivityStatus]) -> Bool {
-                if statuses.count < ActivityStatus.Activity.individualActivityCount {
-                    return false
-                }
-                return (statuses.filter { $0.isSuccessful }.count) == statuses.count
-            }
-
-            let unfilteredCollectStatusesOutput = collectActivityStatuses.values
-            let filteredCollectStatusesOutput = unfilteredCollectStatusesOutput.filter { !areStatusesCollapsable($0.0) }
-
-            collectedStatuses <~ Signal.merge(unfilteredCollectStatusesOutput.map { $0.0 },
-                                              cleanUpCollectedSuccessfulStatuses.values)
-
-            collapseAllStatusesIntoSuccess.serialInput <~ collectedStatuses.producer.filter(areStatusesCollapsable).map { _ in () }
-
-
-            cleanUpCollectedSuccessfulStatuses <~ cleanUpDisplayedSuccessfulStatuses.values.map { _ in ()}
-
-            displayStatuses <~ Signal.merge(filteredCollectStatusesOutput.map { $0.0 },
-                                            collapseAllStatusesIntoSuccess.values.map { $0.0 },
-                                            cleanUpDisplayedSuccessfulStatuses.values.map { $0.0 })
-                .observe(on: UIScheduler())
-
-            updateCollectionView.serialInput <~ Signal.merge(filteredCollectStatusesOutput.map { $0.1 },
-                                                             collapseAllStatusesIntoSuccess.values.map { $0.1 }.skipNil()
-                                                                .map { SignalProducer($0) }.flatten(.concat),
-                                                             cleanUpDisplayedSuccessfulStatuses.values.map { $0.1 })
-                .observe(on: UIScheduler())
-
-        }
-
-        enforceOnce(for: "ActivityViewController.connectInputs()") {
-            setUpInternalConnections()
-
-            self.collectActivityStatuses.serialInput <~ source.observe(on: self.backgroundScheduler)
-            self.cleanUpDisplayedSuccessfulStatuses.serialInput <~ source.filter { $0.isSuccessful }
-                .debounce(ActivityRemovalDelay, on: self.backgroundScheduler)
-                .map { _ in () }
-
+        setUpInternalConnections()
+        enforceOnce(for: "ActivityViewController.connectInputs()") { [unowned self] in
+            self.statusesProcessor.input <~ source
         }
     }
 
-    internal lazy var wantsDisplay = Property<Bool>(initial: false, then: displayStatuses.producer.map { !$0.isEmpty })
+    internal lazy var wantsDisplay = Property<Bool>(initial: false, then: activityStatuses.producer.map { !$0.isEmpty })
 
     private let (lifetime, token) = Lifetime.make()
-    private let scheduler = QueueScheduler()
-    private let collectedStatuses = MutableProperty([ActivityStatus]())
-    private let displayStatuses = MutableProperty([ActivityStatus]())
+    private let activityStatuses = MutableProperty([ActivityStatus]())
+    private let statusesProcessor = ActivityStatusesState()
 
-    private enum CollectionViewUpdate {
-        case update(at: Int)
-        case addition(at: Int)
-        case removal(of: Set<Int>)
-    }
-
-    private lazy var collectActivityStatuses = Action<ActivityStatus, ([ActivityStatus], CollectionViewUpdate), NoError>(state: collectedStatuses) { (currentActivityStatuses, newStatus) in
-
-        var updatedStatuses = currentActivityStatuses
-        let change: CollectionViewUpdate
-
-        if let index = updatedStatuses.index(where: { $0.activity == newStatus.activity }) {
-            updatedStatuses[index] = newStatus
-            change = .update(at: index)
-        } else {
-            let index = updatedStatuses.endIndex
-            updatedStatuses.insert(newStatus, at: index)
-            change = .addition(at: index)
+    private lazy var updateCollectionView = BindingTarget<[CollectionViewUpdate]>(on: UIScheduler(), lifetime: lifetime) { [weak self] updates in
+        guard let collectionView = self?.collectionView else {
+            return
         }
-
-        return SignalProducer(value: (updatedStatuses, change))
-    }
-
-    private lazy var collapseAllStatusesIntoSuccess = Action<Void, ([ActivityStatus], [CollectionViewUpdate]?), NoError>(state: displayStatuses){ statuses in
-
-        var collectionViewUpdates = [CollectionViewUpdate]()
-
-        if statuses.endIndex > 1 {
-            var indexesToDelete = Set<Int>()
-            for index in 1 ..< statuses.endIndex {
-                indexesToDelete.insert(index)
-            }
-            collectionViewUpdates.append(.removal(of: indexesToDelete))
-        }
-
-        collectionViewUpdates.append(.update(at: 0))
-
-        return SignalProducer(value: ([ActivityStatus.allSuccessful], collectionViewUpdates))
-    }
-
-    private lazy var cleanUpCollectedSuccessfulStatuses = Action<Void, [ActivityStatus], NoError>(state: collectedStatuses) { statuses in
-        return SignalProducer(value: statuses.filter { !$0.isSuccessful })
-    }
-
-    private lazy var cleanUpDisplayedSuccessfulStatuses = Action<Void, ([ActivityStatus], CollectionViewUpdate), NoError>(state: displayStatuses) { statuses in
-        var cleanedUpStatuses = [ActivityStatus]()
-        var indexes = Set<Int>()
-        for index in statuses.startIndex ..< statuses.endIndex {
-            let status = statuses[index]
-            if status.isSuccessful {
-                indexes.insert(index)
-            } else {
-                cleanedUpStatuses.append(status)
+        for update in updates {
+            switch update {
+            case .update(let index): collectionView.reloadItems(at: index.asIndexPaths)
+            case .addition(let index): collectionView.animator().insertItems(at: index.asIndexPaths)
+            case .removal(let indexes): collectionView.animator().deleteItems(at: indexes.asIndexPaths)
+            case .fullRefresh: collectionView.animator().reloadData()
             }
         }
-
-        return SignalProducer(value: (cleanedUpStatuses, .removal(of: indexes)))
-    }
-
-    private lazy var updateCollectionView = Action<CollectionViewUpdate, Void, NoError>(unwrapping: collectionViewProperty) { (collectionView, collectionViewUpdate) in
-        switch collectionViewUpdate {
-        case .update(let index): collectionView.reloadItems(at: index.asIndexPaths)
-        case .addition(let index): collectionView.animator().insertItems(at: index.asIndexPaths)
-        case .removal(let indexes): collectionView.animator().deleteItems(at: indexes.asIndexPaths)
-        }
-
-        return SignalProducer.empty
     }
 
     @IBOutlet weak var collectionView: NSCollectionView!
-
-    let collectionViewProperty = MutableProperty<NSCollectionView?>(nil)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -160,8 +72,6 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
             let nib = NSNib(nibNamed: NSNib.Name(rawValue: name), bundle: nil)!
             collectionView.register(nib, forItemWithIdentifier: identifier)
         }
-
-        collectionViewProperty.value = collectionView
 
         (collectionView.collectionViewLayout as! NSCollectionViewGridLayout).maximumNumberOfColumns = 1
         collectionView.reloadData()
@@ -175,11 +85,11 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        return displayStatuses.value.count
+        return activityStatuses.value.count
     }
 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        let activityStatus = displayStatuses.value[indexPath.item]
+        let activityStatus = activityStatuses.value[indexPath.item]
 
         let item: NSCollectionViewItem
         switch activityStatus {
@@ -210,6 +120,154 @@ class ActivityViewController: NSViewController, NSCollectionViewDataSource {
 
 protocol ActivityDisplaying {
     func setDisplayActivity(_ activity: ActivityStatus.Activity)
+}
+
+fileprivate typealias StateProcessor = ([ActivityStatus]) -> ([CollectionViewUpdate], [ActivityStatus])?
+
+fileprivate func collapseIntoSuccess(state: [ActivityStatus]) -> ([CollectionViewUpdate], [ActivityStatus])? {
+    func canCollapse() -> Bool {
+        if state.count < ActivityStatus.Activity.individualActivityCount {
+            return false
+        }
+        return (state.filter { $0.isSuccessful }.count) == state.count
+    }
+
+    guard canCollapse() else {
+        return nil
+    }
+
+    var updates = [CollectionViewUpdate]()
+
+    if state.endIndex > 1 {
+        var indexesToDelete = Set<Int>()
+        for index in 1 ..< state.endIndex {
+            indexesToDelete.insert(index)
+        }
+        updates.append(.removal(of: indexesToDelete))
+    }
+
+    // Make sure to refresh single remaining item at the end
+    updates.append(.update(at: 0))
+
+    return (updates, [ActivityStatus.allSuccessful])
+}
+
+fileprivate func collect(_ status: ActivityStatus, _ state: [ActivityStatus]) -> ([CollectionViewUpdate], [ActivityStatus])? {
+    var updatedState = state
+    if let index = state.index(where: { $0.activity == status.activity }) {
+        updatedState[index] = status
+        return ([.update(at: index)], updatedState)
+    } else {
+        let index = updatedState.endIndex
+        updatedState.insert(status, at: index)
+        return ([.addition(at: index)], updatedState)
+    }
+}
+
+fileprivate func cleanUpSuccessful(state: [ActivityStatus]) -> ([CollectionViewUpdate], [ActivityStatus])? {
+    func anythingToCleanUp() -> Bool {
+        return state.contains(where: { $0.isSuccessful })
+    }
+
+    guard anythingToCleanUp() else {
+        return nil
+    }
+
+    var cleanedUp = [ActivityStatus]()
+    var indexes = Set<Int>()
+    for index in state.startIndex ..< state.endIndex {
+        let status = state[index]
+        if status.isSuccessful {
+            indexes.insert(index)
+        } else {
+            cleanedUp.append(status)
+        }
+    }
+
+    return ([.removal(of: indexes)], cleanedUp)
+}
+
+let IdleProcessingDelay = TimeInterval(2.0)
+
+fileprivate class ActivityStatusesState {
+    // MARK: - State
+    private var state = [ActivityStatus]()
+
+    // MARK: - Input
+    lazy var input = BindingTarget<ActivityStatus>(on: scheduler, lifetime: lifetime) { [weak self] in
+        self?.processInput($0)
+    }
+
+    // MARK: - Output
+    var output: Signal<([ActivityStatus], [CollectionViewUpdate]), NoError> { return outputPipe.output }
+
+    // MARK: - Infrastucture
+    private let (lifetime, token) = Lifetime.make()
+    private let scheduler = QueueScheduler()
+    private var outputPipe = Signal<([ActivityStatus], [CollectionViewUpdate]), NoError>.pipe()
+    private let inputReceivedPipe = Signal<Void, NoError>.pipe()
+
+    // MARK: - Processing
+    private let onCollectProcessors: [StateProcessor] = [collapseIntoSuccess]
+    private let idleDelayedProcessors: [StateProcessor] = [cleanUpSuccessful]
+
+    private func processInput(_ status: ActivityStatus) {
+        inputReceivedPipe.input.send(value: ())
+
+        var state = self.state
+        var updateGroups = [[CollectionViewUpdate]]()
+
+        func apply(_ updateAndState: ([CollectionViewUpdate], [ActivityStatus])?) {
+            guard let (update, newState) = updateAndState else {
+                return
+            }
+            state = newState
+            updateGroups.append(update)
+        }
+
+        apply(collect(status, state))
+
+        for process in onCollectProcessors {
+            apply(process(state))
+        }
+
+        guard updateGroups.count > 0 else {
+            return
+        }
+
+        let update = updateGroups.count == 1 ? updateGroups.first! : [.fullRefresh]
+        self.state = state
+        outputPipe.input.send(value: (state, update))
+    }
+
+    private func applyIdleDelayedProcessors() {
+        var state = self.state
+        var updateGroups = [[CollectionViewUpdate]]()
+
+        func apply(_ updateAndState: ([CollectionViewUpdate], [ActivityStatus])?) {
+            guard let (update, newState) = updateAndState else {
+                return
+            }
+            state = newState
+            updateGroups.append(update)
+        }
+
+        for process in idleDelayedProcessors {
+            apply(process(state))
+        }
+
+        let update = updateGroups.count == 1 ? updateGroups.first! : [.fullRefresh]
+        self.state = state
+        outputPipe.input.send(value: (state, update))
+    }
+
+    // MARK: - Set up
+    init() {
+        let idleDelayTarget = BindingTarget<Void>(on: scheduler, lifetime: lifetime) { [weak self] _ in
+            self?.applyIdleDelayedProcessors()
+        }
+        self.lifetime += idleDelayTarget <~ inputReceivedPipe.output.debounce(IdleProcessingDelay, on: scheduler).logEvents(identifier: "idleDelayTarget", events: [.value])
+    }
 }
 
 fileprivate extension ActivityStatus {
