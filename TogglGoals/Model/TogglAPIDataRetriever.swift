@@ -159,6 +159,12 @@ enum ActivityStatus {
     }
 }
 
+extension ActivityStatus {
+    static var allSuccessful: ActivityStatus {
+        return ActivityStatus.succeeded(.all)
+    }
+}
+
 extension ActivityStatus: Hashable {
     static func ==(lhs: ActivityStatus, rhs: ActivityStatus) -> Bool {
         if lhs.activity != rhs.activity {

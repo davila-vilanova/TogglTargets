@@ -105,7 +105,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             then: goalsRetrievedFromDatabase.output.producer
                 .map { [unowned self] retrievedGoals in
                     IndexedGoalsState(initialStateIndexedGoals: retrievedGoals,
-                                      inputWriteGoal: writeGoalProducer.logEvents(identifier: "writeGoalProducer2", events: [.value]),
+                                      inputWriteGoal: writeGoalProducer,
                                       inputDeleteGoal: deleteGoalProducer,
                                       outputIndexedGoals: self.allGoals.deoptionalizedBindingTarget)
             }

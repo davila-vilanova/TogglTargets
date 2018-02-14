@@ -60,7 +60,7 @@ fileprivate let SetupFailure = "Test setup failure: "
 fileprivate let SetupFailureNilIndexedGoals = "\(SetupFailure)indexedGoals and projectId must not be nil"
 fileprivate let SetupFailureNonMatchingProjectId = "\(SetupFailure)if a newGoal is provided, newGoal's projectId must match provided projectId"
 fileprivate let SetupFailureNilIdsByGoals = "\(SetupFailure)idsByGoals must not be nil"
-fileprivate let SetupFailureNilProjectIdOrNewIndexedGoals = "\(SetupFailure)after calling setupForProjectId(_, newGoal:) projectId and newIndexedGoals must not be nil"
+fileprivate let SetupFailureNilProjectId = "\(SetupFailure)after calling setupForProjectId(_, newGoal:) projectId must not be nil"
 
 class ProjectIDsByGoalsUpdateTests: XCTestCase {
     var indexedGoals: ProjectIndexedGoals?
@@ -125,17 +125,21 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             XCTFail(SetupFailureNilIdsByGoals)
             return
         }
-
-        setUpForProjectId(48, newGoal: Goal(forProjectId: 48, hoursPerMonth: 15, workWeekdays: WeekdaySelection.exceptWeekend))
-        guard let projectId = projectId, let newIndexedGoals = newIndexedGoals else {
-            XCTFail(SetupFailureNilProjectIdOrNewIndexedGoals)
+        guard let indexedGoals = indexedGoals else {
+            XCTFail(SetupFailureNilIndexedGoals)
             return
         }
 
-        let goalUpdate = GoalUpdate.forGoalChange(affecting: idsByGoals,
+        setUpForProjectId(48, newGoal: Goal(forProjectId: 48, hoursPerMonth: 15, workWeekdays: WeekdaySelection.exceptWeekend))
+        guard let projectId = projectId else {
+            XCTFail(SetupFailureNilProjectId)
+            return
+        }
+
+        let goalUpdate = GoalUpdate.forGoalChange(involving: newGoal,
                                                   for: projectId,
-                                                  from: oldGoal,
-                                                  producing: newIndexedGoals)
+                                                  within: indexedGoals,
+                                                  affecting: idsByGoals)
         guard let update = goalUpdate else {
             XCTFail()
             return
@@ -160,17 +164,21 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             XCTFail(SetupFailureNilIdsByGoals)
             return
         }
-
-        setUpForProjectId(25, newGoal: nil)
-        guard let projectId = projectId, let newIndexedGoals = newIndexedGoals else {
-            XCTFail(SetupFailureNilProjectIdOrNewIndexedGoals)
+        guard let indexedGoals = indexedGoals else {
+            XCTFail(SetupFailureNilIndexedGoals)
             return
         }
 
-        let goalUpdate = GoalUpdate.forGoalChange(affecting: idsByGoals,
+        setUpForProjectId(25, newGoal: nil)
+        guard let projectId = projectId else {
+            XCTFail(SetupFailureNilProjectId)
+            return
+        }
+
+        let goalUpdate = GoalUpdate.forGoalChange(involving: newGoal,
                                                   for: projectId,
-                                                  from: oldGoal,
-                                                  producing: newIndexedGoals)
+                                                  within: indexedGoals,
+                                                  affecting: idsByGoals)
         guard let update = goalUpdate else {
             XCTFail()
             return
@@ -194,17 +202,22 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             XCTFail(SetupFailureNilIdsByGoals)
             return
         }
-
-        setUpForProjectId(22, newGoal: Goal(forProjectId: 22, hoursPerMonth: 16, workWeekdays: WeekdaySelection.exceptWeekend))
-        guard let projectId = projectId, let newIndexedGoals = newIndexedGoals else {
-            XCTFail(SetupFailureNilProjectIdOrNewIndexedGoals)
+        guard let indexedGoals = indexedGoals else {
+            XCTFail(SetupFailureNilIndexedGoals)
             return
         }
 
-        let goalUpdate = GoalUpdate.forGoalChange(affecting: idsByGoals,
+        setUpForProjectId(22, newGoal: Goal(forProjectId: 22, hoursPerMonth: 16, workWeekdays: WeekdaySelection.exceptWeekend))
+        guard let projectId = projectId else {
+            XCTFail(SetupFailureNilProjectId)
+            return
+        }
+
+        let goalUpdate = GoalUpdate.forGoalChange(involving: newGoal,
                                                   for: projectId,
-                                                  from: oldGoal,
-                                                  producing: newIndexedGoals)
+                                                  within: indexedGoals,
+                                                  affecting: idsByGoals)
+
         guard let update = goalUpdate else {
             XCTFail()
             return
