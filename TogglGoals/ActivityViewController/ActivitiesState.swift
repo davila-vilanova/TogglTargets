@@ -14,6 +14,7 @@ fileprivate typealias StateTransformation = [ActivityStatus]
 fileprivate typealias StateTransformer = ([ActivityStatus]) -> StateTransformation?
 
 fileprivate let IdleProcessingDelay = TimeInterval(2.0)
+fileprivate let ThrottleDelay = TimeInterval(0.5)
 
 class ActivitiesState {
     // MARK: - State
@@ -25,7 +26,9 @@ class ActivitiesState {
     }
 
     // MARK: - Output
-    var output: SignalProducer<([ActivityStatus]), NoError> { return state.producer }
+    lazy var output: SignalProducer<([ActivityStatus]), NoError> = {
+        state.producer.throttle(ThrottleDelay, on: scheduler)
+    }()
 
     // MARK: - Infrastucture
     private let (lifetime, token) = Lifetime.make()
