@@ -42,7 +42,7 @@ class ActivitiesStateTest: XCTestCase {
             return
         }
         XCTAssertEqual(firstOutputValue.count, 1)
-        XCTAssertEqual(firstOutputValue.first, .executing(.all))
+        XCTAssertEqual(firstOutputValue.first, .executing(.syncSeveral))
     }
 
     func testChangeFromSyncingProfileToSyncingProjectsAndReports() {
@@ -71,7 +71,7 @@ class ActivitiesStateTest: XCTestCase {
 
         var iterator = value.makeIterator()
         XCTAssertEqual(iterator.next(), .succeeded(.syncProfile))
-        XCTAssertEqual(iterator.next(), .executing(.all))
+        XCTAssertEqual(iterator.next(), .executing(.syncSeveral))
         XCTAssertNil(iterator.next())
     }
 

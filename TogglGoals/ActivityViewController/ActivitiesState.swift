@@ -138,7 +138,7 @@ func canCollapseTransient(_ prev:  [ActivityStatus], _ curr: [ActivityStatus]) -
 
 func collapseTransient(_ statuses: [ActivityStatus]) -> [ActivityStatus] {
     var collapsed = statuses.filter { !isTransient(status: $0) }
-    collapsed.append(.executing(.all))
+    collapsed.append(.executing(.syncSeveral))
     return collapsed
 }
 

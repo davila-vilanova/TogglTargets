@@ -25,7 +25,7 @@ class ActivityCollectionViewErrorItem: NSCollectionViewItem, ActivityDisplaying 
         case .syncProjects: retrieveWhat = "projects"
         case .syncReports: retrieveWhat = "reports"
         case .syncRunningEntry: retrieveWhat = "running entry"
-        case .all: retrieveWhat = "data from Toggl"
+        case .syncSeveral: retrieveWhat = "data from Toggl"
         }
 
         failureDescriptionTextField.stringValue = "Failed to retrieve \(retrieveWhat)"

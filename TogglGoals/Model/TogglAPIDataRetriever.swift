@@ -95,10 +95,12 @@ enum ActivityStatus {
         /// Retrieve the currently running time entry.
         case syncRunningEntry
 
-        /// Represents all other `Activity` cases. Useful when combined with
-        /// `ActivityStatus.succeeded` to denote that all data was successfully
-        /// synchronized against the Toggl API.
-        case all
+        /// Represents an indeterminate amount of other `Activity` cases.
+        /// Useful when combined with `ActivityStatus.executing` to summarize
+        /// the synchronizing of several model entities.
+        /// Also useful in combination with `ActivityStatus.succeeded` to denote
+        /// that all data was successfully synchronized.
+        case syncSeveral
 
         /// Count of `Activity` cases not including `all`.
         static var individualActivityCount = 4
@@ -161,7 +163,7 @@ enum ActivityStatus {
 
 extension ActivityStatus {
     static var allSuccessful: ActivityStatus {
-        return ActivityStatus.succeeded(.all)
+        return ActivityStatus.succeeded(.syncSeveral)
     }
 }
 

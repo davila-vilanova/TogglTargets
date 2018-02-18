@@ -20,7 +20,7 @@ class ActivityCollectionViewSuccessItem: NSCollectionViewItem, ActivityDisplayin
         case .syncProjects: retrievedWhat = "Projects"
         case .syncReports: retrievedWhat = "Reports"
         case .syncRunningEntry: retrievedWhat = "Running entry"
-        case .all: retrievedWhat = "All data"
+        case .syncSeveral: retrievedWhat = "All data"
         }
 
         successDescriptionTextField.stringValue = "\(retrievedWhat) synchronized"

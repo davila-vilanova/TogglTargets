@@ -23,7 +23,7 @@ class ActivityCollectionViewProgressItem: NSCollectionViewItem, ActivityDisplayi
         case .syncProjects: retrievingWhat = "projects"
         case .syncReports: retrievingWhat = "reports"
         case .syncRunningEntry: retrievingWhat = "running entry"
-        case .all: retrievingWhat = "data"
+        case .syncSeveral: retrievingWhat = "data"
         }
 
         progressDescriptionTextField.stringValue = "Synchronizing \(retrievingWhat)"
