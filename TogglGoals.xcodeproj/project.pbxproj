@@ -114,6 +114,7 @@
 		637DA2212034760F000D7EB8 /* ValueLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA21F2034760F000D7EB8 /* ValueLogger.swift */; };
 		637DA2222034760F000D7EB8 /* ValueLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA21F2034760F000D7EB8 /* ValueLogger.swift */; };
 		637DA2232034760F000D7EB8 /* ValueLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA21F2034760F000D7EB8 /* ValueLogger.swift */; };
+		637DA22520385096000D7EB8 /* ActivitiesStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */; };
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
@@ -332,6 +333,7 @@
 		637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		637DA21420347006000D7EB8 /* ActivitiesState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesState.swift; sourceTree = "<group>"; };
 		637DA21F2034760F000D7EB8 /* ValueLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueLogger.swift; sourceTree = "<group>"; };
+		637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesStateTest.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProfileNetworkAction.swift; sourceTree = "<group>"; };
 		63A67F351FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProjectsNetworkAction.swift; sourceTree = "<group>"; };
@@ -462,6 +464,7 @@
 				63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */,
 				632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */,
 				63C329321FEFBA63008AB9F2 /* MakeRetrieveReportsNetworkActionTest.swift */,
+				637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */,
 			);
 			path = TogglGoalsTests;
 			sourceTree = "<group>";
@@ -935,6 +938,7 @@
 				635DCE1B1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */,
 				63A67F571FCDA1E1004BEFC6 /* StoreProfileCacheAction.swift in Sources */,
 				6310EFD01FAC6E8700B42C44 /* PeriodPreference.swift in Sources */,
+				637DA22520385096000D7EB8 /* ActivitiesStateTest.swift in Sources */,
 				63D4BBB81F7D821800B87298 /* ModelCoordinator.swift in Sources */,
 				637485611FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift in Sources */,
 				6310EFCC1FAC6D3700B42C44 /* Period.swift in Sources */,

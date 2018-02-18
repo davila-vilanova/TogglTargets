@@ -12,6 +12,7 @@ import ReactiveSwift
 
 fileprivate typealias StateTransformation = [ActivityStatus]
 fileprivate typealias StateTransformer = ([ActivityStatus]) -> StateTransformation?
+fileprivate typealias CollapsePreventer = ([ActivityStatus], [ActivityStatus]) -> Bool
 
 fileprivate let IdleProcessingDelay = TimeInterval(2.0)
 fileprivate let ThrottleDelay = TimeInterval(0.5)
@@ -26,9 +27,13 @@ class ActivitiesState {
     }
 
     // MARK: - Output
-    lazy var output: SignalProducer<([ActivityStatus]), NoError> = {
-        state.producer.throttle(ThrottleDelay, on: scheduler)
-    }()
+    lazy var output: Signal<([ActivityStatus]), NoError> =
+        state.signal
+            .throttle(ThrottleDelay, on: scheduler)
+            .combinePrevious([ActivityStatus]())
+            .map(processOutput)
+
+    private let processOutput = processOutputStatuses
 
     // MARK: - Infrastucture
     private let (lifetime, token) = Lifetime.make()
@@ -115,3 +120,60 @@ fileprivate func cleanUpSuccessful(state: [ActivityStatus]) -> StateTransformati
 
     return state.filter({ !$0.isSuccessful })
 }
+
+fileprivate func processOutputStatuses(previousOutput:  [ActivityStatus],
+                                       currentOutput: [ActivityStatus]) -> [ActivityStatus] {
+    guard canCollapseTransient(previousOutput, currentOutput) else {
+        return currentOutput
+    }
+    return collapseTransient(currentOutput)
+}
+
+func canCollapseTransient(_ prev:  [ActivityStatus], _ curr: [ActivityStatus]) -> Bool {
+    let preventers = [determineIfNoCurrentTransientActivities,
+                      determineIfAnyTransientActivitiesUnchangedFromPreviousValue,
+                      determineIfOnlyIndependentActivitiesCurrentlyTransient]
+    return !shouldPreventCollapse(prev, curr, preventers)
+}
+
+func collapseTransient(_ statuses: [ActivityStatus]) -> [ActivityStatus] {
+    var collapsed = statuses.filter { !isTransient(status: $0) }
+    collapsed.append(.executing(.all))
+    return collapsed
+}
+
+fileprivate func determineIfNoCurrentTransientActivities(
+    _ previous: [ActivityStatus], _ current: [ActivityStatus]) -> Bool {
+    return transientActivities(in: current).isEmpty
+}
+
+fileprivate func determineIfAnyTransientActivitiesUnchangedFromPreviousValue(
+    _ previous: [ActivityStatus], _ current: [ActivityStatus]) -> Bool {
+    return Set(transientActivities(in: current)).intersection(transientActivities(in: previous)).isEmpty == false
+}
+
+fileprivate func determineIfOnlyIndependentActivitiesCurrentlyTransient(
+    _ previous: [ActivityStatus], _ current: [ActivityStatus]) -> Bool {
+
+    let independentActivities = Set<ActivityStatus.Activity>([.syncRunningEntry])
+    let currentTransient = transientActivities(in: current)
+
+    return  currentTransient.filter { independentActivities.contains($0) } == currentTransient
+}
+
+fileprivate func shouldPreventCollapse(_ prev: [ActivityStatus],
+                                       _ curr: [ActivityStatus],
+                                       _ preventers: [CollapsePreventer]) -> Bool {
+    return preventers.contains {
+        $0(prev, curr)
+    }
+}
+
+fileprivate func transientActivities(in statuses: [ActivityStatus]) -> [ActivityStatus.Activity] {
+    return statuses.filter(isTransient).map { $0.activity }
+}
+
+fileprivate func isTransient(status: ActivityStatus) -> Bool {
+    return status.isExecuting
+}
+
