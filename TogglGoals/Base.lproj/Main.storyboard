@@ -132,9 +132,6 @@
                                             <collectionViewGridLayout key="collectionViewLayout" id="65e-jk-VLl"/>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="secondaryBackgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
-                                            <connections>
-                                                <outlet property="dataSource" destination="tS7-EF-bJw" id="mpQ-YP-GCJ"/>
-                                            </connections>
                                         </collectionView>
                                     </subviews>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

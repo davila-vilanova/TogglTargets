@@ -5,9 +5,6 @@
       location = "group:Playgrounds"
       name = "Playgrounds">
       <FileRef
-         location = "group:ActionChaining.playground">
-      </FileRef>
-      <FileRef
          location = "group:ApplyActionSerially.playground">
       </FileRef>
       <FileRef
