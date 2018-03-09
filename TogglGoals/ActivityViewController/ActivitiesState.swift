@@ -28,12 +28,7 @@ class ActivitiesState {
 
     // MARK: - Output
     lazy var output: Signal<([ActivityStatus]), NoError> =
-        state.signal
-            .throttle(ThrottleDelay, on: scheduler)
-            .combinePrevious([ActivityStatus]())
-            .map(processOutput)
-
-    private let processOutput = processOutputStatuses
+        state.signal.throttle(ThrottleDelay, on: scheduler)
 
     // MARK: - Infrastucture
     private let (lifetime, token) = Lifetime.make()
@@ -41,7 +36,7 @@ class ActivitiesState {
     private let inputReceivedPipe = Signal<Void, NoError>.pipe()
 
     // MARK: - Transforming state
-    private let onCollectStateTransformers: [StateTransformer] = [collapseIntoSuccess]
+    private let onCollectStateTransformers: [StateTransformer] = []
     private let idleDelayedStateTransformers: [StateTransformer] = [cleanUpSuccessful]
 
     private func processInput(_ status: ActivityStatus) {
@@ -83,21 +78,6 @@ fileprivate func apply(stateTransformers: [StateTransformer], initialState: [Act
         return didTransform ? state : nil
 }
 
-fileprivate func collapseIntoSuccess(state: [ActivityStatus]) -> StateTransformation? {
-    func canCollapse() -> Bool {
-        if state.count < ActivityStatus.Activity.individualActivityCount {
-            return false
-        }
-        return (state.filter { $0.isSuccessful }.count) == state.count
-    }
-
-    guard canCollapse() else {
-        return nil
-    }
-
-    return [ActivityStatus.allSuccessful]
-}
-
 fileprivate func collect(_ status: ActivityStatus, _ state: [ActivityStatus]) -> StateTransformation {
     var updatedState = state
     if let index = state.index(where: { $0.activity == status.activity }) {
@@ -120,60 +100,3 @@ fileprivate func cleanUpSuccessful(state: [ActivityStatus]) -> StateTransformati
 
     return state.filter({ !$0.isSuccessful })
 }
-
-fileprivate func processOutputStatuses(previousOutput:  [ActivityStatus],
-                                       currentOutput: [ActivityStatus]) -> [ActivityStatus] {
-    guard canCollapseTransient(previousOutput, currentOutput) else {
-        return currentOutput
-    }
-    return collapseTransient(currentOutput)
-}
-
-func canCollapseTransient(_ prev:  [ActivityStatus], _ curr: [ActivityStatus]) -> Bool {
-    let preventers = [determineIfNoCurrentTransientActivities,
-                      determineIfAnyTransientActivitiesUnchangedFromPreviousValue,
-                      determineIfOnlyIndependentActivitiesCurrentlyTransient]
-    return !shouldPreventCollapse(prev, curr, preventers)
-}
-
-func collapseTransient(_ statuses: [ActivityStatus]) -> [ActivityStatus] {
-    var collapsed = statuses.filter { !isTransient(status: $0) }
-    collapsed.append(.executing(.syncSeveral))
-    return collapsed
-}
-
-fileprivate func determineIfNoCurrentTransientActivities(
-    _ previous: [ActivityStatus], _ current: [ActivityStatus]) -> Bool {
-    return transientActivities(in: current).isEmpty
-}
-
-fileprivate func determineIfAnyTransientActivitiesUnchangedFromPreviousValue(
-    _ previous: [ActivityStatus], _ current: [ActivityStatus]) -> Bool {
-    return Set(transientActivities(in: current)).intersection(transientActivities(in: previous)).isEmpty == false
-}
-
-fileprivate func determineIfOnlyIndependentActivitiesCurrentlyTransient(
-    _ previous: [ActivityStatus], _ current: [ActivityStatus]) -> Bool {
-
-    let independentActivities = Set<ActivityStatus.Activity>([.syncRunningEntry])
-    let currentTransient = transientActivities(in: current)
-
-    return  currentTransient.filter { independentActivities.contains($0) } == currentTransient
-}
-
-fileprivate func shouldPreventCollapse(_ prev: [ActivityStatus],
-                                       _ curr: [ActivityStatus],
-                                       _ preventers: [CollapsePreventer]) -> Bool {
-    return preventers.contains {
-        $0(prev, curr)
-    }
-}
-
-fileprivate func transientActivities(in statuses: [ActivityStatus]) -> [ActivityStatus.Activity] {
-    return statuses.filter(isTransient).map { $0.activity }
-}
-
-fileprivate func isTransient(status: ActivityStatus) -> Bool {
-    return status.isExecuting
-}
-

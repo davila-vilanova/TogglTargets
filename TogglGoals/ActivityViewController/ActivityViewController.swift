@@ -11,48 +11,71 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class ActivityViewController: NSViewController {
-    internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
-        func setUpInternalConnections() {
-            activityStatuses <~ activitiesState.output
-            isCollectionViewAvailable.firstTrue.startWithValues { [unowned self]  in
-                let target = BindingTarget<[ActivityStatus]>(on: UIScheduler(), lifetime: self.lifetime) {
-                    self.collectionView.content = $0
-                }
-                target <~ self.activityStatuses.producer
-                self.lifetime.observeEnded {
-                    _ = target
-                }
-            }
-        }
+fileprivate let CondensedActivityVCContainment = "CondensedActivityVCContainment"
 
+class ActivityViewController: NSViewController, ViewControllerContaining {
+    internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
         enforceOnce(for: "ActivityViewController.connectInputs()") { [unowned self] in
-            setUpInternalConnections()
+            self.setUpInternalConnections()
             self.activitiesState.input <~ source
+            self.areViewsAvailable.firstTrue.startWithValues {
+                self.condensedActivityViewController.connectInputs(activityStatuses: self.activityStatuses.producer)
+            }
         }
     }
 
     internal lazy var wantsDisplay = Property<Bool>(initial: false, then: activityStatuses.producer.map { !$0.isEmpty })
 
     private let (lifetime, token) = Lifetime.make()
-    private let activityStatuses = MutableProperty([ActivityStatus]())
     private let activitiesState = ActivitiesState()
+    private let activityStatuses = MutableProperty([ActivityStatus]())
 
+    @IBOutlet weak var condensedActivityView: NSView!
     @IBOutlet weak var collectionView: NSCollectionView!
 
-    private let isCollectionViewAvailable = MutableProperty(false)
+    var condensedActivityViewController: CondensedActivityViewController!
+
+    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
+        if let condensedActivityViewController = controller as? CondensedActivityViewController {
+            self.condensedActivityViewController = condensedActivityViewController
+            displayController(condensedActivityViewController, in: condensedActivityView)
+        }
+    }
+
+    private let areViewsAvailable = MutableProperty(false)
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        initializeControllerContainment(containmentIdentifiers: [CondensedActivityVCContainment])
+
         (collectionView.collectionViewLayout as! NSCollectionViewGridLayout).maximumNumberOfColumns = 1
-        isCollectionViewAvailable.value = true
+        areViewsAvailable.value = true
 
         collectionView.register(ActivityCollectionViewItem.self,
                                 forItemWithIdentifier: NSUserInterfaceItemIdentifier("ActivityCollectionViewItem"))
     }
+
+    private func setUpInternalConnections() {
+        activityStatuses <~ activitiesState.output
+
+        areViewsAvailable.firstTrue.startWithValues { [unowned self]  in
+            let updateCollectionView = BindingTarget<[ActivityStatus]>(on: UIScheduler(), lifetime: self.lifetime) {
+                self.collectionView.content = $0
+            }
+            updateCollectionView <~ self.activityStatuses.producer
+            self.lifetime.observeEnded {
+                _ = updateCollectionView
+            }
+        }
+    }
 }
 
-protocol ActivityDisplaying {
-    func setDisplayActivity(_ activity: ActivityStatus.Activity)
+private extension Array where Element == ActivityStatus {
+    var hasExecutingActivities: Bool {
+        return self.filter { $0.isExecuting }.count > 0
+    }
+    var hasErrors: Bool {
+        return self.filter { $0.isError }.count > 0
+    }
 }

@@ -62,6 +62,7 @@
 		635A258D2052918400EFCE90 /* ActivitiesState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A258A2052918400EFCE90 /* ActivitiesState.swift */; };
 		635A258E2052918400EFCE90 /* ActivityCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A258B2052918400EFCE90 /* ActivityCollectionViewItem.swift */; };
 		635A258F2052918400EFCE90 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A258C2052918400EFCE90 /* ActivityViewController.swift */; };
+		635A259120529DC900EFCE90 /* CondensedActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A259020529DC900EFCE90 /* CondensedActivityViewController.swift */; };
 		635DCE151FD326ED006FED93 /* ActionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE141FD326ED006FED93 /* ActionExtensions.swift */; };
 		635DCE161FD326ED006FED93 /* ActionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE141FD326ED006FED93 /* ActionExtensions.swift */; };
 		635DCE171FD326ED006FED93 /* ActionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE141FD326ED006FED93 /* ActionExtensions.swift */; };
@@ -296,6 +297,7 @@
 		635A258A2052918400EFCE90 /* ActivitiesState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivitiesState.swift; sourceTree = "<group>"; };
 		635A258B2052918400EFCE90 /* ActivityCollectionViewItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityCollectionViewItem.swift; sourceTree = "<group>"; };
 		635A258C2052918400EFCE90 /* ActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityViewController.swift; sourceTree = "<group>"; };
+		635A259020529DC900EFCE90 /* CondensedActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CondensedActivityViewController.swift; sourceTree = "<group>"; };
 		635DCE141FD326ED006FED93 /* ActionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionExtensions.swift; sourceTree = "<group>"; };
 		635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectIDsByGoals.swift; sourceTree = "<group>"; };
 		636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountWeekdaysTests.swift; sourceTree = "<group>"; };
@@ -485,6 +487,7 @@
 				635A258C2052918400EFCE90 /* ActivityViewController.swift */,
 				635A258A2052918400EFCE90 /* ActivitiesState.swift */,
 				635A258B2052918400EFCE90 /* ActivityCollectionViewItem.swift */,
+				635A259020529DC900EFCE90 /* CondensedActivityViewController.swift */,
 			);
 			name = ActivityViewController;
 			path = TogglGoals/ActivityViewController;
@@ -818,6 +821,7 @@
 				63A67F3B1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
 				63A67F361FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				63A67F4A1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
+				635A259120529DC900EFCE90 /* CondensedActivityViewController.swift in Sources */,
 				635A25862052917B00EFCE90 /* ProjectCollectionViewItem.swift in Sources */,
 				63A67F311FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
 				635DCE1A1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */,

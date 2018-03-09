@@ -94,16 +94,6 @@ enum ActivityStatus {
 
         /// Retrieve the currently running time entry.
         case syncRunningEntry
-
-        /// Represents an indeterminate amount of other `Activity` cases.
-        /// Useful when combined with `ActivityStatus.executing` to summarize
-        /// the synchronizing of several model entities.
-        /// Also useful in combination with `ActivityStatus.succeeded` to denote
-        /// that all data was successfully synchronized.
-        case syncSeveral
-
-        /// Count of `Activity` cases not including `all`.
-        static var individualActivityCount = 4
     }
 
     /// The underlying `Activity` is executing. The result of this execution can
@@ -158,12 +148,6 @@ enum ActivityStatus {
         case .error(_, let err, _): return err
         default: return nil
         }
-    }
-}
-
-extension ActivityStatus {
-    static var allSuccessful: ActivityStatus {
-        return ActivityStatus.succeeded(.syncSeveral)
     }
 }
 

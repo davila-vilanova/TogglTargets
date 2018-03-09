@@ -107,7 +107,6 @@ fileprivate extension ActivityStatus.Activity {
         case .syncProjects: return "projects"
         case .syncReports: return "reports"
         case .syncRunningEntry: return "running entry"
-        case .syncSeveral: return "data"
         }
     }
 }
