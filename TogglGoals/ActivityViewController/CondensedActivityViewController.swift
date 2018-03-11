@@ -12,19 +12,29 @@ import ReactiveSwift
 
 class CondensedActivityViewController: NSViewController {
     private let activityStatuses = MutableProperty([ActivityStatus]())
+    private let requestExpandDetailsPipe = Signal<Bool, NoError>.pipe()
 
-    func connectInputs(activityStatuses: SignalProducer<[ActivityStatus], NoError>) {
-        self.activityStatuses <~ activityStatuses
+    func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>,
+                          expandDetails: BindingTarget<Bool>) {
+        enforceOnce(for: "CondensedActivityViewController.connectInterface()") { [unowned self] in
+            self.activityStatuses <~ activityStatuses
+            expandDetails <~ self.requestExpandDetailsPipe.output
+        }
     }
 
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var resultImageView: NSImageView!
     @IBOutlet weak var statusDescriptionLabel: NSTextField!
     @IBOutlet weak var statusDetailLabel: NSTextField!
+    @IBOutlet weak var expandDetailsButton: NSButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         displayState <~ stateProducer(from: activityStatuses.producer)
+    }
+
+    @IBAction func expandDetails(_ button: NSButton) {
+        requestExpandDetailsPipe.input.send(value: button.state == .on)
     }
 
     private let (lifetime, token) = Lifetime.make()

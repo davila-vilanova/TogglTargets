@@ -24,7 +24,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
             }
 
             self.isActivityViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
-                self.activityViewController.connectInputs(modelRetrievalStatus: modelRetrievalStatus)
+                self.activityViewController.connectInterface(modelRetrievalStatus: modelRetrievalStatus)
             }
         }
     }
@@ -54,7 +54,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
 
     // MARK: -
 
-    var keepAround = [BindingTarget<Void>]()
+    private let (lifetime, token) = Lifetime.make()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,21 +73,22 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
         _selectedProjectID <~ projectsListViewController.selectedProjectID
 
         let expandActivity: BindingTarget<Void> = splitViewItem(for: activityViewController)!.reactive.makeBindingTarget { (splitItem, Void) in
-            splitItem.animator().isCollapsed = false
+            if splitItem.isCollapsed {
+                splitItem.animator().isCollapsed = false
+            }
         }
         let collapseActivity: BindingTarget<Void> = splitViewItem(for: activityViewController)!.reactive.makeBindingTarget { (splitItem, Void) in
-            splitItem.animator().isCollapsed = true
+            if !splitItem.isCollapsed {
+                splitItem.animator().isCollapsed = true
+            }
         }
 
         expandActivity <~ activityViewController.wantsDisplay.producer.filter { $0 }.map { _ in () }
-        collapseActivity <~ activityViewController.wantsDisplay.producer.filter { !$0 }.map { _ in () }
+        //collapseActivity <~ activityViewController.wantsDisplay.producer.filter { !$0 }.map { _ in () }
 
-        keepAround.append(expandActivity)
-        keepAround.append(collapseActivity)
+        lifetime.observeEnded {
+            _ = expandActivity
+            _ = collapseActivity
+        }
     }
-
-    func expandActivity() {
-        splitViewItem(for: activityViewController)!.animator().isCollapsed = false
-    }
-
 }

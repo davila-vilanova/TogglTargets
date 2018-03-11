@@ -126,7 +126,7 @@
                                     <constraint firstAttribute="height" constant="34" id="5ZX-iK-lm4"/>
                                 </constraints>
                             </customView>
-                            <scrollView hidden="YES" wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ll7-RC-aOj">
+                            <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ll7-RC-aOj">
                                 <rect key="frame" x="0.0" y="0.0" width="180" height="67"/>
                                 <clipView key="contentView" drawsBackground="NO" id="l89-Cs-Kal">
                                     <rect key="frame" x="1" y="1" width="178" height="65"/>
@@ -220,8 +220,23 @@
                                 </constraints>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSNetwork" id="255-6B-RyB"/>
                             </imageView>
+                            <button translatesAutoresizingMaskIntoConstraints="NO" id="C3R-Tx-blG">
+                                <rect key="frame" x="152" y="10" width="15" height="15"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="15" id="HPO-l0-P1O"/>
+                                    <constraint firstAttribute="width" constant="15" id="VLR-qb-mf3"/>
+                                </constraints>
+                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSTouchBarSearchTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="QrA-gs-FRP">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="expandDetails:" target="d3P-5j-IhJ" id="8gH-I4-KCE"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="C3R-Tx-blG" firstAttribute="centerY" secondItem="Z67-5j-RY0" secondAttribute="centerY" id="3w5-k4-4eQ"/>
                             <constraint firstItem="fuq-DM-yTb" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Nit-SF-M9f" secondAttribute="trailing" constant="4" id="EAA-Yf-aIv"/>
                             <constraint firstItem="4sG-lK-I7k" firstAttribute="leading" secondItem="Z67-5j-RY0" secondAttribute="leading" constant="8" id="bhA-2f-gVB"/>
                             <constraint firstItem="Nit-SF-M9f" firstAttribute="leading" secondItem="Z67-5j-RY0" secondAttribute="leading" constant="8" id="cSY-7d-UTu"/>
@@ -230,9 +245,11 @@
                             <constraint firstItem="Nit-SF-M9f" firstAttribute="centerY" secondItem="Z67-5j-RY0" secondAttribute="centerY" id="m9J-6Y-nnn"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="fuq-DM-yTb" secondAttribute="trailing" constant="8" id="nEM-z1-hE6"/>
                             <constraint firstItem="4sG-lK-I7k" firstAttribute="centerY" secondItem="Z67-5j-RY0" secondAttribute="centerY" id="xx0-cw-KLC"/>
+                            <constraint firstAttribute="trailing" secondItem="C3R-Tx-blG" secondAttribute="trailing" constant="8" id="zfs-ym-Dvp"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="expandDetailsButton" destination="C3R-Tx-blG" id="YfQ-pW-kXh"/>
                         <outlet property="progressIndicator" destination="Nit-SF-M9f" id="QQW-K4-g0k"/>
                         <outlet property="resultImageView" destination="4sG-lK-I7k" id="UAm-8g-8BH"/>
                         <outlet property="statusDescriptionLabel" destination="eD4-VC-Nnc" id="wzD-id-TZq"/>
@@ -1080,5 +1097,6 @@
     </scenes>
     <resources>
         <image name="NSNetwork" width="32" height="32"/>
+        <image name="NSTouchBarSearchTemplate" width="19" height="30"/>
     </resources>
 </document>
