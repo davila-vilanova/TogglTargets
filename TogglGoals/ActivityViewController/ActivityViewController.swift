@@ -32,6 +32,7 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
 
     @IBOutlet weak var condensedActivityView: NSView!
     @IBOutlet weak var collectionView: NSCollectionView!
+    @IBOutlet weak var collectionViewHeight: NSLayoutConstraint!
 
     var condensedActivityViewController: CondensedActivityViewController!
 
@@ -69,7 +70,10 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
         areViewsAvailable.value = true
 
         collectionView.reactive
-            .makeBindingTarget(on: UIScheduler()) { $0.isHidden = $1 } <~ requestExtendedDisplayPipe.output.negate()
+            .makeBindingTarget(on: UIScheduler()) { $0.animator().isHidden = $1 } <~ requestExtendedDisplayPipe.output.negate()
+        collectionViewHeight.reactive
+            .makeBindingTarget(on: UIScheduler()) { $0.animator().constant = $1 } <~ requestExtendedDisplayPipe.output
+                .map { $0 ? 80 : 0 }
 
 
         _ = wantsExtendedDisplay

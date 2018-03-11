@@ -117,23 +117,23 @@
             <objects>
                 <viewController id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Zto-kN-hsB">
-                        <rect key="frame" x="0.0" y="0.0" width="180" height="101"/>
+                        <rect key="frame" x="0.0" y="0.0" width="180" height="114"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="xra-1S-33i">
-                                <rect key="frame" x="0.0" y="67" width="180" height="34"/>
+                                <rect key="frame" x="0.0" y="80" width="180" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="5ZX-iK-lm4"/>
                                 </constraints>
                             </customView>
                             <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ll7-RC-aOj">
-                                <rect key="frame" x="0.0" y="0.0" width="180" height="67"/>
+                                <rect key="frame" x="0.0" y="0.0" width="180" height="80"/>
                                 <clipView key="contentView" drawsBackground="NO" id="l89-Cs-Kal">
-                                    <rect key="frame" x="1" y="1" width="178" height="65"/>
+                                    <rect key="frame" x="1" y="1" width="178" height="78"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <collectionView id="6hX-sj-cqp">
-                                            <rect key="frame" x="0.0" y="0.0" width="178" height="65"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="178" height="78"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                             <collectionViewGridLayout key="collectionViewLayout" id="65e-jk-VLl"/>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -142,6 +142,9 @@
                                     </subviews>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </clipView>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="rTK-fa-aTV"/>
+                                </constraints>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="iDL-6d-dKe">
                                     <rect key="frame" x="-100" y="-100" width="158" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
@@ -164,6 +167,7 @@
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="6hX-sj-cqp" id="eue-XN-ro3"/>
+                        <outlet property="collectionViewHeight" destination="rTK-fa-aTV" id="e8w-mD-yxx"/>
                         <outlet property="condensedActivityView" destination="xra-1S-33i" id="wMb-Ee-g0n"/>
                         <segue destination="d3P-5j-IhJ" kind="custom" identifier="CondensedActivityVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="Aq1-Fn-crL"/>
                     </connections>
