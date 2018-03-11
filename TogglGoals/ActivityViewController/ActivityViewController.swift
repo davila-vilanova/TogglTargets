@@ -12,23 +12,21 @@ import ReactiveSwift
 import ReactiveCocoa
 
 fileprivate let CondensedActivityVCContainment = "CondensedActivityVCContainment"
+fileprivate let CollectionViewExpandedSize: CGFloat = 80
 
 class ActivityViewController: NSViewController, ViewControllerContaining {
-    internal func connectInterface(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
+    internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
         enforceOnce(for: "ActivityViewController.connectInterface()") { [unowned self] in
             self.activitiesState.input <~ source
         }
     }
 
     internal lazy var wantsDisplay = Property<Bool>(initial: false, then: activityStatuses.producer.map { !$0.isEmpty })
-    internal lazy var wantsExtendedDisplay = Property<Bool>(initial: false,
-                                                            then: wantsDisplay.producer.and(requestExtendedDisplayPipe.output.logValues("wantsExtendedDisplay"))
-                                                                )
+    private var wantsExtendedDisplay = MutableProperty(false)
 
     private let (lifetime, token) = Lifetime.make()
     private let activitiesState = ActivitiesState()
     private lazy var activityStatuses = Property(initial: [ActivityStatus](), then: activitiesState.output)
-    private let requestExtendedDisplayPipe = Signal<Bool, NoError>.pipe()
 
     @IBOutlet weak var condensedActivityView: NSView!
     @IBOutlet weak var collectionView: NSCollectionView!
@@ -42,42 +40,36 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
             displayController(condensedActivityViewController, in: condensedActivityView)
         }
     }
-    private let areViewsAvailable = MutableProperty(false)
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         initializeControllerContainment(containmentIdentifiers: [CondensedActivityVCContainment])
 
-        (collectionView.collectionViewLayout as! NSCollectionViewGridLayout).maximumNumberOfColumns = 1
-        collectionView.register(ActivityCollectionViewItem.self,
-                                forItemWithIdentifier: NSUserInterfaceItemIdentifier("ActivityCollectionViewItem"))
+        configureCollectionView()
 
-        let updateCollectionView = BindingTarget<[ActivityStatus]>(on: UIScheduler(), lifetime: self.lifetime) {
-            self.collectionView.content = $0
-        }
-        updateCollectionView <~ self.activityStatuses.producer
-        self.lifetime.observeEnded {
-            _ = updateCollectionView
-        }
+        collectionView.reactive.makeBindingTarget(on: UIScheduler()) { $0.content = $1 as [ActivityStatus] }
+            <~ self.activityStatuses.producer
 
         condensedActivityViewController.connectInterface(
             activityStatuses: activityStatuses.producer,
-            expandDetails: BindingTarget(on: UIScheduler(), lifetime: lifetime, action: {
-                [observer = requestExtendedDisplayPipe.input] in observer.send(value: $0)
-            }))
+            expandDetails: wantsExtendedDisplay.bindingTarget)
 
-        areViewsAvailable.value = true
+        collectionView.reactive.makeBindingTarget(on: UIScheduler()) {
+            $0.animator().isHidden = $1
+            } <~ wantsExtendedDisplay.negate()
 
-        collectionView.reactive
-            .makeBindingTarget(on: UIScheduler()) { $0.animator().isHidden = $1 } <~ requestExtendedDisplayPipe.output.negate()
-        collectionViewHeight.reactive
-            .makeBindingTarget(on: UIScheduler()) { $0.animator().constant = $1 } <~ requestExtendedDisplayPipe.output
-                .map { $0 ? 80 : 0 }
-
-
-        _ = wantsExtendedDisplay
+        collectionViewHeight.reactive.makeBindingTarget(on: UIScheduler()) {
+            $0.animator().constant = $1
+            } <~ wantsExtendedDisplay.map { $0 ? CollectionViewExpandedSize : 0 }
     }
+
+    private func configureCollectionView() {
+        (collectionView.collectionViewLayout as! NSCollectionViewGridLayout).maximumNumberOfColumns = 1
+        collectionView.register(ActivityCollectionViewItem.self,
+                                forItemWithIdentifier: NSUserInterfaceItemIdentifier("ActivityCollectionViewItem"))
+    }
+
 }
 
 private extension Array where Element == ActivityStatus {

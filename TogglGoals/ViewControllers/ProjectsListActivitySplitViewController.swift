@@ -24,7 +24,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
             }
 
             self.isActivityViewControllerAvailable.firstTrue.startWithValues { [unowned self] in
-                self.activityViewController.connectInterface(modelRetrievalStatus: modelRetrievalStatus)
+                self.activityViewController.connectInputs(modelRetrievalStatus: modelRetrievalStatus)
             }
         }
     }
@@ -84,7 +84,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
         }
 
         expandActivity <~ activityViewController.wantsDisplay.producer.filter { $0 }.map { _ in () }
-        //collapseActivity <~ activityViewController.wantsDisplay.producer.filter { !$0 }.map { _ in () }
+        collapseActivity <~ activityViewController.wantsDisplay.producer.filter { !$0 }.map { _ in () }
 
         lifetime.observeEnded {
             _ = expandActivity
