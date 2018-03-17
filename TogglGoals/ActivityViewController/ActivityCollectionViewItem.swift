@@ -26,7 +26,6 @@ class ActivityCollectionViewItem: NSCollectionViewItem {
         }
     }
 
-    private weak var heightConstraint: NSLayoutConstraint?
 
     override func loadView() {
         let stack = NSStackView()
@@ -34,18 +33,6 @@ class ActivityCollectionViewItem: NSCollectionViewItem {
         stack.wantsLayer = true
         stack.layer?.backgroundColor = CGColor.init(gray: 0.9, alpha: 1)
         stack.orientation = .horizontal
-        stack.translatesAutoresizingMaskIntoConstraints = false
-
-//        let height = NSLayoutConstraint(item: stack,
-//                                        attribute: .height,
-//                                        relatedBy: .greaterThanOrEqual,
-//                                        toItem: nil,
-//                                        attribute: .height,
-//                                        multiplier: 1,
-//                                        constant: 30)
-//
-//        stack.addConstraint(height)
-//        heightConstraint = height
 
         view = stack
     }

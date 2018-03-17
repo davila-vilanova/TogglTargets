@@ -138,7 +138,10 @@
                                                 <collectionView wantsLayer="YES" id="e2P-P4-jwR">
                                                     <rect key="frame" x="0.0" y="0.0" width="178" height="158"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
-                                                    <collectionViewGridLayout key="collectionViewLayout" id="UKd-zL-iTJ"/>
+                                                    <collectionViewGridLayout key="collectionViewLayout" id="UKd-zL-iTJ">
+                                                        <size key="minimumItemSize" width="160" height="24"/>
+                                                        <size key="maximumItemSize" width="500" height="24"/>
+                                                    </collectionViewGridLayout>
                                                     <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </collectionView>
                                             </subviews>
