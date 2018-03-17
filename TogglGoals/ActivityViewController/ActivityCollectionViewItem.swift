@@ -26,12 +26,26 @@ class ActivityCollectionViewItem: NSCollectionViewItem {
         }
     }
 
+    private weak var heightConstraint: NSLayoutConstraint?
+
     override func loadView() {
         let stack = NSStackView()
         stack.autoresizingMask = .width
         stack.wantsLayer = true
-        stack.layer?.backgroundColor = CGColor.init(red: 0.0, green: 0, blue: 0.8, alpha: 0.5)
+        stack.layer?.backgroundColor = CGColor.init(gray: 0.9, alpha: 1)
         stack.orientation = .horizontal
+        stack.translatesAutoresizingMaskIntoConstraints = false
+
+//        let height = NSLayoutConstraint(item: stack,
+//                                        attribute: .height,
+//                                        relatedBy: .greaterThanOrEqual,
+//                                        toItem: nil,
+//                                        attribute: .height,
+//                                        multiplier: 1,
+//                                        constant: 30)
+//
+//        stack.addConstraint(height)
+//        heightConstraint = height
 
         view = stack
     }
@@ -58,36 +72,31 @@ class ActivityCollectionViewItem: NSCollectionViewItem {
     }
 
     private func displayExecuting(_ activity: ActivityStatus.Activity) {
-//        let progress = NSProgressIndicator()
-//        progress.isIndeterminate = true
-//        progress.startAnimation(nil)
-//        stackView.insertView(progress, at: 0, in: .leading)
-//        stackView.addSubview(progress)
+        let progress = NSProgressIndicator()
+        progress.style = .spinning
+        progress.isIndeterminate = true
+        progress.startAnimation(nil)
+        stackView.insertView(progress, at: 0, in: .leading)
 
         let description = NSTextField(string: "Synchronizing \(activity.localizedName)")
         description.isBordered = false
         description.isEditable = false
 
         description.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))
-//        stackView.insertView(description, at: 0, in: .center)
-        stackView.addSubview(description)
-        stackView.layer!.backgroundColor = CGColor.init(red: 0.5, green: 0, blue: 0.0, alpha: 0.5)
+        stackView.insertView(description, at: 0, in: .center)
     }
 
     private func displaySucceeded(_ activity: ActivityStatus.Activity) {
-//        let image = NSImage(named: NSImage.Name("NSMenuOnStateTemplate"))!
-//        let imageView = NSImageView(image: image)
-//        imageView.imageScaling = .scaleProportionallyDown
-//        stackView.insertView(imageView, at: 0, in: .leading)
-//        stackView.addSubview(imageView)
+        let image = NSImage(named: NSImage.Name("NSMenuOnStateTemplate"))!
+        let imageView = NSImageView(image: image)
+        imageView.imageScaling = .scaleProportionallyDown
+        stackView.insertView(imageView, at: 0, in: .leading)
 
         let description = NSTextField(string: "Synchronized \(activity.localizedName)")
         description.isBordered = false
         description.isEditable = false
         description.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))
-//        stackView.insertView(description, at: 0, in: .center)
-        stackView.addSubview(description)
-        stackView.layer!.backgroundColor = CGColor.init(red: 0.0, green: 0.5, blue: 0.0, alpha: 0.5)
+        stackView.insertView(description, at: 0, in: .center)
     }
 
     private func displayError(_ error: APIAccessError, for activity: ActivityStatus.Activity, retry: RetryAction) {
@@ -95,8 +104,6 @@ class ActivityCollectionViewItem: NSCollectionViewItem {
         let imageView = NSImageView(image: image)
         imageView.imageScaling = .scaleProportionallyDown
         stackView.insertView(imageView, at: 0, in: .leading)
-        stackView.addSubview(imageView)
-        stackView.layer!.backgroundColor = CGColor.init(red: 0.0, green: 0, blue: 0.0, alpha: 0.8)
     }
 }
 
