@@ -31,7 +31,15 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 		<key>NSExceptionDomains</key>
-		<dict/>
+		<dict>
+			<key>localhost</key>
+	    	<dict>
+	      		<key>NSIncludesSubdomains</key>
+	      		<false/>
+	      		<key>NSExceptionAllowsInsecureHTTPLoads</key>
+	      		<true/>
+			</dict>
+	    </dict>
 	</dict>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
