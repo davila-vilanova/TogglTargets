@@ -18,6 +18,18 @@ class ActivityCollectionViewItem: NSCollectionViewItem {
         }
     }
 
+    override func loadView() {
+        let view = NSView()
+        view.autoresizingMask = .width
+        view.wantsLayer = true
+        if let layer = view.layer {
+            layer.backgroundColor = CGColor.init(gray: 0.9, alpha: 1)
+            layer.cornerRadius = 2
+        }
+
+        self.view = view
+    }
+
     private var activityStatus: ActivityStatus? {
         didSet {
             if let unwrapped = self.activityStatus {
@@ -26,30 +38,17 @@ class ActivityCollectionViewItem: NSCollectionViewItem {
         }
     }
 
-
-    override func loadView() {
-        let stack = NSStackView()
-        stack.autoresizingMask = .width
-        stack.wantsLayer = true
-        stack.layer?.backgroundColor = CGColor.init(gray: 0.9, alpha: 1)
-        stack.orientation = .horizontal
-
-        view = stack
-    }
-
-    private var stackView: NSStackView {
-        return view as! NSStackView
-    }
-
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        for subview in stackView.subviews {
+        for subview in view.subviews {
             subview.removeFromSuperview()
         }
     }
 
     private func displayActivityStatus(_ status: ActivityStatus) {
+        print("displayActivityStatus")
+
         switch status {
         case let .executing(activity): displayExecuting(activity)
         case let .succeeded(activity): displaySucceeded(activity)
@@ -59,38 +58,55 @@ class ActivityCollectionViewItem: NSCollectionViewItem {
     }
 
     private func displayExecuting(_ activity: ActivityStatus.Activity) {
+        print("displayExecuting")
+
         let progress = NSProgressIndicator()
         progress.style = .spinning
         progress.isIndeterminate = true
         progress.startAnimation(nil)
-        stackView.insertView(progress, at: 0, in: .leading)
+
+        view.addSubview(progress)
+
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        progress.heightAnchor.constraint(equalToConstant: 12).isActive = true
+        progress.widthAnchor.constraint(equalTo: progress.heightAnchor).isActive = true
+        progress.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 8).isActive = true
+        progress.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor, constant: 8).isActive = true
+        progress.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
 
         let description = NSTextField(string: "Synchronizing \(activity.localizedName)")
         description.isBordered = false
         description.isEditable = false
-
         description.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))
-        stackView.insertView(description, at: 0, in: .center)
+        description.textColor = NSColor(cgColor: CGColor(gray: 0.2, alpha: 1))
+        description.backgroundColor = NSColor.clear
+
+        view.addSubview(description)
+
+        description.translatesAutoresizingMaskIntoConstraints = false
+        description.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        description.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+
     }
 
     private func displaySucceeded(_ activity: ActivityStatus.Activity) {
-        let image = NSImage(named: NSImage.Name("NSMenuOnStateTemplate"))!
-        let imageView = NSImageView(image: image)
-        imageView.imageScaling = .scaleProportionallyDown
-        stackView.insertView(imageView, at: 0, in: .leading)
-
-        let description = NSTextField(string: "Synchronized \(activity.localizedName)")
-        description.isBordered = false
-        description.isEditable = false
-        description.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))
-        stackView.insertView(description, at: 0, in: .center)
+//        let image = NSImage(named: NSImage.Name("NSMenuOnStateTemplate"))!
+//        let imageView = NSImageView(image: image)
+//        imageView.imageScaling = .scaleProportionallyDown
+//        stackView.insertView(imageView, at: 0, in: .leading)
+//
+//        let description = NSTextField(string: "Synchronized \(activity.localizedName)")
+//        description.isBordered = false
+//        description.isEditable = false
+//        description.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))
+//        stackView.insertView(description, at: 0, in: .center)
     }
 
     private func displayError(_ error: APIAccessError, for activity: ActivityStatus.Activity, retry: RetryAction) {
-        let image = NSImage(named: NSImage.Name("NSRefreshFreestandingTemplate"))!
-        let imageView = NSImageView(image: image)
-        imageView.imageScaling = .scaleProportionallyDown
-        stackView.insertView(imageView, at: 0, in: .leading)
+//        let image = NSImage(named: NSImage.Name("NSRefreshFreestandingTemplate"))!
+//        let imageView = NSImageView(image: image)
+//        imageView.imageScaling = .scaleProportionallyDown
+//        stackView.insertView(imageView, at: 0, in: .leading)
     }
 }
 

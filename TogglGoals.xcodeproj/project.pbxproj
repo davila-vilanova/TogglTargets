@@ -206,6 +206,7 @@
 		63DC619B1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
 		63DC619C1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
 		63DC619D1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
+		63E38BA7206125DD004428BB /* ActivityCollectionViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A258B2052918400EFCE90 /* ActivityCollectionViewItem.swift */; };
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
 		63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */; };
 /* End PBXBuildFile section */
@@ -993,6 +994,7 @@
 				6355C5BF1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
 				63AB082D1FB77CB500565D87 /* Project.swift in Sources */,
 				63B1BBEA1FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,
+				63E38BA7206125DD004428BB /* ActivityCollectionViewItem.swift in Sources */,
 				63AB082F1FB77CB500565D87 /* TimeReport.swift in Sources */,
 				6355C5BA1FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				63AB08301FB77CB500565D87 /* Goal.swift in Sources */,

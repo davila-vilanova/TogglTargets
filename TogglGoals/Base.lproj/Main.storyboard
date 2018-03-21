@@ -129,7 +129,7 @@
                                             <constraint firstAttribute="height" constant="34" id="WEB-uc-VRg"/>
                                         </constraints>
                                     </customView>
-                                    <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ajv-sk-5DU">
+                                    <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ajv-sk-5DU">
                                         <rect key="frame" x="0.0" y="0.0" width="180" height="78"/>
                                         <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="791-Vs-XsU">
                                             <rect key="frame" x="1" y="1" width="178" height="76"/>
@@ -139,8 +139,8 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="178" height="158"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                                     <collectionViewGridLayout key="collectionViewLayout" id="UKd-zL-iTJ">
-                                                        <size key="minimumItemSize" width="160" height="24"/>
-                                                        <size key="maximumItemSize" width="500" height="24"/>
+                                                        <size key="minimumItemSize" width="160" height="30"/>
+                                                        <size key="maximumItemSize" width="500" height="30"/>
                                                     </collectionViewGridLayout>
                                                     <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </collectionView>
@@ -150,12 +150,12 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="78" id="3q2-Uy-3f3"/>
                                         </constraints>
-                                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="wjQ-gN-U55">
-                                            <rect key="frame" x="1" y="89" width="178" height="16"/>
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="wjQ-gN-U55">
+                                            <rect key="frame" x="-100" y="-100" width="178" height="16"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="t1j-XF-fcS">
-                                            <rect key="frame" x="163" y="1" width="16" height="76"/>
+                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="t1j-XF-fcS">
+                                            <rect key="frame" x="-100" y="-100" width="16" height="76"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                     </scrollView>

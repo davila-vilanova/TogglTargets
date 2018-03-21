@@ -2,13 +2,16 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ActivityIteimViewTester/ActivityIteimViewTester.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:ToggleCollectionView/ToggleCollectionView.xcodeproj">
    </FileRef>
    <Group
       location = "group:Playgrounds"
       name = "Playgrounds">
       <FileRef
-         location = "group:ApplyActionSerially.playground">
+         location = "group:/Users/david/devspace/togglreports/TogglGoals/Playgrounds/ActivityItemView.playground">
       </FileRef>
       <FileRef
          location = "group:DiscreteProducers.playground">
