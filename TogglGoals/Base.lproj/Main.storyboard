@@ -196,81 +196,41 @@
             <objects>
                 <viewController id="d3P-5j-IhJ" customClass="CondensedActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Z67-5j-RY0">
-                        <rect key="frame" x="0.0" y="0.0" width="175" height="34"/>
+                        <rect key="frame" x="0.0" y="0.0" width="175" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fuq-DM-yTb">
-                                <rect key="frame" x="60" y="2" width="56" height="30"/>
-                                <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eD4-VC-Nnc">
-                                        <rect key="frame" x="-2" y="16" width="56" height="14"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Syncing..." id="uZf-LS-kcP">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" red="0.26051741839999998" green="0.2605243921" blue="0.260520637" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fp8-gN-r27">
-                                        <rect key="frame" x="-2" y="0.0" width="60" height="14"/>
-                                        <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="syncing items" id="diD-LL-7qC">
-                                            <font key="font" size="9" name="HelveticaNeue"/>
-                                            <color key="textColor" cyan="0.72397428750991821" magenta="0.61290568113327026" yellow="0.0" black="0.0" alpha="1" colorSpace="custom" customColorSpace="genericCMYKColorSpace"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                </subviews>
-                                <visibilityPriorities>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                </visibilityPriorities>
-                                <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                </customSpacing>
-                            </stackView>
-                            <progressIndicator hidden="YES" wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Nit-SF-M9f">
-                                <rect key="frame" x="8" y="9" width="16" height="16"/>
-                            </progressIndicator>
-                            <imageView hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4sG-lK-I7k">
-                                <rect key="frame" x="8" y="10" width="15" height="15"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="15" id="bLS-kG-ehq"/>
-                                    <constraint firstAttribute="width" constant="15" id="rqg-ku-xvS"/>
-                                </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSNetwork" id="255-6B-RyB"/>
-                            </imageView>
-                            <button translatesAutoresizingMaskIntoConstraints="NO" id="C3R-Tx-blG">
-                                <rect key="frame" x="152" y="10" width="15" height="15"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="15" id="HPO-l0-P1O"/>
-                                    <constraint firstAttribute="width" constant="15" id="VLR-qb-mf3"/>
-                                </constraints>
-                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="NSTouchBarSearchTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="QrA-gs-FRP">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="expandDetails:" target="d3P-5j-IhJ" id="8gH-I4-KCE"/>
-                                </connections>
-                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fp8-gN-r27">
+                                <rect key="frame" x="57" y="2" width="60" height="14"/>
+                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="syncing items" id="diD-LL-7qC">
+                                    <font key="font" size="9" name="HelveticaNeue"/>
+                                    <color key="textColor" cyan="0.72397428750991821" magenta="0.61290568113327026" yellow="0.0" black="0.0" alpha="1" colorSpace="custom" customColorSpace="genericCMYKColorSpace"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eD4-VC-Nnc">
+                                <rect key="frame" x="59" y="16" width="56" height="14"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Syncing..." id="uZf-LS-kcP">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" red="0.26051741839999998" green="0.2605243921" blue="0.260520637" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="C3R-Tx-blG" firstAttribute="centerY" secondItem="Z67-5j-RY0" secondAttribute="centerY" id="3w5-k4-4eQ"/>
-                            <constraint firstItem="fuq-DM-yTb" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Nit-SF-M9f" secondAttribute="trailing" constant="4" id="EAA-Yf-aIv"/>
-                            <constraint firstItem="4sG-lK-I7k" firstAttribute="leading" secondItem="Z67-5j-RY0" secondAttribute="leading" constant="8" id="bhA-2f-gVB"/>
-                            <constraint firstItem="Nit-SF-M9f" firstAttribute="leading" secondItem="Z67-5j-RY0" secondAttribute="leading" constant="8" id="cSY-7d-UTu"/>
-                            <constraint firstItem="fuq-DM-yTb" firstAttribute="centerX" secondItem="Z67-5j-RY0" secondAttribute="centerX" id="gQK-qH-7UI"/>
-                            <constraint firstItem="fuq-DM-yTb" firstAttribute="centerY" secondItem="Z67-5j-RY0" secondAttribute="centerY" id="gZ6-Ka-QDs"/>
-                            <constraint firstItem="Nit-SF-M9f" firstAttribute="centerY" secondItem="Z67-5j-RY0" secondAttribute="centerY" id="m9J-6Y-nnn"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="fuq-DM-yTb" secondAttribute="trailing" constant="8" id="nEM-z1-hE6"/>
-                            <constraint firstItem="4sG-lK-I7k" firstAttribute="centerY" secondItem="Z67-5j-RY0" secondAttribute="centerY" id="xx0-cw-KLC"/>
-                            <constraint firstAttribute="trailing" secondItem="C3R-Tx-blG" secondAttribute="trailing" constant="8" id="zfs-ym-Dvp"/>
+                            <constraint firstItem="fp8-gN-r27" firstAttribute="top" secondItem="eD4-VC-Nnc" secondAttribute="bottom" id="5EY-p6-5bm"/>
+                            <constraint firstItem="eD4-VC-Nnc" firstAttribute="top" secondItem="Z67-5j-RY0" secondAttribute="top" constant="2" placeholder="YES" id="tTi-Nv-lg1"/>
+                            <constraint firstItem="fp8-gN-r27" firstAttribute="centerX" secondItem="Z67-5j-RY0" secondAttribute="centerX" id="wdX-OW-kgj"/>
+                            <constraint firstItem="eD4-VC-Nnc" firstAttribute="centerX" secondItem="Z67-5j-RY0" secondAttribute="centerX" id="xvv-21-hlj"/>
                         </constraints>
+                        <gestureRecognizers>
+                            <clickGestureRecognizer delaysPrimaryMouseButtonEvents="YES" numberOfClicksRequired="2" id="lh4-mF-EdT">
+                                <connections>
+                                    <action selector="expandDetails:" target="d3P-5j-IhJ" id="RNW-9w-0CH"/>
+                                </connections>
+                            </clickGestureRecognizer>
+                        </gestureRecognizers>
                     </view>
                     <connections>
-                        <outlet property="expandDetailsButton" destination="C3R-Tx-blG" id="YfQ-pW-kXh"/>
-                        <outlet property="progressIndicator" destination="Nit-SF-M9f" id="QQW-K4-g0k"/>
-                        <outlet property="resultImageView" destination="4sG-lK-I7k" id="UAm-8g-8BH"/>
                         <outlet property="statusDescriptionLabel" destination="eD4-VC-Nnc" id="wzD-id-TZq"/>
                         <outlet property="statusDetailLabel" destination="fp8-gN-r27" id="tnd-Tf-APR"/>
                     </connections>
@@ -1114,8 +1074,4 @@
             <point key="canvasLocation" x="867" y="1027"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="NSNetwork" width="32" height="32"/>
-        <image name="NSTouchBarSearchTemplate" width="19" height="30"/>
-    </resources>
 </document>

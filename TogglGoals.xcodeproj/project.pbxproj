@@ -13,6 +13,9 @@
 		6310EFCF1FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
 		6310EFD01FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
 		6310EFD11FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
+		631D4F1A20656DC700E0DB4F /* CondensedActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A259020529DC900EFCE90 /* CondensedActivityViewController.swift */; };
+		631D4F1B20656E0700E0DB4F /* EnforceOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */; };
+		631D4F1C206572EB00E0DB4F /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
 		631E46301F9799190012E491 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 631E462F1F9799190012E491 /* Preferences.storyboard */; };
 		631E46311F9799190012E491 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 631E462F1F9799190012E491 /* Preferences.storyboard */; };
 		631E463F1F97CB730012E491 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631E463E1F97CB730012E491 /* LoginViewController.swift */; };
@@ -1006,10 +1009,12 @@
 				63AB08321FB77CB500565D87 /* ModelCoordinator.swift in Sources */,
 				63AB083D1FB77CB500565D87 /* PeriodPreference.swift in Sources */,
 				63AB08361FB77CB500565D87 /* TogglAPICredential.swift in Sources */,
+				631D4F1C206572EB00E0DB4F /* ContainmentSegue.swift in Sources */,
 				637DA212202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				63AB08331FB77CB500565D87 /* GoalsStore.swift in Sources */,
 				63DC619D1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */,
 				63AB08391FB77CB500565D87 /* PropertyExtensions.swift in Sources */,
+				631D4F1A20656DC700E0DB4F /* CondensedActivityViewController.swift in Sources */,
 				63AB083B1FB77CB500565D87 /* TimeIntervalExtensions.swift in Sources */,
 				63A67F431FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
 				63AB083E1FB77CB500565D87 /* PreferenceStore.swift in Sources */,
@@ -1022,6 +1027,7 @@
 				63AB083A1FB77CB500565D87 /* SignalProducerExtensions.swift in Sources */,
 				63AB08351FB77CB500565D87 /* GoalProgress.swift in Sources */,
 				635DCE1D1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */,
+				631D4F1B20656E0700E0DB4F /* EnforceOnce.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

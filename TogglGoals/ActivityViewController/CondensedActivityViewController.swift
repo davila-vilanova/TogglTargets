@@ -12,56 +12,69 @@ import ReactiveSwift
 
 class CondensedActivityViewController: NSViewController {
     private let activityStatuses = MutableProperty([ActivityStatus]())
-    private let requestExpandDetailsPipe = Signal<Bool, NoError>.pipe()
+    private let requestExpandDetails = MutableProperty(false)
 
     func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>,
                           expandDetails: BindingTarget<Bool>) {
         enforceOnce(for: "CondensedActivityViewController.connectInterface()") { [unowned self] in
             self.activityStatuses <~ activityStatuses
-            expandDetails <~ self.requestExpandDetailsPipe.output
+            expandDetails <~ self.requestExpandDetails
         }
     }
 
-    @IBOutlet weak var progressIndicator: NSProgressIndicator!
-    @IBOutlet weak var resultImageView: NSImageView!
     @IBOutlet weak var statusDescriptionLabel: NSTextField!
     @IBOutlet weak var statusDetailLabel: NSTextField!
-    @IBOutlet weak var expandDetailsButton: NSButton!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         displayState <~ stateProducer(from: activityStatuses.producer)
     }
 
-    @IBAction func expandDetails(_ button: NSButton) {
-        requestExpandDetailsPipe.input.send(value: button.state == .on)
+    @IBAction func expandDetails(_ sender: Any) {
+        requestExpandDetails.value = !requestExpandDetails.value
     }
+
+    private weak var statusDescriptionTopConstraint: NSLayoutConstraint?
+    private weak var statusDescriptionCenterYConstraint: NSLayoutConstraint?
 
     private let (lifetime, token) = Lifetime.make()
     private lazy var displayState = BindingTarget<State>(on: UIScheduler(), lifetime: lifetime) { [unowned self] in
         switch $0 {
         case .syncing(let count):
-            self.resultImageView.isHidden = true
-            self.progressIndicator.isHidden = false
             self.statusDescriptionLabel.stringValue = "Syncing..."
-            self.statusDetailLabel.stringValue = "\(count) syncing \(count == 1 ? "activity" : "activities") in progress"
-            self.statusDetailLabel.isHidden = false
+            self.setStatusDetail("\(count) syncing \(count == 1 ? "activity" : "activities") in progress")
         case .errors(let count):
-            self.progressIndicator.isHidden = true
-            self.resultImageView.isHidden = false
-            self.resultImageView.image = NSImage(named: NSImage.Name("NSCaution"))!
             self.statusDescriptionLabel.stringValue = (count == 1 ? "Error" : "Errors") + " syncing data"
-            self.statusDetailLabel.stringValue = (count == 1 ? "An error" : "\(count) errors")
-                + " occurred - click for details"
-            self.statusDetailLabel.isHidden = false
+            self.setStatusDetail(count == 1 ? "An error" : "\(count) errors" + " occurred")
         case .success(let count):
-            self.progressIndicator.isHidden = true
-            self.resultImageView.isHidden = false
             self.statusDescriptionLabel.stringValue = "All data synchronized"
-            self.resultImageView.image = NSImage(named: NSImage.Name("NSNetwork"))!
-            self.statusDetailLabel.isHidden = true
+            self.setStatusDetail(nil)
         case .idle:
             break
+        }
+    }
+
+    private func setStatusDetail(_ text: String?) {
+        if let text = text {
+            statusDetailLabel.isHidden = false
+            statusDetailLabel.stringValue = text
+            statusDescriptionCenterYConstraint?.isActive = false
+
+            if statusDescriptionTopConstraint == nil {
+                let topConstraint = statusDescriptionLabel
+                    .topAnchor.constraint(equalTo: view.topAnchor, constant: 0)
+                topConstraint.isActive = true
+                statusDescriptionTopConstraint = topConstraint
+            }
+        } else {
+            statusDetailLabel.isHidden = true
+            statusDescriptionTopConstraint?.isActive = false
+            if statusDescriptionCenterYConstraint == nil {
+                let centerYConstraint = statusDescriptionLabel
+                    .centerYAnchor.constraint(equalTo: view.centerYAnchor)
+                centerYConstraint.isActive = true
+                statusDescriptionCenterYConstraint = centerYConstraint
+            }
         }
     }
 }
