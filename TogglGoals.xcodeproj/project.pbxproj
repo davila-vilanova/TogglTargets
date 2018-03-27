@@ -13,6 +13,8 @@
 		6310EFCF1FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
 		6310EFD01FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
 		6310EFD11FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
+		6315770020695CAA00FFEEE9 /* DetailedActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631576FE20695CAA00FFEEE9 /* DetailedActivityViewController.swift */; };
+		6315770120695CAA00FFEEE9 /* DetailedActivityViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 631576FF20695CAA00FFEEE9 /* DetailedActivityViewController.xib */; };
 		631D4F1A20656DC700E0DB4F /* CondensedActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A259020529DC900EFCE90 /* CondensedActivityViewController.swift */; };
 		631D4F1B20656E0700E0DB4F /* EnforceOnce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA1FD202766C7000D7EB8 /* EnforceOnce.swift */; };
 		631D4F1C206572EB00E0DB4F /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
@@ -267,6 +269,8 @@
 /* Begin PBXFileReference section */
 		6310EFCA1FAC6D3700B42C44 /* Period.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Period.swift; sourceTree = "<group>"; };
 		6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodPreference.swift; sourceTree = "<group>"; };
+		631576FE20695CAA00FFEEE9 /* DetailedActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedActivityViewController.swift; sourceTree = "<group>"; };
+		631576FF20695CAA00FFEEE9 /* DetailedActivityViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailedActivityViewController.xib; sourceTree = "<group>"; };
 		631E462F1F9799190012E491 /* Preferences.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Preferences.storyboard; sourceTree = "<group>"; };
 		631E463E1F97CB730012E491 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = ViewControllers/LoginViewController.swift; sourceTree = "<group>"; };
 		631E46411F97CB980012E491 /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesViewController.swift; path = ViewControllers/PreferencesViewController.swift; sourceTree = "<group>"; };
@@ -492,6 +496,8 @@
 				635A258A2052918400EFCE90 /* ActivitiesState.swift */,
 				635A258B2052918400EFCE90 /* ActivityCollectionViewItem.swift */,
 				635A259020529DC900EFCE90 /* CondensedActivityViewController.swift */,
+				631576FE20695CAA00FFEEE9 /* DetailedActivityViewController.swift */,
+				631576FF20695CAA00FFEEE9 /* DetailedActivityViewController.xib */,
 			);
 			name = ActivityViewController;
 			path = TogglGoals/ActivityViewController;
@@ -781,6 +787,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63D4FF2F1F5AD839006368A3 /* MainMenu.xib in Resources */,
+				6315770120695CAA00FFEEE9 /* DetailedActivityViewController.xib in Resources */,
 				6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */,
 				631E46301F9799190012E491 /* Preferences.storyboard in Resources */,
 				635A25872052917B00EFCE90 /* ProjectCollectionViewItem.xib in Resources */,
@@ -863,6 +870,7 @@
 				63D4BBAC1F7D821800B87298 /* ModelCoordinator.swift in Sources */,
 				637DA20F202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */,
+				6315770020695CAA00FFEEE9 /* DetailedActivityViewController.swift in Sources */,
 				63D4BBAF1F7D821800B87298 /* SignalProducerExtensions.swift in Sources */,
 				63A67F401FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
 				635A258D2052918400EFCE90 /* ActivitiesState.swift in Sources */,

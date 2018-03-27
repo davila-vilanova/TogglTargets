@@ -70,23 +70,31 @@ class ActivityCollectionViewItem: NSCollectionViewItem {
         progress.translatesAutoresizingMaskIntoConstraints = false
         progress.heightAnchor.constraint(equalToConstant: 12).isActive = true
         progress.widthAnchor.constraint(equalTo: progress.heightAnchor).isActive = true
-        progress.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 8).isActive = true
-        progress.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor, constant: 8).isActive = true
+        progress.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8).isActive = true
         progress.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+
+        let descriptionContainer = NSView()
+
+        view.addSubview(descriptionContainer)
+
+        descriptionContainer.translatesAutoresizingMaskIntoConstraints = false
+        descriptionContainer.leadingAnchor.constraint(equalTo: progress.trailingAnchor, constant: 2).isActive = true
+        descriptionContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 2).isActive = true
+        descriptionContainer.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        descriptionContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
 
         let description = NSTextField(string: "Synchronizing \(activity.localizedName)")
         description.isBordered = false
         description.isEditable = false
-        description.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))
+        description.font = NSFont.systemFont(ofSize: 9)
         description.textColor = NSColor(cgColor: CGColor(gray: 0.2, alpha: 1))
         description.backgroundColor = NSColor.clear
 
-        view.addSubview(description)
+        descriptionContainer.addSubview(description)
 
         description.translatesAutoresizingMaskIntoConstraints = false
-        description.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        description.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-
+        description.centerXAnchor.constraint(equalTo: descriptionContainer.centerXAnchor).isActive = true
+        description.centerYAnchor.constraint(equalTo: descriptionContainer.centerYAnchor).isActive = true
     }
 
     private func displaySucceeded(_ activity: ActivityStatus.Activity) {

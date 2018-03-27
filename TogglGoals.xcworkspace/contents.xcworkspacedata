@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:ActivityIteimViewTester/ActivityIteimViewTester.xcodeproj">
+      location = "group:LayoutTests/LayoutTests.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:ToggleCollectionView/ToggleCollectionView.xcodeproj">
@@ -14,7 +14,7 @@
          location = "group:/Users/david/devspace/togglreports/TogglGoals/Playgrounds/ActivityItemView.playground">
       </FileRef>
       <FileRef
-         location = "group:DiscreteProducers.playground">
+         location = "group:/Users/david/devspace/togglreports/TogglGoals/Playgrounds/Meta.playground">
       </FileRef>
       <FileRef
          location = "group:LatestInputObservingActionWrapper.playground">

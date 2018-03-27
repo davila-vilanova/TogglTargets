@@ -12,7 +12,7 @@ import ReactiveSwift
 import ReactiveCocoa
 
 fileprivate let CondensedActivityVCContainment = "CondensedActivityVCContainment"
-fileprivate let CollectionViewExpandedSize: CGFloat = 80
+fileprivate let DetailedActivityVCContainment = "DetailedActivityVCContainment"
 
 class ActivityViewController: NSViewController, ViewControllerContaining {
     internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
@@ -29,49 +29,43 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
     private lazy var activityStatuses = Property(initial: [ActivityStatus](), then: activitiesState.output)
 
     @IBOutlet weak var condensedActivityView: NSView!
-    @IBOutlet weak var collectionView: NSCollectionView! // TODO: weak
+    @IBOutlet weak var detailedActivityView: NSView!
 
     @IBOutlet weak var rootHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var condensedActivityViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var collectionViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var detailedActivityViewHeightConstraint: NSLayoutConstraint!
 
-    var condensedActivityViewController: CondensedActivityViewController!
+    private var condensedActivityViewController: CondensedActivityViewController!
+    private var detailedActivityViewController: DetailedActivityViewController!
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        if let condensedActivityViewController = controller as? CondensedActivityViewController {
-            self.condensedActivityViewController = condensedActivityViewController
-            displayController(condensedActivityViewController, in: condensedActivityView)
+        if let condensedActivityVC = controller as? CondensedActivityViewController {
+            self.condensedActivityViewController = condensedActivityVC
+            displayController(condensedActivityVC, in: condensedActivityView)
+        } else if let detailedActivityVC = controller as? DetailedActivityViewController {
+            self.detailedActivityViewController = detailedActivityVC
+            displayController(detailedActivityVC, in: detailedActivityView)
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        initializeControllerContainment(containmentIdentifiers: [CondensedActivityVCContainment])
+        initializeControllerContainment(containmentIdentifiers: [CondensedActivityVCContainment, DetailedActivityVCContainment])
 
-        configureCollectionView()
-
-        collectionView.reactive.makeBindingTarget(on: UIScheduler()) { $0.content = $1 as [ActivityStatus] }
-            <~ self.activityStatuses.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler())
+        detailedActivityViewController.connectInterface(activityStatuses: self.activityStatuses.producer)
 
         condensedActivityViewController.connectInterface(
             activityStatuses: activityStatuses.producer,
             expandDetails: wantsExtendedDisplay.bindingTarget)
 
-        collectionView.reactive.makeBindingTarget(on: UIScheduler(), animateOpacity)
+        detailedActivityView.reactive.makeBindingTarget(on: UIScheduler(), animateOpacity)
             <~ wantsExtendedDisplay.map { $0 ? (0.0, 1.0) : (1.0, 0.0) }
 
         let collapsedHeight = condensedActivityViewHeightConstraint.constant
-        let expandedHeight = condensedActivityViewHeightConstraint.constant + collectionViewHeightConstraint.constant
+        let expandedHeight = condensedActivityViewHeightConstraint.constant + detailedActivityViewHeightConstraint.constant
         rootHeightConstraint.reactive.makeBindingTarget(on: UIScheduler()) { $0.animator().constant = $1 }
-            <~ wantsExtendedDisplay.map { $0 ? expandedHeight : collapsedHeight }
-    }
-
-
-    private func configureCollectionView() {
-        (collectionView.collectionViewLayout as! NSCollectionViewGridLayout).maximumNumberOfColumns = 1
-        collectionView.register(ActivityCollectionViewItem.self,
-                                forItemWithIdentifier: NSUserInterfaceItemIdentifier("ActivityCollectionViewItem"))
+            <~ wantsExtendedDisplay.map { $0 ? expandedHeight : collapsedHeight }.producer.logValues("rootHeightConstraint")
     }
 }
 
@@ -95,4 +89,3 @@ fileprivate func animateOpacity(view: NSView, values: (from: Double, to: Double)
     animation.toValue = to
     layer.add(animation, forKey: opacityKey)
 }
-

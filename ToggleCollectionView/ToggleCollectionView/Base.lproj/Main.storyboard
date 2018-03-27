@@ -764,10 +764,10 @@
             </objects>
             <point key="canvasLocation" x="327" y="639"/>
         </scene>
-        <!--View Controller-->
+        <!--Layout Tests View Controller-->
         <scene sceneID="k2f-YU-UPT">
             <objects>
-                <viewController id="o9X-Yi-aCU" customClass="ViewController" customModule="ToggleCollectionView" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="o9X-Yi-aCU" customClass="LayoutTestsViewController" customModule="ToggleCollectionView" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="9n5-gb-hQa">
                         <rect key="frame" x="0.0" y="0.0" width="182" height="177"/>
                         <autoresizingMask key="autoresizingMask"/>

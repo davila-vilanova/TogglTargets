@@ -117,74 +117,51 @@
             <objects>
                 <viewController id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Zto-kN-hsB">
-                        <rect key="frame" x="0.0" y="0.0" width="180" height="120"/>
+                        <rect key="frame" x="0.0" y="0.0" width="180" height="154"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="i1i-TI-res" userLabel="Container View">
-                                <rect key="frame" x="0.0" y="0.0" width="180" height="120"/>
+                                <rect key="frame" x="0.0" y="0.0" width="180" height="154"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="583-yh-vab">
-                                        <rect key="frame" x="0.0" y="86" width="180" height="34"/>
+                                        <rect key="frame" x="0.0" y="120" width="180" height="34"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="34" id="WEB-uc-VRg"/>
                                         </constraints>
                                     </customView>
-                                    <scrollView wantsLayer="YES" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ajv-sk-5DU">
-                                        <rect key="frame" x="0.0" y="0.0" width="180" height="78"/>
-                                        <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="791-Vs-XsU">
-                                            <rect key="frame" x="1" y="1" width="178" height="76"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <collectionView wantsLayer="YES" id="e2P-P4-jwR">
-                                                    <rect key="frame" x="0.0" y="0.0" width="178" height="158"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
-                                                    <collectionViewGridLayout key="collectionViewLayout" id="UKd-zL-iTJ">
-                                                        <size key="minimumItemSize" width="160" height="30"/>
-                                                        <size key="maximumItemSize" width="500" height="30"/>
-                                                    </collectionViewGridLayout>
-                                                    <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                </collectionView>
-                                            </subviews>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </clipView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="0df-36-QUP">
+                                        <rect key="frame" x="0.0" y="0.0" width="180" height="120"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="78" id="3q2-Uy-3f3"/>
+                                            <constraint firstAttribute="height" constant="120" id="FXl-FG-l2v"/>
                                         </constraints>
-                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="wjQ-gN-U55">
-                                            <rect key="frame" x="-100" y="-100" width="178" height="16"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="t1j-XF-fcS">
-                                            <rect key="frame" x="-100" y="-100" width="16" height="76"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                    </scrollView>
+                                    </customView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="ajv-sk-5DU" secondAttribute="trailing" id="DM4-f7-GiD"/>
-                                    <constraint firstItem="ajv-sk-5DU" firstAttribute="top" secondItem="583-yh-vab" secondAttribute="bottom" constant="8" id="FDj-Dl-Eff"/>
                                     <constraint firstAttribute="trailing" secondItem="583-yh-vab" secondAttribute="trailing" id="MR8-5E-dZh"/>
-                                    <constraint firstAttribute="height" constant="120" id="kvK-e3-H8n"/>
+                                    <constraint firstAttribute="trailing" secondItem="0df-36-QUP" secondAttribute="trailing" id="U2m-Db-x9B"/>
+                                    <constraint firstItem="0df-36-QUP" firstAttribute="top" secondItem="583-yh-vab" secondAttribute="bottom" id="jEl-iZ-NsP"/>
+                                    <constraint firstAttribute="height" constant="154" id="kvK-e3-H8n"/>
                                     <constraint firstItem="583-yh-vab" firstAttribute="leading" secondItem="i1i-TI-res" secondAttribute="leading" id="nxx-Ni-DOZ"/>
                                     <constraint firstItem="583-yh-vab" firstAttribute="top" secondItem="i1i-TI-res" secondAttribute="top" id="ru5-Am-M0I"/>
-                                    <constraint firstItem="ajv-sk-5DU" firstAttribute="leading" secondItem="i1i-TI-res" secondAttribute="leading" id="xKG-YU-6gM"/>
+                                    <constraint firstItem="0df-36-QUP" firstAttribute="leading" secondItem="i1i-TI-res" secondAttribute="leading" id="tMh-3i-Kzm"/>
                                 </constraints>
                             </customView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="i1i-TI-res" secondAttribute="bottom" id="BPg-yy-0oC"/>
                             <constraint firstItem="i1i-TI-res" firstAttribute="leading" secondItem="Zto-kN-hsB" secondAttribute="leading" id="H1O-KY-oyC"/>
                             <constraint firstItem="i1i-TI-res" firstAttribute="top" secondItem="Zto-kN-hsB" secondAttribute="top" id="NYD-XA-BkT"/>
-                            <constraint firstAttribute="bottom" secondItem="i1i-TI-res" secondAttribute="bottom" id="Piv-JW-2Ch"/>
                             <constraint firstAttribute="trailing" secondItem="i1i-TI-res" secondAttribute="trailing" id="afB-WT-cWP"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="collectionView" destination="e2P-P4-jwR" id="APf-yW-uh4"/>
-                        <outlet property="collectionViewHeightConstraint" destination="3q2-Uy-3f3" id="7k4-Ot-yYJ"/>
                         <outlet property="condensedActivityView" destination="583-yh-vab" id="ogx-0h-yyE"/>
                         <outlet property="condensedActivityViewHeightConstraint" destination="WEB-uc-VRg" id="Jao-0M-Jom"/>
+                        <outlet property="detailedActivityView" destination="0df-36-QUP" id="MGP-NU-LjK"/>
+                        <outlet property="detailedActivityViewHeightConstraint" destination="FXl-FG-l2v" id="quA-Rx-UgV"/>
                         <outlet property="rootHeightConstraint" destination="kvK-e3-H8n" id="58s-4L-zUq"/>
                         <segue destination="d3P-5j-IhJ" kind="custom" identifier="CondensedActivityVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="Aq1-Fn-crL"/>
+                        <segue destination="AJO-lx-pZ5" kind="custom" identifier="DetailedActivityVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="FGd-fh-X8p"/>
                     </connections>
                 </viewController>
                 <customObject id="ytj-7m-2MR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -237,7 +214,20 @@
                 </viewController>
                 <customObject id="mIm-2B-d87" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="371.5" y="1737"/>
+            <point key="canvasLocation" x="394" y="1683"/>
+        </scene>
+        <!--Detailed Activity View Controller-->
+        <scene sceneID="Qxj-pa-5eC">
+            <objects>
+                <viewController id="AJO-lx-pZ5" customClass="DetailedActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="PIw-M0-HkN">
+                        <rect key="frame" x="0.0" y="0.0" width="180" height="86"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="1d0-u5-Upv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="396" y="1796"/>
         </scene>
         <!--Projects List Activity Split View Controller-->
         <scene sceneID="KNa-QW-hF3">
