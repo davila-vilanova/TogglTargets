@@ -10,7 +10,7 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-fileprivate let itemHeight: CGFloat = 30
+fileprivate let itemHeight: CGFloat = 24
 fileprivate let kHeightConstraintIdentifier = "HeightConstraintIdentifier"
 fileprivate let kAnimationDuration = 0.10
 
