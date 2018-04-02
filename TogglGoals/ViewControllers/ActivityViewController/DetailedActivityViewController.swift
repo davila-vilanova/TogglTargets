@@ -1,21 +1,21 @@
 //
-//  ViewController.swift
-//  LayoutTests
+//  DetailedActivityViewController.swift
+//  TogglGoals
 //
-//  Created by David Davila on 24.03.18.
-//  Copyright © 2018 David Dávila. All rights reserved.
+//  Created by David Davila on 26.03.18.
+//  Copyright © 2018 davi. All rights reserved.
 //
 
 import Cocoa
 import Result
 import ReactiveSwift
-@testable import TogglGoals_MacOS
 
-fileprivate let itemHeight: CGFloat = 30
+fileprivate let itemHeight: CGFloat = 24
 fileprivate let kHeightConstraintIdentifier = "HeightConstraintIdentifier"
 fileprivate let kAnimationDuration = 0.10
 
-class LayoutTestsViewController: NSViewController {
+class DetailedActivityViewController: NSViewController {
+
     func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>) {
         self.activityStatuses <~ activityStatuses
     }

@@ -11,6 +11,10 @@
 		631576F12066D6E300FFEEE9 /* LayoutTestsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631576F02066D6E300FFEEE9 /* LayoutTestsViewController.swift */; };
 		631576F32066D6E300FFEEE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 631576F22066D6E300FFEEE9 /* Assets.xcassets */; };
 		631576F62066D6E300FFEEE9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 631576F42066D6E300FFEEE9 /* Main.storyboard */; };
+		631DD9AE206EE9650007ED3F /* SyncingActivityViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 631DD9AC206EE9650007ED3F /* SyncingActivityViewController.xib */; };
+		6334B488206EF05A00A5B796 /* ActivitySuccessViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B486206EF05A00A5B796 /* ActivitySuccessViewController.xib */; };
+		6334B48C206EF30600A5B796 /* ActivityErrorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B48A206EF30600A5B796 /* ActivityErrorViewController.xib */; };
+		6334B48F2070125F00A5B796 /* SingleActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334B48D2070125F00A5B796 /* SingleActivityViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +25,10 @@
 		631576F52066D6E300FFEEE9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		631576F72066D6E300FFEEE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		631576F82066D6E300FFEEE9 /* LayoutTests.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LayoutTests.entitlements; sourceTree = "<group>"; };
+		631DD9AC206EE9650007ED3F /* SyncingActivityViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SyncingActivityViewController.xib; sourceTree = "<group>"; };
+		6334B486206EF05A00A5B796 /* ActivitySuccessViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ActivitySuccessViewController.xib; sourceTree = "<group>"; };
+		6334B48A206EF30600A5B796 /* ActivityErrorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ActivityErrorViewController.xib; sourceTree = "<group>"; };
+		6334B48D2070125F00A5B796 /* SingleActivityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleActivityViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,12 +63,24 @@
 			children = (
 				631576EE2066D6E300FFEEE9 /* AppDelegate.swift */,
 				631576F02066D6E300FFEEE9 /* LayoutTestsViewController.swift */,
+				631DD9AA206EE9300007ED3F /* ActivityItemViewControllers */,
 				631576F22066D6E300FFEEE9 /* Assets.xcassets */,
 				631576F42066D6E300FFEEE9 /* Main.storyboard */,
 				631576F72066D6E300FFEEE9 /* Info.plist */,
 				631576F82066D6E300FFEEE9 /* LayoutTests.entitlements */,
 			);
 			path = LayoutTests;
+			sourceTree = "<group>";
+		};
+		631DD9AA206EE9300007ED3F /* ActivityItemViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				631DD9AC206EE9650007ED3F /* SyncingActivityViewController.xib */,
+				6334B486206EF05A00A5B796 /* ActivitySuccessViewController.xib */,
+				6334B48A206EF30600A5B796 /* ActivityErrorViewController.xib */,
+				6334B48D2070125F00A5B796 /* SingleActivityViewController.swift */,
+			);
+			path = ActivityItemViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -122,6 +142,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				631DD9AE206EE9650007ED3F /* SyncingActivityViewController.xib in Resources */,
+				6334B48C206EF30600A5B796 /* ActivityErrorViewController.xib in Resources */,
+				6334B488206EF05A00A5B796 /* ActivitySuccessViewController.xib in Resources */,
 				631576F32066D6E300FFEEE9 /* Assets.xcassets in Resources */,
 				631576F62066D6E300FFEEE9 /* Main.storyboard in Resources */,
 			);
@@ -134,6 +157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6334B48F2070125F00A5B796 /* SingleActivityViewController.swift in Sources */,
 				631576F12066D6E300FFEEE9 /* LayoutTestsViewController.swift in Sources */,
 				631576EF2066D6E300FFEEE9 /* AppDelegate.swift in Sources */,
 			);

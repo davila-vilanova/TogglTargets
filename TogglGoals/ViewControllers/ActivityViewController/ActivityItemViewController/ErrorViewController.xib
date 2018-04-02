@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13771" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13771"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ErrorViewController" customModule="TogglGoals" customModuleProvider="target">
+            <connections>
+                <outlet property="descriptionLabel" destination="6wy-94-eag" id="hNB-sB-7I9"/>
+                <outlet property="retryButton" destination="SoR-Qg-ZZm" id="uEI-yn-4N0"/>
+                <outlet property="titleLabel" destination="Aco-90-1hl" id="D0v-0u-ByA"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="266" height="108"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Aco-90-1hl">
+                    <rect key="frame" x="18" y="71" width="230" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="An error occured while syncing xyz:" id="7BD-BS-VkB">
+                        <font key="font" metaFont="systemSemibold" size="13"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="6wy-94-eag">
+                    <rect key="frame" x="18" y="49" width="230" height="14"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Error description" id="x7Y-9b-5n3">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.12984204290000001" green="0.12984612579999999" blue="0.12984395030000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SoR-Qg-ZZm">
+                    <rect key="frame" x="179" y="13" width="73" height="32"/>
+                    <buttonCell key="cell" type="push" title="Retry" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAw-c3-PMZ">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="Aco-90-1hl" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="0Iy-b2-ldY"/>
+                <constraint firstAttribute="trailing" secondItem="SoR-Qg-ZZm" secondAttribute="trailing" constant="20" symbolic="YES" id="0kX-DK-LeD"/>
+                <constraint firstItem="6wy-94-eag" firstAttribute="top" secondItem="Aco-90-1hl" secondAttribute="bottom" constant="8" symbolic="YES" id="356-uR-RXY"/>
+                <constraint firstAttribute="bottom" secondItem="SoR-Qg-ZZm" secondAttribute="bottom" constant="20" symbolic="YES" id="7WV-Tk-PBj"/>
+                <constraint firstItem="SoR-Qg-ZZm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="LZ7-xf-1e3"/>
+                <constraint firstItem="Aco-90-1hl" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="ObS-bB-ZU5"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Aco-90-1hl" secondAttribute="trailing" constant="20" symbolic="YES" id="eEm-pC-4Jq"/>
+                <constraint firstItem="6wy-94-eag" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="rdT-e2-qMy"/>
+                <constraint firstItem="6wy-94-eag" firstAttribute="trailing" secondItem="Aco-90-1hl" secondAttribute="trailing" id="u2W-RR-pB8"/>
+            </constraints>
+            <point key="canvasLocation" x="27" y="126.5"/>
+        </customView>
+    </objects>
+</document>

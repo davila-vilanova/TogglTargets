@@ -62,50 +62,100 @@
                                         <menuItem title="Add Syncing Profile" id="emP-He-CJd">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="addSyncingProfileActivity:" target="Voe-Tx-rLC" id="3Db-Zp-uEr"/>
+                                                <action selector="addSyncingProfileActivity:" target="Voe-Tx-rLC" id="40K-Ev-icc"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Add Syncing Projects" id="OZw-WS-TfD">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="addSyncingProjectsActivity:" target="Voe-Tx-rLC" id="zof-Jo-fOE"/>
+                                                <action selector="addSyncingProjectsActivity:" target="Voe-Tx-rLC" id="epV-RP-Tg9"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Add Syncing Reports" id="jYk-dM-yUu">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="addSyncingReportsActivity:" target="Voe-Tx-rLC" id="IxG-Pn-9af"/>
+                                                <action selector="addSyncingReportsActivity:" target="Voe-Tx-rLC" id="GAM-Xf-2eT"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Add Syncing Running Entry" id="rzF-BT-KYA">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="addSyncingRunningEntryActivity:" target="Voe-Tx-rLC" id="ZX8-O6-6Dd"/>
+                                                <action selector="addSyncingRunningEntryActivity:" target="Voe-Tx-rLC" id="8eW-4e-t54"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Yag-lL-LMG"/>
+                                        <menuItem title="Trigger Sync Profile Success" id="lhy-bu-cjv">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="triggerSyncingProfileSuccess:" target="Voe-Tx-rLC" id="OM6-BK-KSN"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Trigger Sync Projects Success" id="VWB-No-5LY">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="triggerSyncingProjectsSuccess:" target="Voe-Tx-rLC" id="mcw-4L-xH5"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Trigger Sync Reports Success" id="3a1-dl-730">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="triggerSyncingReportsSuccess:" target="Voe-Tx-rLC" id="oXu-s3-FCO"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Trigger Sync Running Entry Success" id="Nul-Ue-Avv">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="triggerSyncingRunningEntrySuccess:" target="Voe-Tx-rLC" id="dAu-bZ-qkd"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="PMx-Qh-OYg"/>
+                                        <menuItem title="Trigger Sync Profile Error" id="MZy-qf-Ggz">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="triggerSyncingProfileError:" target="Voe-Tx-rLC" id="EjA-w5-4Fd"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Trigger Sync Projects Error" id="Ron-pj-RE8">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="triggerSyncingProjectsError:" target="Voe-Tx-rLC" id="ejz-0o-cuA"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Trigger Sync Reports Error" id="5vD-8H-CSM">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="triggerSyncingReportsError:" target="Voe-Tx-rLC" id="ivL-it-luc"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Trigger Sync Running Entry Error" id="Nnu-cv-JTP">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="triggerSyncingRunningEntryError:" target="Voe-Tx-rLC" id="PdY-ho-F7A"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="o04-5B-TFw"/>
                                         <menuItem title="Remove Syncing Profile" id="6F9-HO-SJO">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="removeSyncingProfileActivity:" target="Voe-Tx-rLC" id="TqU-OM-I5A"/>
+                                                <action selector="removeSyncingProfileActivity:" target="Voe-Tx-rLC" id="qgK-eR-nb0"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Remove Syncing Projects" id="gBB-WT-JTx">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="removeSyncingProjectsActivity:" target="Voe-Tx-rLC" id="GzE-7Q-ISz"/>
+                                                <action selector="removeSyncingProjectsActivity:" target="Voe-Tx-rLC" id="Hla-i0-C2F"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Remove Syncing Reports" id="LwS-3e-nbf">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="removeSyncingReportsActivity:" target="Voe-Tx-rLC" id="JiZ-8J-8gF"/>
+                                                <action selector="removeSyncingReportsActivity:" target="Voe-Tx-rLC" id="dIW-W1-EO1"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Remove Syncing Running Entry" id="c1f-cg-4u0">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="removeSyncingRunningEntryActivity:" target="Voe-Tx-rLC" id="QqS-OS-xPc"/>
+                                                <action selector="removeSyncingRunningEntryActivity:" target="Voe-Tx-rLC" id="iec-rP-C2l"/>
                                             </connections>
                                         </menuItem>
                                     </items>

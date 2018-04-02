@@ -141,6 +141,13 @@ enum ActivityStatus {
         }
     }
 
+    var retryAction: RetryAction? {
+        switch self {
+        case .error(_, _, let retryAction): return retryAction
+        default: return nil
+        }
+    }
+
     /// If this is the `.error` case, returns the `APIAccessError` that
     /// triggered it. Returns `nil` otherwise.
     var error: APIAccessError? {
