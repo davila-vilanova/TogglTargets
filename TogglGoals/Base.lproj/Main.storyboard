@@ -192,10 +192,16 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <box hidden="YES" verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="hzV-ip-MEy">
+                                <rect key="frame" x="20" y="-2" width="135" height="5"/>
+                            </box>
                         </subviews>
                         <constraints>
                             <constraint firstItem="fp8-gN-r27" firstAttribute="top" secondItem="eD4-VC-Nnc" secondAttribute="bottom" id="5EY-p6-5bm"/>
+                            <constraint firstItem="hzV-ip-MEy" firstAttribute="leading" secondItem="Z67-5j-RY0" secondAttribute="leading" constant="20" symbolic="YES" id="P1K-Wb-g0m"/>
+                            <constraint firstAttribute="bottom" secondItem="hzV-ip-MEy" secondAttribute="bottom" id="ibM-YI-7Qk"/>
                             <constraint firstItem="eD4-VC-Nnc" firstAttribute="top" secondItem="Z67-5j-RY0" secondAttribute="top" constant="2" placeholder="YES" id="tTi-Nv-lg1"/>
+                            <constraint firstAttribute="trailing" secondItem="hzV-ip-MEy" secondAttribute="trailing" constant="20" symbolic="YES" id="tix-Ta-eBn"/>
                             <constraint firstItem="fp8-gN-r27" firstAttribute="centerX" secondItem="Z67-5j-RY0" secondAttribute="centerX" id="wdX-OW-kgj"/>
                             <constraint firstItem="eD4-VC-Nnc" firstAttribute="centerX" secondItem="Z67-5j-RY0" secondAttribute="centerX" id="xvv-21-hlj"/>
                         </constraints>
@@ -208,6 +214,7 @@
                         </gestureRecognizers>
                     </view>
                     <connections>
+                        <outlet property="horizontalLine" destination="hzV-ip-MEy" id="k44-J9-XNP"/>
                         <outlet property="statusDescriptionLabel" destination="eD4-VC-Nnc" id="wzD-id-TZq"/>
                         <outlet property="statusDetailLabel" destination="fp8-gN-r27" id="tnd-Tf-APR"/>
                     </connections>
@@ -712,7 +719,7 @@
                                 </customSpacing>
                             </stackView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DEQ-gQ-Scc">
-                                <rect key="frame" x="-2" y="0.0" width="247" height="14"/>
+                                <rect key="frame" x="-2" y="0.0" width="248" height="14"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="That's 10% more than your baseline of 4 hours" id="b21-yJ-EQn">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

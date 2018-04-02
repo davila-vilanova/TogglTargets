@@ -24,10 +24,12 @@ class CondensedActivityViewController: NSViewController {
 
     @IBOutlet weak var statusDescriptionLabel: NSTextField!
     @IBOutlet weak var statusDetailLabel: NSTextField!
+    @IBOutlet weak var horizontalLine: NSBox!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         displayState <~ stateProducer(from: activityStatuses.producer)
+        horizontalLine.reactive.makeBindingTarget { $0.animator().isHidden = !$1 } <~ requestExpandDetails
     }
 
     @IBAction func expandDetails(_ sender: Any) {
