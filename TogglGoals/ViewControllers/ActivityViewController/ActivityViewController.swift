@@ -11,6 +11,8 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
+fileprivate let kActivityListAnimationDuration = 0.10
+
 fileprivate let CondensedActivityVCContainment = "CondensedActivityVCContainment"
 fileprivate let DetailedActivityVCContainment = "DetailedActivityVCContainment"
 
@@ -22,7 +24,6 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
     }
 
     internal lazy var wantsDisplay = Property(value: true) //Property<Bool>(initial: false, then: activityStatuses.producer.map { !$0.isEmpty })
-    private var wantsExtendedDisplay = MutableProperty(false)
 
     private let (lifetime, token) = Lifetime.make()
     private let activitiesState = ActivitiesState()
@@ -33,7 +34,6 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
 
     @IBOutlet weak var rootHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var condensedActivityViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var detailedActivityViewHeightConstraint: NSLayoutConstraint!
 
     private var condensedActivityViewController: CondensedActivityViewController!
     private var detailedActivityViewController: DetailedActivityViewController!
@@ -53,19 +53,32 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
 
         initializeControllerContainment(containmentIdentifiers: [CondensedActivityVCContainment, DetailedActivityVCContainment])
 
-        detailedActivityViewController.connectInterface(activityStatuses: self.activityStatuses.producer)
+        let detailedViewFittingHeight = MutableProperty<CGFloat>(0)
+        let wantsExtendedDisplay = MutableProperty(false)
+        lifetime.observeEnded {
+            _ = detailedViewFittingHeight
+            _ = wantsExtendedDisplay
+        }
 
-        condensedActivityViewController.connectInterface(
-            activityStatuses: activityStatuses.producer,
-            expandDetails: wantsExtendedDisplay.bindingTarget)
+        detailedActivityViewController.connectInterface(activityStatuses: self.activityStatuses.producer, fittingHeight: detailedViewFittingHeight.bindingTarget, animationDuration: kActivityListAnimationDuration)
+
+        condensedActivityViewController.connectInterface(activityStatuses: activityStatuses.producer, expandDetails: wantsExtendedDisplay.bindingTarget)
 
         detailedActivityView.reactive.makeBindingTarget(on: UIScheduler(), animateOpacity)
             <~ wantsExtendedDisplay.map { $0 ? (0.0, 1.0) : (1.0, 0.0) }
 
         let collapsedHeight = condensedActivityViewHeightConstraint.constant
-        let expandedHeight = condensedActivityViewHeightConstraint.constant + detailedActivityViewHeightConstraint.constant
-        rootHeightConstraint.reactive.makeBindingTarget(on: UIScheduler()) { $0.animator().constant = $1 }
-            <~ wantsExtendedDisplay.map { $0 ? expandedHeight : collapsedHeight }.producer.logValues("rootHeightConstraint")
+
+        let detailedViewHeight = SignalProducer.combineLatest(wantsExtendedDisplay, detailedViewFittingHeight).map { $0 ? $1 : 0 }
+
+        let heightTarget =  rootHeightConstraint.reactive.makeBindingTarget(on: UIScheduler()) { (constraint: NSLayoutConstraint, height: CGFloat) in
+            NSAnimationContext.beginGrouping()
+            NSAnimationContext.current.duration = 0.10
+            constraint.animator().constant = height
+            NSAnimationContext.endGrouping()
+        }
+
+        heightTarget <~ detailedViewHeight.map { collapsedHeight + $0 }
     }
 }
 

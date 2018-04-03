@@ -12,15 +12,18 @@ import ReactiveSwift
 
 fileprivate let itemHeight: CGFloat = 20
 fileprivate let kHeightConstraintIdentifier = "HeightConstraintIdentifier"
-fileprivate let kAnimationDuration = 0.10
 
 class DetailedActivityViewController: NSViewController {
 
-    func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>) {
+    func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>,
+                          fittingHeight: BindingTarget<CGFloat>, animationDuration: TimeInterval) {
         self.activityStatuses <~ activityStatuses
+        fittingHeight <~ self.fittingHeight
+        self.animationDuration = animationDuration
     }
 
     private let activityStatuses = MutableProperty([ActivityStatus]())
+    private lazy var fittingHeight = activityStatuses.map { CGFloat($0.count) * itemHeight }
 
     private weak var profileContainer: NSView!
     private weak var projectsContainer: NSView!
@@ -31,6 +34,8 @@ class DetailedActivityViewController: NSViewController {
     private var projectsActivityController: NSViewController?
     private var reportsActivityController: NSViewController?
     private var runningEntryActivityController: NSViewController?
+
+    private var animationDuration: TimeInterval!
 
     private func activityViewContainer(for activity: ActivityStatus.Activity) -> NSView {
         switch activity {
@@ -82,21 +87,22 @@ class DetailedActivityViewController: NSViewController {
         self.reportsContainer = reportsContainer
         self.runningEntryContainer = runningEntryContainer
 
-        func attachContainerView(_ containerView: NSView, under previousView: NSView? = nil) {
+        func attachContainerView(_ containerView: NSView, above nextView: NSView? = nil) {
             view.addSubview(containerView)
             containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
             containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-            containerView.topAnchor.constraint(equalTo: (previousView?.bottomAnchor ?? view.topAnchor)).isActive = true
+            containerView.bottomAnchor.constraint(equalTo: (nextView?.topAnchor ?? view.bottomAnchor)).isActive = true
 
             let heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
             heightConstraint.identifier = kHeightConstraintIdentifier
             heightConstraint.isActive = true
         }
 
-        attachContainerView(profileContainer)
-        attachContainerView(projectsContainer, under: profileContainer)
-        attachContainerView(reportsContainer, under: projectsContainer)
-        attachContainerView(runningEntryContainer, under: reportsContainer)
+        attachContainerView(runningEntryContainer)
+        attachContainerView(reportsContainer, above: runningEntryContainer)
+        attachContainerView(projectsContainer, above: reportsContainer)
+        attachContainerView(profileContainer, above: projectsContainer)
+        profileContainer.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
 
         updateActivities <~ activityStatuses.combinePrevious([ActivityStatus]())
     }
@@ -114,7 +120,7 @@ class DetailedActivityViewController: NSViewController {
 
         for activity in activitiesToRemove {
             let controller = activityController(for: activity)!
-            detachActivityView(controller.view)
+            detachActivityView(controller.view, animationDuration: animationDuration)
             clearActivityController(for: activity)
         }
 
@@ -123,14 +129,14 @@ class DetailedActivityViewController: NSViewController {
             let controller = makeActivityController(for: activityStatus)
             setActivityController(controller, for: activity)
             let containerView = activityViewContainer(for: activity)
-            attachActivityView(controller.view, to: containerView)
+            attachActivityView(controller.view, to: containerView, animationDuration: animationDuration)
         }
 
         for activity in activitiesToSwap {
             let previousController = activityController(for: activity)!
             let newActivityStatus = newStatusByActivity[activity]!
             let newController = makeActivityController(for: newActivityStatus)
-            swapActivityView(previousController.view, newView: newController.view)
+            swapActivityView(previousController.view, newView: newController.view, animationDuration: animationDuration)
             setActivityController(newController, for: activity)
         }
 
@@ -149,10 +155,11 @@ fileprivate func makeContainerView(identifier: String) -> NSView {
     return view
 }
 
-fileprivate func attachActivityView(_ activityView: NSView, to containerView: NSView) {
+fileprivate func attachActivityView(_ activityView: NSView, to containerView: NSView, animationDuration: TimeInterval) {
     activityView.translatesAutoresizingMaskIntoConstraints = false
+
     NSAnimationContext.beginGrouping()
-    NSAnimationContext.current.duration = kAnimationDuration
+    NSAnimationContext.current.duration = animationDuration
     containerView.constraintWithIdentifier(kHeightConstraintIdentifier)!.animator().constant = itemHeight
     containerView.addSubview(activityView)
     NSAnimationContext.endGrouping()
@@ -163,12 +170,12 @@ fileprivate func attachActivityView(_ activityView: NSView, to containerView: NS
     activityView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
 }
 
-fileprivate func detachActivityView(_ activityView: NSView) {
+fileprivate func detachActivityView(_ activityView: NSView, animationDuration: TimeInterval) {
     guard let superview = activityView.superview else {
         return
     }
     NSAnimationContext.beginGrouping()
-    NSAnimationContext.current.duration = kAnimationDuration
+    NSAnimationContext.current.duration = animationDuration
     NSAnimationContext.current.completionHandler = {
         activityView.removeFromSuperview()
     }
@@ -176,13 +183,13 @@ fileprivate func detachActivityView(_ activityView: NSView) {
     NSAnimationContext.endGrouping()
 }
 
-fileprivate func swapActivityView(_ previousView: NSView, newView: NSView) {
+fileprivate func swapActivityView(_ previousView: NSView, newView: NSView, animationDuration: TimeInterval) {
     guard let superview = previousView.superview else {
         return
     }
 
     NSAnimationContext.beginGrouping()
-    NSAnimationContext.current.duration = kAnimationDuration
+    NSAnimationContext.current.duration = animationDuration
     superview.animator().addSubview(newView)
     previousView.animator().removeFromSuperview()
     NSAnimationContext.endGrouping()

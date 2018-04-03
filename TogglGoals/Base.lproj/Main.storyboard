@@ -132,7 +132,7 @@
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="0df-36-QUP">
                                         <rect key="frame" x="0.0" y="0.0" width="180" height="80"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="80" id="FXl-FG-l2v"/>
+                                            <constraint firstAttribute="height" constant="80" placeholder="YES" id="FXl-FG-l2v"/>
                                         </constraints>
                                     </customView>
                                 </subviews>
@@ -158,7 +158,6 @@
                         <outlet property="condensedActivityView" destination="583-yh-vab" id="ogx-0h-yyE"/>
                         <outlet property="condensedActivityViewHeightConstraint" destination="WEB-uc-VRg" id="Jao-0M-Jom"/>
                         <outlet property="detailedActivityView" destination="0df-36-QUP" id="MGP-NU-LjK"/>
-                        <outlet property="detailedActivityViewHeightConstraint" destination="FXl-FG-l2v" id="quA-Rx-UgV"/>
                         <outlet property="rootHeightConstraint" destination="kvK-e3-H8n" id="58s-4L-zUq"/>
                         <segue destination="d3P-5j-IhJ" kind="custom" identifier="CondensedActivityVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="Aq1-Fn-crL"/>
                         <segue destination="AJO-lx-pZ5" kind="custom" identifier="DetailedActivityVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="FGd-fh-X8p"/>
