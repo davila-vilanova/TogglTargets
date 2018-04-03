@@ -38,10 +38,10 @@
                     </textFieldCell>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SoR-Qg-ZZm">
-                    <rect key="frame" x="179" y="13" width="73" height="32"/>
-                    <buttonCell key="cell" type="push" title="Retry" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAw-c3-PMZ">
+                    <rect key="frame" x="202" y="19" width="44" height="19"/>
+                    <buttonCell key="cell" type="roundRect" title="Retry" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAw-c3-PMZ">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
+                        <font key="font" metaFont="cellTitle"/>
                     </buttonCell>
                 </button>
             </subviews>

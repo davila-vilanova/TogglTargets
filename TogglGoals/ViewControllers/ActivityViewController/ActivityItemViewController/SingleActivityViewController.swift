@@ -57,16 +57,15 @@ class ActivitySuccessViewController: SingleActivityViewController {
     }
 }
 
-class ActivityErrorViewController: SingleActivityViewController {
+class ActivityErrorViewController: SingleActivityViewController, NSPopoverDelegate {
 
-    private var errorDetailsPopover: NSPopover?
+    private weak var errorDetailsPopover: NSPopover?
 
-    @IBAction func toggleErrorDetails(_ sender: NSButton) {
-        switch sender.state {
-        case .on: showErrorDetailsPopover(relativeTo: sender)
-        case .off: closeDetailsPopover()
-        default: break
+    @IBAction func showErrorDetails(_ sender: Any) {
+        guard errorDetailsPopover?.isShown != true else {
+            return
         }
+        showErrorDetailsPopover(relativeTo: view)
     }
 
     private func showErrorDetailsPopover(relativeTo view: NSView) {
@@ -88,12 +87,8 @@ class ActivityErrorViewController: SingleActivityViewController {
         self.errorDetailsPopover = popover
     }
 
-    private func closeDetailsPopover() {
-        guard let popover = errorDetailsPopover else {
-            return
-        }
-        popover.close()
-        errorDetailsPopover = nil
+    func popoverDidClose(_ notification: Notification) {
+        self.errorDetailsPopover = nil
     }
 
     override func viewDidLoad() {

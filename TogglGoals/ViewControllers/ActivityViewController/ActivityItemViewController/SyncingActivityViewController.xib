@@ -27,9 +27,9 @@
                     </constraints>
                 </progressIndicator>
                 <textField wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Pct-2A-CED">
-                    <rect key="frame" x="6" y="23" width="33" height="14"/>
-                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="MEt-ra-Lsf">
-                        <font key="font" metaFont="smallSystem"/>
+                    <rect key="frame" x="6" y="24" width="28" height="11"/>
+                    <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="Label" usesSingleLineMode="YES" id="MEt-ra-Lsf">
+                        <font key="font" metaFont="miniSystem"/>
                         <color key="textColor" red="0.37055522200000002" green="0.37056469920000001" blue="0.37055957319999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>

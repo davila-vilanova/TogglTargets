@@ -117,22 +117,22 @@
             <objects>
                 <viewController id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Zto-kN-hsB">
-                        <rect key="frame" x="0.0" y="0.0" width="180" height="130"/>
+                        <rect key="frame" x="0.0" y="0.0" width="180" height="114"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="i1i-TI-res" userLabel="Container View">
-                                <rect key="frame" x="0.0" y="0.0" width="180" height="130"/>
+                                <rect key="frame" x="0.0" y="0.0" width="180" height="114"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="583-yh-vab">
-                                        <rect key="frame" x="0.0" y="96" width="180" height="34"/>
+                                        <rect key="frame" x="0.0" y="80" width="180" height="34"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="34" id="WEB-uc-VRg"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="0df-36-QUP">
-                                        <rect key="frame" x="0.0" y="0.0" width="180" height="96"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="180" height="80"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="96" id="FXl-FG-l2v"/>
+                                            <constraint firstAttribute="height" constant="80" id="FXl-FG-l2v"/>
                                         </constraints>
                                     </customView>
                                 </subviews>
@@ -140,7 +140,7 @@
                                     <constraint firstAttribute="trailing" secondItem="583-yh-vab" secondAttribute="trailing" id="MR8-5E-dZh"/>
                                     <constraint firstAttribute="trailing" secondItem="0df-36-QUP" secondAttribute="trailing" id="U2m-Db-x9B"/>
                                     <constraint firstItem="0df-36-QUP" firstAttribute="top" secondItem="583-yh-vab" secondAttribute="bottom" id="jEl-iZ-NsP"/>
-                                    <constraint firstAttribute="height" constant="130" id="kvK-e3-H8n"/>
+                                    <constraint firstAttribute="height" constant="114" id="kvK-e3-H8n"/>
                                     <constraint firstItem="583-yh-vab" firstAttribute="leading" secondItem="i1i-TI-res" secondAttribute="leading" id="nxx-Ni-DOZ"/>
                                     <constraint firstItem="583-yh-vab" firstAttribute="top" secondItem="i1i-TI-res" secondAttribute="top" id="ru5-Am-M0I"/>
                                     <constraint firstItem="0df-36-QUP" firstAttribute="leading" secondItem="i1i-TI-res" secondAttribute="leading" id="tMh-3i-Kzm"/>
@@ -206,7 +206,7 @@
                             <constraint firstItem="eD4-VC-Nnc" firstAttribute="centerX" secondItem="Z67-5j-RY0" secondAttribute="centerX" id="xvv-21-hlj"/>
                         </constraints>
                         <gestureRecognizers>
-                            <clickGestureRecognizer delaysPrimaryMouseButtonEvents="YES" numberOfClicksRequired="2" id="lh4-mF-EdT">
+                            <clickGestureRecognizer delaysPrimaryMouseButtonEvents="YES" numberOfClicksRequired="1" id="lh4-mF-EdT">
                                 <connections>
                                     <action selector="expandDetails:" target="d3P-5j-IhJ" id="RNW-9w-0CH"/>
                                 </connections>

@@ -47,7 +47,7 @@ class CondensedActivityViewController: NSViewController {
             self.setStatusDetail("\(count) syncing \(count == 1 ? "activity" : "activities") in progress")
         case .errors(let count):
             self.statusDescriptionLabel.stringValue = (count == 1 ? "Error" : "Errors") + " syncing data"
-            self.setStatusDetail(count == 1 ? "An error" : "\(count) errors" + " occurred")
+            self.setStatusDetail((count == 1 ? "An error" : "\(count) errors") + " occurred.")
         case .success(let count):
             self.statusDescriptionLabel.stringValue = "All data synchronized"
             self.setStatusDetail(nil)

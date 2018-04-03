@@ -40,7 +40,6 @@ extension URLSession {
             return URLRequest(url: resourceURL(for: path))
         }
 
-        print("** sending request to \(endpoint) **")
         return mapErrors(from: self.reactive.data(with: request(for: endpoint)))
     }
 
