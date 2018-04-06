@@ -60,7 +60,7 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
             _ = wantsExtendedDisplay
         }
 
-        detailedActivityViewController.connectInterface(activityStatuses: self.activityStatuses.producer, fittingHeight: detailedViewFittingHeight.bindingTarget, animationDuration: kActivityListAnimationDuration)
+        detailedActivityViewController.connectInterface(activityStatuses: self.activityStatuses.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()), fittingHeight: detailedViewFittingHeight.bindingTarget, animationDuration: kActivityListAnimationDuration)
 
         condensedActivityViewController.connectInterface(activityStatuses: activityStatuses.producer, expandDetails: wantsExtendedDisplay.bindingTarget)
 
@@ -78,7 +78,7 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
             NSAnimationContext.endGrouping()
         }
 
-        heightTarget <~ detailedViewHeight.map { collapsedHeight + $0 }
+        heightTarget <~ detailedViewHeight.map { collapsedHeight + $0 }.skipRepeats()
     }
 }
 
