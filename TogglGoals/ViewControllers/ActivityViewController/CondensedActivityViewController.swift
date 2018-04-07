@@ -158,13 +158,16 @@ fileprivate enum State {
 
 fileprivate func makeStateProducer(from statusesProducer: SignalProducer<[ActivityStatus], NoError>)
     -> SignalProducer<State, NoError> {
-        let syncingCount = statusesProducer.map { $0.filter { $0.isExecuting } }.map { $0.count }
-        let errorCountAndFirst = statusesProducer.map { $0.filter { $0.isError } }.map { ($0.count, $0.first?.error) }
-        let successCount = statusesProducer.map { $0.filter { $0.isSuccessful } }.map { $0.count }
+        let countsProducer = statusesProducer.map { statuses -> (Int, Int, Int, APIAccessError?) in
+            let syncingCount = statuses.filter { $0.isExecuting }.count
+            let successCount = statuses.filter { $0.isSuccessful }.count
+            let errorCount = statuses.filter { $0.isError }.count
+            let firstError = statuses.filter { $0.isError }.first?.error
+            return (syncingCount, successCount, errorCount, firstError)
+        }
 
-        return SignalProducer.combineLatest(syncingCount, successCount, errorCountAndFirst)
-            .map { (syncingCount, successCount, errorCountAndFirst) in
-                let (errorCount, firstError) = errorCountAndFirst
+        return countsProducer
+            .map { (syncingCount, successCount, errorCount, firstError) in
                 if errorCount > 0 {
                     return .errors(count: errorCount, first: firstError!)
                 } else if syncingCount > 0 {
