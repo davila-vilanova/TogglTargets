@@ -23,7 +23,7 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
         }
     }
 
-    internal lazy var wantsDisplay = Property(value: true) //Property<Bool>(initial: false, then: activityStatuses.producer.map { !$0.isEmpty })
+    internal lazy var wantsDisplay = Property<Bool>(initial: true, then: activityStatuses.producer.map { !$0.isEmpty })
 
     private let (lifetime, token) = Lifetime.make()
     private let activitiesState = ActivitiesState()
