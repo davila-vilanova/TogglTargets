@@ -83,8 +83,8 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
             }
         }
 
-        expandActivity <~ activityViewController.wantsDisplay.producer.filter { $0 }.map { _ in () }
-        collapseActivity <~ activityViewController.wantsDisplay.producer.filter { !$0 }.map { _ in () }
+        expandActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter { $0 }.map { _ in () }
+        collapseActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter { !$0 }.map { _ in () }
 
         lifetime.observeEnded {
             _ = expandActivity
