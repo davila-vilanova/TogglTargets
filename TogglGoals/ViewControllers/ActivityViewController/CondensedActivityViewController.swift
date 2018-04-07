@@ -84,7 +84,8 @@ class CondensedActivityViewController: NSViewController {
 
         toggleRequestExpandedDetailsGestureRecognizer.reactive.makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
 
-        requestExpandDetails <~ idleStates.map { _ in false }
+        requestExpandDetails <~ SignalProducer.merge(idleStates.map { _ in false },
+                                                     errorStates.map { _ in true})
     }
 
     @IBAction func toggleRequestExpandDetails(_ sender: Any) {
