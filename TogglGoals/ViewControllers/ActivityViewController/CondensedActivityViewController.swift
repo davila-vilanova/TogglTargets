@@ -58,7 +58,7 @@ class CondensedActivityViewController: NSViewController {
             syncingStates.map { _ in true },
             errorStates.map { _ in true },
             successStates.map { _ in false },
-            idleStates.map { _ in false}
+            idleStates.map { _ in false }
         ).and(requestExpandDetails.negate()).skipRepeats()
 
         statusDetailLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ showStatusDetail.negate()
@@ -83,9 +83,11 @@ class CondensedActivityViewController: NSViewController {
         }
 
         toggleRequestExpandedDetailsGestureRecognizer.reactive.makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
+
+        requestExpandDetails <~ idleStates.map { _ in false }
     }
 
-    @IBAction func expandDetails(_ sender: Any) {
+    @IBAction func toggleRequestExpandDetails(_ sender: Any) {
         requestExpandDetails.value = !requestExpandDetails.value
     }
 }
