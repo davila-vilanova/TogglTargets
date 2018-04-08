@@ -29,11 +29,7 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
     private let activitiesState = ActivitiesState()
     private lazy var activityStatuses = Property(initial: [ActivityStatus](), then: activitiesState.output)
 
-    @IBOutlet weak var condensedActivityView: NSView!
-    @IBOutlet weak var detailedActivityView: NSView!
-
-    @IBOutlet weak var rootHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var condensedActivityViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var rootStackView: NSStackView!
 
     private var condensedActivityViewController: CondensedActivityViewController!
     private var detailedActivityViewController: DetailedActivityViewController!
@@ -41,10 +37,10 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
         if let condensedActivityVC = controller as? CondensedActivityViewController {
             self.condensedActivityViewController = condensedActivityVC
-            displayController(condensedActivityVC, in: condensedActivityView)
+            rootStackView.addArrangedSubview(condensedActivityVC.view)
         } else if let detailedActivityVC = controller as? DetailedActivityViewController {
             self.detailedActivityViewController = detailedActivityVC
-            displayController(detailedActivityVC, in: detailedActivityView)
+            rootStackView.addArrangedSubview(detailedActivityVC.view)
         }
     }
 
@@ -53,32 +49,21 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
 
         initializeControllerContainment(containmentIdentifiers: [CondensedActivityVCContainment, DetailedActivityVCContainment])
 
-        let detailedViewFittingHeight = MutableProperty<CGFloat>(0)
         let wantsExtendedDisplay = MutableProperty(false)
         lifetime.observeEnded {
-            _ = detailedViewFittingHeight
             _ = wantsExtendedDisplay
         }
 
-        detailedActivityViewController.connectInterface(activityStatuses: self.activityStatuses.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()), fittingHeight: detailedViewFittingHeight.bindingTarget, animationDuration: kActivityListAnimationDuration)
+        let statusesForDetailedActivityVC =
+            SignalProducer.merge(activityStatuses.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
+                                 wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
+
+        detailedActivityViewController.connectInterface(activityStatuses: statusesForDetailedActivityVC, animationDuration: kActivityListAnimationDuration)
 
         condensedActivityViewController.connectInterface(activityStatuses: activityStatuses.producer, expandDetails: wantsExtendedDisplay.bindingTarget)
 
-        detailedActivityView.reactive.makeBindingTarget(on: UIScheduler(), animateOpacity)
-            <~ wantsExtendedDisplay.map { $0 ? (0.0, 1.0) : (1.0, 0.0) }
-
-        let collapsedHeight = condensedActivityViewHeightConstraint.constant
-
-        let detailedViewHeight = SignalProducer.combineLatest(wantsExtendedDisplay, detailedViewFittingHeight).map { $0 ? $1 : 0 }
-
-        let heightTarget =  rootHeightConstraint.reactive.makeBindingTarget(on: UIScheduler()) { (constraint: NSLayoutConstraint, height: CGFloat) in
-            NSAnimationContext.beginGrouping()
-            NSAnimationContext.current.duration = 0.10
-            constraint.animator().constant = height
-            NSAnimationContext.endGrouping()
-        }
-
-        heightTarget <~ detailedViewHeight.map { collapsedHeight + $0 }.skipRepeats()
+        detailedActivityViewController.view.reactive.makeBindingTarget(on: UIScheduler(), { $0.isHidden = $1 })
+            <~ wantsExtendedDisplay.negate()
     }
 }
 
@@ -89,16 +74,4 @@ fileprivate extension Array where Element == ActivityStatus {
     var hasErrors: Bool {
         return self.filter { $0.isError }.count > 0
     }
-}
-
-fileprivate func animateOpacity(view: NSView, values: (from: Double, to: Double)) {
-    guard let layer = view.layer else {
-        return
-    }
-    let (from, to) = values
-    let opacityKey = "opacity"
-    let animation = CABasicAnimation(keyPath: opacityKey)
-    animation.fromValue = from
-    animation.toValue = to
-    layer.add(animation, forKey: opacityKey)
 }

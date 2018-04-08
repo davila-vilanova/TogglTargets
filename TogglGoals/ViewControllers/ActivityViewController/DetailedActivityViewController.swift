@@ -16,14 +16,12 @@ fileprivate let kHeightConstraintIdentifier = "HeightConstraintIdentifier"
 class DetailedActivityViewController: NSViewController {
 
     func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>,
-                          fittingHeight: BindingTarget<CGFloat>, animationDuration: TimeInterval) {
+                          animationDuration: TimeInterval) {
         self.activityStatuses <~ activityStatuses
-        fittingHeight <~ self.fittingHeight
         self.animationDuration = animationDuration
     }
 
     private let activityStatuses = MutableProperty([ActivityStatus]())
-    private lazy var fittingHeight = activityStatuses.map { CGFloat($0.count) * itemHeight }
 
     private weak var profileContainer: NSView!
     private weak var projectsContainer: NSView!

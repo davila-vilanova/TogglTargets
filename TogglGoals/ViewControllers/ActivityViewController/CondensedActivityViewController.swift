@@ -20,7 +20,7 @@ class CondensedActivityViewController: NSViewController {
                           expandDetails: BindingTarget<Bool>) {
         enforceOnce(for: "CondensedActivityViewController.connectInterface()") { [unowned self] in
             self.activityStatuses <~ activityStatuses
-            expandDetails <~ self.requestExpandDetails
+            expandDetails <~ self.requestExpandDetails.producer.logValues("requestExpandDetails")
         }
     }
 
@@ -63,26 +63,9 @@ class CondensedActivityViewController: NSViewController {
 
         statusDetailLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ showStatusDetail.negate()
 
-        let descriptionTopConstraint = statusDescriptionLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 0)
-        descriptionTopConstraint.isActive = true
-        let descriptionCenterConstraint = statusDescriptionLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-
-        func animateActiveChangeState(_ constraint: NSLayoutConstraint, _ newActiveState: Bool) { // captures self.view
-            NSAnimationContext.runAnimationGroup({ context in
-                context.allowsImplicitAnimation = true
-                (newActiveState ? NSLayoutConstraint.activate : NSLayoutConstraint.deactivate)([constraint])
-                view.layoutSubtreeIfNeeded()
-            }, completionHandler: nil)
-        }
-
-        descriptionTopConstraint.reactive.makeBindingTarget(animateActiveChangeState) <~ showStatusDetail
-        descriptionCenterConstraint.reactive.makeBindingTarget(animateActiveChangeState) <~ showStatusDetail.negate()
-        lifetime.observeEnded {
-            _ = descriptionTopConstraint
-            _ = descriptionCenterConstraint
-        }
-
         toggleRequestExpandedDetailsGestureRecognizer.reactive.makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
+
+        statusDetailLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ showStatusDetail.negate()
 
         requestExpandDetails <~ SignalProducer.merge(idleStates.map { _ in false },
                                                      errorStates.map { _ in true})
