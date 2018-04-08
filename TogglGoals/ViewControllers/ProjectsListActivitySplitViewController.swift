@@ -10,6 +10,8 @@ import Cocoa
 import Result
 import ReactiveSwift
 
+fileprivate let expandCollapseDelay: TimeInterval = 0.3
+
 class ProjectsListActivitySplitViewController: NSSplitViewController {
 
     internal func connectInputs(projectIDsByGoals: ProjectIDsByGoalsProducer,
@@ -74,6 +76,7 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
 
         let expandActivity: BindingTarget<Void> = splitViewItem(for: activityViewController)!.reactive.makeBindingTarget { (splitItem, Void) in
             if splitItem.isCollapsed {
+                splitItem.viewController.view.layoutSubtreeIfNeeded()
                 splitItem.animator().isCollapsed = false
             }
         }
@@ -83,8 +86,9 @@ class ProjectsListActivitySplitViewController: NSSplitViewController {
             }
         }
 
-        expandActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter { $0 }.map { _ in () }
-        collapseActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter { !$0 }.map { _ in () }
+        let delayScheduler = QueueScheduler()
+        expandActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter { $0 }.map { _ in () }.delay(expandCollapseDelay, on: delayScheduler)
+        collapseActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter { !$0 }.map { _ in () }.delay(expandCollapseDelay, on: delayScheduler)
 
         lifetime.observeEnded {
             _ = expandActivity
