@@ -10,9 +10,6 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-fileprivate let itemHeight: CGFloat = 20
-fileprivate let kHeightConstraintIdentifier = "HeightConstraintIdentifier"
-
 class DetailedActivityViewController: NSViewController {
 
     func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>,
@@ -72,6 +69,8 @@ class DetailedActivityViewController: NSViewController {
             self?.updateActivitiesState(from: $0, to: $1)
     }
 
+    @IBOutlet weak var rootStackView: NSStackView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -85,22 +84,10 @@ class DetailedActivityViewController: NSViewController {
         self.reportsContainer = reportsContainer
         self.runningEntryContainer = runningEntryContainer
 
-        func attachContainerView(_ containerView: NSView, above nextView: NSView? = nil) {
-            view.addSubview(containerView)
-            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-            containerView.bottomAnchor.constraint(equalTo: (nextView?.topAnchor ?? view.bottomAnchor)).isActive = true
-
-            let heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
-            heightConstraint.identifier = kHeightConstraintIdentifier
-            heightConstraint.isActive = true
-        }
-
-        attachContainerView(runningEntryContainer)
-        attachContainerView(reportsContainer, above: runningEntryContainer)
-        attachContainerView(projectsContainer, above: reportsContainer)
-        attachContainerView(profileContainer, above: projectsContainer)
-        profileContainer.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        rootStackView.addArrangedSubview(profileContainer)
+        rootStackView.addArrangedSubview(projectsContainer)
+        rootStackView.addArrangedSubview(reportsContainer)
+        rootStackView.addArrangedSubview(runningEntryContainer)
 
         updateActivities <~ activityStatuses.combinePrevious([ActivityStatus]())
     }
@@ -148,6 +135,7 @@ class DetailedActivityViewController: NSViewController {
 
 fileprivate func makeContainerView(identifier: String) -> NSView {
     let view = NSView()
+    view.wantsLayer = true
     view.identifier = NSUserInterfaceItemIdentifier(rawValue: identifier)
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
@@ -155,30 +143,30 @@ fileprivate func makeContainerView(identifier: String) -> NSView {
 
 fileprivate func attachActivityView(_ activityView: NSView, to containerView: NSView, animationDuration: TimeInterval) {
     activityView.translatesAutoresizingMaskIntoConstraints = false
-
-    NSAnimationContext.beginGrouping()
-    NSAnimationContext.current.duration = animationDuration
-    containerView.constraintWithIdentifier(kHeightConstraintIdentifier)!.animator().constant = itemHeight
     containerView.addSubview(activityView)
-    NSAnimationContext.endGrouping()
-
     activityView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
     activityView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
     activityView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
     activityView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+
+    NSAnimationContext.runAnimationGroup({ (context) in
+        context.duration = animationDuration
+        context.allowsImplicitAnimation = true
+        containerView.isHidden = false
+        containerView.superview!.layoutSubtreeIfNeeded()
+    }, completionHandler: nil)
 }
 
 fileprivate func detachActivityView(_ activityView: NSView, animationDuration: TimeInterval) {
-    guard let superview = activityView.superview else {
+    guard let containerView = activityView.superview else {
         return
     }
-    NSAnimationContext.beginGrouping()
-    NSAnimationContext.current.duration = animationDuration
-    NSAnimationContext.current.completionHandler = {
-        activityView.removeFromSuperview()
-    }
-    superview.constraintWithIdentifier(kHeightConstraintIdentifier)!.animator().constant = 0
-    NSAnimationContext.endGrouping()
+    NSAnimationContext.runAnimationGroup({ (context) in
+        context.duration = animationDuration
+        context.allowsImplicitAnimation = true
+        containerView.isHidden = true
+        containerView.superview!.layoutSubtreeIfNeeded()
+    }, completionHandler: { activityView.removeFromSuperview() })
 }
 
 fileprivate func swapActivityView(_ previousView: NSView, newView: NSView, animationDuration: TimeInterval) {
@@ -186,11 +174,13 @@ fileprivate func swapActivityView(_ previousView: NSView, newView: NSView, anima
         return
     }
 
-    NSAnimationContext.beginGrouping()
-    NSAnimationContext.current.duration = animationDuration
-    superview.animator().addSubview(newView)
-    previousView.animator().removeFromSuperview()
-    NSAnimationContext.endGrouping()
+    NSAnimationContext.runAnimationGroup({ (context) in
+        context.duration = animationDuration
+        context.allowsImplicitAnimation = true
+        previousView.removeFromSuperview()
+        superview.addSubview(newView)
+        superview.layoutSubtreeIfNeeded()
+    }, completionHandler: nil)
 
     newView.translatesAutoresizingMaskIntoConstraints = false
     newView.topAnchor.constraint(equalTo: superview.topAnchor).isActive = true
@@ -204,17 +194,6 @@ fileprivate func makeActivityController(for status: ActivityStatus) -> NSViewCon
     case .executing(_): return SyncingActivityViewController()
     case .succeeded(_): return ActivitySuccessViewController()
     case .error(_, _, _): return ActivityErrorViewController()
-    }
-}
-
-fileprivate extension NSView {
-    func constraintWithIdentifier(_ identifier: String) -> NSLayoutConstraint? {
-        for constraint in constraints {
-            if constraint.identifier == identifier {
-                return constraint
-            }
-        }
-        return nil
     }
 }
 

@@ -11,10 +11,6 @@ import Result
 import ReactiveSwift
 @testable import TogglGoals_MacOS
 
-fileprivate let itemHeight: CGFloat = 30
-fileprivate let kHeightConstraintIdentifier = "HeightConstraintIdentifier"
-fileprivate let kAnimationDuration = 0.10
-
 class LayoutTestsViewController: NSViewController {
     func connectInterface(showLabel: SignalProducer<Bool, NoError>) {
         self.showLabel <~ showLabel
@@ -29,6 +25,13 @@ class LayoutTestsViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        label.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ showLabel
+        label.reactive.makeBindingTarget { view, value in
+            NSAnimationContext.runAnimationGroup({ context in
+//                context.duration = 0.5
+                context.allowsImplicitAnimation = true
+                view.isHidden = value
+                view.superview!.layoutSubtreeIfNeeded()
+            }, completionHandler: nil)
+            } <~ showLabel
     }
 }

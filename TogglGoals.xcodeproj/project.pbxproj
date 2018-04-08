@@ -52,7 +52,6 @@
 		6334B4A320703EC000A5B796 /* ActivityErrorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B49A20703EBF00A5B796 /* ActivityErrorViewController.xib */; };
 		6334B4A420703EC000A5B796 /* SingleActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334B49B20703EBF00A5B796 /* SingleActivityViewController.swift */; };
 		6334B4A520703EC000A5B796 /* ActivitySuccessViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B49C20703EBF00A5B796 /* ActivitySuccessViewController.xib */; };
-		6334B4A620703EC000A5B796 /* DetailedActivityViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B49D20703EBF00A5B796 /* DetailedActivityViewController.xib */; };
 		6334B4A92071A81600A5B796 /* ErrorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334B4A72071A81600A5B796 /* ErrorViewController.swift */; };
 		6334B4AA2071A81600A5B796 /* ErrorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B4A82071A81600A5B796 /* ErrorViewController.xib */; };
 		6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634396891F80456200FDADE3 /* GoalProgressTests.swift */; };
@@ -300,7 +299,6 @@
 		6334B49A20703EBF00A5B796 /* ActivityErrorViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActivityErrorViewController.xib; sourceTree = "<group>"; };
 		6334B49B20703EBF00A5B796 /* SingleActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleActivityViewController.swift; sourceTree = "<group>"; };
 		6334B49C20703EBF00A5B796 /* ActivitySuccessViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActivitySuccessViewController.xib; sourceTree = "<group>"; };
-		6334B49D20703EBF00A5B796 /* DetailedActivityViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailedActivityViewController.xib; sourceTree = "<group>"; };
 		6334B4A72071A81600A5B796 /* ErrorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorViewController.swift; sourceTree = "<group>"; };
 		6334B4A82071A81600A5B796 /* ErrorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ErrorViewController.xib; sourceTree = "<group>"; };
 		634396891F80456200FDADE3 /* GoalProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressTests.swift; sourceTree = "<group>"; };
@@ -474,7 +472,6 @@
 				6334B49520703EBF00A5B796 /* ActivityViewController.swift */,
 				6334B49620703EBF00A5B796 /* ActivitiesState.swift */,
 				6334B49720703EBF00A5B796 /* DetailedActivityViewController.swift */,
-				6334B49D20703EBF00A5B796 /* DetailedActivityViewController.xib */,
 				6334B49820703EBF00A5B796 /* ActivityItemViewController */,
 			);
 			name = ActivityViewController;
@@ -810,7 +807,6 @@
 				63D4FF2F1F5AD839006368A3 /* MainMenu.xib in Resources */,
 				6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */,
 				6334B4A220703EC000A5B796 /* SyncingActivityViewController.xib in Resources */,
-				6334B4A620703EC000A5B796 /* DetailedActivityViewController.xib in Resources */,
 				631E46301F9799190012E491 /* Preferences.storyboard in Resources */,
 				6334B4AA2071A81600A5B796 /* ErrorViewController.xib in Resources */,
 				6334B4A520703EC000A5B796 /* ActivitySuccessViewController.xib in Resources */,

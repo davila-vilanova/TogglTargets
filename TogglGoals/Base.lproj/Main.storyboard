@@ -214,10 +214,24 @@
         <scene sceneID="Qxj-pa-5eC">
             <objects>
                 <viewController id="AJO-lx-pZ5" customClass="DetailedActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="PIw-M0-HkN">
+                    <view key="view" wantsLayer="YES" id="PIw-M0-HkN">
                         <rect key="frame" x="0.0" y="0.0" width="180" height="86"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hSG-ay-gpR">
+                                <rect key="frame" x="0.0" y="0.0" width="180" height="86"/>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="hSG-ay-gpR" firstAttribute="top" secondItem="PIw-M0-HkN" secondAttribute="top" id="XVg-27-jxU"/>
+                            <constraint firstAttribute="bottom" secondItem="hSG-ay-gpR" secondAttribute="bottom" id="bPI-WE-he3"/>
+                            <constraint firstAttribute="trailing" secondItem="hSG-ay-gpR" secondAttribute="trailing" id="gKE-P8-s10"/>
+                            <constraint firstItem="hSG-ay-gpR" firstAttribute="leading" secondItem="PIw-M0-HkN" secondAttribute="leading" id="vdL-i5-1N6"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="rootStackView" destination="hSG-ay-gpR" id="RUB-jC-e4E"/>
+                    </connections>
                 </viewController>
                 <customObject id="1d0-u5-Upv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
