@@ -218,7 +218,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="180" height="86"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hSG-ay-gpR">
+                            <stackView wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hSG-ay-gpR">
                                 <rect key="frame" x="0.0" y="0.0" width="180" height="86"/>
                             </stackView>
                         </subviews>
