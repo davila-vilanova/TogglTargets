@@ -25,12 +25,15 @@ class LayoutTestsViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        label.reactive.makeBindingTarget { view, value in
+        label.reactive.makeBindingTarget { [unowned self] view, value in
             NSAnimationContext.runAnimationGroup({ context in
-//                context.duration = 0.5
+                context.duration = globalAnimationDuration
                 context.allowsImplicitAnimation = true
                 view.isHidden = value
-                view.superview!.layoutSubtreeIfNeeded()
+                if let lv = self.view.superview?.superview?.superview?.superview {
+                    print("\(lv)")
+                    lv.layoutSubtreeIfNeeded()
+                }
             }, completionHandler: nil)
             } <~ showLabel
     }

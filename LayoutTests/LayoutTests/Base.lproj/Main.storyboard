@@ -382,7 +382,7 @@
                         </connections>
                     </window>
                     <connections>
-                        <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
+                        <segue destination="rFs-n1-DH6" kind="relationship" relationship="window.shadowedContentViewController" id="EvP-Xl-0Oa"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -438,8 +438,9 @@
                             </stackView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="fFk-gk-9OX" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" symbolic="YES" id="Kzs-vZ-zry"/>
+                            <constraint firstAttribute="bottom" secondItem="fFk-gk-9OX" secondAttribute="bottom" constant="20" id="G92-nC-aNZ"/>
                             <constraint firstItem="fFk-gk-9OX" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="NEQ-u1-jPf"/>
+                            <constraint firstItem="fFk-gk-9OX" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="Oqx-2I-P62"/>
                         </constraints>
                     </view>
                     <connections>
@@ -448,7 +449,60 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="655"/>
+            <point key="canvasLocation" x="708" y="802"/>
+        </scene>
+        <!--Split View Controller-->
+        <scene sceneID="EaE-mg-0IO">
+            <objects>
+                <splitViewController id="rFs-n1-DH6" sceneMemberID="viewController">
+                    <splitViewItems>
+                        <splitViewItem id="7wq-Fo-ZL5"/>
+                        <splitViewItem id="FOl-aQ-OdN"/>
+                    </splitViewItems>
+                    <splitView key="splitView" dividerStyle="thin" id="LyM-Ng-d70">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <connections>
+                            <outlet property="delegate" destination="rFs-n1-DH6" id="Qkf-sg-AAr"/>
+                        </connections>
+                    </splitView>
+                    <connections>
+                        <outlet property="splitView" destination="LyM-Ng-d70" id="Kog-PB-Bgx"/>
+                        <segue destination="gRr-D7-pOQ" kind="relationship" relationship="splitItems" id="Bnu-VB-se2"/>
+                        <segue destination="XfG-lQ-9wD" kind="relationship" relationship="splitItems" id="eb5-m5-3LN"/>
+                    </connections>
+                </splitViewController>
+                <customObject id="rou-Mz-b3z" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="60" y="697"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="wDP-xb-yeD">
+            <objects>
+                <viewController id="gRr-D7-pOQ" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" id="2KO-HJ-DxQ">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="137"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2px-zP-mdG">
+                                <rect key="frame" x="18" y="100" width="63" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="tope tope" id="fBi-kY-hNv">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="2px-zP-mdG" firstAttribute="leading" secondItem="2KO-HJ-DxQ" secondAttribute="leading" constant="20" id="9tf-VN-GQb"/>
+                            <constraint firstAttribute="bottom" relation="lessThanOrEqual" secondItem="2px-zP-mdG" secondAttribute="bottom" constant="200" id="KkY-LQ-T7h"/>
+                            <constraint firstItem="2px-zP-mdG" firstAttribute="top" secondItem="2KO-HJ-DxQ" secondAttribute="top" constant="20" id="mH7-kd-Nyp"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <customObject id="nKh-sa-G8e" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="693" y="578"/>
         </scene>
     </scenes>
 </document>
