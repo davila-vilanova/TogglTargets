@@ -74,8 +74,8 @@ class ProjectsMasterDetailController: NSSplitViewController {
         case selectionDetail
     }
 
-    private var projectsListViewController: ProjectsListActivitySplitViewController {
-        return splitViewItem(.projectsList).viewController as! ProjectsListActivitySplitViewController
+    private var projectsListViewController: ProjectsListActivityViewController {
+        return splitViewItem(.projectsList).viewController as! ProjectsListActivityViewController
     }
 
     private var selectionDetailViewController: SelectionDetailViewController {

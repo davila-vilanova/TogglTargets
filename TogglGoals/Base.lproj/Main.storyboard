@@ -36,8 +36,8 @@
             <objects>
                 <splitViewController id="ak2-zI-3MP" customClass="ProjectsMasterDetailController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <splitViewItems>
-                        <splitViewItem id="Gd7-84-BIq"/>
-                        <splitViewItem id="hPg-w3-Q5a"/>
+                        <splitViewItem id="ehc-kE-Cok"/>
+                        <splitViewItem id="Lrv-R4-v1z"/>
                     </splitViewItems>
                     <splitView key="splitView" dividerStyle="thin" vertical="YES" id="Tyn-3W-UrQ">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
@@ -48,8 +48,8 @@
                     </splitView>
                     <connections>
                         <outlet property="splitView" destination="Tyn-3W-UrQ" id="uTn-6r-1OP"/>
-                        <segue destination="K4p-5x-O6K" kind="relationship" relationship="splitItems" id="JIb-uN-McO"/>
-                        <segue destination="6zN-45-ObM" kind="relationship" relationship="splitItems" id="e2k-xt-1sA"/>
+                        <segue destination="nBn-WS-EwZ" kind="relationship" relationship="splitItems" id="EQ3-xV-1h9"/>
+                        <segue destination="6zN-45-ObM" kind="relationship" relationship="splitItems" id="Oa3-ed-uax"/>
                     </connections>
                 </splitViewController>
                 <customObject id="qEG-eu-hIH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -110,17 +110,17 @@
                 </viewController>
                 <customObject id="rJd-f4-lqu" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-131" y="1635"/>
+            <point key="canvasLocation" x="-140" y="1746"/>
         </scene>
         <!--Activity View Controller-->
         <scene sceneID="mbv-uH-b3T">
             <objects>
                 <viewController id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="Zto-kN-hsB">
+                    <view key="view" wantsLayer="YES" id="Zto-kN-hsB">
                         <rect key="frame" x="0.0" y="0.0" width="180" height="34"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3r7-aZ-VGW">
+                            <stackView wantsLayer="YES" distribution="fill" orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3r7-aZ-VGW">
                                 <rect key="frame" x="0.0" y="0.0" width="180" height="34"/>
                             </stackView>
                         </subviews>
@@ -149,7 +149,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="175" height="36"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yZX-DL-gQR">
+                            <stackView wantsLayer="YES" distribution="fill" orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yZX-DL-gQR">
                                 <rect key="frame" x="0.0" y="4" width="175" height="28"/>
                                 <subviews>
                                     <textField wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eD4-VC-Nnc">
@@ -236,31 +236,6 @@
                 <customObject id="1d0-u5-Upv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="396" y="1796"/>
-        </scene>
-        <!--Projects List Activity Split View Controller-->
-        <scene sceneID="KNa-QW-hF3">
-            <objects>
-                <splitViewController id="K4p-5x-O6K" customClass="ProjectsListActivitySplitViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <splitViewItems>
-                        <splitViewItem id="Fyf-E5-abV"/>
-                        <splitViewItem collapsed="YES" id="cRZ-A3-cSS"/>
-                    </splitViewItems>
-                    <splitView key="splitView" dividerStyle="thin" id="iFB-Xu-vqF">
-                        <rect key="frame" x="0.0" y="0.0" width="159" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <connections>
-                            <outlet property="delegate" destination="K4p-5x-O6K" id="xHW-lP-Esm"/>
-                        </connections>
-                    </splitView>
-                    <connections>
-                        <outlet property="splitView" destination="iFB-Xu-vqF" id="kum-YR-fFI"/>
-                        <segue destination="uJx-25-i9K" kind="relationship" relationship="splitItems" id="2Lp-pc-Jog"/>
-                        <segue destination="tS7-EF-bJw" kind="relationship" relationship="splitItems" id="uBJ-0r-mPQ"/>
-                    </connections>
-                </splitViewController>
-                <customObject id="YbL-ce-m3R" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-71.5" y="1137"/>
         </scene>
         <!--Project Details View Controller-->
         <scene sceneID="huO-mY-84c">
@@ -1025,6 +1000,35 @@
                 <customObject id="HEr-Yv-904" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1702" y="1402"/>
+        </scene>
+        <!--Projects List Activity View Controller-->
+        <scene sceneID="TeI-Ga-lEs">
+            <objects>
+                <viewController id="nBn-WS-EwZ" customClass="ProjectsListActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" id="VJj-ct-htK">
+                        <rect key="frame" x="0.0" y="0.0" width="163" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <stackView identifier="ProjectsListActivityStackView" wantsLayer="YES" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jyy-RP-JY6">
+                                <rect key="frame" x="0.0" y="0.0" width="163" height="300"/>
+                            </stackView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="jyy-RP-JY6" firstAttribute="top" secondItem="VJj-ct-htK" secondAttribute="top" id="6v7-D9-Oad"/>
+                            <constraint firstAttribute="trailing" secondItem="jyy-RP-JY6" secondAttribute="trailing" id="HlK-bG-ShA"/>
+                            <constraint firstItem="jyy-RP-JY6" firstAttribute="leading" secondItem="VJj-ct-htK" secondAttribute="leading" id="fgT-fj-UB6"/>
+                            <constraint firstAttribute="bottom" secondItem="jyy-RP-JY6" secondAttribute="bottom" id="h2M-Aa-cnq"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="stackView" destination="jyy-RP-JY6" id="s5J-0g-zPy"/>
+                        <segue destination="uJx-25-i9K" kind="custom" identifier="ProjectsListVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="hR2-lZ-TOo"/>
+                        <segue destination="tS7-EF-bJw" kind="custom" identifier="ActivityVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="8jC-9L-IZN"/>
+                    </connections>
+                </viewController>
+                <customObject id="OkY-uy-qWM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-115.5" y="1137"/>
         </scene>
         <!--Selection Detail View Controller-->
         <scene sceneID="sNa-IS-Xca">

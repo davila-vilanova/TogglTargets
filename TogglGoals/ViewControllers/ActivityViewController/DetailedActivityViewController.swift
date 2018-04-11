@@ -13,10 +13,12 @@ import ReactiveSwift
 class DetailedActivityViewController: NSViewController {
 
     func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>,
-                          animationDuration: TimeInterval) {
+                          animationSettings: SignalProducer<AnimationSettings?, NoError>) {
         self.activityStatuses <~ activityStatuses
-        self.animationDuration = animationDuration
+        self.animationSettings <~ animationSettings
     }
+
+    internal var animationSettings = MutableProperty<AnimationSettings?>(nil)
 
     private let activityStatuses = MutableProperty([ActivityStatus]())
 
@@ -29,8 +31,6 @@ class DetailedActivityViewController: NSViewController {
     private var projectsActivityController: NSViewController?
     private var reportsActivityController: NSViewController?
     private var runningEntryActivityController: NSViewController?
-
-    private var animationDuration: TimeInterval!
 
     private func activityViewContainer(for activity: ActivityStatus.Activity) -> NSView {
         switch activity {
@@ -65,8 +65,8 @@ class DetailedActivityViewController: NSViewController {
 
     private let (lifetime, token) = Lifetime.make()
     private lazy var updateActivities =
-        BindingTarget<([ActivityStatus], [ActivityStatus])>(on: UIScheduler(), lifetime: lifetime) { [weak self] in
-            self?.updateActivitiesState(from: $0, to: $1)
+        BindingTarget(on: UIScheduler(), lifetime: lifetime) { [weak self] in
+            self?.updateActivitiesState(from: $0, to: $1, animationSettings: self?.animationSettings.value)
     }
 
     @IBOutlet weak var rootStackView: NSStackView!
@@ -92,7 +92,9 @@ class DetailedActivityViewController: NSViewController {
         updateActivities <~ activityStatuses.combinePrevious([ActivityStatus]())
     }
 
-    private func updateActivitiesState(from previousStatus: [ActivityStatus], to newStatus: [ActivityStatus]) {
+    private func updateActivitiesState(from previousStatus: [ActivityStatus],
+                                       to newStatus: [ActivityStatus],
+                                       animationSettings: AnimationSettings? = nil) {
         let previousStatusByActivity = Dictionary(uniqueKeysWithValues: previousStatus.map { ($0.activity, $0) } )
         let newStatusByActivity = Dictionary(uniqueKeysWithValues: newStatus.map { ($0.activity, $0) } )
 
@@ -105,7 +107,7 @@ class DetailedActivityViewController: NSViewController {
 
         for activity in activitiesToRemove {
             let controller = activityController(for: activity)!
-            detachActivityView(controller.view, animationDuration: animationDuration)
+            detachActivityView(controller.view, animateWith: animationSettings)
             clearActivityController(for: activity)
         }
 
@@ -114,14 +116,14 @@ class DetailedActivityViewController: NSViewController {
             let controller = makeActivityController(for: activityStatus)
             setActivityController(controller, for: activity)
             let containerView = activityViewContainer(for: activity)
-            attachActivityView(controller.view, to: containerView, animationDuration: animationDuration)
+            attachActivityView(controller.view, to: containerView, animateWith: animationSettings)
         }
 
         for activity in activitiesToSwap {
             let previousController = activityController(for: activity)!
             let newActivityStatus = newStatusByActivity[activity]!
             let newController = makeActivityController(for: newActivityStatus)
-            swapActivityView(previousController.view, newView: newController.view, animationDuration: animationDuration)
+            swapActivityView(previousController.view, newView: newController.view, animateWith: animationSettings)
             setActivityController(newController, for: activity)
         }
 
@@ -132,7 +134,6 @@ class DetailedActivityViewController: NSViewController {
     }
 }
 
-
 fileprivate func makeContainerView(identifier: String) -> NSView {
     let view = NSView()
     view.wantsLayer = true
@@ -141,52 +142,77 @@ fileprivate func makeContainerView(identifier: String) -> NSView {
     return view
 }
 
-fileprivate func attachActivityView(_ activityView: NSView, to containerView: NSView, animationDuration: TimeInterval) {
+fileprivate func attachActivityView(_ activityView: NSView, to containerView: NSView, animateWith animationSettings: AnimationSettings? = nil) {
     activityView.translatesAutoresizingMaskIntoConstraints = false
     containerView.addSubview(activityView)
     activityView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
     activityView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
     activityView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
     activityView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+    containerView.layoutSubtreeIfNeeded()
 
-    NSAnimationContext.runAnimationGroup({ (context) in
-        context.duration = animationDuration
-        context.allowsImplicitAnimation = true
+    let animatableChanges = {
         containerView.isHidden = false
-        containerView.superview!.layoutSubtreeIfNeeded()
-    }, completionHandler: nil)
+    }
+
+    if let animationSettings = animationSettings {
+        animationSettings.animate(in: containerView, changes: animatableChanges)
+    } else {
+        animatableChanges()
+    }
 }
 
-fileprivate func detachActivityView(_ activityView: NSView, animationDuration: TimeInterval) {
+fileprivate func detachActivityView(_ activityView: NSView, animateWith animationSettings: AnimationSettings? = nil) {
     guard let containerView = activityView.superview else {
         return
     }
-    NSAnimationContext.runAnimationGroup({ (context) in
-        context.duration = animationDuration
-        context.allowsImplicitAnimation = true
+
+    let animatableChanges = {
         containerView.isHidden = true
-        containerView.superview!.layoutSubtreeIfNeeded()
-    }, completionHandler: { activityView.removeFromSuperview() })
+    }
+
+    let postAnimationChanges = {
+        activityView.removeFromSuperview()
+    }
+
+    if let animationSettings = animationSettings {
+        animationSettings.animate(in: containerView, changes: animatableChanges, completion: postAnimationChanges)
+    } else {
+        animatableChanges()
+        postAnimationChanges()
+    }
+
 }
 
-fileprivate func swapActivityView(_ previousView: NSView, newView: NSView, animationDuration: TimeInterval) {
+fileprivate func swapActivityView(_ previousView: NSView, newView: NSView, animateWith animationSettings: AnimationSettings? = nil) {
     guard let superview = previousView.superview else {
         return
     }
 
-    NSAnimationContext.runAnimationGroup({ (context) in
-        context.duration = animationDuration
-        context.allowsImplicitAnimation = true
-        previousView.removeFromSuperview()
-        superview.addSubview(newView)
-        superview.layoutSubtreeIfNeeded()
-    }, completionHandler: nil)
-
     newView.translatesAutoresizingMaskIntoConstraints = false
+    superview.addSubview(newView)
+    newView.isHidden = true
     newView.topAnchor.constraint(equalTo: superview.topAnchor).isActive = true
     newView.bottomAnchor.constraint(equalTo: superview.bottomAnchor).isActive = true
     newView.leadingAnchor.constraint(equalTo: superview.leadingAnchor).isActive = true
     newView.trailingAnchor.constraint(equalTo: superview.trailingAnchor).isActive = true
+    newView.layoutSubtreeIfNeeded()
+
+    let animatableChanges = {
+        newView.isHidden = false
+        previousView.isHidden = true
+    }
+
+    let postAnimationChanges = {
+        previousView.removeFromSuperview()
+    }
+
+    if let animationSettings = animationSettings {
+        animationSettings.animate(in: superview, changes: animatableChanges, completion: postAnimationChanges)
+    } else {
+        animatableChanges()
+        postAnimationChanges()
+    }
 }
 
 fileprivate func makeActivityController(for status: ActivityStatus) -> NSViewController {

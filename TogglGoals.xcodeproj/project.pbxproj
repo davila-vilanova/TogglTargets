@@ -63,7 +63,7 @@
 		6355C5BD1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */; };
 		6355C5BE1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */; };
 		6355C5BF1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */; };
-		635A256620528F2C00EFCE90 /* ProjectsListActivitySplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A256520528F2C00EFCE90 /* ProjectsListActivitySplitViewController.swift */; };
+		635A256620528F2C00EFCE90 /* ProjectsListActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A256520528F2C00EFCE90 /* ProjectsListActivityViewController.swift */; };
 		635A257A205290CE00EFCE90 /* ProjectsMasterDetailWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A2579205290CE00EFCE90 /* ProjectsMasterDetailWindowController.swift */; };
 		635A25832052917B00EFCE90 /* ListLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A257C2052917A00EFCE90 /* ListLayout.swift */; };
 		635A25842052917B00EFCE90 /* ProjectCollectionViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A257E2052917A00EFCE90 /* ProjectCollectionViewHeader.swift */; };
@@ -304,7 +304,7 @@
 		634396891F80456200FDADE3 /* GoalProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressTests.swift; sourceTree = "<group>"; };
 		6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDateGenerator.swift; sourceTree = "<group>"; };
 		6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataRetriever.swift; sourceTree = "<group>"; };
-		635A256520528F2C00EFCE90 /* ProjectsListActivitySplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectsListActivitySplitViewController.swift; path = ViewControllers/ProjectsListActivitySplitViewController.swift; sourceTree = "<group>"; };
+		635A256520528F2C00EFCE90 /* ProjectsListActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectsListActivityViewController.swift; path = ViewControllers/ProjectsListActivityViewController.swift; sourceTree = "<group>"; };
 		635A2579205290CE00EFCE90 /* ProjectsMasterDetailWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsMasterDetailWindowController.swift; sourceTree = "<group>"; };
 		635A257C2052917A00EFCE90 /* ListLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListLayout.swift; sourceTree = "<group>"; };
 		635A257E2052917A00EFCE90 /* ProjectCollectionViewHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectCollectionViewHeader.swift; sourceTree = "<group>"; };
@@ -468,8 +468,8 @@
 		6334B49320703EBF00A5B796 /* ActivityViewController */ = {
 			isa = PBXGroup;
 			children = (
-				6334B49420703EBF00A5B796 /* CondensedActivityViewController.swift */,
 				6334B49520703EBF00A5B796 /* ActivityViewController.swift */,
+				6334B49420703EBF00A5B796 /* CondensedActivityViewController.swift */,
 				6334B49620703EBF00A5B796 /* ActivitiesState.swift */,
 				6334B49720703EBF00A5B796 /* DetailedActivityViewController.swift */,
 				6334B49820703EBF00A5B796 /* ActivityItemViewController */,
@@ -525,7 +525,7 @@
 			isa = PBXGroup;
 			children = (
 				637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */,
-				635A256520528F2C00EFCE90 /* ProjectsListActivitySplitViewController.swift */,
+				635A256520528F2C00EFCE90 /* ProjectsListActivityViewController.swift */,
 				635A257B2052917A00EFCE90 /* ProjectsViewController */,
 				6334B49320703EBF00A5B796 /* ActivityViewController */,
 				637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */,
@@ -880,7 +880,7 @@
 				63D4BBB01F7D821800B87298 /* TogglAPICredential.swift in Sources */,
 				637DA2202034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				637A32481EE16FD600667FC3 /* GoalViewController.swift in Sources */,
-				635A256620528F2C00EFCE90 /* ProjectsListActivitySplitViewController.swift in Sources */,
+				635A256620528F2C00EFCE90 /* ProjectsListActivityViewController.swift in Sources */,
 				639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
 				6355C5B71FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				63A67F511FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift in Sources */,

@@ -11,17 +11,35 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-fileprivate let kActivityListAnimationDuration = 0.10
-
 fileprivate let CondensedActivityVCContainment = "CondensedActivityVCContainment"
 fileprivate let DetailedActivityVCContainment = "DetailedActivityVCContainment"
 
+struct AnimationSettings {
+    let duration: TimeInterval
+    let layoutRootIdentifier: NSUserInterfaceItemIdentifier
+
+    func layoutFromLayoutRootIfNeeded(findLayoutRootFrom view: NSView) {
+        view.findSuperview(with: layoutRootIdentifier)?.layoutSubtreeIfNeeded()
+    }
+    func animate(in view: NSView, changes: () -> Void, completion: @escaping () -> Void = { }) {
+        NSAnimationContext.runAnimationGroup({ context in
+            context.allowsImplicitAnimation = true
+            context.duration = duration
+            changes()
+            layoutFromLayoutRootIfNeeded(findLayoutRootFrom: view)
+        }, completionHandler: completion)
+    }
+}
+
 class ActivityViewController: NSViewController, ViewControllerContaining {
-    internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
+    internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>,
+                                animationSettings: SignalProducer<AnimationSettings?, NoError>) {
         enforceOnce(for: "ActivityViewController.connectInterface()") { [unowned self] in
             self.activitiesState.input <~ source
+            self.animationSettings <~ animationSettings
         }
     }
+    internal var animationSettings = MutableProperty<AnimationSettings?>(nil)
 
     internal lazy var wantsDisplay = Property<Bool>(initial: true, then: activityStatuses.producer.map { !$0.isEmpty })
 
@@ -58,12 +76,24 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
             SignalProducer.merge(activityStatuses.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
                                  wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
 
-        detailedActivityViewController.connectInterface(activityStatuses: statusesForDetailedActivityVC, animationDuration: kActivityListAnimationDuration)
+        detailedActivityViewController.connectInterface(activityStatuses: statusesForDetailedActivityVC,
+                                                        animationSettings: animationSettings.producer)
 
-        condensedActivityViewController.connectInterface(activityStatuses: activityStatuses.producer, expandDetails: wantsExtendedDisplay.bindingTarget)
+        condensedActivityViewController.connectInterface(activityStatuses: activityStatuses.producer,
+                                                         animationSettings: animationSettings.producer,
+                                                         expandDetails: wantsExtendedDisplay.bindingTarget)
 
         detailedActivityViewController.view.reactive.makeBindingTarget(on: UIScheduler(), { $0.isHidden = $1 })
             <~ wantsExtendedDisplay.negate()
+    }
+}
+
+extension NSView {
+    func findSuperview(with identifier: NSUserInterfaceItemIdentifier) -> NSView? {
+        guard let superview = superview else {
+            return nil
+        }
+        return superview.identifier == identifier ? superview : superview.findSuperview(with: identifier)
     }
 }
 
