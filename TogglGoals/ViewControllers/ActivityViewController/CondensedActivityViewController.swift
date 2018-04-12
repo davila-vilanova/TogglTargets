@@ -16,14 +16,10 @@ class CondensedActivityViewController: NSViewController {
     private let activityStatuses = MutableProperty([ActivityStatus]())
     private let requestExpandDetails = MutableProperty(false)
 
-    internal var animationSettings = MutableProperty<AnimationSettings?>(nil)
-
     func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>,
-                          animationSettings: SignalProducer<AnimationSettings?, NoError>,
                           expandDetails: BindingTarget<Bool>) {
         enforceOnce(for: "CondensedActivityViewController.connectInterface()") { [unowned self] in
             self.activityStatuses <~ activityStatuses
-            self.animationSettings <~ animationSettings
             expandDetails <~ self.requestExpandDetails.producer.logValues("requestExpandDetails")
         }
     }
@@ -70,9 +66,11 @@ class CondensedActivityViewController: NSViewController {
         toggleRequestExpandedDetailsGestureRecognizer.reactive.makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
 
         statusDetailLabel.reactive.makeBindingTarget { [unowned self] label, hidden in
-            self.animationSettings.value?.animate(in: self.view, changes: {
+            NSAnimationContext.runAnimationGroup({ context in
+                context.allowsImplicitAnimation = true
                 label.isHidden = hidden
-            })
+                self.view.layoutSubtreeIfNeeded()
+            }, completionHandler: nil)
         } <~ showStatusDetail.negate()
 
         requestExpandDetails <~ SignalProducer.merge(idleStates.map { _ in false },

@@ -13,7 +13,6 @@ import ReactiveSwift
 fileprivate let ProjectsListVCContainment = "ProjectsListVCContainment"
 fileprivate let ActivityVCContainment = "ActivityVCContainment"
 
-fileprivate let animationDuration = 1.0
 class ProjectsListActivityViewController: NSViewController, ViewControllerContaining {
 
     internal func connectInputs(projectIDsByGoals: ProjectIDsByGoalsProducer,
@@ -26,8 +25,7 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
                                                               runningEntry: runningEntry,
                                                               currentDate: currentDate)
                 self.activityViewController
-                    .connectInputs(modelRetrievalStatus: modelRetrievalStatus,
-                                   animationSettings: self.animationSettings.producer)
+                    .connectInputs(modelRetrievalStatus: modelRetrievalStatus)
             }
         }
     }
@@ -72,8 +70,6 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
 
     private let (lifetime, token) = Lifetime.make()
 
-    private let animationSettings = MutableProperty<AnimationSettings?>(nil)
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -81,20 +77,26 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
 
         areViewAndContainedViewControllersAvailable.value = true
 
-        animationSettings.value = AnimationSettings(duration: animationDuration, layoutRootIdentifier: stackView.identifier!)
-
         _selectedProjectID <~ projectsListViewController.selectedProjectID
 
-        let showActivity = activityViewController.view.reactive.makeBindingTarget { (view: NSView, input: (Bool, AnimationSettings)) in
-            let (show, animationSettings) = input
-            animationSettings.animate(in: self.view, changes: { view.isHidden = !show })
+        // Duplicated to allow independent animations
+        let showActivity: BindingTarget<Void> = activityViewController.view.reactive.makeBindingTarget { [unowned self] activityView, _ in
+            NSAnimationContext.runAnimationGroup({ context in
+                context.allowsImplicitAnimation = false
+                activityView.animator().isHidden = false
+                self.stackView.layoutSubtreeIfNeeded()
+            }, completionHandler: nil)
         }
 
-        showActivity <~ SignalProducer.combineLatest(activityViewController.wantsDisplay.producer.skipRepeats(),
-                                                     animationSettings.producer.skipNil())
-
-        lifetime.observeEnded {
-            _ = showActivity
+        let hideActivity: BindingTarget<Void> = activityViewController.view.reactive.makeBindingTarget { [unowned self] activityView, _ in
+            NSAnimationContext.runAnimationGroup({ context in
+                context.allowsImplicitAnimation = true
+                activityView.isHidden = true
+                self.stackView.layoutSubtreeIfNeeded()
+            }, completionHandler: nil)
         }
+
+        showActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter{ $0 }.map { _ in () }
+        hideActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter{ !$0 }.map { _ in () }
     }
 }
