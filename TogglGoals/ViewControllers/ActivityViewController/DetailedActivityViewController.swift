@@ -225,8 +225,9 @@ fileprivate func makeActivityController(for status: ActivityStatus) -> NSViewCon
 
 fileprivate extension ActivityStatus {
     func representedBySameController(as anotherStatus: ActivityStatus) -> Bool {
-        return isExecuting != anotherStatus.isExecuting &&
-            isSuccessful != anotherStatus.isSuccessful &&
-            isError != anotherStatus.isError
+        return (isExecuting == anotherStatus.isExecuting) &&
+            (isSuccessful == anotherStatus.isSuccessful) &&
+            (isError == anotherStatus.isError)
     }
 }
+
