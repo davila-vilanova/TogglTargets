@@ -15,13 +15,15 @@ fileprivate let CondensedActivityVCContainment = "CondensedActivityVCContainment
 fileprivate let DetailedActivityVCContainment = "DetailedActivityVCContainment"
 
 class ActivityViewController: NSViewController, ViewControllerContaining {
-    internal func connectInputs(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>) {
+    internal func connectInterface(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>,
+                                   requestDisplay: BindingTarget<Bool>) {
         enforceOnce(for: "ActivityViewController.connectInterface()") { [unowned self] in
             self.activitiesState.input <~ source
+            requestDisplay <~ self.wantsDisplay
         }
     }
 
-    internal lazy var wantsDisplay = Property<Bool>(initial: true, then: activityStatuses.producer.map { !$0.isEmpty })
+    private lazy var wantsDisplay = Property<Bool>(initial: true, then: activityStatuses.producer.map { !$0.isEmpty })
 
     private let (lifetime, token) = Lifetime.make()
     private let activitiesState = ActivitiesState()

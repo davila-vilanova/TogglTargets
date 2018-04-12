@@ -20,7 +20,7 @@ class CondensedActivityViewController: NSViewController {
                           expandDetails: BindingTarget<Bool>) {
         enforceOnce(for: "CondensedActivityViewController.connectInterface()") { [unowned self] in
             self.activityStatuses <~ activityStatuses
-            expandDetails <~ self.requestExpandDetails.producer.logValues("requestExpandDetails")
+            expandDetails <~ self.requestExpandDetails.producer
         }
     }
 

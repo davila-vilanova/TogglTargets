@@ -25,7 +25,8 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
                                                               runningEntry: runningEntry,
                                                               currentDate: currentDate)
                 self.activityViewController
-                    .connectInputs(modelRetrievalStatus: modelRetrievalStatus)
+                    .connectInterface(modelRetrievalStatus: modelRetrievalStatus,
+                                      requestDisplay: self.displayActivity.bindingTarget)
             }
         }
     }
@@ -41,6 +42,8 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
             }
         }
     }
+
+    private let displayActivity = MutableProperty(false)
 
     internal lazy var selectedProjectID = _selectedProjectID.producer
     private let _selectedProjectID = MutableProperty<ProjectID?>(nil)
@@ -96,7 +99,7 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
             }, completionHandler: nil)
         }
 
-        showActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter{ $0 }.map { _ in () }
-        hideActivity <~ activityViewController.wantsDisplay.producer.skipRepeats().filter{ !$0 }.map { _ in () }
+        showActivity <~ displayActivity.producer.skipRepeats().filter{ $0 }.map { _ in () }
+        hideActivity <~ displayActivity.producer.skipRepeats().filter{ !$0 }.map { _ in () }
     }
 }
