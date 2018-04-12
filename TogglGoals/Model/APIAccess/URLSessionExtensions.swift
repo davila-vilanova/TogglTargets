@@ -31,7 +31,7 @@ extension URLSession {
 
     func togglAPIRequestProducer(for endpoint: String) -> SignalProducer<(Data, URLResponse), APIAccessError> {
         func resourceURL(for endpoint: String) -> URL {
-            let rootAPIURLString = "http://localhost:8080/toggl"
+            let rootAPIURLString = "https://toggl.com"
             let resourceURLString = rootAPIURLString + endpoint
             return URL(string: resourceURLString)!
         }
