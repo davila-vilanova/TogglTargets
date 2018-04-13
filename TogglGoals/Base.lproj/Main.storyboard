@@ -274,6 +274,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="KmV-P0-dzM" secondAttribute="trailing" constant="20" symbolic="YES" id="0Bb-gE-gap"/>
+                            <constraint firstItem="KmV-P0-dzM" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ifD-zz-iY5" secondAttribute="trailing" constant="8" symbolic="YES" id="0oP-0H-b4j"/>
                             <constraint firstItem="ifD-zz-iY5" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="4BL-iZ-OBF"/>
                             <constraint firstItem="6Nr-Rc-1SN" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="4Ip-0Y-Bas"/>
                             <constraint firstItem="OOB-9P-pYC" firstAttribute="leading" secondItem="aCi-JH-WTK" secondAttribute="leading" constant="20" symbolic="YES" id="8DX-4v-4JV"/>
@@ -709,6 +710,7 @@
                             <constraint firstItem="DEQ-gQ-Scc" firstAttribute="top" secondItem="h9S-pH-zK2" secondAttribute="bottom" constant="2" id="B7J-xt-Px3"/>
                             <constraint firstAttribute="bottom" secondItem="DEQ-gQ-Scc" secondAttribute="bottom" id="ZlR-j6-tSD"/>
                             <constraint firstItem="58W-aJ-6ZP" firstAttribute="leading" secondItem="CWe-Ok-q92" secondAttribute="leading" id="cPP-eQ-NNm"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="DEQ-gQ-Scc" secondAttribute="trailing" id="ePl-Sv-bKd"/>
                             <constraint firstItem="DEQ-gQ-Scc" firstAttribute="leading" secondItem="CWe-Ok-q92" secondAttribute="leading" id="hXi-j8-oqQ"/>
                             <constraint firstItem="h9S-pH-zK2" firstAttribute="top" secondItem="58W-aJ-6ZP" secondAttribute="bottom" constant="2" id="qeJ-Ob-svC"/>
                         </constraints>
@@ -927,18 +929,14 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
-                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="68" translatesAutoresizingMaskIntoConstraints="NO" id="Cmp-ld-qcb">
-                                <rect key="frame" x="0.0" y="269" width="477" height="68"/>
-                            </customView>
-                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="x0L-tp-DvU">
-                                <rect key="frame" x="0.0" y="258" width="477" height="5"/>
-                            </box>
-                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="59" translatesAutoresizingMaskIntoConstraints="NO" id="oap-Fn-wNg">
-                                <rect key="frame" x="0.0" y="193" width="477" height="59"/>
-                            </customView>
-                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="IDR-Hi-ehm">
-                                <rect key="frame" x="0.0" y="8" width="477" height="45"/>
-                            </customView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hE0-PS-Rau">
+                                <rect key="frame" x="212" y="348" width="111" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="compute strategy" id="7bC-a5-7cw">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mFI-rM-DT6">
                                 <rect key="frame" x="327" y="342" width="153" height="26"/>
                                 <popUpButtonCell key="cell" type="push" title="from today" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="CSh-kF-rVJ" id="sdJ-bf-5uw">
@@ -952,14 +950,18 @@
                                     </menu>
                                 </popUpButtonCell>
                             </popUpButton>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hE0-PS-Rau">
-                                <rect key="frame" x="212" y="348" width="111" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="compute strategy" id="7bC-a5-7cw">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="68" translatesAutoresizingMaskIntoConstraints="NO" id="Cmp-ld-qcb">
+                                <rect key="frame" x="0.0" y="269" width="477" height="68"/>
+                            </customView>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="x0L-tp-DvU">
+                                <rect key="frame" x="0.0" y="258" width="477" height="5"/>
+                            </box>
+                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="59" translatesAutoresizingMaskIntoConstraints="NO" id="oap-Fn-wNg">
+                                <rect key="frame" x="0.0" y="193" width="477" height="59"/>
+                            </customView>
+                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="IDR-Hi-ehm">
+                                <rect key="frame" x="0.0" y="8" width="477" height="45"/>
+                            </customView>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="mFI-rM-DT6" secondAttribute="trailing" id="Bjh-Y7-kou"/>
@@ -971,6 +973,7 @@
                             <constraint firstItem="mFI-rM-DT6" firstAttribute="top" secondItem="AwW-7C-Ykd" secondAttribute="top" id="RyJ-rD-FR5"/>
                             <constraint firstAttribute="bottom" secondItem="IDR-Hi-ehm" secondAttribute="bottom" constant="8" id="Tqr-S9-Fkd"/>
                             <constraint firstItem="IDR-Hi-ehm" firstAttribute="top" relation="greaterThanOrEqual" secondItem="oap-Fn-wNg" secondAttribute="bottom" constant="16" id="VPN-9L-u9d"/>
+                            <constraint firstItem="hE0-PS-Rau" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="0Yd-FG-N7Y" secondAttribute="trailing" constant="8" symbolic="YES" id="Wjx-fc-IPH"/>
                             <constraint firstItem="hE0-PS-Rau" firstAttribute="baseline" secondItem="0Yd-FG-N7Y" secondAttribute="baseline" id="eG5-kZ-0Tn"/>
                             <constraint firstAttribute="trailing" secondItem="oap-Fn-wNg" secondAttribute="trailing" id="fTd-Xb-sex"/>
                             <constraint firstItem="mFI-rM-DT6" firstAttribute="leading" secondItem="hE0-PS-Rau" secondAttribute="trailing" constant="8" symbolic="YES" id="fi5-2a-AvS"/>
