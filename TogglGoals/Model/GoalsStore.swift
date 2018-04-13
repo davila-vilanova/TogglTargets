@@ -287,13 +287,6 @@ fileprivate class SingleGoalUpdateComputer {
         deleteGoal <~ inputDeleteGoal
 
         lifetime += outputProjectIDsByGoalsUpdate <~ projectIDsByGoalsUpdatePipe.output
-
-        let description = "\(self)"
-        print("\(description) started")
-
-        lifetime.observeEnded {
-            print("\(description) ended")
-        }
     }
 
     // MARK: - State
