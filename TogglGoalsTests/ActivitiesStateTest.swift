@@ -27,24 +27,6 @@ class ActivitiesStateTest: XCTestCase {
         testee = nil
     }
 
-    func testSyncingProfileIsGeneralizedIntoSyncingData() {
-        var outputValue: [ActivityStatus]? = nil
-
-        let outputExpectation = expectation(description: "output value received")
-        signalHolder = testee.output.take(first: 1).on(value: { outputValue = $0; outputExpectation.fulfill() })
-
-        testee.input <~ SignalProducer(value: .executing(.syncProfile))
-
-        wait(for: [outputExpectation], timeout: OutputTimeout)
-
-        guard let firstOutputValue = outputValue else {
-            XCTFail("output value is nil")
-            return
-        }
-        XCTAssertEqual(firstOutputValue.count, 1)
-        XCTAssertEqual(firstOutputValue.first, .executing(.syncSeveral))
-    }
-
     func testChangeFromSyncingProfileToSyncingProjectsAndReports() {
         var outputValue: [ActivityStatus]? = nil
 
@@ -69,9 +51,11 @@ class ActivitiesStateTest: XCTestCase {
             return
         }
 
+        XCTAssertEqual(value.count, 3)
         var iterator = value.makeIterator()
         XCTAssertEqual(iterator.next(), .succeeded(.syncProfile))
-        XCTAssertEqual(iterator.next(), .executing(.syncSeveral))
+        XCTAssertEqual(iterator.next(), .executing(.syncProjects))
+        XCTAssertEqual(iterator.next(), .executing(.syncReports))
         XCTAssertNil(iterator.next())
     }
 
