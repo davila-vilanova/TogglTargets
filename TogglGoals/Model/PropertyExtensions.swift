@@ -18,9 +18,3 @@ extension MutablePropertyProtocol where Value: OptionalProtocol {
         }
     }
 }
-
-extension PropertyProtocol where Value == Bool {
-    var firstTrue: SignalProducer<Void, NoError> {
-        return producer.filter { $0 }.take(first: 1).map { _ in () }
-    }
-}

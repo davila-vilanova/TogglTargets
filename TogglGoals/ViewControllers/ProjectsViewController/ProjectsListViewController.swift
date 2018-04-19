@@ -17,30 +17,8 @@ fileprivate let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("Section
 /// Produces a stream of selected `Project` values via the `selectedProject` property.
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate {
 
-    /// Sets the actions used by this controller.
-    ///
-    /// - parameters:
-    ///   - readProject: An `Action` this controller will apply to obtain project `Property` instances
-    ///     corresponding to its input project IDs.
-    ///   - readGoal: A function this controller will use to read goals corresponding
-    ///     to its input project IDs.
-    ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s
-    ///     corresponding to its input project IDs.
-    ///
-    /// - note: This method must be called exactly once during the life of this instance.
-    internal func setActions(readProject: @escaping (ProjectID) -> SignalProducer<Project?, NoError>,
-                             readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
-                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
-        enforceOnce(for: "ProjectsListViewController.setActions()") {
-            self.readProject = readProject
-            self.readGoal = readGoal
-            self.readReport = readReport
-        }
-    }
+    // MARK: - Interface
 
-    /// Connects the provided signal producers to the this controller's reactive inputs.
-    ///
-    /// - parameters:
     ///   - projectIDsByGoals: a producer of `ProjectIDsByGoals.Update` values
     ///     that when started emits a `full(ProjectIDsByGoals)` value which can
     ///     be followed by full or incremental updates.
@@ -49,19 +27,32 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     worked time for the corresponding project.
     ///   - currentDate: A signal producer that emits `Date` values corresponding to the current date as time passes.
     ///     This is useful to calculate the elapsed running time of the active time entry provided by `runningEntry`.
-    ///
-    /// - note: This method must be called exactly once during the life of this instance.
-    internal func connectInputs(projectIDsByGoals: ProjectIDsByGoalsProducer,
-                                runningEntry: SignalProducer<RunningEntry?, NoError>,
-                                currentDate: SignalProducer<Date, NoError>) {
-        enforceOnce(for: "ProjectsListViewController.connectInputs()") {
-            self.runningEntry <~ runningEntry
-            self.currentDate <~ currentDate
+    ///   - readProject: An `Action` this controller will apply to obtain project `Property` instances
+    ///     corresponding to its input project IDs.
+    ///   - readGoal: A function this controller will use to read goals corresponding
+    ///     to its input project IDs.
+    ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s
+    ///     corresponding to its input project IDs.
+    internal typealias Interface =
+        (projectIDsByGoals: ProjectIDsByGoalsProducer,
+        runningEntry: SignalProducer<RunningEntry?, NoError>,
+        currentDate: SignalProducer<Date, NoError>,
+        readProject: ReadProject,
+        readGoal: ReadGoal,
+        readReport: ReadReport)
 
-            self.isReadyToDisplayCollection.firstTrue.startWithValues {
-                self.projectIDsByGoals <~ projectIDsByGoals
-            }
-        }
+    private let _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private func connectInterface() {
+        projectIDsByGoals <~ _interface.latest { $0.projectIDsByGoals }
+        runningEntry <~ _interface.latest { $0.runningEntry }
+        currentDate <~ _interface.latest { $0.currentDate }
+
+        let nilSkipped = _interface.producer.skipNil()
+        readProject <~ nilSkipped.map { $0.readProject }
+        readGoal <~ nilSkipped.map { $0.readGoal }
+        readReport <~ nilSkipped.map { $0.readReport }
     }
 
 
@@ -84,16 +75,14 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private let _selectedProjectID = MutableProperty<ProjectID?>(nil)
 
 
-    // MARK: - Actions
-
-    /// The action used to read projects by project ID.
-    private var readProject: ((ProjectID) -> SignalProducer<Project?, NoError>)!
+    /// The function used to read projects by project ID.
+    private let readProject = MutableProperty<ReadProject?>(nil)
 
     /// The function used to read goals by project ID.
-    private var readGoal: ((ProjectID) -> SignalProducer<Goal?, NoError>)!
+    private let readGoal = MutableProperty<ReadGoal?>(nil)
 
     /// The action used to read reports by project ID.
-    private var readReport: ((ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>)!
+    private let readReport = MutableProperty<ReadReport?>(nil)
 
 
     // MARK: - Outlets
@@ -105,13 +94,14 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: -
 
-    /// Holds a `false` value that changes to `true` when the view is loaded and `projectsCollectionView` is
-    /// set up and ready to go.
-    private let isReadyToDisplayCollection = MutableProperty(false)
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        initializeProjectsCollectionView()
+        connectInterface()
+    }
+
+    private func initializeProjectsCollectionView() {
         let itemNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewItem"), bundle: nil)!
         projectsCollectionView.register(itemNib, forItemWithIdentifier: ProjectItemIdentifier)
 
@@ -119,7 +109,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         projectsCollectionView.register(headerNib,
                                         forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
                                         withIdentifier: SectionHeaderIdentifier)
-        isReadyToDisplayCollection.value = true
     }
 
     /// The lifetime (and lifetime token) associated to this instance's binding targets.
@@ -207,9 +196,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
 
-        projectItem.setInputs(project: readProject(projectId),
-                              goal: readGoal(projectId),
-                              report: readReport(projectId))
+        // TODO: De-force-unwrap
+        projectItem.setInputs(project: readProject.value!(projectId),
+                              goal: readGoal.value!(projectId),
+                              report: readReport.value!(projectId))
 
         return projectItem
     }

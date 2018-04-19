@@ -17,30 +17,68 @@ fileprivate let NoGoalVCContainment = "NoGoalVCContainment"
 
 class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
-    // MARK: - Inputs
+    // MARK: - Interface
 
-    internal func connectInputs(project: SignalProducer<Project, NoError>,
-                                currentDate: SignalProducer<Date, NoError>,
-                                calendar: SignalProducer<Calendar, NoError>,
-                                periodPreference: SignalProducer<PeriodPreference, NoError>,
-                                runningEntry: SignalProducer<RunningEntry?, NoError>) {
-        enforceOnce(for: "ProjectDetailsViewController.connectInputs()") {
-            self.project <~ project
+    internal typealias Interface = (
+        project: SignalProducer<Project, NoError>,
+        currentDate: SignalProducer<Date, NoError>,
+        calendar: SignalProducer<Calendar, NoError>,
+        periodPreference: SignalProducer<PeriodPreference, NoError>,
+        runningEntry: SignalProducer<RunningEntry?, NoError>,
+        readGoal: ReadGoal,
+        writeGoal: BindingTarget<Goal>,
+        deleteGoal: BindingTarget<ProjectID>,
+        readReport: ReadReport)
 
-            self.areChildrenControllersAvailable.firstTrue.startWithValues {
-                self.goalReportViewController.connectInputs(projectId: self.projectId,
-                                                            goal: self.goalForCurrentProject.skipNil(),
-                                                            report: self.reportForCurrentProject,
-                                                            runningEntry: runningEntry,
-                                                            calendar: calendar,
-                                                            currentDate: currentDate,
-                                                            periodPreference: periodPreference)
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
-                self.goalViewController.connectInputs(goal: self.goalForCurrentProject,
-                                                      calendar: calendar)
+    private var (lifetime, token) = Lifetime.make()
+    private let outputsDisposable = SerialDisposable()
+    private let updateDeleteGoal = MutableProperty<Goal?>(nil)
 
-                self.noGoalViewController.connectInputs(projectId: self.projectId)
-            }
+    private func connectInterface() {
+        project <~ _interface.latest { $0.project }
+
+        let nonNilInterface = _interface.producer.skipNil()
+        readGoal <~ nonNilInterface.map { $0.readGoal }
+        readReport <~ nonNilInterface.map { $0.readReport }
+
+        goalReportViewController.interface <~ SignalProducer(
+            value: (projectId: projectId,
+                    goal: goalForCurrentProject.skipNil(),
+                    report: reportForCurrentProject,
+                    runningEntry: _interface.latest { $0.runningEntry },
+                    calendar: _interface.latest { $0.calendar },
+                    currentDate: _interface.latest { $0.currentDate },
+                    periodPreference: _interface.latest { $0.periodPreference }))
+
+        self.goalViewController.interface <~
+            SignalProducer.combineLatest(
+                nonNilInterface.map { $0.calendar },
+                SignalProducer(value: goalForCurrentProject.producer),
+                SignalProducer(value: updateDeleteGoal.bindingTarget))
+                .map {
+                    (calendar: $0,
+                     goal: $1,
+                     userUpdates: $2)
+        }
+
+        self.noGoalViewController.interface <~
+            SignalProducer.combineLatest(
+                SignalProducer(value: projectId.producer),
+                nonNilInterface.map { $0.writeGoal })
+                .map {
+                    (projectId: $0,
+                     goalCreated: $1)
+        }
+
+        lifetime += nonNilInterface.map { ($0.writeGoal, $0.deleteGoal) }
+            .startWithValues { [unowned self] modifyGoal, deleteGoal in
+                let d = CompositeDisposable()
+                self.outputsDisposable.inner = d
+                d += modifyGoal <~ self.updateDeleteGoal.producer.skipNil()
+                d += deleteGoal <~ self.projectId.producer.sample(on: self.updateDeleteGoal.producer.filter { $0 == nil }.map { _ in ()} )
         }
     }
 
@@ -50,36 +88,13 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     /// Selected project.
     private let project = MutableProperty<Project?>(nil)
 
+    private let readGoal = MutableProperty<ReadGoal?>(nil)
+    private let readReport = MutableProperty<ReadReport?>(nil)
+
 
     // MARK: - Derived input
 
     private lazy var projectId: SignalProducer<Int64, NoError> = project.producer.skipNil().map { $0.id }
-
-
-    // MARK: - Goal and report retrieving actions
-
-    internal func setActions(readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
-                             writeGoal: BindingTarget<Goal>,
-                             deleteGoal: BindingTarget<ProjectID>,
-                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
-
-        enforceOnce(for: "ProjectDetailsViewController.setActions()") {
-            self.readGoal.value = readGoal
-            self.readReport.value = readReport
-
-            self.areChildrenControllersAvailable.firstTrue.startWithValues {
-                // Send to `writeGoal` any goal modification or creation
-                writeGoal <~ Signal.merge(self.goalViewController.userUpdates.skipNil(),
-                                          self.noGoalViewController.goalCreated)
-
-                // Send the project ID to `deleteGoal` when a goal is to be deleted
-                let deleteSignal = self.goalViewController.userUpdates.filter { $0 == nil}.map { _ in () }
-                deleteGoal <~ self.projectId.sample(on: deleteSignal)
-            }
-        }
-    }
-
-    private let readGoal = MutableProperty<((ProjectID) -> SignalProducer<Goal?, NoError>)?>(nil)
 
     /// Goal corresponding to the selected project.
     private lazy var goalForCurrentProject: SignalProducer<Goal?, NoError> = projectId
@@ -88,8 +103,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         .map { projectId, readGoal in readGoal(projectId) }
         .flatten(.latest)
 
-
-    private let readReport = MutableProperty<((ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>)?>(nil)
 
     /// Report corresponding to the selected project.
     private lazy var reportForCurrentProject: SignalProducer<TwoPartTimeReport?, NoError> = projectId
@@ -130,7 +143,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         }
     }
 
-    private let areChildrenControllersAvailable = MutableProperty(false)
 
     // MARK: - Outlets
 
@@ -145,10 +157,12 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         super.viewDidLoad()
 
         initializeControllerContainment(containmentIdentifiers: [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment])
+
+        connectInterface()
+
         setupLocalProjectDisplay()
         setupContainedViewControllerVisibility()
 
-        areChildrenControllersAvailable.value = true
     }
 
     private func setupLocalProjectDisplay() {

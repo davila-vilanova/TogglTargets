@@ -13,18 +13,21 @@ import ReactiveCocoa
 
 class GoalStrategyViewController: NSViewController {
 
-    // MARK: Inputs
+    // MARK: Interface
 
-    internal func connectInputs(timeGoal: SignalProducer<TimeInterval, NoError>,
-                                dayBaseline: SignalProducer<TimeInterval?, NoError>,
-                                dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError>,
-                                dayBaselineDifferential: SignalProducer<Double?, NoError>) {
-        enforceOnce(for: "GoalStrategyViewController.connectInputs()") {
-            self.timeGoal <~ timeGoal
-            self.dayBaseline <~ dayBaseline
-            self.dayBaselineAdjustedToProgress <~ dayBaselineAdjustedToProgress
-            self.dayBaselineDifferential <~ dayBaselineDifferential
-        }
+    internal typealias Interface = (timeGoal: SignalProducer<TimeInterval, NoError>,
+        dayBaseline: SignalProducer<TimeInterval?, NoError>,
+        dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError>,
+        dayBaselineDifferential: SignalProducer<Double?, NoError>)
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private func connectInterface() {
+        timeGoal <~ _interface.latest { $0.timeGoal }
+        dayBaseline <~ _interface.latest { $0.dayBaseline }
+        dayBaselineAdjustedToProgress <~ _interface.latest { $0.dayBaselineAdjustedToProgress }
+        dayBaselineDifferential <~ _interface.latest { $0.dayBaselineDifferential }
     }
 
     // MARK: - Backing properties
@@ -64,6 +67,8 @@ class GoalStrategyViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        connectInterface()
+        
         // Update total hours and hours per day with the values of the corresponding signals, formatted to a time string
         totalHoursStrategyLabel.reactive.text <~ timeGoal.producer.mapToString(timeFormatter: timeFormatter)
         hoursPerDayLabel.reactive.text <~ dayBaselineAdjustedToProgress.producer.mapToString(timeFormatter: timeFormatter)
@@ -99,10 +104,16 @@ class GoalStrategyViewController: NSViewController {
 }
 
 class GoalReachedViewController: NSViewController {
-    internal func connectInputs(timeGoal: SignalProducer<TimeInterval, NoError>) {
-        enforceOnce(for: "GoalReachedViewController.connectInputs()") {
-            self.timeGoal <~ timeGoal
-        }
+
+    // MARK: - Interface
+
+    internal typealias Interface = SignalProducer<TimeInterval, NoError>
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private func connectInterface() {
+        timeGoal <~ _interface.latest { $0 }
     }
 
     private let timeGoal = MutableProperty<TimeInterval>(0)
@@ -118,6 +129,9 @@ class GoalReachedViewController: NSViewController {
     @IBOutlet weak var totalHoursLabel: NSTextField!
 
     override func viewDidLoad() {
+        super.viewDidLoad()
+
+        connectInterface()
         totalHoursLabel.reactive.text <~ timeGoal.producer.mapToString(timeFormatter: timeFormatter)
     }
 }

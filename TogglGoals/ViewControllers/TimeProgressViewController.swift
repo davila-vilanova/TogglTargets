@@ -13,22 +13,25 @@ import ReactiveCocoa
 
 class TimeProgressViewController: NSViewController {
 
-    // MARK: Exposed targets
+    // MARK: Interface
 
-    internal func connectInputs(timeGoal: SignalProducer<TimeInterval, NoError>,
-                                totalWorkDays: SignalProducer<Int?, NoError>,
-                                remainingWorkDays: SignalProducer<Int?, NoError>,
-                                workedTime: SignalProducer<TimeInterval, NoError>,
-                                remainingTimeToGoal: SignalProducer<TimeInterval, NoError>,
-                                strategyStartsToday: SignalProducer<Bool, NoError>) {
-        enforceOnce(for: "TimeProgressViewController.connectInputs()") {
-            self.timeGoal <~ timeGoal
-            self.totalWorkDays <~ totalWorkDays
-            self.remainingWorkDays <~ remainingWorkDays
-            self.workedTime <~ workedTime
-            self.remainingTimeToGoal <~ remainingTimeToGoal
-            self.strategyStartsToday <~ strategyStartsToday
-        }
+    internal typealias Interface = (timeGoal: SignalProducer<TimeInterval, NoError>,
+        totalWorkDays: SignalProducer<Int?, NoError>,
+        remainingWorkDays: SignalProducer<Int?, NoError>,
+        workedTime: SignalProducer<TimeInterval, NoError>,
+        remainingTimeToGoal: SignalProducer<TimeInterval, NoError>,
+        strategyStartsToday: SignalProducer<Bool, NoError>)
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private func connectInterface() {
+        timeGoal <~ _interface.latest { $0.timeGoal }
+        totalWorkDays <~ _interface.latest { $0.totalWorkDays }
+        remainingWorkDays <~ _interface.latest { $0.remainingWorkDays }
+        workedTime <~ _interface.latest { $0.workedTime }
+        remainingTimeToGoal <~ _interface.latest { $0.remainingTimeToGoal }
+        strategyStartsToday <~ _interface.latest { $0.strategyStartsToday }
     }
 
 
@@ -119,10 +122,16 @@ class TimeProgressViewController: NSViewController {
         }
     }
 
-    private let intToDouble = { (integerOrNil: Int?) -> Double? in
-        guard let integer = integerOrNil else {
-            return nil
-        }
-        return Double(integer)
+    // MARK: -
+
+    override func viewDidLoad() {
+        connectInterface()
     }
+}
+
+fileprivate let intToDouble = { (integerOrNil: Int?) -> Double? in
+    guard let integer = integerOrNil else {
+        return nil
+    }
+    return Double(integer)
 }

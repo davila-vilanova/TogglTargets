@@ -15,43 +15,38 @@ fileprivate let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
 
 class SelectionDetailViewController: NSViewController, ViewControllerContaining {
 
-    // MARK: - Inputs and Actions
+    // MARK: - Interface
 
-    internal func connectInputs(projectID: SignalProducer<ProjectID?, NoError>,
-                                currentDate: SignalProducer<Date, NoError>,
-                                calendar: SignalProducer<Calendar, NoError>,
-                                periodPreference: SignalProducer<PeriodPreference, NoError>,
-                                runningEntry: SignalProducer<RunningEntry?, NoError>) {
+    internal typealias Interface =
+        (projectId: SignalProducer<ProjectID?, NoError>,
+        currentDate: SignalProducer<Date, NoError>,
+        calendar: SignalProducer<Calendar, NoError>,
+        periodPreference: SignalProducer<PeriodPreference, NoError>,
+        runningEntry: SignalProducer<RunningEntry?, NoError>,
+        readProject: ReadProject,
+        readGoal: ReadGoal,
+        writeGoal: BindingTarget<Goal>,
+        deleteGoal: BindingTarget<ProjectID>,
+        readReport: ReadReport)
 
-        enforceOnce(for: "SelectionDetailViewController.connectInputs()") {
-            self.selectedProjectID <~ projectID
+    private let _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
-            self.areChildrenControllersAvailable.firstTrue.startWithValues {
-                self.projectDetailsViewController.connectInputs(project: self.selectedProject.skipNil(),
-                                                                currentDate: currentDate,
-                                                                calendar: calendar,
-                                                                periodPreference: periodPreference,
-                                                                runningEntry: runningEntry)
-            }
-        }
-    }
+    private func connectInterface() {
+        selectedProjectID <~ _interface.latest { $0.projectId }
+        readProject <~ _interface.producer.skipNil().map { $0.readProject }
 
-    internal func setActions(readProject: @escaping (ProjectID) -> SignalProducer<Project?, NoError>,
-                             readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
-                             writeGoal: BindingTarget<Goal>,
-                             deleteGoal: BindingTarget<ProjectID>,
-                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
-        enforceOnce(for: "SelectionDetailViewController.setActions()") {
-            self.readProject.value = readProject
-
-            self.areChildrenControllersAvailable.firstTrue.startWithValues {
-                [unowned self] in
-                self.projectDetailsViewController
-                    .setActions(readGoal: readGoal,
-                                writeGoal: writeGoal,
-                                deleteGoal: deleteGoal,
-                                readReport: readReport)
-            }
+        projectDetailsViewController.interface <~
+            _interface.producer.skipNil().map { [unowned self] in
+                (project: self.selectedProject.skipNil(),
+                 currentDate: $0.currentDate,
+                 calendar: $0.calendar,
+                 periodPreference: $0.periodPreference,
+                 runningEntry: $0.runningEntry,
+                 readGoal: $0.readGoal,
+                 writeGoal: $0.writeGoal,
+                 deleteGoal: $0.deleteGoal,
+                 readReport: $0.readReport)
         }
     }
 
@@ -102,7 +97,6 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
         }
     }
 
-    private let areChildrenControllersAvailable = MutableProperty(false)
 
     // MARK: -
 
@@ -110,7 +104,9 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
         super.viewDidLoad()
 
         initializeControllerContainment(containmentIdentifiers: [ProjectDetailsVCContainment, EmtpySelectionVCContainment])
+
+        connectInterface()
+
         setupContainedViewControllerVisibility()
-        areChildrenControllersAvailable.value = true
     }
 }

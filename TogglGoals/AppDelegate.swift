@@ -66,20 +66,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let mainWindow = mainWindowController.window
         mainWindow!.makeKeyAndOrderFront(nil)
 
-        if let controller = mainWindowController.window?.contentViewController as? ProjectsMasterDetailController {
-            controller.connectInputs(calendar: calendar.producer,
-                                     periodPreference: periodPreferenceStore.output.producer.skipNil(),
-                                     projectIDsByGoals: modelCoordinator.projectIDsByGoals,
-                                     runningEntry: modelCoordinator.runningEntry.producer,
-                                     currentDate: currentDateGenerator.currentDate.producer,
-                                     modelRetrievalStatus: modelCoordinator.retrievalStatus)
+        let controller = mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
+        controller.interface <~
+            SignalProducer(
+                value: (calendar: calendar.producer,
+                        periodPreference: periodPreferenceStore.output.producer.skipNil(),
+                        projectIDsByGoals: modelCoordinator.projectIDsByGoals,
+                        runningEntry: modelCoordinator.runningEntry.producer,
+                        currentDate: currentDateGenerator.currentDate.producer,
+                        modelRetrievalStatus: modelCoordinator.retrievalStatus,
+                        readProject: modelCoordinator.readProject,
+                        readGoal: modelCoordinator.readGoal,
+                        writeGoal: modelCoordinator.writeGoal,
+                        deleteGoal: modelCoordinator.deleteGoal,
+                        readReport: modelCoordinator.readReport))
 
-            controller.setActions(readProject: modelCoordinator.readProject,
-                                  readGoal: modelCoordinator.readGoal,
-                                  writeGoal: modelCoordinator.writeGoal,
-                                  deleteGoal: modelCoordinator.deleteGoal,
-                                  readReport: modelCoordinator.readReport)
-        }
 
         modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
     }
@@ -99,12 +100,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         preferencesWindow.delegate = self
         let preferencesController = preferencesWindowController!.contentViewController! as! PreferencesViewController
 
-        preferencesController.connectInputs(existingGoalPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
-                                            userDefaults: userDefaults.producer,
-                                            calendar: calendar.producer,
-                                            currentDate: currentDateGenerator.currentDate.producer)
-        credentialStore.input <~ SignalProducer(value: preferencesController.resolvedCredential.skipNil())
-        periodPreferenceStore.input <~ SignalProducer(value: preferencesController.updatedGoalPeriodPreference)
+        let resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
+        let updatedPeriodPreference = MutableProperty<PeriodPreference?>(nil)
+
+        preferencesController.interface <~ SignalProducer<PreferencesViewController.Interface, NoError>(
+            value: (periodPreferenceStore.output.producer.skipNil(),
+                    userDefaults.producer,
+                    calendar.producer,
+                    currentDateGenerator.currentDate.producer,
+                    resolvedCredential.deoptionalizedBindingTarget,
+                    updatedPeriodPreference.deoptionalizedBindingTarget))
+
+        credentialStore.input <~ SignalProducer(value: resolvedCredential.signal.skipNil())
+        periodPreferenceStore.input <~ SignalProducer(value: updatedPeriodPreference.signal.skipNil())
     }
 
     @IBAction func refreshAllData(_ sender: Any) {

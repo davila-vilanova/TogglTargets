@@ -13,14 +13,17 @@ import ReactiveCocoa
 
 class DayProgressViewController: NSViewController {
 
-    // MARK: Inputs
+    // MARK: Interface
 
-    internal func connectInputs(timeWorkedToday: SignalProducer<TimeInterval, NoError>,
-                                remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError>) {
-        enforceOnce(for: "DayProgressViewController.connectInputs()") {
-            self.timeWorkedToday <~ timeWorkedToday
-            self.remainingTimeToDayBaseline <~ remainingTimeToDayBaseline
-        }
+    internal typealias Interface = (timeWorkedToday: SignalProducer<TimeInterval, NoError>,
+        remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError>)
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private func connectInterface() {
+        timeWorkedToday <~ _interface.latest { $0.timeWorkedToday }
+        remainingTimeToDayBaseline <~ _interface.latest { $0.remainingTimeToDayBaseline }
     }
 
 
@@ -54,6 +57,7 @@ class DayProgressViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        connectInterface()
 
         // Update worked and remaining time today with the values of the corresponding signals formatted to a time string
         // TODO: do not include English text directly in inline constant strings

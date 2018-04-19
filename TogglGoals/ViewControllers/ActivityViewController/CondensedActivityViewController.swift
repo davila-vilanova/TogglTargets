@@ -16,12 +16,26 @@ class CondensedActivityViewController: NSViewController {
     private let activityStatuses = MutableProperty([ActivityStatus]())
     private let requestExpandDetails = MutableProperty(false)
 
-    func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>,
-                          expandDetails: BindingTarget<Bool>) {
-        enforceOnce(for: "CondensedActivityViewController.connectInterface()") { [unowned self] in
-            self.activityStatuses <~ activityStatuses
-            expandDetails <~ self.requestExpandDetails.producer
+    // MARK: - Interface
+
+    internal typealias Interface = (
+        activityStatuses: SignalProducer<[ActivityStatus], NoError>,
+        expandDetails: BindingTarget<Bool>)
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private let outputsDisposable = SerialDisposable()
+
+    private func connectInterface() {
+        activityStatuses <~ _interface.latest { $0.activityStatuses }
+
+        lifetime += _interface.producer.skipNil().map { $0.expandDetails }
+            .startWithValues { [unowned self] in
+                self.outputsDisposable.inner = $0 <~ self.requestExpandDetails
         }
+
+        lifetime += outputsDisposable
     }
 
     @IBOutlet weak var statusDescriptionLabel: NSTextField!
@@ -31,6 +45,8 @@ class CondensedActivityViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        connectInterface()
 
         horizontalLine.reactive.makeBindingTarget { $0.animator().isHidden = !$1 } <~ requestExpandDetails
 

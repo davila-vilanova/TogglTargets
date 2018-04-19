@@ -10,6 +10,7 @@ import Foundation
 import Result
 import ReactiveSwift
 
+
 /// Combines data from the Toggl API and the user's goals.
 /// Determines the dates of the reports to retrieve based on the user's period
 /// preference and the current date.
@@ -67,7 +68,7 @@ internal class ModelCoordinator: NSObject {
     /// Function which takes a project ID as input and returns a producer that
     /// emits values over time corresponding to the project associated with that
     /// project ID.
-    internal lazy var readProject = { (projectID: ProjectID) -> SignalProducer<Project?, NoError> in
+    internal lazy var readProject: ReadProject = { projectID in
         self.togglDataRetriever.projects.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
     }
 
@@ -77,7 +78,7 @@ internal class ModelCoordinator: NSObject {
     /// Function which takes a project ID as input and returns a producer that
     /// emits values over time corresponding to the report associated with that
     /// project ID.
-    internal lazy var readReport = { (projectID: ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError> in
+    internal lazy var readReport: ReadReport = { projectID in
         self.togglDataRetriever.reports.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
     }
 
@@ -105,7 +106,7 @@ internal class ModelCoordinator: NSObject {
     ///
     /// - note: `nil` goal values represent a goal that does not exist yet or
     ///         that has been deleted.
-    internal var readGoal: (ProjectID) -> SignalProducer<Goal?, NoError> {
+    internal var readGoal: ReadGoal {
         return goalsStore.readGoal
     }
 

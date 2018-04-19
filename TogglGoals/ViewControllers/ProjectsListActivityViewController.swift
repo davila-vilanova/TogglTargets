@@ -15,32 +15,33 @@ fileprivate let ActivityVCContainment = "ActivityVCContainment"
 
 class ProjectsListActivityViewController: NSViewController, ViewControllerContaining {
 
-    internal func connectInputs(projectIDsByGoals: ProjectIDsByGoalsProducer,
-                                runningEntry: SignalProducer<RunningEntry?, NoError>,
-                                currentDate: SignalProducer<Date, NoError>,
-                                modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>) {
-        enforceOnce(for: "ProjectsListActivitySplitViewController.connectInputs()") {
-            self.areViewAndContainedViewControllersAvailable.firstTrue.start(on: UIScheduler()).startWithValues { [unowned self] in
-                self.projectsListViewController.connectInputs(projectIDsByGoals: projectIDsByGoals,
-                                                              runningEntry: runningEntry,
-                                                              currentDate: currentDate)
-                self.activityViewController
-                    .connectInterface(modelRetrievalStatus: modelRetrievalStatus,
-                                      requestDisplay: self.displayActivity.bindingTarget)
-            }
-        }
-    }
+    // Interface
 
-    internal func setActions(readProject: @escaping (ProjectID) -> SignalProducer<Project?, NoError>,
-                             readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
-                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
-        enforceOnce(for: "ProjectsListActivitySplitViewController.setActions()") {
-            self.areViewAndContainedViewControllersAvailable.firstTrue.startWithValues { [unowned self] in
-                self.projectsListViewController.setActions(readProject: readProject,
-                                                           readGoal: readGoal,
-                                                           readReport: readReport)
-            }
-        }
+    internal typealias Interface =
+        (projectIDsByGoals: ProjectIDsByGoalsProducer,
+        runningEntry: SignalProducer<RunningEntry?, NoError>,
+        currentDate: SignalProducer<Date, NoError>,
+        modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
+        readProject: ReadProject,
+        readGoal: ReadGoal,
+        readReport: ReadReport)
+
+    private let _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    internal func connectInterface() {
+        projectsListViewController.interface <~
+            _interface.producer.skipNil().map { ($0.projectIDsByGoals,
+                                       $0.runningEntry,
+                                       $0.currentDate,
+                                       $0.readProject,
+                                       $0.readGoal,
+                                       $0.readReport) }
+
+        activityViewController.interface <~
+            _interface.producer.skipNil().map { [unowned self] in
+                ($0.modelRetrievalStatus,
+                 self.displayActivity.bindingTarget) }
     }
 
     private let displayActivity = MutableProperty(false)
@@ -52,8 +53,6 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
 
     private var projectsListViewController: ProjectsListViewController!
     private var activityViewController: ActivityViewController!
-
-    private let areViewAndContainedViewControllersAvailable = MutableProperty(false)
 
     @IBOutlet weak var stackView: NSStackView!
 
@@ -78,7 +77,7 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
 
         initializeControllerContainment(containmentIdentifiers: [ProjectsListVCContainment, ActivityVCContainment])
 
-        areViewAndContainedViewControllersAvailable.value = true
+        connectInterface()
 
         _selectedProjectID <~ projectsListViewController.selectedProjectID
 

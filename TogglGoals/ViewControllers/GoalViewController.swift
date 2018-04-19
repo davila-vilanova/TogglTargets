@@ -13,28 +13,38 @@ import Result
 
 class GoalViewController: NSViewController {
 
-    // MARK: - Input
+    // MARK: - Interface
 
-    internal func connectInputs(goal: SignalProducer<Goal?, NoError>,
-                                calendar: SignalProducer<Calendar, NoError>) {
-        enforceOnce(for: "GoalViewController.connectInputs()") {
-            self.didLoadViewProperty.firstTrue.startWithValues {
-                self.goal <~ goal
-                self.calendar <~ calendar
-            }
+    internal typealias Interface = (
+        calendar: SignalProducer<Calendar, NoError>,
+        goal: SignalProducer<Goal?, NoError>,
+        userUpdates: BindingTarget<Goal?>)
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private let goal = MutableProperty<Goal?>(nil)
+    private var calendar = MutableProperty<Calendar?>(nil)
+
+    private let outputsDisposable = SerialDisposable()
+
+    private func connectInterface() {
+        lifetime.observeEnded {
+            print ("GoalViewController lifetime's disposed")
         }
+        calendar <~ _interface.producer.skipNil().map { $0.calendar }.flatten(.latest)
+        goal <~ _interface.producer.skipNil().map { $0.goal }.flatten(.latest)
+
+        lifetime += _interface.producer.skipNil().map { $0.userUpdates }
+            .startWithValues { [unowned self] in
+                self.outputsDisposable.inner = $0 <~ self.userUpdatesPipe.output
+        }
+        lifetime += outputsDisposable
     }
 
     // MARK: - Output
 
-    internal var userUpdates: Signal<Goal?, NoError> { return _userUpdates.output }
-    private var _userUpdates = Signal<Goal?, NoError>.pipe()
-
-
-    // MARK: - Backing properties
-
-    private let goal = MutableProperty<Goal?>(nil)
-    private var calendar = MutableProperty<Calendar?>(nil)
+    private var userUpdatesPipe = Signal<Goal?, NoError>.pipe()
 
 
     // MARK: - Outlets
@@ -46,6 +56,7 @@ class GoalViewController: NSViewController {
 
 
     // MARK: -
+    private let (lifetime, token) = Lifetime.make()
 
     private let didLoadViewProperty = MutableProperty(false)
 
@@ -54,6 +65,8 @@ class GoalViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        connectInterface()
 
         // Set up view
         calendar.producer.skipNil().observe(on: UIScheduler()).startWithValues { [unowned self] (cal) in
@@ -95,7 +108,7 @@ class GoalViewController: NSViewController {
             }
             goalValue.workWeekdays = newSelection
             self.goal.value = goalValue
-            self._userUpdates.input.send(value: goalValue)
+            self.userUpdatesPipe.input.send(value: goalValue)
         }
 
 
@@ -107,7 +120,7 @@ class GoalViewController: NSViewController {
                 }
                 goalValue.hoursPerMonth = parsedHours.intValue
                 self.goal.value = goalValue
-                self._userUpdates.input.send(value: goalValue)
+                self.userUpdatesPipe.input.send(value: goalValue)
             }
         }
 
@@ -147,7 +160,6 @@ class GoalViewController: NSViewController {
         isWeekWorkdayControlPopulated.value = true
     }
 
-    private let (lifetime, token) = Lifetime.make()
     private lazy var selectedWeekdaySegments = BindingTarget<WeekdaySelection?>(on: UIScheduler(), lifetime: lifetime) { [weak self] in
         guard let _self = self else {
             return
@@ -159,7 +171,7 @@ class GoalViewController: NSViewController {
 
     @IBAction func deleteGoal(_ sender: Any) {
         goal.value = nil
-        _userUpdates.input.send(value: goal.value)
+        userUpdatesPipe.input.send(value: goal.value)
     }
 }
 
@@ -167,23 +179,33 @@ class GoalViewController: NSViewController {
 
 class NoGoalViewController: NSViewController {
 
-    // MARK: Inputs
+    // MARK: Interface
 
-    internal func connectInputs(projectId: SignalProducer<ProjectID, NoError>) {
-        enforceOnce(for: "NoGoalViewController.connectInputs()") {
-            self.projectId <~ projectId
+    internal typealias Interface = (
+        projectId: SignalProducer<ProjectID, NoError>,
+        goalCreated: BindingTarget<Goal>
+    )
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private let (lifetime, token) = Lifetime.make()
+    private let outputsDisposable = SerialDisposable()
+
+    private func connectInterface() {
+        projectId <~ _interface.latest { $0.projectId }
+
+        lifetime += _interface.producer.skipNil().map { $0.goalCreated }
+            .startWithValues { [unowned self] in
+                self.outputsDisposable.inner = $0 <~ self.goalCreatedPipe.output
         }
+        lifetime += outputsDisposable
     }
-
-
-    // MARK: - Outputs
-
-    var goalCreated: Signal<Goal, NoError> { return goalCreatedPipe.output }
 
 
     // MARK: - Private
 
-    private let projectId = MutableProperty<Int64?>(nil)
+    private let projectId = MutableProperty<ProjectID?>(nil)
     private let goalCreatedPipe = Signal<Goal, NoError>.pipe()
 
     private var createGoalAction: Action<Void, Goal, NoError>!
@@ -198,6 +220,8 @@ class NoGoalViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        connectInterface()
 
         createGoalAction = Action<Void, Goal, NoError>(unwrapping: projectId) {
             SignalProducer(value: Goal(forProjectId: $0, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend))

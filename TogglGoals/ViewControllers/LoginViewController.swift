@@ -38,23 +38,35 @@ fileprivate enum CredentialValidationResult {
 
 class LoginViewController: NSViewController, ViewControllerContaining {
 
-    // MARK: - Inputs
+    // MARK: - Interface
 
-    internal func connectInputs(userDefaults: SignalProducer<UserDefaults, NoError>) {
-        enforceOnce(for: "LoginViewController.connectInputs()") {
-            self.userDefaults <~ userDefaults
+    internal typealias Interface = (
+        userDefaults: SignalProducer<UserDefaults, NoError>,
+        resolvedCredential: BindingTarget<TogglAPITokenCredential>)
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private let outputsDisposable = SerialDisposable()
+
+    private func connectInterface() {
+        userDefaults <~ _interface.latest { $0.userDefaults }
+
+        let resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
+            credentialValidatingAction.values.map { validationResult -> TogglAPITokenCredential? in
+                switch validationResult {
+                case let .valid(credential, _): return credential
+                default: return nil
+                }
+                }.skipNil()
+
+        lifetime += _interface.producer.skipNil().map { $0.resolvedCredential }
+            .startWithValues { [unowned self] in
+                self.outputsDisposable.inner = $0 <~ resolvedCredential
         }
+
+        lifetime += outputsDisposable
     }
-
-    // MARK: - Outputs
-
-    internal lazy var resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
-        credentialValidatingAction.values.map { validationResult -> TogglAPITokenCredential? in
-            switch validationResult {
-            case let .valid(credential, _): return credential
-            default: return nil
-            }
-        }.skipNil()
 
 
     // MARK: - Backing properties
@@ -224,7 +236,10 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     // MARK: - View did load
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         initializeControllerContainment(containmentIdentifiers: [UsernamePasswordVCContainment, APITokenVCContainment])
+
+        connectInterface()
 
         let persistedLoginMethod = userDefaults.producer.skipNil()
             .map { $0.string(forKey: PersistenceKeys.selectedLoginMethod.rawValue) }

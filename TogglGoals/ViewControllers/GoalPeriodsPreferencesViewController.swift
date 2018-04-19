@@ -15,32 +15,42 @@ internal let DefaultPeriodPreference = PeriodPreference.monthly
 
 class GoalPeriodsPreferencesViewController: NSViewController {
 
-    // MARK: - Inputs
+    // MARK: - Interface
 
-    internal func connectInputs(calendar: SignalProducer<Calendar, NoError>,
-                                currentDate: SignalProducer<Date, NoError>,
-                                periodPreference: SignalProducer<PeriodPreference, NoError>) {
-        enforceOnce(for: "GoalPeriodsPreferencesViewController.connectInputs()") {
-            self.calendar <~ calendar
-            self.currentDate <~ currentDate
-            self.existingPreference <~ periodPreference
+    internal typealias Interface = (
+        calendar: SignalProducer<Calendar, NoError>,
+        currentDate: SignalProducer<Date, NoError>,
+        periodPreference: SignalProducer<PeriodPreference, NoError>,
+        updatedPreference: BindingTarget<PeriodPreference>)
+
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private let outputsDisposable = SerialDisposable()
+    private var (lifetime, token) = Lifetime.make()
+
+    private func connectInterface() {
+        calendar <~ _interface.latest { $0.calendar }
+        currentDate <~ _interface.latest { $0.currentDate }
+        existingPreference <~ _interface.latest { $0.periodPreference }
+
+        lifetime += _interface.producer.skipNil().map { $0.updatedPreference }
+            .startWithValues { [unowned self] in
+                self.outputsDisposable.inner = $0 <~ self.updatedPreference
         }
+
+        lifetime += outputsDisposable
     }
 
-
-    // MARK: - Outputs
-
-    internal var updatedPreference: Signal<PeriodPreference, NoError> {
-        return Signal.merge(generateMonthlyPeriodPreference.values,
-                            generateWeeklyPeriodPreference.values)
-    }
-
-
-    // MARK: - Backing properties
+    // MARK: - Backing properties and signals
 
     private let calendar = MutableProperty<Calendar?>(nil)
     private let currentDate = MutableProperty<Date?>(nil)
     private let existingPreference = MutableProperty<PeriodPreference>(DefaultPeriodPreference)
+
+    private lazy var updatedPreference: Signal<PeriodPreference, NoError> =
+        Signal.merge(generateMonthlyPeriodPreference.values, generateWeeklyPeriodPreference.values)
 
 
     // MARK: - IBOutlets
@@ -97,6 +107,7 @@ class GoalPeriodsPreferencesViewController: NSViewController {
         reflectExistingPreference()
         assignActions()
         reflectCurrentPeriod()
+        connectInterface()
     }
     
     private func makeRadioButtonSelectionMutuallyExclusive() {

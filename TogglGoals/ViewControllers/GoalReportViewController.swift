@@ -18,25 +18,27 @@ fileprivate let DayProgressVCContainment = "DayProgressVCContainment"
 
 class GoalReportViewController: NSViewController, ViewControllerContaining {
 
-    // MARK: Inputs
+    // MARK: Interface
 
-    internal func connectInputs(projectId: SignalProducer<Int64, NoError>,
-                                goal: SignalProducer<Goal, NoError>,
-                                report: SignalProducer<TwoPartTimeReport?, NoError>,
-                                runningEntry: SignalProducer<RunningEntry?, NoError>,
-                                calendar: SignalProducer<Calendar, NoError>,
-                                currentDate: SignalProducer<Date, NoError>,
-                                periodPreference: SignalProducer<PeriodPreference, NoError>) {
+    internal typealias Interface = (projectId: SignalProducer<Int64, NoError>,
+        goal: SignalProducer<Goal, NoError>,
+        report: SignalProducer<TwoPartTimeReport?, NoError>,
+        runningEntry: SignalProducer<RunningEntry?, NoError>,
+        calendar: SignalProducer<Calendar, NoError>,
+        currentDate: SignalProducer<Date, NoError>,
+        periodPreference: SignalProducer<PeriodPreference, NoError>)
 
-        enforceOnce(for: "GoalReportViewController.connectInputs()") {
-            self.goalProgress.projectId <~ projectId
-            self.goalProgress.goal <~ goal
-            self.goalProgress.report <~ report
-            self.goalProgress.runningEntry <~ runningEntry
-            self.calendar <~ calendar
-            self.currentDate <~ currentDate
-            self.periodPreference <~ periodPreference
-        }
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private func connectInterface() {
+        goalProgress.projectId <~ _interface.latest { $0.projectId }
+        goalProgress.goal <~ _interface.latest { $0.goal }
+        goalProgress.report <~ _interface.latest {$0.report }
+        goalProgress.runningEntry <~ _interface.latest { $0.runningEntry }
+        calendar <~ _interface.latest { $0.calendar }
+        currentDate <~ _interface.latest { $0.currentDate }
+        periodPreference <~ _interface.latest { $0.periodPreference }
     }
 
 
@@ -75,37 +77,40 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     var timeProgressViewController: TimeProgressViewController! {
         didSet {
-            timeProgressViewController.connectInputs(timeGoal: goalProgress.timeGoal,
-                                                     totalWorkDays: goalProgress.totalWorkDays,
-                                                     remainingWorkDays: goalProgress.remainingWorkDays,
-                                                     workedTime: goalProgress.workedTime,
-                                                     remainingTimeToGoal: goalProgress.remainingTimeToGoal,
-                                                     strategyStartsToday: goalProgress.strategyStartsToday)
+            timeProgressViewController.interface <~
+                SignalProducer(value: (timeGoal: goalProgress.timeGoal,
+                                       totalWorkDays: goalProgress.totalWorkDays,
+                                       remainingWorkDays: goalProgress.remainingWorkDays,
+                                       workedTime: goalProgress.workedTime,
+                                       remainingTimeToGoal: goalProgress.remainingTimeToGoal,
+                                       strategyStartsToday: goalProgress.strategyStartsToday))
         }
     }
-    
+
     var goalStrategyViewController: GoalStrategyViewController! {
         didSet {
-            goalStrategyViewController.connectInputs(timeGoal: goalProgress.timeGoal,
-                                                     dayBaseline: goalProgress.dayBaseline,
-                                                     dayBaselineAdjustedToProgress: goalProgress.dayBaselineAdjustedToProgress,
-                                                     dayBaselineDifferential: goalProgress.dayBaselineDifferential)
+            goalStrategyViewController.interface <~
+                SignalProducer(value: (timeGoal: goalProgress.timeGoal,
+                                       dayBaseline: goalProgress.dayBaseline,
+                                       dayBaselineAdjustedToProgress: goalProgress.dayBaselineAdjustedToProgress,
+                                       dayBaselineDifferential: goalProgress.dayBaselineDifferential))
         }
     }
 
     var goalReachedViewController: GoalReachedViewController! {
         didSet {
-            goalReachedViewController.connectInputs(timeGoal: goalProgress.timeGoal)
+            goalReachedViewController.interface <~ SignalProducer(value: goalProgress.timeGoal)
         }
     }
 
     var dayProgressViewController: DayProgressViewController! {
         didSet {
-            dayProgressViewController.connectInputs(timeWorkedToday: goalProgress.timeWorkedToday.producer,
-                                                    remainingTimeToDayBaseline: goalProgress.remainingTimeToDayBaseline.producer)
+            dayProgressViewController.interface <~
+                SignalProducer(value: (timeWorkedToday: goalProgress.timeWorkedToday.producer,
+                                       remainingTimeToDayBaseline: goalProgress.remainingTimeToDayBaseline.producer))
         }
     }
-    
+
     
     // MARK: - Value formatters
     
@@ -136,7 +141,9 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        connectInterface()
+
         for identifier in [GoalProgressVCContainment, GoalStrategyVCContainment, GoalReachedVCContainment, DayProgressVCContainment] {
             performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
         }

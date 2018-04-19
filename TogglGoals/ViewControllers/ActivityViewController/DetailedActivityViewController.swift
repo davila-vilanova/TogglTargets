@@ -12,8 +12,13 @@ import ReactiveSwift
 
 class DetailedActivityViewController: NSViewController {
 
-    func connectInterface(activityStatuses: SignalProducer<[ActivityStatus], NoError>) {
-        self.activityStatuses <~ activityStatuses
+    internal typealias Interface = SignalProducer<[ActivityStatus], NoError>
+
+    private let _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    func connectInterface() {
+        self.activityStatuses <~ _interface.producer.skipNil().flatten(.latest)
     }
 
     private let activityStatuses = MutableProperty([ActivityStatus]())
@@ -86,6 +91,8 @@ class DetailedActivityViewController: NSViewController {
         rootStackView.addArrangedSubview(runningEntryContainer)
 
         updateActivities <~ activityStatuses.combinePrevious([ActivityStatus]())
+
+        connectInterface()
     }
 
     private func updateActivitiesState(from previousStatus: [ActivityStatus],

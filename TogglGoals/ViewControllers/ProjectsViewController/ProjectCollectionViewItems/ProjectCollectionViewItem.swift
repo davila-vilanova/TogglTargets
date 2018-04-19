@@ -40,7 +40,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
     @IBOutlet weak var reportLabel: NSTextField!
 
 
-    // MARK: - Inputs
+    // MARK: - Interface
 
     internal func setInputs(project: SignalProducer<Project?, NoError>,
                             goal: SignalProducer<Goal?, NoError>,

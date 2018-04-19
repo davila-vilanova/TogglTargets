@@ -21,48 +21,46 @@ class ProjectsMasterDetailController: NSSplitViewController {
     private let _modelRetrievalStatus = MutableProperty<ActivityStatus?>(nil)
 
 
-    // MARK: - Inputs and actions
+    // MARK: - Interface
 
-    internal func connectInputs(calendar: SignalProducer<Calendar, NoError>,
-                                periodPreference: SignalProducer<PeriodPreference, NoError>,
-                                projectIDsByGoals: ProjectIDsByGoalsProducer,
-                                runningEntry: SignalProducer<RunningEntry?, NoError>,
-                                currentDate: SignalProducer<Date, NoError>,
-                                modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>) {
-        enforceOnce(for: "ProjectsMasterDetailController.connectInputs()") {
-            self.areChildrenControllersAvailable.firstTrue.startWithValues {
-                self.projectsListViewController.connectInputs(projectIDsByGoals: projectIDsByGoals,
-                                                              runningEntry: runningEntry,
-                                                              currentDate: currentDate,
-                                                              modelRetrievalStatus: modelRetrievalStatus)
-            }
-            self.selectionDetailViewController.connectInputs(projectID: self.projectsListViewController.selectedProjectID,
-                                                             currentDate: currentDate,
-                                                             calendar: calendar,
-                                                             periodPreference: periodPreference,
-                                                             runningEntry: runningEntry)
-        }
-    }
+    internal typealias Interface =
+        (calendar: SignalProducer<Calendar, NoError>,
+        periodPreference: SignalProducer<PeriodPreference, NoError>,
+        projectIDsByGoals: ProjectIDsByGoalsProducer,
+        runningEntry: SignalProducer<RunningEntry?, NoError>,
+        currentDate: SignalProducer<Date, NoError>,
+        modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
+        readProject: ReadProject,
+        readGoal: ReadGoal,
+        writeGoal: BindingTarget<Goal>,
+        deleteGoal: BindingTarget<ProjectID>,
+        readReport: ReadReport)
 
-    internal func setActions(readProject: @escaping (ProjectID) -> SignalProducer<Project?, NoError>,
-                             readGoal: @escaping (ProjectID) -> SignalProducer<Goal?, NoError>,
-                             writeGoal: BindingTarget<Goal>,
-                             deleteGoal: BindingTarget<ProjectID>,
-                             readReport: @escaping (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>) {
-        enforceOnce(for: "ProjectsMasterDetailController.setActions()") {
-            self.areChildrenControllersAvailable.firstTrue.startWithValues { [unowned self] _ in
-                self.projectsListViewController
-                    .setActions(readProject: readProject,
-                                readGoal: readGoal,
-                                readReport: readReport)
-                self.selectionDetailViewController
-                    .setActions(readProject: readProject,
-                                readGoal: readGoal,
-                                writeGoal: writeGoal,
-                                deleteGoal: deleteGoal,
-                                readReport: readReport)
-            }
-        }
+    private let _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private func connectInterface() {
+        projectsListActivityViewController.interface <~
+            _interface.producer.skipNil().map { ($0.projectIDsByGoals,
+                                                 $0.runningEntry,
+                                                 $0.currentDate,
+                                                 $0.modelRetrievalStatus,
+                                                 $0.readProject,
+                                                 $0.readGoal,
+                                                 $0.readReport) }
+
+        selectionDetailViewController.interface <~
+            _interface.producer.skipNil().map {
+                [unowned self] in (self.projectsListActivityViewController.selectedProjectID,
+                                   $0.currentDate,
+                                   $0.calendar,
+                                   $0.periodPreference,
+                                   $0.runningEntry,
+                                   $0.readProject,
+                                   $0.readGoal,
+                                   $0.writeGoal,
+                                   $0.deleteGoal,
+                                   $0.readReport) }
     }
 
 
@@ -74,7 +72,7 @@ class ProjectsMasterDetailController: NSSplitViewController {
         case selectionDetail
     }
 
-    private var projectsListViewController: ProjectsListActivityViewController {
+    private var projectsListActivityViewController: ProjectsListActivityViewController {
         return splitViewItem(.projectsList).viewController as! ProjectsListActivityViewController
     }
 
@@ -94,6 +92,6 @@ class ProjectsMasterDetailController: NSSplitViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        areChildrenControllersAvailable.value = true
+        connectInterface()
     }
 }

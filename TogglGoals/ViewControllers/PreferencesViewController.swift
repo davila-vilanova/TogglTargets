@@ -12,31 +12,25 @@ import Result
 
 class PreferencesViewController: NSTabViewController {
 
-    // MARK: - Inputs
+    // MARK: - Interface
 
-    internal func connectInputs(existingGoalPeriodPreference: SignalProducer<PeriodPreference, NoError>,
-                                userDefaults: SignalProducer<UserDefaults, NoError>,
-                                calendar: SignalProducer<Calendar, NoError>,
-                                currentDate: SignalProducer<Date, NoError>) {
-        enforceOnce(for: "PreferencesViewController.connectInputs()") {
-            self.areChildrenControllersAvailable.firstTrue.startWithValues {
-                self.loginViewController.connectInputs(userDefaults: userDefaults)
-                self.goalPeriodsController.connectInputs(calendar: calendar,
-                                                         currentDate: currentDate,
-                                                         periodPreference: existingGoalPeriodPreference)
-            }
-        }
+    internal typealias Interface = (
+        existingGoalPeriodPreference: SignalProducer<PeriodPreference, NoError>,
+        userDefaults: SignalProducer<UserDefaults, NoError>,
+        calendar: SignalProducer<Calendar, NoError>,
+        currentDate: SignalProducer<Date, NoError>,
+        resolvedCredential: BindingTarget<TogglAPITokenCredential>,
+        updatedGoalPeriodPreference: BindingTarget<PeriodPreference>)
+
+    private var _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private func connectInterface() {
+        loginViewController.interface <~ _interface.producer.skipNil()
+            .map { ($0.userDefaults, $0.resolvedCredential) }
+        goalPeriodsController.interface <~ _interface.producer.skipNil()
+            .map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference) }
     }
-
-    // MARK: - Outputs
-
-    internal var resolvedCredential: Signal<TogglAPITokenCredential?, NoError> { return _resolvedCredential.signal }
-    internal var updatedGoalPeriodPreference: Signal<PeriodPreference, NoError> { return _updatedGoalPeriodPreference.signal.skipNil() }
-
-    // MARK: - Backing of reactive interface
-
-    private let _resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
-    private let _updatedGoalPeriodPreference = MutableProperty<PeriodPreference?>(nil)
 
 
     // MARK: - Contained view controllers
@@ -59,17 +53,11 @@ class PreferencesViewController: NSTabViewController {
         return tabViewItems[index.rawValue]
     }
 
-    private let areChildrenControllersAvailable = MutableProperty(false)
-
 
     // MARK: -
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        areChildrenControllersAvailable.value = true
-
-        _resolvedCredential <~ loginViewController.resolvedCredential
-        _updatedGoalPeriodPreference <~ goalPeriodsController.updatedPreference
+        connectInterface()
     }
 }

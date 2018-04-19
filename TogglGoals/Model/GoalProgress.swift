@@ -12,7 +12,7 @@ import Result
 
 /// GoalProgress 
 class GoalProgress {
-    // MARK: - Inputs
+    // MARK: - Interface
 
     public var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
     public var goal: BindingTarget<Goal>{ return _goal.deoptionalizedBindingTarget }

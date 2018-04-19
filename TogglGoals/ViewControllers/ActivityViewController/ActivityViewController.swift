@@ -15,19 +15,41 @@ fileprivate let CondensedActivityVCContainment = "CondensedActivityVCContainment
 fileprivate let DetailedActivityVCContainment = "DetailedActivityVCContainment"
 
 class ActivityViewController: NSViewController, ViewControllerContaining {
-    internal func connectInterface(modelRetrievalStatus source: SignalProducer<ActivityStatus, NoError>,
-                                   requestDisplay: BindingTarget<Bool>) {
-        enforceOnce(for: "ActivityViewController.connectInterface()") { [unowned self] in
-            self.activitiesState.input <~ source
-            requestDisplay <~ self.wantsDisplay
+
+    internal typealias Interface =
+        (modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
+        requestDisplay: BindingTarget<Bool>)
+
+    private let _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private let outputsDisposable = SerialDisposable()
+
+    private func connectInterface() {
+        activitiesState.input <~ _interface.latest { $0.modelRetrievalStatus }
+
+        condensedActivityViewController.interface <~
+            SignalProducer<CondensedActivityViewController.Interface, NoError>(
+                value: (activitiesState.output.producer, wantsExtendedDisplay.bindingTarget))
+
+        let statusesForDetailedActivityVC =
+            SignalProducer.merge(activitiesState.output.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
+                                 wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
+
+        detailedActivityViewController.interface <~ SignalProducer(value: statusesForDetailedActivityVC)
+
+        lifetime += _interface.producer.skipNil().map { $0.requestDisplay }.startWithValues { [unowned self] in
+            self.outputsDisposable.inner = $0 <~ self.wantsDisplay
         }
+
+        lifetime += outputsDisposable
     }
 
-    private lazy var wantsDisplay = Property<Bool>(initial: true, then: activityStatuses.producer.map { !$0.isEmpty })
+    private lazy var wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
+    private let wantsExtendedDisplay = MutableProperty(false)
 
     private let (lifetime, token) = Lifetime.make()
     private let activitiesState = ActivitiesState()
-    private lazy var activityStatuses = Property(initial: [ActivityStatus](), then: activitiesState.output)
 
     @IBOutlet weak var rootStackView: NSStackView!
 
@@ -49,19 +71,7 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
 
         initializeControllerContainment(containmentIdentifiers: [CondensedActivityVCContainment, DetailedActivityVCContainment])
 
-        let wantsExtendedDisplay = MutableProperty(false)
-        lifetime.observeEnded {
-            _ = wantsExtendedDisplay
-        }
-
-        let statusesForDetailedActivityVC =
-            SignalProducer.merge(activityStatuses.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
-                                 wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
-
-        detailedActivityViewController.connectInterface(activityStatuses: statusesForDetailedActivityVC)
-
-        condensedActivityViewController.connectInterface(activityStatuses: activityStatuses.producer,
-                                                         expandDetails: wantsExtendedDisplay.bindingTarget)
+        connectInterface()
 
         detailedActivityViewController.view.reactive.makeBindingTarget(on: UIScheduler(), { $0.isHidden = $1 })
             <~ wantsExtendedDisplay.negate()

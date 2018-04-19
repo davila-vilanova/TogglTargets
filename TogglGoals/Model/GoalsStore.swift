@@ -27,7 +27,7 @@ protocol GoalsStore {
     ///
     /// - note: `nil` goal values represent a goal that does not exist yet or
     ///         that has been deleted.
-    var readGoal: (ProjectID) -> SignalProducer<Goal?, NoError> { get }
+    var readGoal: ReadGoal { get }
 
     /// Target which accepts new (or edited) goal values.
     var writeGoal: BindingTarget<Goal> { get }
@@ -136,11 +136,11 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
     ///
     /// - note: `nil` goal values represent a goal that does not exist yet or
     ///         that has been deleted.
-    lazy var readGoal = { (projectID: ProjectID) -> SignalProducer<Goal?, NoError> in
+    lazy var readGoal: ReadGoal = { projectID in
         self.allGoals.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
     }
 
-    // MARK: - Public actions
+    // MARK: - Public 
 
     var writeGoal: BindingTarget<Goal> { return _writeGoal.deoptionalizedBindingTarget }
     private let _writeGoal = MutableProperty<Goal?>(nil)

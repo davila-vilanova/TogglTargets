@@ -4,14 +4,22 @@ import ReactiveSwift
 @testable import TogglGoals_MacOS
 import PlaygroundSupport
 
-fileprivate extension ActivityStatus {
-    func representedBySameController(as anotherStatus: ActivityStatus) -> Bool {
-        return isExecuting != anotherStatus.isExecuting ||
-            isSuccessful != anotherStatus.isSuccessful ||
-            isError != anotherStatus.isError
-    }
-}
-let a = ActivityStatus.executing(.syncProfile)
-let b = ActivityStatus.executing(.syncReports)
+typealias F = ((Int)->Int)
 
-a.representedBySameController(as: b)
+let impl = { (a: Int) -> Int in a + 1 }
+
+let f = MutableProperty<F>(impl)
+let x = MutableProperty(1)
+
+let (lifetime, token) = Lifetime.make()
+let y = BindingTarget<Int>(lifetime: lifetime) {
+    print ("y=\($0)")
+}
+
+y <~ SignalProducer.combineLatest(f, x).map { f, x in f(x) }
+
+f.value = { $0 * 8 }
+x.value = 3
+
+let g = MutableProperty<(F, Int)>((impl, 7))
+
