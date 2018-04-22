@@ -15,7 +15,8 @@ class GoalStrategyViewController: NSViewController {
 
     // MARK: Interface
 
-    internal typealias Interface = (timeGoal: SignalProducer<TimeInterval, NoError>,
+    internal typealias Interface = (
+        timeGoal: SignalProducer<TimeInterval, NoError>,
         dayBaseline: SignalProducer<TimeInterval?, NoError>,
         dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError>,
         dayBaselineDifferential: SignalProducer<Double?, NoError>)
@@ -24,10 +25,10 @@ class GoalStrategyViewController: NSViewController {
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     private func connectInterface() {
-        timeGoal <~ _interface.latest { $0.timeGoal }
-        dayBaseline <~ _interface.latest { $0.dayBaseline }
-        dayBaselineAdjustedToProgress <~ _interface.latest { $0.dayBaselineAdjustedToProgress }
-        dayBaselineDifferential <~ _interface.latest { $0.dayBaselineDifferential }
+        timeGoal <~ _interface.latestOutput { $0.timeGoal }
+        dayBaseline <~ _interface.latestOutput { $0.dayBaseline }
+        dayBaselineAdjustedToProgress <~ _interface.latestOutput { $0.dayBaselineAdjustedToProgress }
+        dayBaselineDifferential <~ _interface.latestOutput { $0.dayBaselineDifferential }
     }
 
     // MARK: - Backing properties
@@ -113,7 +114,7 @@ class GoalReachedViewController: NSViewController {
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     private func connectInterface() {
-        timeGoal <~ _interface.latest { $0 }
+        timeGoal <~ _interface.latestOutput { $0 }
     }
 
     private let timeGoal = MutableProperty<TimeInterval>(0)

@@ -27,20 +27,12 @@ class GoalPeriodsPreferencesViewController: NSViewController {
     private var _interface = MutableProperty<Interface?>(nil)
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
-    private let outputsDisposable = SerialDisposable()
-    private var (lifetime, token) = Lifetime.make()
-
     private func connectInterface() {
-        calendar <~ _interface.latest { $0.calendar }
-        currentDate <~ _interface.latest { $0.currentDate }
-        existingPreference <~ _interface.latest { $0.periodPreference }
+        calendar <~ _interface.latestOutput { $0.calendar }
+        currentDate <~ _interface.latestOutput { $0.currentDate }
+        existingPreference <~ _interface.latestOutput { $0.periodPreference }
 
-        lifetime += _interface.producer.skipNil().map { $0.updatedPreference }
-            .startWithValues { [unowned self] in
-                self.outputsDisposable.inner = $0 <~ self.updatedPreference
-        }
-
-        lifetime += outputsDisposable
+        updatedPreference.bindOnlyToLatest(_interface.producer.skipNil().map { $0.updatedPreference })
     }
 
     // MARK: - Backing properties and signals
@@ -64,7 +56,6 @@ class GoalPeriodsPreferencesViewController: NSViewController {
 
 
     // MARK: - State
-
 
     private lazy var isWeeklyPreferenceSelectedProperty =
         Property<Bool>(initial: DefaultPeriodPreference.isWeekly,                 // default value

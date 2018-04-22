@@ -26,20 +26,10 @@ class GoalViewController: NSViewController {
     private let goal = MutableProperty<Goal?>(nil)
     private var calendar = MutableProperty<Calendar?>(nil)
 
-    private let outputsDisposable = SerialDisposable()
-
     private func connectInterface() {
-        lifetime.observeEnded {
-            print ("GoalViewController lifetime's disposed")
-        }
         calendar <~ _interface.producer.skipNil().map { $0.calendar }.flatten(.latest)
         goal <~ _interface.producer.skipNil().map { $0.goal }.flatten(.latest)
-
-        lifetime += _interface.producer.skipNil().map { $0.userUpdates }
-            .startWithValues { [unowned self] in
-                self.outputsDisposable.inner = $0 <~ self.userUpdatesPipe.output
-        }
-        lifetime += outputsDisposable
+        userUpdatesPipe.output.bindOnlyToLatest(_interface.producer.skipNil().map { $0.userUpdates })
     }
 
     // MARK: - Output
@@ -189,17 +179,9 @@ class NoGoalViewController: NSViewController {
     private var _interface = MutableProperty<Interface?>(nil)
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
-    private let (lifetime, token) = Lifetime.make()
-    private let outputsDisposable = SerialDisposable()
-
     private func connectInterface() {
-        projectId <~ _interface.latest { $0.projectId }
-
-        lifetime += _interface.producer.skipNil().map { $0.goalCreated }
-            .startWithValues { [unowned self] in
-                self.outputsDisposable.inner = $0 <~ self.goalCreatedPipe.output
-        }
-        lifetime += outputsDisposable
+        projectId <~ _interface.latestOutput { $0.projectId }
+        goalCreatedPipe.output.bindOnlyToLatest(_interface.producer.skipNil().map { $0.goalCreated })
     }
 
 

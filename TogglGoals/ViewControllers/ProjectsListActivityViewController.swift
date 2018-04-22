@@ -17,8 +17,9 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
 
     // Interface
 
-    internal typealias Interface =
-        (projectIDsByGoals: ProjectIDsByGoalsProducer,
+    internal typealias Interface = (
+        projectIDsByGoals: ProjectIDsByGoalsProducer,
+        selectedProjectId: BindingTarget<ProjectID?>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
         modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
@@ -30,24 +31,23 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     internal func connectInterface() {
-        projectsListViewController.interface <~
-            _interface.producer.skipNil().map { ($0.projectIDsByGoals,
-                                       $0.runningEntry,
-                                       $0.currentDate,
-                                       $0.readProject,
-                                       $0.readGoal,
-                                       $0.readReport) }
+        projectsListViewController.interface <~ _interface.producer.skipNil().map {
+            ($0.projectIDsByGoals,
+             $0.selectedProjectId,
+             $0.runningEntry,
+             $0.currentDate,
+             $0.readProject,
+             $0.readGoal,
+             $0.readReport)
+        }
 
-        activityViewController.interface <~
-            _interface.producer.skipNil().map { [unowned self] in
-                ($0.modelRetrievalStatus,
-                 self.displayActivity.bindingTarget) }
+        activityViewController.interface <~ SignalProducer<ActivityViewController.Interface, NoError>(
+            value: (_interface.latestOutput { $0.modelRetrievalStatus },
+                    displayActivity.bindingTarget)
+        )
     }
 
     private let displayActivity = MutableProperty(false)
-
-    internal lazy var selectedProjectID = _selectedProjectID.producer
-    private let _selectedProjectID = MutableProperty<ProjectID?>(nil)
 
     // MARK: - Contained view controllers
 
@@ -78,8 +78,6 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
         initializeControllerContainment(containmentIdentifiers: [ProjectsListVCContainment, ActivityVCContainment])
 
         connectInterface()
-
-        _selectedProjectID <~ projectsListViewController.selectedProjectID
 
         // Duplicated to allow independent animations
         let showActivity: BindingTarget<Void> = activityViewController.view.reactive.makeBindingTarget { [unowned self] activityView, _ in

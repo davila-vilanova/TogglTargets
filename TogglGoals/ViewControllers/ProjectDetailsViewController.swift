@@ -34,28 +34,31 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     private var (lifetime, token) = Lifetime.make()
-    private let outputsDisposable = SerialDisposable()
-    private let updateDeleteGoal = MutableProperty<Goal?>(nil)
 
     private func connectInterface() {
-        project <~ _interface.latest { $0.project }
+        project <~ _interface.latestOutput { $0.project }
 
-        let nonNilInterface = _interface.producer.skipNil()
-        readGoal <~ nonNilInterface.map { $0.readGoal }
-        readReport <~ nonNilInterface.map { $0.readReport }
+        let ownInterface = _interface.producer.skipNil()
+        readGoal <~ ownInterface.map { $0.readGoal }
+        readReport <~ ownInterface.map { $0.readReport }
 
         goalReportViewController.interface <~ SignalProducer(
             value: (projectId: projectId,
                     goal: goalForCurrentProject.skipNil(),
                     report: reportForCurrentProject,
-                    runningEntry: _interface.latest { $0.runningEntry },
-                    calendar: _interface.latest { $0.calendar },
-                    currentDate: _interface.latest { $0.currentDate },
-                    periodPreference: _interface.latest { $0.periodPreference }))
+                    runningEntry: _interface.latestOutput { $0.runningEntry },
+                    calendar: _interface.latestOutput { $0.calendar },
+                    currentDate: _interface.latestOutput { $0.currentDate },
+                    periodPreference: _interface.latestOutput { $0.periodPreference }))
 
+        let updateDeleteGoal = MutableProperty<Goal?>(nil)
+        lifetime.observeEnded {
+            _ = updateDeleteGoal
+        }
+        
         self.goalViewController.interface <~
             SignalProducer.combineLatest(
-                nonNilInterface.map { $0.calendar },
+                ownInterface.map { $0.calendar },
                 SignalProducer(value: goalForCurrentProject.producer),
                 SignalProducer(value: updateDeleteGoal.bindingTarget))
                 .map {
@@ -67,19 +70,14 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         self.noGoalViewController.interface <~
             SignalProducer.combineLatest(
                 SignalProducer(value: projectId.producer),
-                nonNilInterface.map { $0.writeGoal })
+                ownInterface.map { $0.writeGoal })
                 .map {
                     (projectId: $0,
                      goalCreated: $1)
         }
 
-        lifetime += nonNilInterface.map { ($0.writeGoal, $0.deleteGoal) }
-            .startWithValues { [unowned self] modifyGoal, deleteGoal in
-                let d = CompositeDisposable()
-                self.outputsDisposable.inner = d
-                d += modifyGoal <~ self.updateDeleteGoal.producer.skipNil()
-                d += deleteGoal <~ self.projectId.producer.sample(on: self.updateDeleteGoal.producer.filter { $0 == nil }.map { _ in ()} )
-        }
+        lifetime += updateDeleteGoal.producer.skipNil().bindOnlyToLatest(ownInterface.map { $0.writeGoal })
+        lifetime += projectId.producer.sample(on: updateDeleteGoal.producer.filter { $0 == nil}.map { _ in () }).bindOnlyToLatest(ownInterface.map { $0.deleteGoal })
     }
 
 

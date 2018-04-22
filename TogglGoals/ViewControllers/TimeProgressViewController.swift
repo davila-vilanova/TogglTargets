@@ -15,7 +15,8 @@ class TimeProgressViewController: NSViewController {
 
     // MARK: Interface
 
-    internal typealias Interface = (timeGoal: SignalProducer<TimeInterval, NoError>,
+    internal typealias Interface = (
+        timeGoal: SignalProducer<TimeInterval, NoError>,
         totalWorkDays: SignalProducer<Int?, NoError>,
         remainingWorkDays: SignalProducer<Int?, NoError>,
         workedTime: SignalProducer<TimeInterval, NoError>,
@@ -26,12 +27,12 @@ class TimeProgressViewController: NSViewController {
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     private func connectInterface() {
-        timeGoal <~ _interface.latest { $0.timeGoal }
-        totalWorkDays <~ _interface.latest { $0.totalWorkDays }
-        remainingWorkDays <~ _interface.latest { $0.remainingWorkDays }
-        workedTime <~ _interface.latest { $0.workedTime }
-        remainingTimeToGoal <~ _interface.latest { $0.remainingTimeToGoal }
-        strategyStartsToday <~ _interface.latest { $0.strategyStartsToday }
+        timeGoal <~ _interface.latestOutput { $0.timeGoal }
+        totalWorkDays <~ _interface.latestOutput { $0.totalWorkDays }
+        remainingWorkDays <~ _interface.latestOutput { $0.remainingWorkDays }
+        workedTime <~ _interface.latestOutput { $0.workedTime }
+        remainingTimeToGoal <~ _interface.latestOutput { $0.remainingTimeToGoal }
+        strategyStartsToday <~ _interface.latestOutput { $0.strategyStartsToday }
     }
 
 

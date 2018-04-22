@@ -33,20 +33,23 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     private func connectInterface() {
-        selectedProjectID <~ _interface.latest { $0.projectId }
+        selectedProjectID <~ _interface.latestOutput { $0.projectId }
         readProject <~ _interface.producer.skipNil().map { $0.readProject }
 
         projectDetailsViewController.interface <~
-            _interface.producer.skipNil().map { [unowned self] in
-                (project: self.selectedProject.skipNil(),
-                 currentDate: $0.currentDate,
-                 calendar: $0.calendar,
-                 periodPreference: $0.periodPreference,
-                 runningEntry: $0.runningEntry,
-                 readGoal: $0.readGoal,
-                 writeGoal: $0.writeGoal,
-                 deleteGoal: $0.deleteGoal,
-                 readReport: $0.readReport)
+            SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
+                                         _interface.producer.skipNil())
+                .map {
+                    selectedProjectProducer, ownInterface in
+                    (selectedProjectProducer,
+                     ownInterface.currentDate,
+                     ownInterface.calendar,
+                     ownInterface.periodPreference,
+                     ownInterface.runningEntry,
+                     ownInterface.readGoal,
+                     ownInterface.writeGoal,
+                     ownInterface.deleteGoal,
+                     ownInterface.readReport)
         }
     }
 

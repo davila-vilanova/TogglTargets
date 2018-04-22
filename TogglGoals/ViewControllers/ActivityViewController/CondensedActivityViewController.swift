@@ -25,17 +25,9 @@ class CondensedActivityViewController: NSViewController {
     private var _interface = MutableProperty<Interface?>(nil)
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
-    private let outputsDisposable = SerialDisposable()
-
     private func connectInterface() {
-        activityStatuses <~ _interface.latest { $0.activityStatuses }
-
-        lifetime += _interface.producer.skipNil().map { $0.expandDetails }
-            .startWithValues { [unowned self] in
-                self.outputsDisposable.inner = $0 <~ self.requestExpandDetails
-        }
-
-        lifetime += outputsDisposable
+        activityStatuses <~ _interface.latestOutput { $0.activityStatuses }
+        requestExpandDetails.bindOnlyToLatest(_interface.producer.skipNil().map { $0.expandDetails } )
     }
 
     @IBOutlet weak var statusDescriptionLabel: NSTextField!

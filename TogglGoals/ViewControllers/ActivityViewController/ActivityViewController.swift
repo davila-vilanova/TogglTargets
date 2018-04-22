@@ -23,10 +23,8 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
     private let _interface = MutableProperty<Interface?>(nil)
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
-    private let outputsDisposable = SerialDisposable()
-
     private func connectInterface() {
-        activitiesState.input <~ _interface.latest { $0.modelRetrievalStatus }
+        activitiesState.input <~ _interface.latestOutput { $0.modelRetrievalStatus }
 
         condensedActivityViewController.interface <~
             SignalProducer<CondensedActivityViewController.Interface, NoError>(
@@ -38,14 +36,11 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
 
         detailedActivityViewController.interface <~ SignalProducer(value: statusesForDetailedActivityVC)
 
-        lifetime += _interface.producer.skipNil().map { $0.requestDisplay }.startWithValues { [unowned self] in
-            self.outputsDisposable.inner = $0 <~ self.wantsDisplay
-        }
-
-        lifetime += outputsDisposable
+        let wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
+        lifetime += wantsDisplay.bindOnlyToLatest(_interface.producer.skipNil().map { $0.requestDisplay })
     }
 
-    private lazy var wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
+
     private let wantsExtendedDisplay = MutableProperty(false)
 
     private let (lifetime, token) = Lifetime.make()

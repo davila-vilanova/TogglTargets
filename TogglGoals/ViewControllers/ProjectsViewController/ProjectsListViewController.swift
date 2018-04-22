@@ -22,6 +22,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///   - projectIDsByGoals: a producer of `ProjectIDsByGoals.Update` values
     ///     that when started emits a `full(ProjectIDsByGoals)` value which can
     ///     be followed by full or incremental updates.
+    ///   - selectedProjectId:  Emits `Project` values whenever a project is selected
+    ///     or `nil` when no project is selected. Only one project can be selected at a time.
     ///   - runningEntry: A signal producer that emits `RunningEntry` or `nil` values depending on whether
     ///     a time entry is currently active. This is used to add the currently running time to the reported
     ///     worked time for the corresponding project.
@@ -33,8 +35,9 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     to its input project IDs.
     ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s
     ///     corresponding to its input project IDs.
-    internal typealias Interface =
-        (projectIDsByGoals: ProjectIDsByGoalsProducer,
+    internal typealias Interface = (
+        projectIDsByGoals: ProjectIDsByGoalsProducer,
+        selectedProjectId: BindingTarget<ProjectID?>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
         readProject: ReadProject,
@@ -45,24 +48,18 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     private func connectInterface() {
-        projectIDsByGoals <~ _interface.latest { $0.projectIDsByGoals }
-        runningEntry <~ _interface.latest { $0.runningEntry }
-        currentDate <~ _interface.latest { $0.currentDate }
+        projectIDsByGoals <~ _interface.latestOutput { $0.projectIDsByGoals }
+        runningEntry <~ _interface.latestOutput { $0.runningEntry }
+        currentDate <~ _interface.latestOutput { $0.currentDate }
 
-        let nilSkipped = _interface.producer.skipNil()
-        readProject <~ nilSkipped.map { $0.readProject }
-        readGoal <~ nilSkipped.map { $0.readGoal }
-        readReport <~ nilSkipped.map { $0.readReport }
+        let ownInterface = _interface.producer.skipNil()
+        readProject <~ ownInterface.map { $0.readProject }
+        readGoal <~ ownInterface.map { $0.readGoal }
+        readReport <~ ownInterface.map { $0.readReport }
+        lifetime += selectedProjectID.bindOnlyToLatest(ownInterface.map { $0.selectedProjectId })
     }
 
 
-    // MARK: - Exposed reactive output
-
-    /// Emits `Project` values whenever a project is selected or `nil` when no project is selected.
-    /// Only one project can be selected at a time.
-    internal lazy var selectedProjectID = _selectedProjectID.producer
-
-    
     // MARK: - Backing properties
 
     /// Holds the input `RunningEntry` values.
@@ -72,7 +69,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private let currentDate = MutableProperty<Date?>(nil)
 
     /// Holds the ID of the currently selected project, if any.
-    private let _selectedProjectID = MutableProperty<ProjectID?>(nil)
+    private let selectedProjectID = MutableProperty<ProjectID?>(nil)
 
 
     /// The function used to read projects by project ID.
@@ -158,9 +155,9 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private func sendSelectedProjectValue() {
         if let indexPath = projectsCollectionView.selectionIndexPaths.first,
             let projectID = currentProjectIDs.projectId(for: indexPath) {
-            _selectedProjectID.value = projectID
+            selectedProjectID.value = projectID
         } else {
-            _selectedProjectID.value = nil
+            selectedProjectID.value = nil
         }
     }
 

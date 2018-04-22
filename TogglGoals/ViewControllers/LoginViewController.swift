@@ -47,10 +47,8 @@ class LoginViewController: NSViewController, ViewControllerContaining {
     private var _interface = MutableProperty<Interface?>(nil)
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
-    private let outputsDisposable = SerialDisposable()
-
     private func connectInterface() {
-        userDefaults <~ _interface.latest { $0.userDefaults }
+        userDefaults <~ _interface.latestOutput { $0.userDefaults }
 
         let resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
             credentialValidatingAction.values.map { validationResult -> TogglAPITokenCredential? in
@@ -58,14 +56,13 @@ class LoginViewController: NSViewController, ViewControllerContaining {
                 case let .valid(credential, _): return credential
                 default: return nil
                 }
-                }.skipNil()
+            }.skipNil()
 
-        lifetime += _interface.producer.skipNil().map { $0.resolvedCredential }
-            .startWithValues { [unowned self] in
-                self.outputsDisposable.inner = $0 <~ resolvedCredential
+        lifetime.observeEnded {
+            _ = resolvedCredential
         }
 
-        lifetime += outputsDisposable
+        lifetime += resolvedCredential.bindOnlyToLatest(_interface.producer.skipNil().map { $0.resolvedCredential })
     }
 
 

@@ -18,7 +18,7 @@ class DetailedActivityViewController: NSViewController {
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     func connectInterface() {
-        self.activityStatuses <~ _interface.producer.skipNil().flatten(.latest)
+        self.activityStatuses <~ _interface.latestOutput { $0 }
     }
 
     private let activityStatuses = MutableProperty([ActivityStatus]())

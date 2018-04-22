@@ -27,6 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                                                 scheduler: scheduler)
     private lazy var periodPreferenceStore = PreferenceStore<PeriodPreference>(userDefaults: userDefaults,
                                                                                scheduler: scheduler)
+    private let (lifetime, token) = Lifetime.make()
 
     private let modelCoordinator: ModelCoordinator
 
@@ -102,6 +103,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         let resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
         let updatedPeriodPreference = MutableProperty<PeriodPreference?>(nil)
+        lifetime.observeEnded {
+            _ = updatedPeriodPreference
+        }
 
         preferencesController.interface <~ SignalProducer<PreferencesViewController.Interface, NoError>(
             value: (periodPreferenceStore.output.producer.skipNil(),

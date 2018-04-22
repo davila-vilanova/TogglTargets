@@ -20,7 +20,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
 
     // MARK: Interface
 
-    internal typealias Interface = (projectId: SignalProducer<Int64, NoError>,
+    internal typealias Interface = (
+        projectId: SignalProducer<Int64, NoError>,
         goal: SignalProducer<Goal, NoError>,
         report: SignalProducer<TwoPartTimeReport?, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
@@ -32,13 +33,13 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     private func connectInterface() {
-        goalProgress.projectId <~ _interface.latest { $0.projectId }
-        goalProgress.goal <~ _interface.latest { $0.goal }
-        goalProgress.report <~ _interface.latest {$0.report }
-        goalProgress.runningEntry <~ _interface.latest { $0.runningEntry }
-        calendar <~ _interface.latest { $0.calendar }
-        currentDate <~ _interface.latest { $0.currentDate }
-        periodPreference <~ _interface.latest { $0.periodPreference }
+        goalProgress.projectId <~ _interface.latestOutput { $0.projectId }
+        goalProgress.goal <~ _interface.latestOutput { $0.goal }
+        goalProgress.report <~ _interface.latestOutput {$0.report }
+        goalProgress.runningEntry <~ _interface.latestOutput { $0.runningEntry }
+        calendar <~ _interface.latestOutput { $0.calendar }
+        currentDate <~ _interface.latestOutput { $0.currentDate }
+        periodPreference <~ _interface.latestOutput { $0.periodPreference }
     }
 
 

@@ -22,8 +22,8 @@ class DayProgressViewController: NSViewController {
     internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
 
     private func connectInterface() {
-        timeWorkedToday <~ _interface.latest { $0.timeWorkedToday }
-        remainingTimeToDayBaseline <~ _interface.latest { $0.remainingTimeToDayBaseline }
+        timeWorkedToday <~ _interface.latestOutput { $0.timeWorkedToday }
+        remainingTimeToDayBaseline <~ _interface.latestOutput { $0.remainingTimeToDayBaseline }
     }
 
 
