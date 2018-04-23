@@ -188,15 +188,16 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                         itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItem(withIdentifier: ProjectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
-        projectItem.connectOnceInLifecycle(runningEntry: runningEntry.producer,
-                                           currentDate: currentDate.producer.skipNil())
 
         let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
 
         // TODO: De-force-unwrap
-        projectItem.setInputs(project: readProject.value!(projectId),
-                              goal: readGoal.value!(projectId),
-                              report: readReport.value!(projectId))
+        projectItem.interface <~ SignalProducer<ProjectCollectionViewItem.Interface, NoError>(
+            value: (runningEntry.producer,
+                    currentDate.producer.skipNil(),
+                    readProject.value!(projectId),
+                    readGoal.value!(projectId),
+                    readReport.value!(projectId)))
 
         return projectItem
     }

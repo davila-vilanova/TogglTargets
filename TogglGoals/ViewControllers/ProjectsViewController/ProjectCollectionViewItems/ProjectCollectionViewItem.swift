@@ -13,25 +13,30 @@ import Result
 
 class ProjectCollectionViewItem: NSCollectionViewItem {
 
-    // MARK: Connections to be established once in lifetime
+    typealias Interface = (
+        runningEntry: SignalProducer<RunningEntry?, NoError>,
+        currentDate: SignalProducer<Date, NoError>,
+        project: SignalProducer<Project?, NoError>,
+        goal: SignalProducer<Goal?, NoError>,
+        report: SignalProducer<TwoPartTimeReport?, NoError>)
+
+    private let _interface = MutableProperty<Interface?>(nil)
+    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+
+    private func connectInterface() {
+        runningEntry <~ _interface.latestOutput { $0.runningEntry }
+        currentDate <~ _interface.latestOutput { $0.currentDate }
+        project <~ _interface.latestOutput { $0.project }
+        goal <~ _interface.latestOutput { $0.goal }
+        report <~ _interface.latestOutput { $0.report }
+    }
 
     private let runningEntry = MutableProperty<RunningEntry?>(nil)
     private let currentDate = MutableProperty<Date?>(nil)
+    private let project = MutableProperty<Project?>(nil)
+    private let goal = MutableProperty<Goal?>(nil)
+    private let report = MutableProperty<TwoPartTimeReport?>(nil)
 
-    func connectOnceInLifecycle(runningEntry: SignalProducer<RunningEntry?, NoError>,
-                                currentDate: SignalProducer<Date, NoError>) {
-        guard Thread.current.isMainThread else {
-            assert(false)
-            return
-        }
-        guard areOnceConnectionsPerformed == false else {
-            return
-        }
-        self.runningEntry <~ runningEntry
-        self.currentDate <~ currentDate
-        areOnceConnectionsPerformed = true
-    }
-    private var areOnceConnectionsPerformed = false
 
     // MARK: - Outlets
 
@@ -40,38 +45,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
     @IBOutlet weak var reportLabel: NSTextField!
 
 
-    // MARK: - Interface
-
-    internal func setInputs(project: SignalProducer<Project?, NoError>,
-                            goal: SignalProducer<Goal?, NoError>,
-                            report: SignalProducer<TwoPartTimeReport?, NoError>) {
-        projects <~ SignalProducer(value: project)
-        goals <~ SignalProducer(value: goal)
-        reports <~ SignalProducer(value: report)
-    }
-
-    // MARK: - Backing properties
-
-    private let projects = MutableProperty<SignalProducer<Project?, NoError>?>(nil)
-    private let goals = MutableProperty<SignalProducer<Goal?, NoError>?>(nil)
-    private let reports = MutableProperty<SignalProducer<TwoPartTimeReport?, NoError>?>(nil)
-
-
-    // MARK: - Selection of latest binding
-
-    private lazy var project: SignalProducer<Project?, NoError> = projects.producer.skipNil().flatten(.latest)
-    private lazy var goal: SignalProducer<Goal?, NoError> = goals.producer.skipNil().flatten(.latest)
-    private lazy var report: SignalProducer<TwoPartTimeReport?, NoError> = reports.producer.skipNil().flatten(.latest)
-
-
     // MARK: - NSCollectionViewItem
-
-    override var textField: NSTextField? {
-        get {
-            return projectNameLabel
-        }
-        set { }
-    }
 
     override var isSelected: Bool {
         set {
@@ -97,6 +71,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        connectInterface()
 
         projectNameLabel.reactive.text <~ project.map { project -> String in
             return project?.name ?? "(nothing)"
