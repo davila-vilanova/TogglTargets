@@ -646,9 +646,9 @@
 		63FF9EEA208FA3BC0087DD1C /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */,
-				63FF9EEC208FA3BC0087DD1C /* LoginViewController.swift */,
 				63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */,
+				63FF9EEC208FA3BC0087DD1C /* LoginViewController.swift */,
+				63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */,
 			);
 			name = Preferences;
 			path = ViewControllers/Preferences;
