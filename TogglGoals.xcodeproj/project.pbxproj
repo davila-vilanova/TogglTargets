@@ -13,7 +13,6 @@
 		6310EFCF1FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
 		6310EFD01FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
 		6310EFD11FAC6E8700B42C44 /* PeriodPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */; };
-		631D4F1C206572EB00E0DB4F /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
 		631E46301F9799190012E491 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 631E462F1F9799190012E491 /* Preferences.storyboard */; };
 		631E46311F9799190012E491 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 631E462F1F9799190012E491 /* Preferences.storyboard */; };
 		6323099A1FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */; };
@@ -49,10 +48,6 @@
 		6334B4A520703EC000A5B796 /* ActivitySuccessViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B49C20703EBF00A5B796 /* ActivitySuccessViewController.xib */; };
 		6334B4A92071A81600A5B796 /* ErrorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334B4A72071A81600A5B796 /* ErrorViewController.swift */; };
 		6334B4AA2071A81600A5B796 /* ErrorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B4A82071A81600A5B796 /* ErrorViewController.xib */; };
-		63415BBD2084CD0F0083E40B /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */; };
-		63415BBE2084CD0F0083E40B /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */; };
-		63415BBF2084CD0F0083E40B /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */; };
-		63415BC02084CD0F0083E40B /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */; };
 		63415BC220852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
 		63415BC320852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
 		63415BC420852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
@@ -97,9 +92,6 @@
 		637A324E1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */; };
 		637A32501EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */; };
 		637A32511EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */; };
-		637A325F1EE1761C00667FC3 /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
-		637A32601EE1761C00667FC3 /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
-		637DA203202797E0000D7EB8 /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
 		637DA204202A302A000D7EB8 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA12008C2BB00635AD1 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		637DA205202A3030000D7EB8 /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA02008C2BB00635AD1 /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		637DA206202A3037000D7EB8 /* ReactiveCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EA9F2008C2BB00635AD1 /* ReactiveCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -116,6 +108,8 @@
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
+		639F38F2208FA4D500AE96CF /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */; };
+		639F38F3208FA4D500AE96CF /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */; };
 		63A67F311FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */; };
 		63A67F321FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */; };
 		63A67F331FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */; };
@@ -296,7 +290,6 @@
 		6334B49C20703EBF00A5B796 /* ActivitySuccessViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActivitySuccessViewController.xib; sourceTree = "<group>"; };
 		6334B4A72071A81600A5B796 /* ErrorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorViewController.swift; sourceTree = "<group>"; };
 		6334B4A82071A81600A5B796 /* ErrorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ErrorViewController.xib; sourceTree = "<group>"; };
-		63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
 		63415BC120852A650083E40B /* ReadByProjectID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadByProjectID.swift; sourceTree = "<group>"; };
 		634396891F80456200FDADE3 /* GoalProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressTests.swift; sourceTree = "<group>"; };
 		6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDateGenerator.swift; sourceTree = "<group>"; };
@@ -321,11 +314,12 @@
 		637A323A1EE16FD600667FC3 /* ProjectDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectDetailsViewController.swift; path = ViewControllers/ProjectDetailsViewController.swift; sourceTree = "<group>"; };
 		637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectsMasterDetailController.swift; path = ViewControllers/ProjectsMasterDetailController.swift; sourceTree = "<group>"; };
 		637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SelectionDetailViewController.swift; path = ViewControllers/SelectionDetailViewController.swift; sourceTree = "<group>"; };
-		637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainmentSegue.swift; sourceTree = "<group>"; };
 		637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		637DA21F2034760F000D7EB8 /* ValueLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueLogger.swift; sourceTree = "<group>"; };
 		637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesStateTest.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
+		639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainmentSegue.swift; sourceTree = "<group>"; };
+		639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
 		63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProfileNetworkAction.swift; sourceTree = "<group>"; };
 		63A67F351FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProjectsNetworkAction.swift; sourceTree = "<group>"; };
 		63A67F3A1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveReportsNetworkAction.swift; sourceTree = "<group>"; };
@@ -534,18 +528,9 @@
 				637A32381EE16FD600667FC3 /* GoalStrategyViewController.swift */,
 				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
 				63FF9EEA208FA3BC0087DD1C /* Preferences */,
-				637DA20120279230000D7EB8 /* Util */,
+				639F38EF208FA4D500AE96CF /* Util */,
 			);
 			name = "View Controllers";
-			sourceTree = "<group>";
-		};
-		637DA20120279230000D7EB8 /* Util */ = {
-			isa = PBXGroup;
-			children = (
-				637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */,
-				63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */,
-			);
-			path = Util;
 			sourceTree = "<group>";
 		};
 		637DA21920347598000D7EB8 /* Logging */ = {
@@ -554,6 +539,16 @@
 				637DA21F2034760F000D7EB8 /* ValueLogger.swift */,
 			);
 			path = Logging;
+			sourceTree = "<group>";
+		};
+		639F38EF208FA4D500AE96CF /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */,
+				639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */,
+			);
+			name = Util;
+			path = ViewControllers/Util;
 			sourceTree = "<group>";
 		};
 		63A67F2E1FCD9A35004BEFC6 /* APIAccess */ = {
@@ -878,12 +873,12 @@
 				635A25832052917B00EFCE90 /* ListLayout.swift in Sources */,
 				6310EFCF1FAC6E8700B42C44 /* PeriodPreference.swift in Sources */,
 				63FF9EEF208FA3BC0087DD1C /* LoginViewController.swift in Sources */,
-				63415BBD2084CD0F0083E40B /* InterfaceBinding.swift in Sources */,
 				63A67F451FCD9C77004BEFC6 /* URLSessionExtensions.swift in Sources */,
 				637A32441EE16FD600667FC3 /* GoalReportViewController.swift in Sources */,
 				63D4BBA71F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				637A32421EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
 				63D4BBB01F7D821800B87298 /* TogglAPICredential.swift in Sources */,
+				639F38F2208FA4D500AE96CF /* ContainmentSegue.swift in Sources */,
 				637DA2202034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				637A32481EE16FD600667FC3 /* GoalViewController.swift in Sources */,
 				635A256620528F2C00EFCE90 /* ProjectsListActivityViewController.swift in Sources */,
@@ -903,7 +898,7 @@
 				6334B49E20703EC000A5B796 /* CondensedActivityViewController.swift in Sources */,
 				6334B4A020703EC000A5B796 /* ActivitiesState.swift in Sources */,
 				63AB08131FB6305200565D87 /* PreferenceStore.swift in Sources */,
-				637A325F1EE1761C00667FC3 /* ContainmentSegue.swift in Sources */,
+				639F38F3208FA4D500AE96CF /* InterfaceBinding.swift in Sources */,
 				6355C5BC1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
 				635A257A205290CE00EFCE90 /* ProjectsMasterDetailWindowController.swift in Sources */,
 				637A32401EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
@@ -940,12 +935,10 @@
 				63D4BBBA1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				63CE971120815B95006E7167 /* ActivitiesState.swift in Sources */,
 				63D4BBB41F7D821800B87298 /* GoalProgress.swift in Sources */,
-				63415BBE2084CD0F0083E40B /* InterfaceBinding.swift in Sources */,
 				63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */,
 				637DA210202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
 				63415BC320852A650083E40B /* ReadByProjectID.swift in Sources */,
-				637DA203202797E0000D7EB8 /* ContainmentSegue.swift in Sources */,
 				63D4BBB31F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				6333B6D71F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				63A67F521FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift in Sources */,
@@ -1007,7 +1000,6 @@
 				63D4BBC01F7D821900B87298 /* GoalProgress.swift in Sources */,
 				63D4BBC81F7D821900B87298 /* TogglAPICredential.swift in Sources */,
 				6355C5BE1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
-				63415BBF2084CD0F0083E40B /* InterfaceBinding.swift in Sources */,
 				63415BC420852A650083E40B /* ReadByProjectID.swift in Sources */,
 				6333B6D41F9746E6002CF189 /* Project.swift in Sources */,
 				63D4BBC11F7D821900B87298 /* GoalsStore.swift in Sources */,
@@ -1016,7 +1008,6 @@
 				6333B6E41F974763002CF189 /* Goal.swift in Sources */,
 				637A32451EE16FD600667FC3 /* GoalReportViewController.swift in Sources */,
 				637A324B1EE16FD600667FC3 /* ProjectDetailsViewController.swift in Sources */,
-				637A32601EE1761C00667FC3 /* ContainmentSegue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1040,7 +1031,6 @@
 				63AB08321FB77CB500565D87 /* ModelCoordinator.swift in Sources */,
 				63AB083D1FB77CB500565D87 /* PeriodPreference.swift in Sources */,
 				63AB08361FB77CB500565D87 /* TogglAPICredential.swift in Sources */,
-				631D4F1C206572EB00E0DB4F /* ContainmentSegue.swift in Sources */,
 				637DA212202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				63AB08331FB77CB500565D87 /* GoalsStore.swift in Sources */,
 				63DC619D1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */,
@@ -1048,7 +1038,6 @@
 				63AB083B1FB77CB500565D87 /* TimeIntervalExtensions.swift in Sources */,
 				63415BC520852A650083E40B /* ReadByProjectID.swift in Sources */,
 				63A67F431FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
-				63415BC02084CD0F0083E40B /* InterfaceBinding.swift in Sources */,
 				63AB083E1FB77CB500565D87 /* PreferenceStore.swift in Sources */,
 				63A67F391FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				63A67F3E1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
