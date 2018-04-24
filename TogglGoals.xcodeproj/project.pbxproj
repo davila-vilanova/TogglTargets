@@ -16,10 +16,6 @@
 		631D4F1C206572EB00E0DB4F /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
 		631E46301F9799190012E491 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 631E462F1F9799190012E491 /* Preferences.storyboard */; };
 		631E46311F9799190012E491 /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 631E462F1F9799190012E491 /* Preferences.storyboard */; };
-		631E463F1F97CB730012E491 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631E463E1F97CB730012E491 /* LoginViewController.swift */; };
-		631E46401F97CB730012E491 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631E463E1F97CB730012E491 /* LoginViewController.swift */; };
-		631E46421F97CB980012E491 /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631E46411F97CB980012E491 /* PreferencesViewController.swift */; };
-		631E46431F97CB980012E491 /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631E46411F97CB980012E491 /* PreferencesViewController.swift */; };
 		6323099A1FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */; };
 		632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957451DBA99F000E11A10 /* AppDelegate.swift */; };
 		6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 632957491DBA99F000E11A10 /* Assets.xcassets */; };
@@ -155,8 +151,6 @@
 		63AB08131FB6305200565D87 /* PreferenceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AB08121FB6305200565D87 /* PreferenceStore.swift */; };
 		63AB08141FB6305200565D87 /* PreferenceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AB08121FB6305200565D87 /* PreferenceStore.swift */; };
 		63AB08151FB6305200565D87 /* PreferenceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AB08121FB6305200565D87 /* PreferenceStore.swift */; };
-		63AB08171FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AB08161FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift */; };
-		63AB08191FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AB08161FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift */; };
 		63AB08241FB77C5100565D87 /* TogglGoals_MacOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 63AB08221FB77C5100565D87 /* TogglGoals_MacOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		63AB082C1FB77CB500565D87 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6CD1F974690002CF189 /* Profile.swift */; };
 		63AB082D1FB77CB500565D87 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6D11F9746E6002CF189 /* Project.swift */; };
@@ -216,6 +210,9 @@
 		63DC619D1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
 		63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */; };
+		63FF9EEE208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */; };
+		63FF9EEF208FA3BC0087DD1C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEC208FA3BC0087DD1C /* LoginViewController.swift */; };
+		63FF9EF0208FA3BC0087DD1C /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -272,8 +269,6 @@
 		6310EFCA1FAC6D3700B42C44 /* Period.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Period.swift; sourceTree = "<group>"; };
 		6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodPreference.swift; sourceTree = "<group>"; };
 		631E462F1F9799190012E491 /* Preferences.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Preferences.storyboard; sourceTree = "<group>"; };
-		631E463E1F97CB730012E491 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = ViewControllers/LoginViewController.swift; sourceTree = "<group>"; };
-		631E46411F97CB980012E491 /* PreferencesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesViewController.swift; path = ViewControllers/PreferencesViewController.swift; sourceTree = "<group>"; };
 		632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveProjectsNetworkActionTest.swift; sourceTree = "<group>"; };
 		632957421DBA99F000E11A10 /* TogglGoals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TogglGoals.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957451DBA99F000E11A10 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -340,7 +335,6 @@
 		63A67F501FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProfileCacheAction.swift; sourceTree = "<group>"; };
 		63A67F551FCDA1E1004BEFC6 /* StoreProfileCacheAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreProfileCacheAction.swift; sourceTree = "<group>"; };
 		63AB08121FB6305200565D87 /* PreferenceStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceStore.swift; sourceTree = "<group>"; };
-		63AB08161FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GoalPeriodsPreferencesViewController.swift; path = ViewControllers/GoalPeriodsPreferencesViewController.swift; sourceTree = "<group>"; };
 		63AB08201FB77C5100565D87 /* TogglGoals_MacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TogglGoals_MacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		63AB08221FB77C5100565D87 /* TogglGoals_MacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TogglGoals_MacOS.h; sourceTree = "<group>"; };
 		63AB08231FB77C5100565D87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -362,6 +356,9 @@
 		63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPINetworkRetriever.swift; sourceTree = "<group>"; };
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
 		63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindClosestMatchingWeekdayTests.swift; sourceTree = "<group>"; };
+		63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalPeriodsPreferencesViewController.swift; sourceTree = "<group>"; };
+		63FF9EEC208FA3BC0087DD1C /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -536,9 +533,7 @@
 				637A32361EE16FD600667FC3 /* TimeProgressViewController.swift */,
 				637A32381EE16FD600667FC3 /* GoalStrategyViewController.swift */,
 				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
-				631E46411F97CB980012E491 /* PreferencesViewController.swift */,
-				631E463E1F97CB730012E491 /* LoginViewController.swift */,
-				63AB08161FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift */,
+				63FF9EEA208FA3BC0087DD1C /* Preferences */,
 				637DA20120279230000D7EB8 /* Util */,
 			);
 			name = "View Controllers";
@@ -651,6 +646,17 @@
 				63D7EAA22008C2BB00635AD1 /* SQLite.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		63FF9EEA208FA3BC0087DD1C /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */,
+				63FF9EEC208FA3BC0087DD1C /* LoginViewController.swift */,
+				63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */,
+			);
+			name = Preferences;
+			path = ViewControllers/Preferences;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -848,7 +854,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				631E463F1F97CB730012E491 /* LoginViewController.swift in Sources */,
 				63D4BBA81F7D821800B87298 /* GoalProgress.swift in Sources */,
 				6334B4A420703EC000A5B796 /* SingleActivityViewController.swift in Sources */,
 				63A67F3B1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
@@ -856,6 +861,7 @@
 				63A67F4A1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
 				635A25862052917B00EFCE90 /* ProjectCollectionViewItem.swift in Sources */,
 				63A67F311FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
+				63FF9EEE208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift in Sources */,
 				635DCE1A1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */,
 				6333B6CE1F974690002CF189 /* Profile.swift in Sources */,
 				63A67F561FCDA1E1004BEFC6 /* StoreProfileCacheAction.swift in Sources */,
@@ -867,11 +873,11 @@
 				6333B6DE1F974741002CF189 /* TimeReport.swift in Sources */,
 				6334B4A120703EC000A5B796 /* DetailedActivityViewController.swift in Sources */,
 				637A323E1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */,
-				631E46421F97CB980012E491 /* PreferencesViewController.swift in Sources */,
 				632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */,
 				6333B6D61F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				635A25832052917B00EFCE90 /* ListLayout.swift in Sources */,
 				6310EFCF1FAC6E8700B42C44 /* PeriodPreference.swift in Sources */,
+				63FF9EEF208FA3BC0087DD1C /* LoginViewController.swift in Sources */,
 				63415BBD2084CD0F0083E40B /* InterfaceBinding.swift in Sources */,
 				63A67F451FCD9C77004BEFC6 /* URLSessionExtensions.swift in Sources */,
 				637A32441EE16FD600667FC3 /* GoalReportViewController.swift in Sources */,
@@ -883,12 +889,12 @@
 				635A256620528F2C00EFCE90 /* ProjectsListActivityViewController.swift in Sources */,
 				639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
 				63415BC220852A650083E40B /* ReadByProjectID.swift in Sources */,
+				63FF9EF0208FA3BC0087DD1C /* PreferencesViewController.swift in Sources */,
 				6355C5B71FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				63A67F511FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift in Sources */,
 				63D4BBAE1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				6334B4A92071A81600A5B796 /* ErrorViewController.swift in Sources */,
 				637A32461EE16FD600667FC3 /* GoalStrategyViewController.swift in Sources */,
-				63AB08171FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift in Sources */,
 				63D4BBAC1F7D821800B87298 /* ModelCoordinator.swift in Sources */,
 				637DA20F202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */,
@@ -967,7 +973,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				631E46401F97CB730012E491 /* LoginViewController.swift in Sources */,
 				63A67F3D1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
 				63A67F381FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				63A67F4C1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
@@ -979,7 +984,6 @@
 				63B1BBE91FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,
 				6333B6E01F974741002CF189 /* TimeReport.swift in Sources */,
 				639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
-				631E46431F97CB980012E491 /* PreferencesViewController.swift in Sources */,
 				637A32471EE16FD600667FC3 /* GoalStrategyViewController.swift in Sources */,
 				6333B6D81F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				637A323F1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */,
@@ -993,7 +997,6 @@
 				6355C5B91FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				637A32431EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
 				63A67F531FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift in Sources */,
-				63AB08191FB630DE00565D87 /* GoalPeriodsPreferencesViewController.swift in Sources */,
 				63D4BBC71F7D821900B87298 /* SignalProducerExtensions.swift in Sources */,
 				6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */,
 				637A32491EE16FD600667FC3 /* GoalViewController.swift in Sources */,
