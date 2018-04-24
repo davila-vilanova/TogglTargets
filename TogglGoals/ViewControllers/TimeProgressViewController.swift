@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class TimeProgressViewController: NSViewController {
+class TimeProgressViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -23,17 +23,8 @@ class TimeProgressViewController: NSViewController {
         remainingTimeToGoal: SignalProducer<TimeInterval, NoError>,
         strategyStartsToday: SignalProducer<Bool, NoError>)
 
-    private var _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    private func connectInterface() {
-        timeGoal <~ _interface.latestOutput { $0.timeGoal }
-        totalWorkDays <~ _interface.latestOutput { $0.totalWorkDays }
-        remainingWorkDays <~ _interface.latestOutput { $0.remainingWorkDays }
-        workedTime <~ _interface.latestOutput { $0.workedTime }
-        remainingTimeToGoal <~ _interface.latestOutput { $0.remainingTimeToGoal }
-        strategyStartsToday <~ _interface.latestOutput { $0.strategyStartsToday }
-    }
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
     // MARK: - Backing properties
@@ -126,7 +117,12 @@ class TimeProgressViewController: NSViewController {
     // MARK: -
 
     override func viewDidLoad() {
-        connectInterface()
+        timeGoal <~ lastBinding.latestOutput { $0.timeGoal }
+        totalWorkDays <~ lastBinding.latestOutput { $0.totalWorkDays }
+        remainingWorkDays <~ lastBinding.latestOutput { $0.remainingWorkDays }
+        workedTime <~ lastBinding.latestOutput { $0.workedTime }
+        remainingTimeToGoal <~ lastBinding.latestOutput { $0.remainingTimeToGoal }
+        strategyStartsToday <~ lastBinding.latestOutput { $0.strategyStartsToday }
     }
 }
 

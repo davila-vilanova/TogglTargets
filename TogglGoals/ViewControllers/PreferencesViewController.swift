@@ -10,7 +10,7 @@ import Cocoa
 import ReactiveSwift
 import Result
 
-class PreferencesViewController: NSTabViewController {
+class PreferencesViewController: NSTabViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -22,15 +22,8 @@ class PreferencesViewController: NSTabViewController {
         resolvedCredential: BindingTarget<TogglAPITokenCredential>,
         updatedGoalPeriodPreference: BindingTarget<PeriodPreference>)
 
-    private var _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    private func connectInterface() {
-        loginViewController.interface <~ _interface.producer.skipNil()
-            .map { ($0.userDefaults, $0.resolvedCredential) }
-        goalPeriodsController.interface <~ _interface.producer.skipNil()
-            .map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference) }
-    }
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
     // MARK: - Contained view controllers
@@ -58,6 +51,11 @@ class PreferencesViewController: NSTabViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        connectInterface()
+
+        loginViewController <~ lastBinding.producer.skipNil()
+            .map { ($0.userDefaults, $0.resolvedCredential) }
+
+        goalPeriodsController <~ lastBinding.producer.skipNil()
+            .map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference) }
     }
 }

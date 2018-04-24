@@ -16,7 +16,7 @@ fileprivate let GoalStrategyVCContainment = "GoalStrategyVCContainment"
 fileprivate let GoalReachedVCContainment = "GoalReachedVCContainment"
 fileprivate let DayProgressVCContainment = "DayProgressVCContainment"
 
-class GoalReportViewController: NSViewController, ViewControllerContaining {
+class GoalReportViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -29,18 +29,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
         currentDate: SignalProducer<Date, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>)
 
-    private var _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    private func connectInterface() {
-        goalProgress.projectId <~ _interface.latestOutput { $0.projectId }
-        goalProgress.goal <~ _interface.latestOutput { $0.goal }
-        goalProgress.report <~ _interface.latestOutput {$0.report }
-        goalProgress.runningEntry <~ _interface.latestOutput { $0.runningEntry }
-        calendar <~ _interface.latestOutput { $0.calendar }
-        currentDate <~ _interface.latestOutput { $0.currentDate }
-        periodPreference <~ _interface.latestOutput { $0.periodPreference }
-    }
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
     // MARK: - Properties
@@ -78,7 +68,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     
     var timeProgressViewController: TimeProgressViewController! {
         didSet {
-            timeProgressViewController.interface <~
+            timeProgressViewController <~
                 SignalProducer(value: (timeGoal: goalProgress.timeGoal,
                                        totalWorkDays: goalProgress.totalWorkDays,
                                        remainingWorkDays: goalProgress.remainingWorkDays,
@@ -90,7 +80,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
 
     var goalStrategyViewController: GoalStrategyViewController! {
         didSet {
-            goalStrategyViewController.interface <~
+            goalStrategyViewController <~
                 SignalProducer(value: (timeGoal: goalProgress.timeGoal,
                                        dayBaseline: goalProgress.dayBaseline,
                                        dayBaselineAdjustedToProgress: goalProgress.dayBaselineAdjustedToProgress,
@@ -100,13 +90,13 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
 
     var goalReachedViewController: GoalReachedViewController! {
         didSet {
-            goalReachedViewController.interface <~ SignalProducer(value: goalProgress.timeGoal)
+            goalReachedViewController <~ SignalProducer(value: goalProgress.timeGoal)
         }
     }
 
     var dayProgressViewController: DayProgressViewController! {
         didSet {
-            dayProgressViewController.interface <~
+            dayProgressViewController <~
                 SignalProducer(value: (timeWorkedToday: goalProgress.timeWorkedToday.producer,
                                        remainingTimeToDayBaseline: goalProgress.remainingTimeToDayBaseline.producer))
         }
@@ -143,7 +133,13 @@ class GoalReportViewController: NSViewController, ViewControllerContaining {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        connectInterface()
+        goalProgress.projectId <~ lastBinding.latestOutput { $0.projectId }
+        goalProgress.goal <~ lastBinding.latestOutput { $0.goal }
+        goalProgress.report <~ lastBinding.latestOutput {$0.report }
+        goalProgress.runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
+        calendar <~ lastBinding.latestOutput { $0.calendar }
+        currentDate <~ lastBinding.latestOutput { $0.currentDate }
+        periodPreference <~ lastBinding.latestOutput { $0.periodPreference }
 
         for identifier in [GoalProgressVCContainment, GoalStrategyVCContainment, GoalReachedVCContainment, DayProgressVCContainment] {
             performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)

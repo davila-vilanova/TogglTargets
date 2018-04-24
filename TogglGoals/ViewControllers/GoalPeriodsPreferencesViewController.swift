@@ -13,7 +13,7 @@ import ReactiveCocoa
 
 internal let DefaultPeriodPreference = PeriodPreference.monthly
 
-class GoalPeriodsPreferencesViewController: NSViewController {
+class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -24,16 +24,9 @@ class GoalPeriodsPreferencesViewController: NSViewController {
         updatedPreference: BindingTarget<PeriodPreference>)
 
 
-    private var _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-    private func connectInterface() {
-        calendar <~ _interface.latestOutput { $0.calendar }
-        currentDate <~ _interface.latestOutput { $0.currentDate }
-        existingPreference <~ _interface.latestOutput { $0.periodPreference }
-
-        updatedPreference.bindOnlyToLatest(_interface.producer.skipNil().map { $0.updatedPreference })
-    }
 
     // MARK: - Backing properties and signals
 
@@ -93,12 +86,17 @@ class GoalPeriodsPreferencesViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        calendar <~ lastBinding.latestOutput { $0.calendar }
+        currentDate <~ lastBinding.latestOutput { $0.currentDate }
+        existingPreference <~ lastBinding.latestOutput { $0.periodPreference }
+
+        updatedPreference.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.updatedPreference })
+
         makeRadioButtonSelectionMutuallyExclusive()
         populateWeekdaysPopUpButton()
         reflectExistingPreference()
         assignActions()
         reflectCurrentPeriod()
-        connectInterface()
     }
     
     private func makeRadioButtonSelectionMutuallyExclusive() {

@@ -68,20 +68,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         mainWindow!.makeKeyAndOrderFront(nil)
 
         let controller = mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
-        controller.interface <~
-            SignalProducer(
-                value: (calendar: calendar.producer,
-                        periodPreference: periodPreferenceStore.output.producer.skipNil(),
-                        projectIDsByGoals: modelCoordinator.projectIDsByGoals,
-                        runningEntry: modelCoordinator.runningEntry.producer,
-                        currentDate: currentDateGenerator.currentDate.producer,
-                        modelRetrievalStatus: modelCoordinator.retrievalStatus,
-                        readProject: modelCoordinator.readProject,
-                        readGoal: modelCoordinator.readGoal,
-                        writeGoal: modelCoordinator.writeGoal,
-                        deleteGoal: modelCoordinator.deleteGoal,
-                        readReport: modelCoordinator.readReport))
-
+        controller <~ SignalProducer(
+            value: (calendar: calendar.producer,
+                    periodPreference: periodPreferenceStore.output.producer.skipNil(),
+                    projectIDsByGoals: modelCoordinator.projectIDsByGoals,
+                    runningEntry: modelCoordinator.runningEntry.producer,
+                    currentDate: currentDateGenerator.currentDate.producer,
+                    modelRetrievalStatus: modelCoordinator.retrievalStatus,
+                    readProject: modelCoordinator.readProject,
+                    readGoal: modelCoordinator.readGoal,
+                    writeGoal: modelCoordinator.writeGoal,
+                    deleteGoal: modelCoordinator.deleteGoal,
+                    readReport: modelCoordinator.readReport))
 
         modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
     }
@@ -107,7 +105,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             _ = updatedPeriodPreference
         }
 
-        preferencesController.interface <~ SignalProducer<PreferencesViewController.Interface, NoError>(
+        preferencesController <~ SignalProducer<PreferencesViewController.Interface, NoError>(
             value: (periodPreferenceStore.output.producer.skipNil(),
                     userDefaults.producer,
                     calendar.producer,

@@ -13,7 +13,7 @@ import ReactiveSwift
 fileprivate let ProjectsListVCContainment = "ProjectsListVCContainment"
 fileprivate let ActivityVCContainment = "ActivityVCContainment"
 
-class ProjectsListActivityViewController: NSViewController, ViewControllerContaining {
+class ProjectsListActivityViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
 
     // Interface
 
@@ -27,25 +27,9 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
         readGoal: ReadGoal,
         readReport: ReadReport)
 
-    private let _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+    private let lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-    internal func connectInterface() {
-        projectsListViewController.interface <~ _interface.producer.skipNil().map {
-            ($0.projectIDsByGoals,
-             $0.selectedProjectId,
-             $0.runningEntry,
-             $0.currentDate,
-             $0.readProject,
-             $0.readGoal,
-             $0.readReport)
-        }
-
-        activityViewController.interface <~ SignalProducer<ActivityViewController.Interface, NoError>(
-            value: (_interface.latestOutput { $0.modelRetrievalStatus },
-                    displayActivity.bindingTarget)
-        )
-    }
 
     private let displayActivity = MutableProperty(false)
 
@@ -77,7 +61,20 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
 
         initializeControllerContainment(containmentIdentifiers: [ProjectsListVCContainment, ActivityVCContainment])
 
-        connectInterface()
+        projectsListViewController <~ lastBinding.producer.skipNil().map {
+            ($0.projectIDsByGoals,
+             $0.selectedProjectId,
+             $0.runningEntry,
+             $0.currentDate,
+             $0.readProject,
+             $0.readGoal,
+             $0.readReport)
+        }
+
+        activityViewController <~ SignalProducer<ActivityViewController.Interface, NoError>(
+            value: (lastBinding.latestOutput { $0.modelRetrievalStatus },
+                    displayActivity.bindingTarget)
+        )
 
         // Duplicated to allow independent animations
         let showActivity: BindingTarget<Void> = activityViewController.view.reactive.makeBindingTarget { [unowned self] activityView, _ in

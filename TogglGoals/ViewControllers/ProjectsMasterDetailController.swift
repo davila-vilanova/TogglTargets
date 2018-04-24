@@ -10,7 +10,7 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-class ProjectsMasterDetailController: NSSplitViewController {
+class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -27,47 +27,10 @@ class ProjectsMasterDetailController: NSSplitViewController {
         deleteGoal: BindingTarget<ProjectID>,
         readReport: ReadReport)
 
-    private let _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+    private let lastBinding = MutableProperty<Interface?>(nil)
     private let (lifetime, token) = Lifetime.make()
 
-    private func connectInterface() {
-        let selectedProjectId = MutableProperty<ProjectID?>(nil)
-
-        lifetime.observeEnded {
-            _ = selectedProjectId
-        }
-
-        projectsListActivityViewController.interface <~
-            SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.bindingTarget),
-                                         _interface.producer.skipNil())
-                .map { selectedProjectIdTarget, ownInterface in
-                    (ownInterface.projectIDsByGoals,
-                     selectedProjectIdTarget,
-                     ownInterface.runningEntry,
-                     ownInterface.currentDate,
-                     ownInterface.modelRetrievalStatus,
-                     ownInterface.readProject,
-                     ownInterface.readGoal,
-                     ownInterface.readReport)
-        }
-
-        selectionDetailViewController.interface <~
-            SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.producer),
-                                         _interface.producer.skipNil())
-                .map { selectedProjectIdProducer, ownInterface in
-                    (selectedProjectIdProducer,
-                     ownInterface.currentDate,
-                     ownInterface.calendar,
-                     ownInterface.periodPreference,
-                     ownInterface.runningEntry,
-                     ownInterface.readProject,
-                     ownInterface.readGoal,
-                     ownInterface.writeGoal,
-                     ownInterface.deleteGoal,
-                     ownInterface.readReport)
-        }
-    }
+    internal var bindingTarget: BindingTarget<ProjectsMasterDetailController.Interface?> { return lastBinding.bindingTarget }
 
 
     // MARK: - Contained view controllers
@@ -95,6 +58,40 @@ class ProjectsMasterDetailController: NSSplitViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        connectInterface()
+        let selectedProjectId = MutableProperty<ProjectID?>(nil)
+
+        lifetime.observeEnded {
+            _ = selectedProjectId
+        }
+
+        projectsListActivityViewController <~
+            SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.bindingTarget),
+                                         lastBinding.producer.skipNil())
+                .map { selectedProjectIdTarget, binding in
+                    (binding.projectIDsByGoals,
+                     selectedProjectIdTarget,
+                     binding.runningEntry,
+                     binding.currentDate,
+                     binding.modelRetrievalStatus,
+                     binding.readProject,
+                     binding.readGoal,
+                     binding.readReport)
+        }
+
+        selectionDetailViewController <~
+            SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.producer),
+                                         lastBinding.producer.skipNil())
+                .map { selectedProjectIdProducer, binding in
+                    (selectedProjectIdProducer,
+                     binding.currentDate,
+                     binding.calendar,
+                     binding.periodPreference,
+                     binding.runningEntry,
+                     binding.readProject,
+                     binding.readGoal,
+                     binding.writeGoal,
+                     binding.deleteGoal,
+                     binding.readReport)
+        }
     }
 }

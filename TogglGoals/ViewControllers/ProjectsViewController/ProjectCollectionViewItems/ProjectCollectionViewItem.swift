@@ -11,7 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-class ProjectCollectionViewItem: NSCollectionViewItem {
+class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
     typealias Interface = (
         runningEntry: SignalProducer<RunningEntry?, NoError>,
@@ -20,16 +20,8 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
         goal: SignalProducer<Goal?, NoError>,
         report: SignalProducer<TwoPartTimeReport?, NoError>)
 
-    private let _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    private func connectInterface() {
-        runningEntry <~ _interface.latestOutput { $0.runningEntry }
-        currentDate <~ _interface.latestOutput { $0.currentDate }
-        project <~ _interface.latestOutput { $0.project }
-        goal <~ _interface.latestOutput { $0.goal }
-        report <~ _interface.latestOutput { $0.report }
-    }
+    private let lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
     private let runningEntry = MutableProperty<RunningEntry?>(nil)
     private let currentDate = MutableProperty<Date?>(nil)
@@ -71,7 +63,12 @@ class ProjectCollectionViewItem: NSCollectionViewItem {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        connectInterface()
+
+        runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
+        currentDate <~ lastBinding.latestOutput { $0.currentDate }
+        project <~ lastBinding.latestOutput { $0.project }
+        goal <~ lastBinding.latestOutput { $0.goal }
+        report <~ lastBinding.latestOutput { $0.report }
 
         projectNameLabel.reactive.text <~ project.map { project -> String in
             return project?.name ?? "(nothing)"

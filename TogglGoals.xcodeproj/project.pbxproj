@@ -53,10 +53,10 @@
 		6334B4A520703EC000A5B796 /* ActivitySuccessViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B49C20703EBF00A5B796 /* ActivitySuccessViewController.xib */; };
 		6334B4A92071A81600A5B796 /* ErrorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334B4A72071A81600A5B796 /* ErrorViewController.swift */; };
 		6334B4AA2071A81600A5B796 /* ErrorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B4A82071A81600A5B796 /* ErrorViewController.xib */; };
-		63415BBD2084CD0F0083E40B /* InputConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InputConnection.swift */; };
-		63415BBE2084CD0F0083E40B /* InputConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InputConnection.swift */; };
-		63415BBF2084CD0F0083E40B /* InputConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InputConnection.swift */; };
-		63415BC02084CD0F0083E40B /* InputConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InputConnection.swift */; };
+		63415BBD2084CD0F0083E40B /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */; };
+		63415BBE2084CD0F0083E40B /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */; };
+		63415BBF2084CD0F0083E40B /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */; };
+		63415BC02084CD0F0083E40B /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */; };
 		63415BC220852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
 		63415BC320852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
 		63415BC420852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
@@ -103,7 +103,6 @@
 		637A324A1EE16FD600667FC3 /* ProjectDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323A1EE16FD600667FC3 /* ProjectDetailsViewController.swift */; };
 		637A324B1EE16FD600667FC3 /* ProjectDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323A1EE16FD600667FC3 /* ProjectDetailsViewController.swift */; };
 		637A324E1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */; };
-		637A324F1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */; };
 		637A32501EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */; };
 		637A32511EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */; };
 		637A325F1EE1761C00667FC3 /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */; };
@@ -306,7 +305,7 @@
 		6334B49C20703EBF00A5B796 /* ActivitySuccessViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActivitySuccessViewController.xib; sourceTree = "<group>"; };
 		6334B4A72071A81600A5B796 /* ErrorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorViewController.swift; sourceTree = "<group>"; };
 		6334B4A82071A81600A5B796 /* ErrorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ErrorViewController.xib; sourceTree = "<group>"; };
-		63415BBC2084CD0F0083E40B /* InputConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputConnection.swift; sourceTree = "<group>"; };
+		63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
 		63415BC120852A650083E40B /* ReadByProjectID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadByProjectID.swift; sourceTree = "<group>"; };
 		634396891F80456200FDADE3 /* GoalProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressTests.swift; sourceTree = "<group>"; };
 		6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDateGenerator.swift; sourceTree = "<group>"; };
@@ -554,7 +553,7 @@
 			isa = PBXGroup;
 			children = (
 				637A325E1EE1761C00667FC3 /* ContainmentSegue.swift */,
-				63415BBC2084CD0F0083E40B /* InputConnection.swift */,
+				63415BBC2084CD0F0083E40B /* InterfaceBinding.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -879,7 +878,7 @@
 				6333B6D61F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				635A25832052917B00EFCE90 /* ListLayout.swift in Sources */,
 				6310EFCF1FAC6E8700B42C44 /* PeriodPreference.swift in Sources */,
-				63415BBD2084CD0F0083E40B /* InputConnection.swift in Sources */,
+				63415BBD2084CD0F0083E40B /* InterfaceBinding.swift in Sources */,
 				63A67F451FCD9C77004BEFC6 /* URLSessionExtensions.swift in Sources */,
 				637A32441EE16FD600667FC3 /* GoalReportViewController.swift in Sources */,
 				63D4BBA71F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
@@ -942,7 +941,7 @@
 				63D4BBBA1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				63CE971120815B95006E7167 /* ActivitiesState.swift in Sources */,
 				63D4BBB41F7D821800B87298 /* GoalProgress.swift in Sources */,
-				63415BBE2084CD0F0083E40B /* InputConnection.swift in Sources */,
+				63415BBE2084CD0F0083E40B /* InterfaceBinding.swift in Sources */,
 				63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */,
 				637DA210202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
@@ -983,7 +982,6 @@
 				63A67F331FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
 				6333B6D01F974690002CF189 /* Profile.swift in Sources */,
 				635DCE1C1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */,
-				637A324F1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */,
 				63A67F581FCDA1E1004BEFC6 /* StoreProfileCacheAction.swift in Sources */,
 				63DC619C1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */,
 				63B1BBE91FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,
@@ -1015,7 +1013,7 @@
 				63D4BBC01F7D821900B87298 /* GoalProgress.swift in Sources */,
 				63D4BBC81F7D821900B87298 /* TogglAPICredential.swift in Sources */,
 				6355C5BE1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
-				63415BBF2084CD0F0083E40B /* InputConnection.swift in Sources */,
+				63415BBF2084CD0F0083E40B /* InterfaceBinding.swift in Sources */,
 				63415BC420852A650083E40B /* ReadByProjectID.swift in Sources */,
 				6333B6D41F9746E6002CF189 /* Project.swift in Sources */,
 				63D4BBC11F7D821900B87298 /* GoalsStore.swift in Sources */,
@@ -1057,7 +1055,7 @@
 				63AB083B1FB77CB500565D87 /* TimeIntervalExtensions.swift in Sources */,
 				63415BC520852A650083E40B /* ReadByProjectID.swift in Sources */,
 				63A67F431FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
-				63415BC02084CD0F0083E40B /* InputConnection.swift in Sources */,
+				63415BC02084CD0F0083E40B /* InterfaceBinding.swift in Sources */,
 				63AB083E1FB77CB500565D87 /* PreferenceStore.swift in Sources */,
 				63A67F391FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				63A67F3E1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,

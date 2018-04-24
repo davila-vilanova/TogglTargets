@@ -11,7 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-class GoalViewController: NSViewController {
+class GoalViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -20,17 +20,12 @@ class GoalViewController: NSViewController {
         goal: SignalProducer<Goal?, NoError>,
         userUpdates: BindingTarget<Goal?>)
 
-    private var _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
     private let goal = MutableProperty<Goal?>(nil)
     private var calendar = MutableProperty<Calendar?>(nil)
 
-    private func connectInterface() {
-        calendar <~ _interface.producer.skipNil().map { $0.calendar }.flatten(.latest)
-        goal <~ _interface.producer.skipNil().map { $0.goal }.flatten(.latest)
-        userUpdatesPipe.output.bindOnlyToLatest(_interface.producer.skipNil().map { $0.userUpdates })
-    }
 
     // MARK: - Output
 
@@ -56,7 +51,9 @@ class GoalViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        connectInterface()
+        calendar <~ lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
+        goal <~ lastBinding.producer.skipNil().map { $0.goal }.flatten(.latest)
+        userUpdatesPipe.output.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.userUpdates })
 
         // Set up view
         calendar.producer.skipNil().observe(on: UIScheduler()).startWithValues { [unowned self] (cal) in
@@ -167,7 +164,7 @@ class GoalViewController: NSViewController {
 
 // MARK: -
 
-class NoGoalViewController: NSViewController {
+class NoGoalViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -176,13 +173,8 @@ class NoGoalViewController: NSViewController {
         goalCreated: BindingTarget<Goal>
     )
 
-    private var _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    private func connectInterface() {
-        projectId <~ _interface.latestOutput { $0.projectId }
-        goalCreatedPipe.output.bindOnlyToLatest(_interface.producer.skipNil().map { $0.goalCreated })
-    }
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
     // MARK: - Private
@@ -203,7 +195,8 @@ class NoGoalViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        connectInterface()
+        projectId <~ lastBinding.latestOutput { $0.projectId }
+        goalCreatedPipe.output.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.goalCreated })
 
         createGoalAction = Action<Void, Goal, NoError>(unwrapping: projectId) {
             SignalProducer(value: Goal(forProjectId: $0, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend))

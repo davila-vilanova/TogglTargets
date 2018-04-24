@@ -10,7 +10,7 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-class CondensedActivityViewController: NSViewController {
+class CondensedActivityViewController: NSViewController, BindingTargetProvider {
     private let (lifetime, token) = Lifetime.make()
 
     private let activityStatuses = MutableProperty([ActivityStatus]())
@@ -22,13 +22,9 @@ class CondensedActivityViewController: NSViewController {
         activityStatuses: SignalProducer<[ActivityStatus], NoError>,
         expandDetails: BindingTarget<Bool>)
 
-    private var _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-    private func connectInterface() {
-        activityStatuses <~ _interface.latestOutput { $0.activityStatuses }
-        requestExpandDetails.bindOnlyToLatest(_interface.producer.skipNil().map { $0.expandDetails } )
-    }
 
     @IBOutlet weak var statusDescriptionLabel: NSTextField!
     @IBOutlet weak var statusDetailLabel: NSTextField!
@@ -38,7 +34,8 @@ class CondensedActivityViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        connectInterface()
+        activityStatuses <~ lastBinding.latestOutput { $0.activityStatuses }
+        requestExpandDetails.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.expandDetails } )
 
         horizontalLine.reactive.makeBindingTarget { $0.animator().isHidden = !$1 } <~ requestExpandDetails
 

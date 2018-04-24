@@ -36,7 +36,7 @@ fileprivate enum CredentialValidationResult {
     case other
 }
 
-class LoginViewController: NSViewController, ViewControllerContaining {
+class LoginViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -44,26 +44,8 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         userDefaults: SignalProducer<UserDefaults, NoError>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential>)
 
-    private var _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    private func connectInterface() {
-        userDefaults <~ _interface.latestOutput { $0.userDefaults }
-
-        let resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
-            credentialValidatingAction.values.map { validationResult -> TogglAPITokenCredential? in
-                switch validationResult {
-                case let .valid(credential, _): return credential
-                default: return nil
-                }
-            }.skipNil()
-
-        lifetime.observeEnded {
-            _ = resolvedCredential
-        }
-
-        lifetime += resolvedCredential.bindOnlyToLatest(_interface.producer.skipNil().map { $0.resolvedCredential })
-    }
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
     // MARK: - Backing properties
@@ -236,7 +218,21 @@ class LoginViewController: NSViewController, ViewControllerContaining {
         
         initializeControllerContainment(containmentIdentifiers: [UsernamePasswordVCContainment, APITokenVCContainment])
 
-        connectInterface()
+        userDefaults <~ lastBinding.latestOutput { $0.userDefaults }
+
+        let resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
+            credentialValidatingAction.values.map { validationResult -> TogglAPITokenCredential? in
+                switch validationResult {
+                case let .valid(credential, _): return credential
+                default: return nil
+                }
+                }.skipNil()
+
+        lifetime.observeEnded {
+            _ = resolvedCredential
+        }
+
+        lifetime += resolvedCredential.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.resolvedCredential })
 
         let persistedLoginMethod = userDefaults.producer.skipNil()
             .map { $0.string(forKey: PersistenceKeys.selectedLoginMethod.rawValue) }
@@ -298,6 +294,8 @@ fileprivate protocol KeyViewsProviding {
     var lastKeyView: NSView { get }
 }
 
+// MARK: -
+
 class EmailPasswordViewController: NSViewController, CredentialProducing, KeyViewsProviding {
 
     // MARK: - Reactive interface and backing
@@ -348,6 +346,8 @@ class EmailPasswordViewController: NSViewController, CredentialProducing, KeyVie
             .map { TogglAPIEmailCredential(email: $0, password: $1) }
     }
 }
+
+// MARK: -
 
 class APITokenViewController: NSViewController, CredentialProducing, KeyViewsProviding {
 

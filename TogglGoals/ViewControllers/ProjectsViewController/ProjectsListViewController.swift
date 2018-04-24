@@ -15,7 +15,7 @@ fileprivate let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("Section
 
 /// Manages a collection view that displays `Project` items organized by whether they have an associated goal.
 /// Produces a stream of selected `Project` values via the `selectedProject` property.
-class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate {
+class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -44,20 +44,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         readGoal: ReadGoal,
         readReport: ReadReport)
 
-    private let _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    private func connectInterface() {
-        projectIDsByGoals <~ _interface.latestOutput { $0.projectIDsByGoals }
-        runningEntry <~ _interface.latestOutput { $0.runningEntry }
-        currentDate <~ _interface.latestOutput { $0.currentDate }
-
-        let ownInterface = _interface.producer.skipNil()
-        readProject <~ ownInterface.map { $0.readProject }
-        readGoal <~ ownInterface.map { $0.readGoal }
-        readReport <~ ownInterface.map { $0.readReport }
-        lifetime += selectedProjectID.bindOnlyToLatest(ownInterface.map { $0.selectedProjectId })
-    }
+    private let lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
     // MARK: - Backing properties
@@ -95,7 +83,16 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         super.viewDidLoad()
 
         initializeProjectsCollectionView()
-        connectInterface()
+
+        projectIDsByGoals <~ lastBinding.latestOutput { $0.projectIDsByGoals }
+        runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
+        currentDate <~ lastBinding.latestOutput { $0.currentDate }
+
+        let lastValidBinding = lastBinding.producer.skipNil()
+        readProject <~ lastValidBinding.map { $0.readProject }
+        readGoal <~ lastValidBinding.map { $0.readGoal }
+        readReport <~ lastValidBinding.map { $0.readReport }
+        lifetime += selectedProjectID.bindOnlyToLatest(lastValidBinding.map { $0.selectedProjectId })
     }
 
     private func initializeProjectsCollectionView() {
@@ -192,7 +189,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
 
         // TODO: De-force-unwrap
-        projectItem.interface <~ SignalProducer<ProjectCollectionViewItem.Interface, NoError>(
+        projectItem <~ SignalProducer<ProjectCollectionViewItem.Interface, NoError>(
             value: (runningEntry.producer,
                     currentDate.producer.skipNil(),
                     readProject.value!(projectId),

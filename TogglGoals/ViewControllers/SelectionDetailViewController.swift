@@ -13,7 +13,7 @@ import Result
 fileprivate let ProjectDetailsVCContainment = "ProjectDetailsVCContainment"
 fileprivate let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
 
-class SelectionDetailViewController: NSViewController, ViewControllerContaining {
+class SelectionDetailViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -29,29 +29,8 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
         deleteGoal: BindingTarget<ProjectID>,
         readReport: ReadReport)
 
-    private let _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    private func connectInterface() {
-        selectedProjectID <~ _interface.latestOutput { $0.projectId }
-        readProject <~ _interface.producer.skipNil().map { $0.readProject }
-
-        projectDetailsViewController.interface <~
-            SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
-                                         _interface.producer.skipNil())
-                .map {
-                    selectedProjectProducer, ownInterface in
-                    (selectedProjectProducer,
-                     ownInterface.currentDate,
-                     ownInterface.calendar,
-                     ownInterface.periodPreference,
-                     ownInterface.runningEntry,
-                     ownInterface.readGoal,
-                     ownInterface.writeGoal,
-                     ownInterface.deleteGoal,
-                     ownInterface.readReport)
-        }
-    }
+    private let lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
     // MARK: - Local use of project
@@ -108,7 +87,24 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining 
 
         initializeControllerContainment(containmentIdentifiers: [ProjectDetailsVCContainment, EmtpySelectionVCContainment])
 
-        connectInterface()
+        selectedProjectID <~ lastBinding.latestOutput { $0.projectId }
+        readProject <~ lastBinding.producer.skipNil().map { $0.readProject }
+
+        projectDetailsViewController <~
+            SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
+                                         lastBinding.producer.skipNil())
+                .map {
+                    selectedProjectProducer, binding in
+                    (selectedProjectProducer,
+                     binding.currentDate,
+                     binding.calendar,
+                     binding.periodPreference,
+                     binding.runningEntry,
+                     binding.readGoal,
+                     binding.writeGoal,
+                     binding.deleteGoal,
+                     binding.readReport)
+        }
 
         setupContainedViewControllerVisibility()
     }

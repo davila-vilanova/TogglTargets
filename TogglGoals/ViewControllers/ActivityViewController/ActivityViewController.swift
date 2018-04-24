@@ -14,32 +14,14 @@ import ReactiveCocoa
 fileprivate let CondensedActivityVCContainment = "CondensedActivityVCContainment"
 fileprivate let DetailedActivityVCContainment = "DetailedActivityVCContainment"
 
-class ActivityViewController: NSViewController, ViewControllerContaining {
+class ActivityViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
 
     internal typealias Interface =
         (modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
         requestDisplay: BindingTarget<Bool>)
 
-    private let _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    private func connectInterface() {
-        activitiesState.input <~ _interface.latestOutput { $0.modelRetrievalStatus }
-
-        condensedActivityViewController.interface <~
-            SignalProducer<CondensedActivityViewController.Interface, NoError>(
-                value: (activitiesState.output.producer, wantsExtendedDisplay.bindingTarget))
-
-        let statusesForDetailedActivityVC =
-            SignalProducer.merge(activitiesState.output.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
-                                 wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
-
-        detailedActivityViewController.interface <~ SignalProducer(value: statusesForDetailedActivityVC)
-
-        let wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
-        lifetime += wantsDisplay.bindOnlyToLatest(_interface.producer.skipNil().map { $0.requestDisplay })
-    }
-
+    private let lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
     private let wantsExtendedDisplay = MutableProperty(false)
 
@@ -66,7 +48,20 @@ class ActivityViewController: NSViewController, ViewControllerContaining {
 
         initializeControllerContainment(containmentIdentifiers: [CondensedActivityVCContainment, DetailedActivityVCContainment])
 
-        connectInterface()
+        activitiesState.input <~ lastBinding.latestOutput { $0.modelRetrievalStatus }
+
+        condensedActivityViewController <~
+            SignalProducer<CondensedActivityViewController.Interface, NoError>(
+                value: (activitiesState.output.producer, wantsExtendedDisplay.bindingTarget))
+
+        let statusesForDetailedActivityVC =
+            SignalProducer.merge(activitiesState.output.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
+                                 wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
+
+        detailedActivityViewController <~ SignalProducer(value: statusesForDetailedActivityVC)
+
+        let wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
+        lifetime += wantsDisplay.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.requestDisplay })
 
         detailedActivityViewController.view.reactive.makeBindingTarget(on: UIScheduler(), { $0.isHidden = $1 })
             <~ wantsExtendedDisplay.negate()

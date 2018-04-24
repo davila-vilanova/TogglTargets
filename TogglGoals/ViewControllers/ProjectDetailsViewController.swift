@@ -15,7 +15,7 @@ fileprivate let GoalVCContainment = "GoalVCContainment"
 fileprivate let GoalReportVCContainment = "GoalReportVCContainment"
 fileprivate let NoGoalVCContainment = "NoGoalVCContainment"
 
-class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
+class ProjectDetailsViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -30,55 +30,10 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
         deleteGoal: BindingTarget<ProjectID>,
         readReport: ReadReport)
 
-    private var _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
     private var (lifetime, token) = Lifetime.make()
-
-    private func connectInterface() {
-        project <~ _interface.latestOutput { $0.project }
-
-        let ownInterface = _interface.producer.skipNil()
-        readGoal <~ ownInterface.map { $0.readGoal }
-        readReport <~ ownInterface.map { $0.readReport }
-
-        goalReportViewController.interface <~ SignalProducer(
-            value: (projectId: projectId,
-                    goal: goalForCurrentProject.skipNil(),
-                    report: reportForCurrentProject,
-                    runningEntry: _interface.latestOutput { $0.runningEntry },
-                    calendar: _interface.latestOutput { $0.calendar },
-                    currentDate: _interface.latestOutput { $0.currentDate },
-                    periodPreference: _interface.latestOutput { $0.periodPreference }))
-
-        let updateDeleteGoal = MutableProperty<Goal?>(nil)
-        lifetime.observeEnded {
-            _ = updateDeleteGoal
-        }
-        
-        self.goalViewController.interface <~
-            SignalProducer.combineLatest(
-                ownInterface.map { $0.calendar },
-                SignalProducer(value: goalForCurrentProject.producer),
-                SignalProducer(value: updateDeleteGoal.bindingTarget))
-                .map {
-                    (calendar: $0,
-                     goal: $1,
-                     userUpdates: $2)
-        }
-
-        self.noGoalViewController.interface <~
-            SignalProducer.combineLatest(
-                SignalProducer(value: projectId.producer),
-                ownInterface.map { $0.writeGoal })
-                .map {
-                    (projectId: $0,
-                     goalCreated: $1)
-        }
-
-        lifetime += updateDeleteGoal.producer.skipNil().bindOnlyToLatest(ownInterface.map { $0.writeGoal })
-        lifetime += projectId.producer.sample(on: updateDeleteGoal.producer.filter { $0 == nil}.map { _ in () }).bindOnlyToLatest(ownInterface.map { $0.deleteGoal })
-    }
 
 
     // MARK: - Private properties
@@ -156,7 +111,48 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining {
 
         initializeControllerContainment(containmentIdentifiers: [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment])
 
-        connectInterface()
+        project <~ lastBinding.latestOutput { $0.project }
+
+        let lastValidBinding = lastBinding.producer.skipNil()
+        readGoal <~ lastValidBinding.map { $0.readGoal }
+        readReport <~ lastValidBinding.map { $0.readReport }
+
+        goalReportViewController <~ SignalProducer(
+            value: (projectId: projectId,
+                    goal: goalForCurrentProject.skipNil(),
+                    report: reportForCurrentProject,
+                    runningEntry: lastBinding.latestOutput { $0.runningEntry },
+                    calendar: lastBinding.latestOutput { $0.calendar },
+                    currentDate: lastBinding.latestOutput { $0.currentDate },
+                    periodPreference: lastBinding.latestOutput { $0.periodPreference }))
+
+        let updateDeleteGoal = MutableProperty<Goal?>(nil)
+        lifetime.observeEnded {
+            _ = updateDeleteGoal
+        }
+
+        self.goalViewController <~
+            SignalProducer.combineLatest(
+                lastValidBinding.map { $0.calendar },
+                SignalProducer(value: goalForCurrentProject.producer),
+                SignalProducer(value: updateDeleteGoal.bindingTarget))
+                .map {
+                    (calendar: $0,
+                     goal: $1,
+                     userUpdates: $2)
+        }
+
+        self.noGoalViewController <~
+            SignalProducer.combineLatest(
+                SignalProducer(value: projectId.producer),
+                lastValidBinding.map { $0.writeGoal })
+                .map {
+                    (projectId: $0,
+                     goalCreated: $1)
+        }
+
+        lifetime += updateDeleteGoal.producer.skipNil().bindOnlyToLatest(lastValidBinding.map { $0.writeGoal })
+        lifetime += projectId.producer.sample(on: updateDeleteGoal.producer.filter { $0 == nil}.map { _ in () }).bindOnlyToLatest(lastValidBinding.map { $0.deleteGoal })
 
         setupLocalProjectDisplay()
         setupContainedViewControllerVisibility()

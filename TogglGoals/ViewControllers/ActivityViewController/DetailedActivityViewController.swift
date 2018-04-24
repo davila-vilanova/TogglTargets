@@ -10,16 +10,12 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-class DetailedActivityViewController: NSViewController {
+class DetailedActivityViewController: NSViewController, BindingTargetProvider {
 
     internal typealias Interface = SignalProducer<[ActivityStatus], NoError>
 
-    private let _interface = MutableProperty<Interface?>(nil)
-    internal var interface: BindingTarget<Interface?> { return _interface.bindingTarget }
-
-    func connectInterface() {
-        self.activityStatuses <~ _interface.latestOutput { $0 }
-    }
+    private let lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
     private let activityStatuses = MutableProperty([ActivityStatus]())
 
@@ -92,7 +88,7 @@ class DetailedActivityViewController: NSViewController {
 
         updateActivities <~ activityStatuses.combinePrevious([ActivityStatus]())
 
-        connectInterface()
+        self.activityStatuses <~ lastBinding.latestOutput { $0 }
     }
 
     private func updateActivitiesState(from previousStatus: [ActivityStatus],
