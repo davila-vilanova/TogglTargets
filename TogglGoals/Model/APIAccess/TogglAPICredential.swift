@@ -83,7 +83,7 @@ struct TogglAPITokenCredential: TogglAPICredential {
     // derived from an email and password-based credential and thus avoid treating
     // a credential transformation like a credential swap
     fileprivate let derivedFromEmail: String?
-    private let apiToken: String
+    let apiToken: String
     var type: CredentialType { return CredentialType.apiToken }
 
     init?(apiToken: String, derivedFromEmail: String? = nil) {

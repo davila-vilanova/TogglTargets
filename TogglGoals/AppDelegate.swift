@@ -106,14 +106,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         preferencesController <~ SignalProducer<PreferencesViewController.Interface, NoError>(
-            value: (periodPreferenceStore.output.producer.skipNil(),
-                    userDefaults.producer,
-                    calendar.producer,
-                    currentDateGenerator.currentDate.producer,
-                    resolvedCredential.deoptionalizedBindingTarget,
-                    updatedPeriodPreference.deoptionalizedBindingTarget))
+            value: (existingAPIToken: credentialStore.output.producer.skipNil(),
+                    resolvedCredential: resolvedCredential.deoptionalizedBindingTarget,
+                    testURLSessionAction: makeTestURLSessionNetworkAction(),
+                    existingGoalPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
+                    calendar: calendar.producer,
+                    currentDate: currentDateGenerator.currentDate.producer,
+                    updatedGoalPeriodPreference: updatedPeriodPreference.deoptionalizedBindingTarget))
 
-        credentialStore.input <~ SignalProducer(value: resolvedCredential.signal.skipNil())
+        credentialStore.input <~ SignalProducer(value: resolvedCredential.signal.skipNil().logValues("resolvedCredential"))
         periodPreferenceStore.input <~ SignalProducer(value: updatedPeriodPreference.signal.skipNil())
     }
 
