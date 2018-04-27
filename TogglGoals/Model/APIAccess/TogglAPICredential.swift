@@ -79,31 +79,19 @@ extension TogglAPIEmailCredential: Equatable {
 }
 
 struct TogglAPITokenCredential: TogglAPICredential {
-    // Email is not stricty necessary but it allows to detect when an APIToken credential is
-    // derived from an email and password-based credential and thus avoid treating
-    // a credential transformation like a credential swap
-    fileprivate let derivedFromEmail: String?
     let apiToken: String
     var type: CredentialType { return CredentialType.apiToken }
 
-    init?(apiToken: String, derivedFromEmail: String? = nil) {
+    init?(apiToken: String) {
         guard !apiToken.isEmpty else {
             return nil
         }
         self.apiToken = apiToken
-        self.derivedFromEmail = derivedFromEmail
         self.authHeaderValue = computeAuthHeaderValue(username: apiToken, password: APITokenPassword)
     }
 
     var authHeaderKey: String = AuthHeaderKey
     private(set) var authHeaderValue: String
-
-    func isLikelyDerived(from emailCredential: TogglAPIEmailCredential) -> Bool {
-        guard let email = derivedFromEmail else {
-            return false
-        }
-        return email == emailCredential.email
-    }
 
     static func headersIncludeTokenAuthenticationEntry(_ headers: [AnyHashable : Any]) -> Bool {
         guard let headerValue = headers[AuthHeaderKey] as? String else {
