@@ -260,7 +260,7 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
         let tokenDownstream = lastBinding.latestOutput { $0.tokenDownstream }
         let credentialUpstream = MutableProperty<TogglAPICredential?>(nil)
 
-        let textFieldOutput = apiTokenField.reactive.stringValues
+        let textFieldOutput = apiTokenField.reactive.continuousStringValues
         apiTokenField.reactive.stringValue <~ tokenDownstream.take(first: 1).take(until: textFieldOutput.map { _ in () })
         credentialUpstream <~ textFieldOutput.map(TogglAPITokenCredential.init)
         credentialUpstream <~ tokenDownstream.take(first: 1).map(TogglAPITokenCredential.init)
@@ -308,8 +308,8 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let credentialUpstream = Signal.combineLatest(usernameField.reactive.stringValues,
-                                                      passwordField.reactive.stringValues)
+        let credentialUpstream = Signal.combineLatest(usernameField.reactive.continuousStringValues,
+                                                      passwordField.reactive.continuousStringValues)
             .map(TogglAPIEmailCredential.init)
             .map { $0 as TogglAPICredential? }
 
