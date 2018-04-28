@@ -102,6 +102,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
         let updatedPeriodPreference = MutableProperty<PeriodPreference?>(nil)
         lifetime.observeEnded {
+            _ = resolvedCredential
             _ = updatedPeriodPreference
         }
 
@@ -114,7 +115,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     currentDate: currentDateGenerator.currentDate.producer,
                     updatedGoalPeriodPreference: updatedPeriodPreference.deoptionalizedBindingTarget))
 
-        credentialStore.input <~ SignalProducer(value: resolvedCredential.signal.skipNil().logValues("resolvedCredential"))
+        credentialStore.input <~ SignalProducer(value: resolvedCredential.signal.skipNil().logEvents(identifier: "resolvedCredential"))
         periodPreferenceStore.input <~ SignalProducer(value: updatedPeriodPreference.signal.skipNil())
     }
 
