@@ -81,7 +81,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     deleteGoal: modelCoordinator.deleteGoal,
                     readReport: modelCoordinator.readReport))
 
-        modelCoordinator.apiCredential <~ credentialStore.output.producer.skipNil().map { $0 as TogglAPICredential }
+        modelCoordinator.apiCredential <~ credentialStore.output.producer.map { $0 as TogglAPICredential? }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -115,8 +115,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     currentDate: currentDateGenerator.currentDate.producer,
                     updatedGoalPeriodPreference: updatedPeriodPreference.deoptionalizedBindingTarget))
 
-        credentialStore.input <~ SignalProducer(value: resolvedCredential.signal.skipNil().logEvents(identifier: "resolvedCredential"))
-        periodPreferenceStore.input <~ SignalProducer(value: updatedPeriodPreference.signal.skipNil())
+        credentialStore.input <~ SignalProducer(value: resolvedCredential.signal)
+        periodPreferenceStore.input <~ SignalProducer(value: updatedPeriodPreference.signal)
     }
 
     @IBAction func refreshAllData(_ sender: Any) {

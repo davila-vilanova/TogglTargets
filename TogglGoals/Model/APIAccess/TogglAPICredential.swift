@@ -116,6 +116,10 @@ extension TogglAPITokenCredential: StorableInUserDefaults {
     func write(to userDefaults: UserDefaults) {
         userDefaults.set(apiToken, forKey: UserDefaultsKey.apiToken.rawValue)
     }
+
+    static func delete(from userDefaults: UserDefaults) {
+        userDefaults.removeObject(forKey: UserDefaultsKey.apiToken.rawValue)
+    }
 }
 
 extension TogglAPITokenCredential: Equatable {

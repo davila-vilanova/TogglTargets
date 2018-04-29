@@ -13,12 +13,13 @@ import Result
 protocol StorableInUserDefaults {
     init?(userDefaults: UserDefaults)
     func write(to userDefaults: UserDefaults)
+    static func delete(from userDefaults: UserDefaults)
 }
 
 class PreferenceStore<PreferenceType: StorableInUserDefaults> {
 
     lazy var output = Property(_output)
-    var input: BindingTarget<Signal<PreferenceType, NoError>> { return _input.deoptionalizedBindingTarget }
+    var input: BindingTarget<Signal<PreferenceType?, NoError>> { return _input.deoptionalizedBindingTarget }
 
     init(userDefaults: Property<UserDefaults>,
          scheduler: Scheduler) {
@@ -29,7 +30,6 @@ class PreferenceStore<PreferenceType: StorableInUserDefaults> {
         _output <~ userDefaults.producer
             .map { PreferenceType(userDefaults: $0) }
             .take(first: 1)
-            .skipNil()
 
         // The latest source assigned to input will:
         //  * update the persisted value
@@ -45,13 +45,17 @@ class PreferenceStore<PreferenceType: StorableInUserDefaults> {
     private let userDefaults: Property<UserDefaults>
     private let scheduler: Scheduler
 
-    private lazy var _input = MutableProperty<Signal<PreferenceType, NoError>?>(nil)
+    private lazy var _input = MutableProperty<Signal<PreferenceType?, NoError>?>(nil)
     private lazy var _output = MutableProperty<PreferenceType?>(nil)
 
     private let (lifetime, token) = Lifetime.make()
 
     private lazy var persistValue =
-        BindingTarget<(UserDefaults, PreferenceType)>(on: scheduler, lifetime: lifetime) {
-            (userDefaults, preferenceType) in preferenceType.write(to: userDefaults)
+        BindingTarget<(UserDefaults, PreferenceType?)>(on: scheduler, lifetime: lifetime) { (userDefaults, value) in
+            if let value = value {
+                value.write(to: userDefaults)
+            } else {
+                PreferenceType.delete(from: userDefaults)
+            }
     }
 }
