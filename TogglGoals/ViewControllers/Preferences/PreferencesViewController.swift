@@ -15,8 +15,8 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     // MARK: - Interface
 
     internal typealias Interface = (
-        existingAPIToken: SignalProducer<TogglAPITokenCredential, NoError>,
-        resolvedCredential: BindingTarget<TogglAPITokenCredential>,
+        existingCredential: SignalProducer<TogglAPITokenCredential, NoError>,
+        resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
         testURLSessionAction: TestURLSessionAction,
         existingGoalPeriodPreference: SignalProducer<PeriodPreference, NoError>,
         calendar: SignalProducer<Calendar, NoError>,
@@ -54,7 +54,7 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
         super.viewDidLoad()
 
         loginViewController <~ lastBinding.producer.skipNil()
-            .map { ($0.existingAPIToken, $0.resolvedCredential, $0.testURLSessionAction) }
+            .map { ($0.existingCredential, $0.resolvedCredential, $0.testURLSessionAction) }
 
         goalPeriodsController <~ lastBinding.producer.skipNil()
             .map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference) }

@@ -190,7 +190,7 @@
                                 <gestureRecognizers>
                                     <clickGestureRecognizer delaysPrimaryMouseButtonEvents="YES" numberOfClicksRequired="1" id="5f0-xd-LOt">
                                         <connections>
-                                            <action selector="requestSwitchToTokenViewControllerWithSender:" target="Luk-hD-CZ9" id="Jxh-Eg-4J6"/>
+                                            <action selector="switchToDirectTokenEntry:" target="Luk-hD-CZ9" id="XBC-JN-OIt"/>
                                         </connections>
                                     </clickGestureRecognizer>
                                 </gestureRecognizers>
@@ -227,7 +227,7 @@
                 </viewController>
                 <customObject id="yml-nP-qH9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1184.5" y="-510"/>
+            <point key="canvasLocation" x="1176" y="-328"/>
         </scene>
         <!--Token View Controller-->
         <scene sceneID="vTJ-KD-t4P">
@@ -258,7 +258,7 @@
                                 <gestureRecognizers>
                                     <clickGestureRecognizer delaysPrimaryMouseButtonEvents="YES" numberOfClicksRequired="1" id="Yzg-zz-GQB">
                                         <connections>
-                                            <action selector="requestSwitchToEmailViewControllerWithSender:" target="ySu-bD-nwW" id="bxj-vG-QDW"/>
+                                            <action selector="switchToEmailPasswordEntry:" target="ySu-bD-nwW" id="U5h-iW-1Lb"/>
                                         </connections>
                                     </clickGestureRecognizer>
                                 </gestureRecognizers>
@@ -297,7 +297,7 @@
                 </viewController>
                 <customObject id="R61-f0-YKI" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1183.5" y="-279"/>
+            <point key="canvasLocation" x="1176" y="-502"/>
         </scene>
         <!--Goal Periods-->
         <scene sceneID="moW-Kh-FCL">

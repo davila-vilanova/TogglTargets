@@ -107,8 +107,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         preferencesController <~ SignalProducer<PreferencesViewController.Interface, NoError>(
-            value: (existingAPIToken: credentialStore.output.producer.skipNil(),
-                    resolvedCredential: resolvedCredential.deoptionalizedBindingTarget,
+            value: (existingCredential: credentialStore.output.producer.skipNil(),
+                    resolvedCredential: resolvedCredential.bindingTarget,
                     testURLSessionAction: makeTestURLSessionNetworkAction(),
                     existingGoalPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
                     calendar: calendar.producer,

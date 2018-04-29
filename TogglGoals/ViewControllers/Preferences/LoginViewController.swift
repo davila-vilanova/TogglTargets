@@ -26,11 +26,11 @@ fileprivate enum CredentialValidationResult {
 
 class LoginViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
 
-    // MARK: - Interface
+    // MARK: Interface
 
     internal typealias Interface = (
-        existingAPIToken: SignalProducer<TogglAPITokenCredential, NoError>,
-        resolvedCredential: BindingTarget<TogglAPITokenCredential>,
+        existingCredential: SignalProducer<TogglAPITokenCredential, NoError>,
+        resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
         testURLSessionAction: TestURLSessionAction)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -80,13 +80,13 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
         // Connect interfaces of children controllers
 
         apiTokenViewController <~ SignalProducer(
-            value: (tokenDownstream: lastBinding.latestOutput { $0.existingAPIToken }.map { $0.apiToken },
+            value: (tokenDownstream: lastBinding.latestOutput { $0.existingCredential }.map { $0.apiToken },
                     credentialUpstream: credentialFromToken.bindingTarget,
-                    switchToTokenRetrievalFromEmailCredentials: displayEmailPasswordViewController.bindingTarget))
+                    switchToEmailPasswordController: displayEmailPasswordViewController.bindingTarget))
 
         emailPasswordViewController <~ SignalProducer(
             value: (credentialUpstream: credentialFromEmail.bindingTarget,
-                    switchToDirectTokenEntry: displayTokenViewController.bindingTarget))
+                    switchToTokenController: displayTokenViewController.bindingTarget))
 
 
         // Set up the displaying of the right view controller
@@ -149,13 +149,13 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
         // Take validated / resolved token credential from action's output
         // and connect it to credential output
 
-        let resolvedCredential: Signal<TogglAPITokenCredential, NoError> =
+        let resolvedCredential: Signal<TogglAPITokenCredential?, NoError> =
             validateCredential.values.map { validationResult -> TogglAPITokenCredential? in
                 switch validationResult {
                 case let .valid(credential, _): return credential
                 default: return nil
                 }
-            }.skipNil().logEvents(identifier: "resolvedCredential")
+            }.logEvents(identifier: "resolvedCredential")
 
         resolvedCredential.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.resolvedCredential })
 
@@ -185,7 +185,7 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
         dimLoginResult <~ validateCredential.isExecuting
 
 
-        // Show visual feedback after credential validated
+        // Show feedback after credential validated
 
         resultLabel.reactive.stringValue <~ validateCredential.values.map { (result) -> String in
             switch result {
@@ -223,12 +223,12 @@ fileprivate protocol KeyViewsProviding {
 
 class APITokenViewController: NSViewController, KeyViewsProviding, BindingTargetProvider {
 
-    // MARK: - Interface
+    // MARK: Interface
 
     internal typealias Interface = (
         tokenDownstream: SignalProducer<String, NoError>,
         credentialUpstream: BindingTarget<TogglAPICredential?>,
-        switchToTokenRetrievalFromEmailCredentials: BindingTarget<Void>)
+        switchToEmailPasswordController: BindingTarget<Void>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -238,8 +238,8 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
 
     @IBOutlet weak var apiTokenField: NSTextField!
 
-    @IBAction func requestSwitchToEmailViewController(sender: AnyObject) {
-        requestSwitchToTokenRetrieval <~ SignalProducer(value: ())
+    @IBAction func switchToEmailPasswordEntry(_ sender: AnyObject) {
+        requestSwitchToEmailPasswordController <~ SignalProducer(value: ())
     }
 
 
@@ -252,22 +252,27 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
     // MARK: - Wiring
 
     private let (lifetime, token) = Lifetime.make()
-    private let requestSwitchToTokenRetrieval = MutableProperty<Void>(())
+    private let requestSwitchToEmailPasswordController = MutableProperty<Void>(())
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Connect to interface
         let tokenDownstream = lastBinding.latestOutput { $0.tokenDownstream }
         let credentialUpstream = MutableProperty<TogglAPICredential?>(nil)
-
-        let textFieldOutput = apiTokenField.reactive.continuousStringValues
-        apiTokenField.reactive.stringValue <~ tokenDownstream.take(first: 1).take(until: textFieldOutput.map { _ in () })
-        credentialUpstream <~ textFieldOutput.map(TogglAPITokenCredential.init)
-        credentialUpstream <~ tokenDownstream.take(first: 1).map(TogglAPITokenCredential.init)
-
         let validBindings = lastBinding.producer.skipNil()
         credentialUpstream.bindOnlyToLatest(validBindings.map { $0.credentialUpstream })
-        requestSwitchToTokenRetrieval.signal.bindOnlyToLatest(validBindings.map { $0.switchToTokenRetrievalFromEmailCredentials })
+        requestSwitchToEmailPasswordController.signal.bindOnlyToLatest(validBindings.map { $0.switchToEmailPasswordController })
+
+        // Prefill the token field with the first value coming downstream
+        // but do not do it if the user starts editing it before the downstream value comes
+        let edited = apiTokenField.reactive.continuousStringValues
+        let downstreamUntilEdited = tokenDownstream.take(first: 1).take(until: edited.map { _ in () })
+        apiTokenField.reactive.stringValue <~ downstreamUntilEdited
+
+        // Send upstream a credential based on the value displayed in the token field
+        credentialUpstream <~ downstreamUntilEdited.map(TogglAPITokenCredential.init)
+        credentialUpstream <~ edited.map(TogglAPITokenCredential.init)
     }
 }
 
@@ -276,11 +281,11 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
 
 class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingTargetProvider {
 
-    // MARK: - Interface
+    // MARK: Interface
 
     internal typealias Interface = (
         credentialUpstream: BindingTarget<TogglAPICredential?>,
-        switchToDirectTokenEntry: BindingTarget<Void>)
+        switchToTokenController: BindingTarget<Void>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -291,8 +296,8 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
     @IBOutlet weak var usernameField: NSTextField!
     @IBOutlet weak var passwordField: NSSecureTextField!
 
-    @IBAction func requestSwitchToTokenViewController(sender: AnyObject) {
-        requestDirectTokenEntry <~ SignalProducer(value: ())
+    @IBAction func switchToDirectTokenEntry(_ sender: AnyObject) {
+        requestSwitchToTokenController <~ SignalProducer(value: ())
     }
 
     // MARK: - KeyViewsProviding
@@ -303,7 +308,7 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
 
     // MARK: -
 
-    private let requestDirectTokenEntry = MutableProperty<Void>(())
+    private let requestSwitchToTokenController = MutableProperty<Void>(())
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -315,7 +320,7 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
 
         let validBindings = lastBinding.producer.skipNil()
         credentialUpstream.bindOnlyToLatest(validBindings.map { $0.credentialUpstream })
-        requestDirectTokenEntry.signal.bindOnlyToLatest(validBindings.map { $0.switchToDirectTokenEntry })
+        requestSwitchToTokenController.signal.bindOnlyToLatest(validBindings.map { $0.switchToTokenController })
     }
 }
 
