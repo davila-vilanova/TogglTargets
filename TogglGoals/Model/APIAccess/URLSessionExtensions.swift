@@ -11,25 +11,25 @@ import Result
 import ReactiveSwift
 
 extension URLSession {
-    convenience init?(togglAPICredential: TogglAPICredential?) {
-        guard let credential = togglAPICredential else {
-            return nil
-        }
-        let authHeaders: [String: String] = [ credential.authHeaderKey : credential.authHeaderValue ]
+    convenience init(togglAPICredential: TogglAPICredential?) {
         let config = URLSessionConfiguration.ephemeral
-//        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
-        config.httpAdditionalHeaders = authHeaders
+        config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        if let credential = togglAPICredential {
+            let authHeaders: [String: String] = [ credential.authHeaderKey : credential.authHeaderValue ]
+            config.httpAdditionalHeaders = authHeaders
+        }
         self.init(configuration: config)
     }
 
-    var canAccessTogglReportsAPI: Bool {
-        guard let headers = configuration.httpAdditionalHeaders else {
-            return false
-        }
-        return TogglAPITokenCredential.headersIncludeTokenAuthenticationEntry(headers)
+    var isCredentialSet: Bool {
+        return configuration.httpAdditionalHeaders != nil
     }
 
     func togglAPIRequestProducer(for endpoint: String) -> SignalProducer<(Data, URLResponse), APIAccessError> {
+        guard isCredentialSet else {
+            return SignalProducer(error: APIAccessError.noCredentials)
+        }
+
         func resourceURL(for endpoint: String) -> URL {
             let rootAPIURLString = "http://localhost:8080/toggl"
             let resourceURLString = rootAPIURLString + endpoint

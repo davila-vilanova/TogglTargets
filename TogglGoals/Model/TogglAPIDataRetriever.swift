@@ -209,7 +209,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Generates a `URLSession` instance based on the latest value received through `apiCredential`.
     private lazy var urlSession = Property<URLSession?>(
-        initial: nil, then: _apiCredential.producer.skipNil().map(URLSession.init))
+        initial: nil, then: _apiCredential.producer.map(URLSession.init))
 
 
     // MARK: - Profile
@@ -278,7 +278,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// by executing the underlying retrieveRunningEntryNetworkAction.
     /// This `Action` is enabled if an API credential is available and if the underlying action is enabled.
     lazy var updateRunningEntry: RefreshAction = {
-        let action = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveRunningEntryNetworkAction.isEnabled)) { [weak self] _ in
+        let action = RefreshAction(enabledIf: urlSession.map { $0?.isCredentialSet == true }.and(retrieveRunningEntryNetworkAction.isEnabled)) { [weak self] _ in
             guard let retriever = self else {
                 return SignalProducer.empty
             }
@@ -292,14 +292,16 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Triggers an attempt to retrieve the user profile, projects, reports and
     /// currently running entry.
-    lazy var refreshAllData = RefreshAction(state: urlSession.map { $0 != nil }.and(retrieveProfileNetworkAction.isEnabled)) { [weak self] _ in
+    lazy var refreshAllData = RefreshAction(enabledIf: urlSession.map { $0 != nil }.and(retrieveProfileNetworkAction.isEnabled)) { [weak self] _ in
         // TODO revisit all weak and unowned references to self inside closures
         guard let retriever = self else {
             return SignalProducer.empty
         }
 
         retriever.retrieveProfileNetworkAction <~ SignalProducer(value: ())
-        retriever.updateRunningEntry <~ SignalProducer(value: ())
+
+        // Start syncing running entry the first time a URLSession with a credential is available
+        retriever.updateRunningEntry <~ retriever.urlSession.map { $0?.isCredentialSet == true }.map { _ in () }
 
         return SignalProducer.empty
     }
@@ -410,7 +412,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
         
         let refreshOnURLSessionChange: Signal<Void, NoError> =
-            urlSession.signal.skipNil()
+            urlSession.signal
                 .throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
                 .map { _ in () }
         refreshAllData <~ refreshOnURLSessionChange
