@@ -191,7 +191,7 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
             switch result {
             case let .valid(_, profile): return "Hello, \(profile.name ?? "there") :)"
             case .invalid: return "Credential is not valid :("
-            case let .error(err): return "Cannot verify -- \(err)"
+            case let .error(err): return "Cannot verify: \(err.shortLocalizedDescription)"
             case .other: return "Cannot verify"
             }
         }
@@ -207,6 +207,19 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
                 }
             default: return nil
             }
+        }
+    }
+}
+
+// MARK: -
+
+fileprivate extension APIAccessError {
+    var shortLocalizedDescription: String {
+        switch self {
+        case .loadingSubsystemError(let underlyingError): return underlyingError.localizedDescription
+        case .serverHiccups(response: _, data: _): return "Server triggered an exception"
+        case .otherHTTPError(response: let response): return "Server returned error with status code \(response.statusCode)"
+        default: return "something unexpected happened"
         }
     }
 }
