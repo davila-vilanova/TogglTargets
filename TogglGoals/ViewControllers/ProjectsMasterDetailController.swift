@@ -55,6 +55,15 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     // MARK: -
 
+    internal lazy var dismissSinglePresentedController = BindingTarget<Void>(on: UIScheduler(), lifetime: lifetime) { [unowned self] in
+        guard let presentedControllers = self.presentedViewControllers,
+            presentedControllers.count == 1,
+            let presentedController = presentedControllers.first else {
+                return
+        }
+        self.dismissViewController(presentedController)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

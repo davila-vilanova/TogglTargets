@@ -11,11 +11,11 @@ import ReactiveSwift
 import Result
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate {
     
     private lazy var mainStoryboard = NSStoryboard(name: .init("Main"), bundle: nil)
     private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
-    private var preferencesWindowController: NSWindowController?
+    private lazy var mainViewController: ProjectsMasterDetailController = mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
 
     private let scheduler = QueueScheduler()
 
@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                                                 scheduler: scheduler)
     private lazy var periodPreferenceStore = PreferenceStore<PeriodPreference>(userDefaults: userDefaults,
                                                                                scheduler: scheduler)
-    private let (lifetime, token) = Lifetime.make()
+    private let (applicationLifetime, token) = Lifetime.make()
 
     private let modelCoordinator: ModelCoordinator
 
@@ -67,8 +67,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let mainWindow = mainWindowController.window
         mainWindow!.makeKeyAndOrderFront(nil)
 
-        let controller = mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
-        controller <~ SignalProducer(
+        mainViewController <~ SignalProducer(
             value: (calendar: calendar.producer,
                     periodPreference: periodPreferenceStore.output.producer.skipNil(),
                     projectIDsByGoals: modelCoordinator.projectIDsByGoals,
@@ -88,22 +87,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         userDefaults.value.synchronize()
     }
 
-    @IBAction func openPreferencesWindow(_ sender: Any) {
-        guard preferencesWindowController == nil else {
-            return
-        }
+    @IBAction func presentPreferencesController(_ sender: Any) {
         let preferencesStoryboard = NSStoryboard(name: .init("Preferences"), bundle: nil)
-        preferencesWindowController = (preferencesStoryboard.instantiateInitialController() as! NSWindowController)
-        let preferencesWindow = preferencesWindowController!.window!
-        preferencesWindow.makeKeyAndOrderFront(nil)
-        preferencesWindow.delegate = self
-        let preferencesController = preferencesWindowController!.contentViewController! as! PreferencesViewController
+        let preferencesController = (preferencesStoryboard.instantiateInitialController() as! PreferencesViewController)
+        let lifetime = preferencesController.lifetime
 
         let resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
         let updatedPeriodPreference = MutableProperty<PeriodPreference?>(nil)
+        let dismissRequested = MutableProperty<Void>(())
+
         lifetime.observeEnded {
             _ = resolvedCredential
             _ = updatedPeriodPreference
+            _ = dismissRequested
         }
 
         preferencesController <~ SignalProducer<PreferencesViewController.Interface, NoError>(
@@ -113,24 +109,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     existingGoalPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
                     calendar: calendar.producer,
                     currentDate: currentDateGenerator.currentDate.producer,
-                    updatedGoalPeriodPreference: updatedPeriodPreference.deoptionalizedBindingTarget))
+                    updatedGoalPeriodPreference: updatedPeriodPreference.deoptionalizedBindingTarget,
+                    dismiss: dismissRequested.bindingTarget))
 
-        credentialStore.input <~ SignalProducer(value: resolvedCredential.signal)
-        periodPreferenceStore.input <~ SignalProducer(value: updatedPeriodPreference.signal)
+        lifetime += credentialStore.input <~ SignalProducer(value: resolvedCredential.signal)
+        lifetime += periodPreferenceStore.input <~ SignalProducer(value: updatedPeriodPreference.signal)
+
+        lifetime += mainViewController.dismissSinglePresentedController <~ dismissRequested.signal
+
+        mainViewController.presentViewControllerAsSheet(preferencesController)
     }
 
     @IBAction func refreshAllData(_ sender: Any) {
         modelCoordinator.refreshAllData <~ SignalProducer(value: ())
     }
 
-    // MARK: - NSWindowDelegate
-
-    func windowWillClose(_ notification: Notification) {
-        if (notification.object as? NSWindow) === preferencesWindowController?.window {
-            preferencesWindowController = nil
-            credentialStore.input <~ SignalProducer.never
-            periodPreferenceStore.input <~ SignalProducer.never
-        }
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return true
     }
 }
 

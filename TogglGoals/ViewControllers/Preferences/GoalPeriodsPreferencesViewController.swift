@@ -21,7 +21,8 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
         calendar: SignalProducer<Calendar, NoError>,
         currentDate: SignalProducer<Date, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
-        updatedPreference: BindingTarget<PeriodPreference>)
+        updatedPreference: BindingTarget<PeriodPreference>,
+        dismiss: BindingTarget<Void>)
 
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -38,7 +39,7 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
         Signal.merge(generateMonthlyPeriodPreference.values, generateWeeklyPeriodPreference.values)
 
 
-    // MARK: - IBOutlets
+    // MARK: - Outlets and action
 
     @IBOutlet weak var preferMonthlyGoalPeriodsButton: NSButton!
     @IBOutlet weak var preferWeeklyGoalPeriodsButton: NSButton!
@@ -47,6 +48,9 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
     @IBOutlet weak var currentPeriodStart: NSTextField!
     @IBOutlet weak var currentPeriodEnd: NSTextField!
 
+    @IBAction func dismiss(_ sender: Any) {
+        requestDismissal <~ SignalProducer(value: ())
+    }
 
     // MARK: - State
 
@@ -81,7 +85,9 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
                                                     execute: weekdayToWeeklyPeriodPreferenceProducer)
 
 
-    // MARK: -
+    // MARK: - Wiring
+
+    private let requestDismissal = MutableProperty<Void>(())
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,7 +96,9 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
         currentDate <~ lastBinding.latestOutput { $0.currentDate }
         existingPreference <~ lastBinding.latestOutput { $0.periodPreference }
 
-        updatedPreference.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.updatedPreference })
+        let validBindings = lastBinding.producer.skipNil()
+        updatedPreference.bindOnlyToLatest(validBindings.map { $0.updatedPreference })
+        requestDismissal.signal.bindOnlyToLatest(validBindings.map { $0.dismiss })
 
         makeRadioButtonSelectionMutuallyExclusive()
         populateWeekdaysPopUpButton()
