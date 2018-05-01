@@ -204,6 +204,11 @@
 		63DC619D1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
 		63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */; };
+		63F15015209868430044288F /* LogInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F15014209868430044288F /* LogInViewController.swift */; };
+		63F150172098699A0044288F /* KeyViewsProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F150162098699A0044288F /* KeyViewsProviding.swift */; };
+		63F15019209869EC0044288F /* APITokenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F15018209869EC0044288F /* APITokenViewController.swift */; };
+		63F1501B20986A150044288F /* EmailPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1501A20986A150044288F /* EmailPasswordViewController.swift */; };
+		63F1501D20986A3A0044288F /* LoggedInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1501C20986A3A0044288F /* LoggedInViewController.swift */; };
 		63FF9EEE208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */; };
 		63FF9EEF208FA3BC0087DD1C /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */; };
 		63FF9EF0208FA3BC0087DD1C /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */; };
@@ -350,6 +355,11 @@
 		63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPINetworkRetriever.swift; sourceTree = "<group>"; };
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
 		63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindClosestMatchingWeekdayTests.swift; sourceTree = "<group>"; };
+		63F15014209868430044288F /* LogInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInViewController.swift; sourceTree = "<group>"; };
+		63F150162098699A0044288F /* KeyViewsProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyViewsProviding.swift; sourceTree = "<group>"; };
+		63F15018209869EC0044288F /* APITokenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APITokenViewController.swift; sourceTree = "<group>"; };
+		63F1501A20986A150044288F /* EmailPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPasswordViewController.swift; sourceTree = "<group>"; };
+		63F1501C20986A3A0044288F /* LoggedInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedInViewController.swift; sourceTree = "<group>"; };
 		63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalPeriodsPreferencesViewController.swift; sourceTree = "<group>"; };
 		63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
@@ -648,7 +658,12 @@
 			children = (
 				63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */,
 				63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */,
+				63F15014209868430044288F /* LogInViewController.swift */,
+				63F15018209869EC0044288F /* APITokenViewController.swift */,
+				63F1501A20986A150044288F /* EmailPasswordViewController.swift */,
+				63F1501C20986A3A0044288F /* LoggedInViewController.swift */,
 				63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */,
+				63F150162098699A0044288F /* KeyViewsProviding.swift */,
 			);
 			name = Preferences;
 			path = ViewControllers/Preferences;
@@ -875,6 +890,7 @@
 				63FF9EEF208FA3BC0087DD1C /* AccountViewController.swift in Sources */,
 				63A67F451FCD9C77004BEFC6 /* URLSessionExtensions.swift in Sources */,
 				637A32441EE16FD600667FC3 /* GoalReportViewController.swift in Sources */,
+				63F1501D20986A3A0044288F /* LoggedInViewController.swift in Sources */,
 				63D4BBA71F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				637A32421EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
 				63D4BBB01F7D821800B87298 /* TogglAPICredential.swift in Sources */,
@@ -883,6 +899,7 @@
 				637A32481EE16FD600667FC3 /* GoalViewController.swift in Sources */,
 				635A256620528F2C00EFCE90 /* ProjectsListActivityViewController.swift in Sources */,
 				639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
+				63F1501B20986A150044288F /* EmailPasswordViewController.swift in Sources */,
 				63415BC220852A650083E40B /* ReadByProjectID.swift in Sources */,
 				63FF9EF0208FA3BC0087DD1C /* PreferencesViewController.swift in Sources */,
 				6355C5B71FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
@@ -890,6 +907,7 @@
 				63D4BBAE1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				6334B4A92071A81600A5B796 /* ErrorViewController.swift in Sources */,
 				637A32461EE16FD600667FC3 /* GoalStrategyViewController.swift in Sources */,
+				63F15019209869EC0044288F /* APITokenViewController.swift in Sources */,
 				63D4BBAC1F7D821800B87298 /* ModelCoordinator.swift in Sources */,
 				637DA20F202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */,
@@ -898,11 +916,13 @@
 				6334B49E20703EC000A5B796 /* CondensedActivityViewController.swift in Sources */,
 				6334B4A020703EC000A5B796 /* ActivitiesState.swift in Sources */,
 				63AB08131FB6305200565D87 /* PreferenceStore.swift in Sources */,
+				63F150172098699A0044288F /* KeyViewsProviding.swift in Sources */,
 				639F38F3208FA4D500AE96CF /* InterfaceBinding.swift in Sources */,
 				6355C5BC1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
 				635A257A205290CE00EFCE90 /* ProjectsMasterDetailWindowController.swift in Sources */,
 				637A32401EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
 				637A324A1EE16FD600667FC3 /* ProjectDetailsViewController.swift in Sources */,
+				63F15015209868430044288F /* LogInViewController.swift in Sources */,
 				6333B6D21F9746E6002CF189 /* Project.swift in Sources */,
 				637A32501EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */,
 				6333B6E61F974791002CF189 /* RunningEntry.swift in Sources */,

@@ -55,10 +55,10 @@
             </objects>
             <point key="canvasLocation" x="26" y="8"/>
         </scene>
-        <!--Login View Controller-->
+        <!--Log In View Controller-->
         <scene sceneID="wUP-qS-shd">
             <objects>
-                <viewController id="dvF-Cf-Qok" customClass="LoginViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="dvF-Cf-Qok" customClass="LogInViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kBz-yA-1xn">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="252"/>
                         <autoresizingMask key="autoresizingMask"/>
