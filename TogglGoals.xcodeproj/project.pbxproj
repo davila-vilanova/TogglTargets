@@ -205,7 +205,7 @@
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
 		63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */; };
 		63FF9EEE208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */; };
-		63FF9EEF208FA3BC0087DD1C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEC208FA3BC0087DD1C /* LoginViewController.swift */; };
+		63FF9EEF208FA3BC0087DD1C /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */; };
 		63FF9EF0208FA3BC0087DD1C /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -351,7 +351,7 @@
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
 		63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindClosestMatchingWeekdayTests.swift; sourceTree = "<group>"; };
 		63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalPeriodsPreferencesViewController.swift; sourceTree = "<group>"; };
-		63FF9EEC208FA3BC0087DD1C /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -647,7 +647,7 @@
 			isa = PBXGroup;
 			children = (
 				63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */,
-				63FF9EEC208FA3BC0087DD1C /* LoginViewController.swift */,
+				63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */,
 				63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */,
 			);
 			name = Preferences;
@@ -872,7 +872,7 @@
 				6333B6D61F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				635A25832052917B00EFCE90 /* ListLayout.swift in Sources */,
 				6310EFCF1FAC6E8700B42C44 /* PeriodPreference.swift in Sources */,
-				63FF9EEF208FA3BC0087DD1C /* LoginViewController.swift in Sources */,
+				63FF9EEF208FA3BC0087DD1C /* AccountViewController.swift in Sources */,
 				63A67F451FCD9C77004BEFC6 /* URLSessionExtensions.swift in Sources */,
 				637A32441EE16FD600667FC3 /* GoalReportViewController.swift in Sources */,
 				63D4BBA71F7D821800B87298 /* DateTimeExtensions.swift in Sources */,

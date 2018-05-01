@@ -15,7 +15,7 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     // MARK: - Interface
 
     internal typealias Interface = (
-        existingCredential: SignalProducer<TogglAPITokenCredential, NoError>,
+        existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
         testURLSessionAction: TestURLSessionAction,
         existingGoalPeriodPreference: SignalProducer<PeriodPreference, NoError>,
@@ -31,12 +31,12 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
 
     /// Represents the tab items this controller contains
     private enum SplitItemIndex: Int {
-        case accountLogin = 0
+        case account = 0
         case goalPeriods
     }
 
-    private var loginViewController: LoginViewController {
-        return tabViewItem(.accountLogin).viewController as! LoginViewController
+    private var accountViewController: AccountViewController {
+        return tabViewItem(.account).viewController as! AccountViewController
     }
 
     private var goalPeriodsController: GoalPeriodsPreferencesViewController {
@@ -53,7 +53,7 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        loginViewController <~ lastBinding.producer.skipNil()
+        accountViewController <~ lastBinding.producer.skipNil()
             .map { ($0.existingCredential, $0.resolvedCredential, $0.testURLSessionAction) }
 
         goalPeriodsController <~ lastBinding.producer.skipNil()
