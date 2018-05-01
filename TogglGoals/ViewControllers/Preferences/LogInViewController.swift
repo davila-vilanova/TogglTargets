@@ -151,7 +151,7 @@ class LogInViewController: NSViewController, ViewControllerContaining, BindingTa
                 case let .valid(credential, _): return credential
                 default: return nil
                 }
-                }.logEvents(identifier: "resolvedCredential")
+            }
 
         resolvedCredential.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.resolvedCredential })
 

@@ -54,6 +54,6 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
         fullNameField.reactive.stringValue <~ profileProducer.map { $0.name }.skipNil()
         profileImageView.reactive.image <~ profileProducer.map { $0.imageUrl }.skipNil().map { NSImage(contentsOf: $0) }.skipNil()
 
-        requestLogOut.bindOnlyToLatest(validBindings.map { $0.logOut })
+        requestLogOut.signal.bindOnlyToLatest(validBindings.map { $0.logOut })
     }
 }
