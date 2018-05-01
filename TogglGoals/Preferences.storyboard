@@ -106,9 +106,9 @@
                     </view>
                     <connections>
                         <outlet property="credentialsView" destination="sK3-Rd-Chx" id="5uz-Z1-5c9"/>
+                        <outlet property="errorField" destination="mMv-nO-59z" id="Lcn-Sx-S7r"/>
                         <outlet property="loginButton" destination="eiy-Oe-NmO" id="95g-ha-Nov"/>
                         <outlet property="progressIndicator" destination="Nal-sn-bL2" id="S2C-6U-edt"/>
-                        <outlet property="resultLabel" destination="mMv-nO-59z" id="Lcn-Sx-S7r"/>
                         <segue destination="ySu-bD-nwW" kind="custom" identifier="APITokenVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="vRv-iS-xUS"/>
                         <segue destination="Luk-hD-CZ9" kind="custom" identifier="UsernamePasswordVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="tFo-Nr-Nwg"/>
                     </connections>

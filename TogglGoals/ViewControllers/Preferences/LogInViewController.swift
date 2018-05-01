@@ -54,7 +54,7 @@ class LogInViewController: NSViewController, ViewControllerContaining, BindingTa
     @IBOutlet weak var credentialsView: NSView!
     @IBOutlet weak var loginButton: NSButton!
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
-    @IBOutlet weak var resultLabel: NSTextField!
+    @IBOutlet weak var errorField: NSTextField!
 
     private let credentialFromToken = MutableProperty<TogglAPICredential?>(nil)
     private let credentialFromEmail = MutableProperty<TogglAPICredential?>(nil)
@@ -172,9 +172,9 @@ class LogInViewController: NSViewController, ViewControllerContaining, BindingTa
 
         // Provide feedback after credential validated
 
-        resultLabel.reactive.stringValue <~ validateCredential.values.map { (result) -> String in
+        errorField.reactive.stringValue <~ validateCredential.values.map { (result) -> String in
             switch result {
-            case .valid(_, _): return "Logged in successfully"
+            case .valid(_, _): return ""
             case .invalid: return "Credential is not valid"
             case let .error(err): return "Cannot verify: \(err.shortLocalizedDescription)"
             case .other: return "Cannot verify: an unexpected error occurred. Feel free to try again."
