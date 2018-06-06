@@ -1,5 +1,5 @@
 //
-//  LogInViewController.swift
+//  LoginViewController.swift
 //  TogglGoals
 //
 //  Created by David Dávila on 01.05.18.
@@ -23,7 +23,7 @@ fileprivate enum CredentialValidationResult {
     case other
 }
 
-class LogInViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
+class LoginViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
 
     // MARK: Interface
 

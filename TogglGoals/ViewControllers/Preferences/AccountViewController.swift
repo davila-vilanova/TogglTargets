@@ -29,11 +29,11 @@ class AccountViewController: NSViewController, ViewControllerContaining, Binding
 
     // MARK: - Contained view controllers
 
-    private var loginViewController: LogInViewController!
+    private var loginViewController: LoginViewController!
     private var loggedInViewController: LoggedInViewController!
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        if let vc = controller as? LogInViewController {
+        if let vc = controller as? LoginViewController {
             loginViewController = vc
         } else if let vc = controller as? LoggedInViewController {
             loggedInViewController = vc
