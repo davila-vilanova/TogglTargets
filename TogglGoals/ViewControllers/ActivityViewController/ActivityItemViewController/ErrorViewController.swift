@@ -44,9 +44,9 @@ fileprivate func errorTitle(with activityDescription: String) -> String {
 fileprivate func errorDescriptionForUser(from error: APIAccessError) -> String {
     switch error {
     case .noCredentials:
-        return "No credentials configured. Click retry to enter your Toggl credentials."
+        return "No credentials configured. Please configure your Toggl credentials."
     case .authenticationError(response: _):
-        return "Authentication error. Click retry to re-enter your Toggl credentials."
+        return "Authentication error. Check your Toggl credentials."
     case .loadingSubsystemError(underlyingError: let underlyingError):
         return "The request failed with the following error:\n\(underlyingError.localizedDescription)"
     case .serverHiccups(response: let response, data: _):
