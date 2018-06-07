@@ -93,7 +93,28 @@ class ActivityErrorViewController: SingleActivityViewController, NSPopoverDelega
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        label.reactive.text <~ representedActivity.producer.skipNil().map { "Error syncing \($0.descriptionForUI)" }
+        let statuses = representedActivityStatus.producer.skipNil()
+        label.reactive.text <~
+            SignalProducer.merge(statuses.filter(isNoCredentialsError).map { _ in "No credentials configured" },
+                                 statuses.filter(isAuthenticationError).map { "\($0.activity.descriptionForUI): authentication error" },
+                                 statuses.filter(isOtherError).map { "Error syncing \($0.activity.descriptionForUI)" })
     }
 }
 
+fileprivate func isNoCredentialsError(_ status: ActivityStatus) -> Bool {
+    switch status.error {
+    case .some(.noCredentials): return true
+    default: return false
+    }
+}
+
+fileprivate func isAuthenticationError(_ status: ActivityStatus) -> Bool {
+    switch status.error {
+    case .some(.authenticationError): return true
+    default: return false
+    }
+}
+
+fileprivate func isOtherError(_ status: ActivityStatus) -> Bool {
+    return !isNoCredentialsError(status) && !isAuthenticationError(status)
+}
