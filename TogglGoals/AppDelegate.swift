@@ -121,8 +121,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     updatedGoalPeriodPreference: updatedPeriodPreference.deoptionalizedBindingTarget))
 
 
-        lifetime += credentialStore.input <~ SignalProducer(value: resolvedCredential.signal)
-        lifetime += periodPreferenceStore.input <~ SignalProducer(value: updatedPeriodPreference.signal)
+        lifetime += credentialStore.input <~ resolvedCredential.signal
+        lifetime += periodPreferenceStore.input <~ updatedPeriodPreference.signal
 
         window.makeKeyAndOrderFront(nil)
         window.delegate = self
