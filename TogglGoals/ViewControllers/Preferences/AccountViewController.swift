@@ -21,8 +21,7 @@ class AccountViewController: NSViewController, ViewControllerContaining, Binding
     internal typealias Interface = (
         existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
-        testURLSessionAction: TestURLSessionAction,
-        dismiss: BindingTarget<Void>)
+        testURLSessionAction: TestURLSessionAction)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -56,8 +55,7 @@ class AccountViewController: NSViewController, ViewControllerContaining, Binding
         logOutRequested.signal.map { nil as TogglAPITokenCredential? }.bindOnlyToLatest(validBindings.map { $0.resolvedCredential })
         loggedInViewController <~ validBindings.map { (existingCredential: $0.existingCredential,
                                                        testURLSessionAction: $0.testURLSessionAction,
-                                                       logOut: logOutRequested.bindingTarget,
-                                                       dismiss: $0.dismiss) }
+                                                       logOut: logOutRequested.bindingTarget) }
 
         let selectedController = BindingTarget(on: UIScheduler(), lifetime: lifetime) { [unowned self] in
             displayController($0, in: self.view)

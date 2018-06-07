@@ -21,9 +21,7 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
         calendar: SignalProducer<Calendar, NoError>,
         currentDate: SignalProducer<Date, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
-        updatedPreference: BindingTarget<PeriodPreference>,
-        dismiss: BindingTarget<Void>)
-
+        updatedPreference: BindingTarget<PeriodPreference>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -47,10 +45,6 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
     @IBOutlet weak var weeklyGoalStartDayPopUp: NSPopUpButton!
     @IBOutlet weak var currentPeriodStart: NSTextField!
     @IBOutlet weak var currentPeriodEnd: NSTextField!
-
-    @IBAction func dismiss(_ sender: Any) {
-        requestDismissal <~ SignalProducer(value: ())
-    }
 
     // MARK: - State
 
@@ -87,8 +81,6 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
 
     // MARK: - Wiring
 
-    private let requestDismissal = MutableProperty<Void>(())
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -98,7 +90,6 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
 
         let validBindings = lastBinding.producer.skipNil()
         updatedPreference.bindOnlyToLatest(validBindings.map { $0.updatedPreference })
-        requestDismissal.signal.bindOnlyToLatest(validBindings.map { $0.dismiss })
 
         makeRadioButtonSelectionMutuallyExclusive()
         populateWeekdaysPopUpButton()

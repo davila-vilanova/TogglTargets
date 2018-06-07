@@ -21,8 +21,7 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
         existingGoalPeriodPreference: SignalProducer<PeriodPreference, NoError>,
         calendar: SignalProducer<Calendar, NoError>,
         currentDate: SignalProducer<Date, NoError>,
-        updatedGoalPeriodPreference: BindingTarget<PeriodPreference>,
-        dismiss: BindingTarget<Void>)
+        updatedGoalPeriodPreference: BindingTarget<PeriodPreference>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -58,9 +57,9 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
         super.viewDidLoad()
 
         accountViewController <~ lastBinding.producer.skipNil()
-            .map { ($0.existingCredential, $0.resolvedCredential, $0.testURLSessionAction, $0.dismiss) }
+            .map { ($0.existingCredential, $0.resolvedCredential, $0.testURLSessionAction) }
 
         goalPeriodsController <~ lastBinding.producer.skipNil()
-            .map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference, $0.dismiss) }
+            .map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference) }
     }
 }

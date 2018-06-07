@@ -18,8 +18,7 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
     internal typealias Interface = (
         existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
         testURLSessionAction: TestURLSessionAction,
-        logOut: BindingTarget<Void>,
-        dismiss: BindingTarget<Void>)
+        logOut: BindingTarget<Void>)
     // incoming non-nil credential must have been valid at some point, otherwise it wouldn't have made it past the Account VC
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -34,15 +33,10 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
         requestLogOut <~ SignalProducer(value: ())
     }
 
-    @IBAction func dismiss(_ sender: Any) {
-        requestDismissal <~ SignalProducer(value: ())
-    }
-
 
     // MARK: - Wiring
 
     private let requestLogOut = MutableProperty<Void>(())
-    private let requestDismissal = MutableProperty<Void>(())
 
     override func viewDidLoad() {
         let validBindings = lastBinding.producer.skipNil()
@@ -61,6 +55,5 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
         profileImageView.reactive.image <~ profileProducer.map { $0.imageUrl }.skipNil().map { NSImage(contentsOf: $0) }.skipNil()
 
         requestLogOut.signal.bindOnlyToLatest(validBindings.map { $0.logOut })
-        requestDismissal.signal.bindOnlyToLatest(validBindings.map { $0.dismiss })
     }
 }
