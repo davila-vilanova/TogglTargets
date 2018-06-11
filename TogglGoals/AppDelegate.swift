@@ -83,6 +83,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     readReport: modelCoordinator.readReport))
 
         modelCoordinator.apiCredential <~ credentialStore.output.producer.map { $0 as TogglAPICredential? }
+
+        NotificationCenter.default.addObserver(forName: ConfigureUserAccountRequestedNotificationName,
+                                               object: nil,
+                                               queue: OperationQueue.main,
+                                               using: { _ in self.presentPreferences(jumpingTo: .account) })
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -90,6 +95,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     @IBAction func presentPreferences(_ sender: Any) {
+        presentPreferences()
+    }
+
+    private func presentPreferences(jumpingTo prefsSection: PreferencesViewController.Section? = nil) {
         assert(Thread.current.isMainThread)
 
         if let alreadyPresented = presentedPreferencesWindow {
@@ -112,14 +121,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         preferencesController <~ SignalProducer<PreferencesViewController.Interface, NoError>(
-            value: (existingCredential: credentialStore.output.producer,
+            value: (displaySection: SignalProducer(value: prefsSection),
+                    existingCredential: credentialStore.output.producer,
                     resolvedCredential: resolvedCredential.bindingTarget,
                     testURLSessionAction: makeTestURLSessionNetworkAction(),
                     existingGoalPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
                     calendar: calendar.producer,
                     currentDate: currentDateGenerator.currentDate.producer,
                     updatedGoalPeriodPreference: updatedPeriodPreference.deoptionalizedBindingTarget))
-
 
         lifetime += credentialStore.input <~ resolvedCredential.signal
         lifetime += periodPreferenceStore.input <~ updatedPeriodPreference.signal

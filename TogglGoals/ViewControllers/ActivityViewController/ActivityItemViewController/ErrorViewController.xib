@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
@@ -10,7 +10,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="ErrorViewController" customModule="TogglGoals" customModuleProvider="target">
             <connections>
                 <outlet property="descriptionLabel" destination="6wy-94-eag" id="hNB-sB-7I9"/>
-                <outlet property="retryButton" destination="SoR-Qg-ZZm" id="uEI-yn-4N0"/>
+                <outlet property="recoveryButton" destination="SoR-Qg-ZZm" id="uEI-yn-4N0"/>
                 <outlet property="titleLabel" destination="Aco-90-1hl" id="D0v-0u-ByA"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
@@ -38,8 +38,8 @@
                     </textFieldCell>
                 </textField>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SoR-Qg-ZZm">
-                    <rect key="frame" x="202" y="19" width="44" height="19"/>
-                    <buttonCell key="cell" type="roundRect" title="Retry" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAw-c3-PMZ">
+                    <rect key="frame" x="164" y="19" width="82" height="19"/>
+                    <buttonCell key="cell" type="roundRect" title="retry button" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAw-c3-PMZ">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="cellTitle"/>
                     </buttonCell>

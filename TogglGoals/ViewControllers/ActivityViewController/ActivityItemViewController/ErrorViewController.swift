@@ -7,14 +7,19 @@
 //
 
 import Cocoa
+import Result
 import ReactiveSwift
 import ReactiveCocoa
+
+let ConfigureUserAccountRequestedNotificationName = NSNotification.Name(rawValue: "ConfigureUserAccountRequestedNotification")
+
+private typealias RecoveryAction = Action<Void, Void, NoError>
 
 class ErrorViewController: NSViewController {
 
     @IBOutlet weak var titleLabel: NSTextField!
     @IBOutlet weak var descriptionLabel: NSTextField!
-    @IBOutlet weak var retryButton: NSButton!
+    @IBOutlet weak var recoveryButton: NSButton!
 
     func displayError(_ error: APIAccessError, for activityDescription: String, retryAction: RetryAction) {
         representedError.value = (error, activityDescription, retryAction)
@@ -29,11 +34,17 @@ class ErrorViewController: NSViewController {
         let representedErrorProducer = representedError.producer.skipNil()
 
         titleLabel.reactive.text <~ representedErrorProducer.map { $0.1 }.map(errorTitle)
-        descriptionLabel.reactive.text <~ representedErrorProducer.map { $0.0 }.map(errorDescriptionForUser)
+        descriptionLabel.reactive.text <~ representedErrorProducer.map { $0.0 }.map(localizedDescription)
 
-        lifetime += representedErrorProducer.map { $0.2 }.startWithValues { [unowned self] in
-            self.retryButton.reactive.pressed = CocoaAction($0)
-        }
+        recoveryButton.reactive.makeBindingTarget(on: UIScheduler()) { (button, action) in
+            button.reactive.pressed = action
+            } <~ representedErrorProducer.map { ($0.0, $0.2) }
+                .map { (error, retry) in recovery(for: error) ?? retry }
+                .map(CocoaAction.init)
+
+        recoveryButton.reactive.makeBindingTarget(on: UIScheduler(), { (button, title) in
+            button.title = title
+        }) <~ representedErrorProducer.map { $0.0 }.map(recoveryDescription)
     }
 }
 
@@ -41,7 +52,7 @@ fileprivate func errorTitle(with activityDescription: String) -> String {
     return "An error occured while \(activityDescription)"
 }
 
-fileprivate func errorDescriptionForUser(from error: APIAccessError) -> String {
+fileprivate func localizedDescription(for error: APIAccessError) -> String {
     switch error {
     case .noCredentials:
         return "No credentials configured. Please configure your Toggl credentials."
@@ -57,5 +68,25 @@ fileprivate func errorDescriptionForUser(from error: APIAccessError) -> String {
         return "Received what seems not to be an HTTP response: \(response.description)"
     case .otherHTTPError(response: let response):
         return "Received an HTTP error that I don't know how to handle. Response code is \(response.statusCode)."
+    }
+}
+
+fileprivate func recovery(for error: APIAccessError) -> RecoveryAction? {
+    switch error {
+    case .noCredentials:
+        return RecoveryAction {
+            NotificationCenter.default.post(name: ConfigureUserAccountRequestedNotificationName, object: nil)
+            return SignalProducer<Void, NoError>.empty
+        }
+    default: return nil
+    }
+}
+
+fileprivate func recoveryDescription(for error: APIAccessError) -> String {
+    switch error {
+    case .noCredentials:
+        return "Open Preferences"
+    default:
+        return "Retry"
     }
 }
