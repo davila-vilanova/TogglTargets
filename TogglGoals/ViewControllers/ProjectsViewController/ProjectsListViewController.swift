@@ -40,6 +40,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         selectedProjectId: BindingTarget<ProjectID?>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
+        periodPreference: SignalProducer<PeriodPreference, NoError>,
         readProject: ReadProject,
         readGoal: ReadGoal,
         readReport: ReadReport)
@@ -55,6 +56,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     /// Holds the current `Date` input values.
     private let currentDate = MutableProperty<Date?>(nil)
+
+    private let periodPreference = MutableProperty<PeriodPreference?>(nil)
 
     /// Holds the ID of the currently selected project, if any.
     private let selectedProjectID = MutableProperty<ProjectID?>(nil)
@@ -87,6 +90,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         projectIDsByGoals <~ lastBinding.latestOutput { $0.projectIDsByGoals }
         runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
         currentDate <~ lastBinding.latestOutput { $0.currentDate }
+        periodPreference <~ lastBinding.latestOutput { $0.periodPreference }
 
         let lastValidBinding = lastBinding.producer.skipNil()
         readProject <~ lastValidBinding.map { $0.readProject }
@@ -194,6 +198,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                     currentDate.producer.skipNil(),
                     readProject.value!(projectId),
                     readGoal.value!(projectId),
+                    periodPreference.producer.skipNil(),
                     readReport.value!(projectId)))
 
         return projectItem

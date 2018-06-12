@@ -22,6 +22,7 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
         selectedProjectId: BindingTarget<ProjectID?>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
+        periodPreference: SignalProducer<PeriodPreference, NoError>,
         modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
         readProject: ReadProject,
         readGoal: ReadGoal,
@@ -66,6 +67,7 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
              $0.selectedProjectId,
              $0.runningEntry,
              $0.currentDate,
+             $0.periodPreference,
              $0.readProject,
              $0.readGoal,
              $0.readReport)

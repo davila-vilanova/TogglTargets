@@ -18,6 +18,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
         currentDate: SignalProducer<Date, NoError>,
         project: SignalProducer<Project?, NoError>,
         goal: SignalProducer<Goal?, NoError>,
+        periodPreference: SignalProducer<PeriodPreference, NoError>,
         report: SignalProducer<TwoPartTimeReport?, NoError>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -27,6 +28,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     private let currentDate = MutableProperty<Date?>(nil)
     private let project = MutableProperty<Project?>(nil)
     private let goal = MutableProperty<Goal?>(nil)
+    private let periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let report = MutableProperty<TwoPartTimeReport?>(nil)
 
 
@@ -68,18 +70,25 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
         currentDate <~ lastBinding.latestOutput { $0.currentDate }
         project <~ lastBinding.latestOutput { $0.project }
         goal <~ lastBinding.latestOutput { $0.goal }
+        periodPreference <~ lastBinding.latestOutput { $0.periodPreference }
         report <~ lastBinding.latestOutput { $0.report }
 
         projectNameLabel.reactive.text <~ project.map { project -> String in
             return project?.name ?? "(nothing)"
         }
 
-        goalLabel.reactive.text <~ goal.map { goal -> String in
-            if let goal = goal {
-                return "\(goal.hoursTarget) hours per period"
-            } else {
-                return "(no goal)"
-            }
+        goalLabel.reactive.text <~ goal.producer.combineLatest(with: periodPreference.producer.skipNil())
+            .map { goal, periodPreference -> String in
+                let targetPeriodDescription: String
+                switch periodPreference {
+                case .monthly: targetPeriodDescription = "hours per month"
+                case .weekly: targetPeriodDescription = "hours per week"
+                }
+                if let goal = goal {
+                    return "\(goal.hoursTarget) \(targetPeriodDescription)"
+                } else {
+                    return "(no goal)"
+                }
         }
         let workedTimeFromReport = report.map { (reportValueOrNil) -> TimeInterval in
             return reportValueOrNil?.workedTime ?? 0.0

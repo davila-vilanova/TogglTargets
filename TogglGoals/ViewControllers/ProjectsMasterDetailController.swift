@@ -72,6 +72,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      selectedProjectIdTarget,
                      binding.runningEntry,
                      binding.currentDate,
+                     binding.periodPreference,
                      binding.modelRetrievalStatus,
                      binding.readProject,
                      binding.readGoal,
