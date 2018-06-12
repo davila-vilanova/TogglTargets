@@ -27,7 +27,7 @@ class GoalProgress {
     // MARK: - Outputs
 
     public lazy var timeGoal: SignalProducer<TimeInterval, NoError> = {
-        return _goal.producer.skipNil().map { TimeInterval.from(hours: $0.hoursPerMonth) }
+        return _goal.producer.skipNil().map { TimeInterval.from(hours: $0.hoursTarget) }
     }()
 
     // Will be nil if start or end are invalid dates

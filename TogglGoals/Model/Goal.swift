@@ -10,13 +10,13 @@ import Foundation
 
 struct Goal {
     let projectId: Int64
-    var hoursPerMonth: Int
+    var hoursTarget: Int
     var workWeekdays: WeekdaySelection
 
     // TODO: rename argument labels
     init(forProjectId projectId: Int64, hoursPerMonth: Int, workWeekdays: WeekdaySelection) {
         self.projectId = projectId
-        self.hoursPerMonth = hoursPerMonth
+        self.hoursTarget = hoursPerMonth
         self.workWeekdays = workWeekdays
     }
 }
@@ -24,14 +24,14 @@ struct Goal {
 extension Goal: Equatable {
     static func ==(lhs: Goal, rhs: Goal) -> Bool {
         return lhs.projectId == rhs.projectId
-            && lhs.hoursPerMonth == rhs.hoursPerMonth
+            && lhs.hoursTarget == rhs.hoursTarget
             && lhs.workWeekdays == rhs.workWeekdays
     }
 }
 
 extension Goal: Comparable {
     static func <(lhs: Goal, rhs: Goal) -> Bool {
-        return lhs.hoursPerMonth < rhs.hoursPerMonth
+        return lhs.hoursTarget < rhs.hoursTarget
     }
 }
 
@@ -44,7 +44,7 @@ extension Goal {
 extension Goal: CustomDebugStringConvertible {
     var debugDescription: String {
         get {
-            return "Goal(forProjectId: \(projectId), hoursPerMonth: \(hoursPerMonth), workWeekdays: \(workWeekdays))"
+            return "Goal(forProjectId: \(projectId), hoursPerMonth: \(hoursTarget), workWeekdays: \(workWeekdays))"
         }
     }
 }

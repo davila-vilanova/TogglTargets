@@ -73,7 +73,7 @@ class GoalViewController: NSViewController, BindingTargetProvider {
         monthlyHoursGoalField.reactive.text <~ goal.map { [monthlyHoursGoalFormatter] goal in
             if let formatter = monthlyHoursGoalFormatter,
                 let goal = goal,
-                let hoursString = formatter.string(from: NSNumber(value: goal.hoursPerMonth)) {
+                let hoursString = formatter.string(from: NSNumber(value: goal.hoursTarget)) {
                 return hoursString
             } else {
                 return "---"
@@ -105,7 +105,7 @@ class GoalViewController: NSViewController, BindingTargetProvider {
                 guard var goalValue = self.goal.value else {
                     return
                 }
-                goalValue.hoursPerMonth = parsedHours.intValue
+                goalValue.hoursTarget = parsedHours.intValue
                 self.goal.value = goalValue
                 self.userUpdatesPipe.input.send(value: goalValue)
             }

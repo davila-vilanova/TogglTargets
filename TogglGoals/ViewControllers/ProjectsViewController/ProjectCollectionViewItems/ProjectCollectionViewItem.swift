@@ -76,7 +76,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
         goalLabel.reactive.text <~ goal.map { goal -> String in
             if let goal = goal {
-                return "\(goal.hoursPerMonth) hours per month"
+                return "\(goal.hoursTarget) hours per period"
             } else {
                 return "(no goal)"
             }

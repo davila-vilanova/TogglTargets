@@ -204,7 +204,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
     private func storeGoal(_ goal: Goal) {
         try! db.run(goalsTable.insert(or: .replace,
                                       projectIdExpression <- goal.projectId,
-                                      hoursPerMonthExpression <- goal.hoursPerMonth,
+                                      hoursPerMonthExpression <- goal.hoursTarget,
                                       workWeekdaysExpression <- goal.workWeekdays))
         // TODO: synchronize periodically instead of writing immediately
     }
