@@ -24,7 +24,7 @@ typealias RefreshAction = Action<Void, Void, NoError>
 ///   profile and delimited by the periods of time represented by the `TwoPartTimeReportPeriod` values
 ///   received through the `twoPartReportPeriod` binding target. The reports are fetched whenever new
 ///   workspace IDs or new time period values become available.
-/// * Retrieves the running time on demand.
+/// * Retrieves the running time entry on demand.
 protocol TogglAPIDataRetriever: class {
 
     // MARK: - Exposed binding targets
@@ -52,7 +52,7 @@ protocol TogglAPIDataRetriever: class {
     /// project ID, as they become available.
     var reports: Property<IndexedTwoPartTimeReports?> { get }
 
-    /// Holds and publishes the current time entry or `nil` for no time entry whenever it is retrieved.
+    /// Holds and publishes the last retrieved current time entry or `nil` for no time entry..
     var runningEntry: Property<RunningEntry?> { get }
 
 
@@ -62,11 +62,11 @@ protocol TogglAPIDataRetriever: class {
     /// currently running entry.
     var refreshAllData: RefreshAction { get }
 
-    /// Triggers and attempt to retrieve the currently running time entry.
+    /// Triggers an attempt to retrieve the currently running time entry.
     var updateRunningEntry: RefreshAction { get }
 
-    /// Triggers and attempt to refresh the reports from the Toggl API.
     var refreshReports: RefreshAction { get }
+    /// Triggers an attempt to refresh the report for the given project ID from the Toggl API.
 
     // MARK: - Activity and Errors
 
@@ -268,7 +268,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// The `Action` used to retrieve the currently running time entry from the Toggl API.
     private var retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction!
 
-    /// Holds and publishes the current time entry or `nil` for no time entry whenever it is retrieved.
+    /// Holds and publishes the last retrieved current time entry or `nil` for no time entry.
     internal lazy var runningEntry = Property<RunningEntry?>(initial: nil, then: retrieveRunningEntryNetworkAction.values)
 
 

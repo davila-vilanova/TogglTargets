@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 
 
-/// Combines data from the Toggl API and the user's goals.
+/// Combines data from the Toggl API, the user's goals and the system's time and date.
 /// Determines the dates of the reports to retrieve based on the user's period
 /// preference and the current date.
 /// Keeps the running entry up to date and triggers updates to the current date
