@@ -292,16 +292,15 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Triggers an attempt to retrieve the user profile, projects, reports and
     /// currently running entry.
-    lazy var refreshAllData = RefreshAction(enabledIf: urlSession.map { $0 != nil }.and(retrieveProfileNetworkAction.isEnabled)) { [weak self] _ in
-        // TODO revisit all weak and unowned references to self inside closures
+    lazy var refreshAllData = RefreshAction(state: urlSession.combineLatest(with: retrieveProfileNetworkAction.isEnabled),
+                                            enabledIf: { $0.0 != nil && $0.1 } )
+    { [weak self] (state, _) in
         guard let retriever = self else {
             return SignalProducer.empty
         }
 
-        retriever.retrieveProfileNetworkAction <~ SignalProducer(value: ())
-
-        // Start syncing running entry the first time a URLSession with a credential is available
-        retriever.updateRunningEntry <~ retriever.urlSession.map { $0?.isCredentialSet == true }.map { _ in () }
+        retriever.retrieveProfileNetworkAction.apply(state.0!).start()
+        retriever.updateRunningEntry <~ SignalProducer(value: ())
 
         return SignalProducer.empty
     }
@@ -359,7 +358,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
                 return extractStatus(from: action, for: activity, retryErrorsWith: SignalProducer(value: ()))
         }
 
-        return SignalProducer.merge(extractStatus(from: retrieveProfileNetworkAction, for: .syncProfile),
+        return SignalProducer.merge(extractStatus(from: retrieveProfileNetworkAction, for: .syncProfile, retryErrorsWith: urlSession.producer.skipNil()),
                                     extractStatus(from: retrieveProjectsNetworkAction, for: .syncProjects, retryErrorsWith: workspaceIDs),
                                     extractStatus(from: retrieveReportsNetworkAction, for: .syncReports, retryErrorsWith: SignalProducer.combineLatest(workspaceIDs, _twoPartReportPeriod.producer.skipNil())),
                                     extractStatus(from: retrieveRunningEntryNetworkAction, for: .syncRunningEntry))
@@ -399,7 +398,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         self.retrieveProfileCacheAction = retrieveProfileCacheAction
         self.storeProfileCacheAction = storeProfileCacheAction
 
-        self.retrieveProfileNetworkAction = retrieveProfileNetworkActionMaker(urlSession)
+        self.retrieveProfileNetworkAction = retrieveProfileNetworkActionMaker()
         self.retrieveProjectsNetworkAction = retrieveProjectsNetworkActionMaker(urlSession)
         self.retrieveReportsNetworkAction = retrieveReportsNetworkActionMaker(urlSession)
         self.retrieveRunningEntryNetworkAction = retrieveRunningEntryNetworkActionMaker(urlSession)
@@ -410,15 +409,9 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         _ = reports
         _ = runningEntry
 
-        
-        let refreshOnURLSessionChange: Signal<Void, NoError> =
-            urlSession.signal
-                .throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
-                .map { _ in () }
-        refreshAllData <~ refreshOnURLSessionChange
-
-        storeProfileCacheAction <~ retrieveProfileNetworkAction.values
             .throttle(while: storeProfileCacheAction.isExecuting, on: scheduler)
+
+        retrieveProfileNetworkAction <~ urlSession.producer.skipNil()
 
         retrieveProjectsNetworkAction <~ workspaceIDs
             .throttle(while: retrieveProjectsNetworkAction.isExecuting, on: scheduler)
@@ -426,6 +419,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         retrieveReportsNetworkAction <~ SignalProducer.combineLatest(workspaceIDs,
                                                                      _twoPartReportPeriod.producer.skipNil())
             .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
+
+        updateRunningEntry <~ SignalProducer(value: ())
 
         // Nudge retrieve cache actions to pump the pipes
         retrieveProfileCacheAction <~ SignalProducer(value: ())

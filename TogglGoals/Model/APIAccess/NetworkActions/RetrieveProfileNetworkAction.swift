@@ -9,12 +9,12 @@
 import Foundation
 import ReactiveSwift
 
-typealias RetrieveProfileNetworkAction = Action<Void, Profile, APIAccessError>
+typealias RetrieveProfileNetworkAction = Action<URLSession, Profile, APIAccessError>
 
-typealias RetrieveProfileNetworkActionMaker = (Property<URLSession?>) -> RetrieveProfileNetworkAction
+typealias RetrieveProfileNetworkActionMaker = () -> RetrieveProfileNetworkAction
 
-func makeRetrieveProfileNetworkAction(_ urlSession: Property<URLSession?>) -> RetrieveProfileNetworkAction {
-    return RetrieveProfileNetworkAction(unwrapping: urlSession) { (session, _) in
+func makeRetrieveProfileNetworkAction() -> RetrieveProfileNetworkAction {
+    return RetrieveProfileNetworkAction { session in
         session.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
     }
 }
