@@ -167,7 +167,7 @@ extension ActivityStatus: Hashable {
         switch lhs {
         case .executing(_): return rhs.isExecuting
         case .succeeded(_): return rhs.isSuccessful
-        case .error(_, _, _): return rhs.isError // Error and retryAction themselves don't contribute to equality
+        case .error(_, _, _): return rhs.isError // Error itself and retryAction don't contribute to equality
         }
     }
 
