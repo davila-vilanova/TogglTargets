@@ -409,6 +409,10 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         _ = reports
         _ = runningEntry
 
+        let noCredentialsErrors = retrieveProfileNetworkAction.errors.filter(isNoCredentialsError)
+
+        storeProfileCacheAction <~ Signal.merge(retrieveProfileNetworkAction.values.map { Optional($0) },
+                                                noCredentialsErrors.map { _ -> Profile? in nil })
             .throttle(while: storeProfileCacheAction.isExecuting, on: scheduler)
 
         retrieveProfileNetworkAction <~ urlSession.producer.skipNil()
@@ -424,5 +428,14 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
         // Nudge retrieve cache actions to pump the pipes
         retrieveProfileCacheAction <~ SignalProducer(value: ())
+    }
+}
+
+fileprivate func isNoCredentialsError(_ error: APIAccessError) -> Bool {
+    switch error {
+    case .noCredentials:
+        return true
+    default:
+        return false
     }
 }
