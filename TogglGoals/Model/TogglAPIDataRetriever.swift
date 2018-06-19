@@ -241,7 +241,10 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Holds and publishes `IndexedProjects` values, or projects indexed by project ID, as they
     /// become available.
-    internal lazy var projects = Property<IndexedProjects?>(initial: nil, then: retrieveProjectsNetworkAction.values)
+    internal lazy var projects: Property<IndexedProjects?> = {
+        let emptyOnNoCredentials = retrieveProfileNetworkAction.errors.filter(isNoCredentialsError).logEvents().map { _ in IndexedProjects() }
+        return Property(initial: nil, then: Signal.merge(retrieveProjectsNetworkAction.values, emptyOnNoCredentials))
+    }()
 
 
     // MARK: - Reports
