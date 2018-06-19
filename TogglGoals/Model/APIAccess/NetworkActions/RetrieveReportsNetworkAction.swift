@@ -9,10 +9,6 @@
 import Foundation
 import ReactiveSwift
 
-/// A dictionary of `TwoPartTimeReport` values indexed by their corresponding
-/// project ID.
-typealias IndexedTwoPartTimeReports = [ProjectID : TwoPartTimeReport]
-
 /// Action that takes an array of `WorkspaceID` values and a two-part period,
 /// retrieves from the Toggl API the corresponding time reports and merges them
 /// in an `IndexedTwoPartTimeReports` dictionary.

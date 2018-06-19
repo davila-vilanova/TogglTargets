@@ -13,6 +13,11 @@ import ReactiveSwift
 typealias StoreProfileCacheAction  = Action<Profile?, (), NoError>
 func makeStoreProfileCacheAction() -> StoreProfileCacheAction {
     return StoreProfileCacheAction { profile in
-        SignalProducer.empty // TODO
+        if profile != nil {
+            print("would store profile in cache")
+        } else {
+            print("would delete profile from cache")
+        }
+        return SignalProducer.empty // TODO
     }
 }

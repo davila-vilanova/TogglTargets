@@ -13,6 +13,7 @@ import ReactiveSwift
 typealias RetrieveProfileCacheAction = Action<(), Profile?, NoError>
 func makeRetrieveProfileCacheAction() -> RetrieveProfileCacheAction {
     return RetrieveProfileCacheAction {
-        SignalProducer<Profile?, NoError>(value: nil) // TODO
+        print("would retrieve profile from cache")
+        return SignalProducer<Profile?, NoError>(value: nil) // TODO
     }
 }

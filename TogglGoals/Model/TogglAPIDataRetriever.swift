@@ -211,6 +211,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     private lazy var urlSession = Property<URLSession?>(
         initial: nil, then: _apiCredential.producer.map(URLSession.init))
 
+    private lazy var noCredentialsEvents: Signal<(), NoError> = retrieveProfileNetworkAction.errors.filter(isNoCredentialsError).map { _ in () }
 
     // MARK: - Profile
 
@@ -239,11 +240,19 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// The `Action` used to retrieve projects from the Toggl API.
     private var retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction!
 
+    /// The `Action` used to retrieve projects from the local cache.
+    private let retrieveProjectsCacheAction: RetrieveProjectsCacheAction
+
+    /// The `Action` used to store projects into the local cache.
+    private let storeProjectsCacheAction: StoreProjectsCacheAction
+
     /// Holds and publishes `IndexedProjects` values, or projects indexed by project ID, as they
     /// become available.
     internal lazy var projects: Property<IndexedProjects?> = {
-        let emptyOnNoCredentials = retrieveProfileNetworkAction.errors.filter(isNoCredentialsError).logEvents().map { _ in IndexedProjects() }
-        return Property(initial: nil, then: Signal.merge(retrieveProjectsNetworkAction.values, emptyOnNoCredentials))
+        let retrievedFromNetwork = retrieveProjectsNetworkAction.values
+        let retrievedFromCache = retrieveProjectsCacheAction.values.skipNil()
+        let emptyOnNoCredentials = noCredentialsEvents.map { IndexedProjects() }
+        return Property(initial: nil, then: Signal.merge(retrievedFromNetwork, retrievedFromCache, emptyOnNoCredentials))
     }()
 
 
@@ -261,9 +270,20 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// The `Action` used to retrieve reports from the Toggl API.
     private var retrieveReportsNetworkAction: RetrieveReportsNetworkAction!
 
+    /// The `Action` used to retrieve reports from the local cache.
+    private let retrieveReportsCacheAction: RetrieveReportsCacheAction
+
+    /// The `Action` used to store projects into the local cache.
+    private let storeReportsCacheAction: StoreReportsCacheAction
+
     /// Holds and publishes `IndexedTwoPartTimeReports` values, or two-part time reports indexed by
     /// project ID, as they become available.
-    internal lazy var reports = Property<IndexedTwoPartTimeReports?>(initial: nil, then: retrieveReportsNetworkAction.values)
+    internal lazy var reports: Property<IndexedTwoPartTimeReports?> = {
+        let retrievedFromNetwork = retrieveReportsNetworkAction.values
+        let retrievedFromCache = retrieveReportsCacheAction.values.skipNil()
+        let emptyOnNoCredentials = noCredentialsEvents.map { IndexedTwoPartTimeReports() }
+        return Property(initial: nil, then: Signal.merge(retrievedFromNetwork, retrievedFromCache, emptyOnNoCredentials))
+    }()
 
 
     // MARK: - RunningEntry
@@ -393,13 +413,21 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
          retrieveProfileCacheAction: RetrieveProfileCacheAction,
          storeProfileCacheAction: StoreProfileCacheAction,
          retrieveProjectsNetworkActionMaker: RetrieveProjectsNetworkActionMaker,
+         retrieveProjectsCacheAction: RetrieveProjectsCacheAction,
+         storeProjectsCacheAction: StoreProjectsCacheAction,
          retrieveReportsNetworkActionMaker: RetrieveReportsNetworkActionMaker,
+         retrieveReportsCacheAction: RetrieveReportsCacheAction,
+         storeReportsCacheAction: StoreReportsCacheAction,
          retrieveRunningEntryNetworkActionMaker: RetrieveRunningEntryNetworkActionMaker) {
 
         (lifetime, lifetimeToken) = Lifetime.make()
 
         self.retrieveProfileCacheAction = retrieveProfileCacheAction
         self.storeProfileCacheAction = storeProfileCacheAction
+        self.retrieveProjectsCacheAction = retrieveProjectsCacheAction
+        self.storeProjectsCacheAction = storeProjectsCacheAction
+        self.retrieveReportsCacheAction = retrieveReportsCacheAction
+        self.storeReportsCacheAction = storeReportsCacheAction
 
         self.retrieveProfileNetworkAction = retrieveProfileNetworkActionMaker()
         self.retrieveProjectsNetworkAction = retrieveProjectsNetworkActionMaker(urlSession)
@@ -412,13 +440,19 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         _ = reports
         _ = runningEntry
 
-        let noCredentialsErrors = retrieveProfileNetworkAction.errors.filter(isNoCredentialsError)
 
         storeProfileCacheAction <~ Signal.merge(retrieveProfileNetworkAction.values.map { Optional($0) },
-                                                noCredentialsErrors.map { _ -> Profile? in nil })
+                                                noCredentialsEvents.map { nil })
             .throttle(while: storeProfileCacheAction.isExecuting, on: scheduler)
 
+        storeProjectsCacheAction <~ Signal.merge(retrieveProjectsNetworkAction.values.map { Optional($0) },
+                                                 noCredentialsEvents.map { nil })
+
+        storeReportsCacheAction <~ Signal.merge(retrieveReportsNetworkAction.values.map { Optional($0) },
+                                                noCredentialsEvents.map { nil })
+
         retrieveProfileNetworkAction <~ urlSession.producer.skipNil()
+            .throttle(while: retrieveProfileNetworkAction.isExecuting, on: scheduler)
 
         retrieveProjectsNetworkAction <~ workspaceIDs
             .throttle(while: retrieveProjectsNetworkAction.isExecuting, on: scheduler)

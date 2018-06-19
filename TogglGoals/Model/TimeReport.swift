@@ -55,3 +55,7 @@ struct ReportEntry: Decodable {
     let id: Int64
     let time: TimeInterval
 }
+
+/// A dictionary of `TwoPartTimeReport` values indexed by their corresponding
+/// project ID.
+typealias IndexedTwoPartTimeReports = [ProjectID : TwoPartTimeReport]
