@@ -20,7 +20,7 @@ typealias RetrieveProjectsNetworkAction = Action<([WorkspaceID]), IndexedProject
 /// enabled whenever the the provided `Property` holds a non-`nil` value.
 ///
 /// This can be used to inject a `RetrieveProjectsNetworkAction` into an entity
-/// that needs to make the `Action` depend from the state of its `URLSession`.
+/// that needs to make the `Action` depend on the state of its `URLSession`.
 typealias RetrieveProjectsNetworkActionMaker = (Property<URLSession?>) -> RetrieveProjectsNetworkAction
 
 /// A concrete, non-mock implementation of `RetrieveProjectsNetworkActionMaker`.

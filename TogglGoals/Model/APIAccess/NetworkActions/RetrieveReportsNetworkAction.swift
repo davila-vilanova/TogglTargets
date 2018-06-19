@@ -25,7 +25,7 @@ typealias RetrieveReportsNetworkAction =
 /// that is enabled whenever the the provided `Property` holds a non-`nil` value.
 ///
 /// This can be used to inject a `RetrieveReportsNetworkAction` into an entity
-/// that needs to make the `Action` depend from the state of its `URLSession`.
+/// that needs to make the `Action` depend on the state of its `URLSession`.
 typealias RetrieveReportsNetworkActionMaker = (Property<URLSession?>) -> RetrieveReportsNetworkAction
 
 /// A concrete, non-mock implementation of `RetrieveReportsNetworkActionMaker`.
