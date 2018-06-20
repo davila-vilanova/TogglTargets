@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="qcD-Qd-jkJ">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="qcD-Qd-jkJ">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
@@ -401,18 +401,18 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
-                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1kO-gf-Psr">
+                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1kO-gf-Psr">
                                 <rect key="frame" x="117" y="42" width="214" height="65"/>
                                 <subviews>
                                     <button horizontalHuggingPriority="270" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="e9U-8j-qE7">
-                                        <rect key="frame" x="-1" y="24" width="64" height="18"/>
+                                        <rect key="frame" x="-1" y="48" width="64" height="18"/>
                                         <buttonCell key="cell" type="radio" title="weekly" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="oVQ-XK-S6M">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="o1h-Dr-imu">
-                                        <rect key="frame" x="67" y="24" width="70" height="17"/>
+                                        <rect key="frame" x="67" y="48" width="70" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="starting on" id="zAY-Ev-8Tw">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" red="0.4756349325" green="0.47564673419999998" blue="0.47564041610000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -420,7 +420,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <popUpButton horizontalHuggingPriority="260" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iax-dd-6YJ">
-                                        <rect key="frame" x="141" y="19" width="76" height="26"/>
+                                        <rect key="frame" x="141" y="41" width="76" height="26"/>
                                         <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Olx-ko-dlQ" id="rXZ-F1-DX4">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
