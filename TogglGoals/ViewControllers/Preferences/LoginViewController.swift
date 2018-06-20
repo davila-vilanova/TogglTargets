@@ -21,6 +21,13 @@ fileprivate enum CredentialValidationResult {
     case error(APIAccessError)
     /// internal inconsistency, should not happen
     case other
+
+    var isError: Bool {
+        switch (self) {
+        case .error: return true
+        default: return false
+        }
+    }
 }
 
 class LoginViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
@@ -140,6 +147,9 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
         })
 
         loginButton.reactive.pressed = CocoaAction(validateCredential)
+        loginButton.reactive.makeBindingTarget {
+            $0.title = $1
+        } <~ validateCredential.values.filter { $0.isError }.map { _ in "retry" }
 
 
         // Take validated / resolved token credential from action's output
