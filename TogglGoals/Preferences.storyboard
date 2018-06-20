@@ -125,11 +125,11 @@
             <objects>
                 <viewController id="Luk-hD-CZ9" customClass="EmailPasswordViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="EAt-GK-mDh">
-                        <rect key="frame" x="0.0" y="0.0" width="365" height="126"/>
+                        <rect key="frame" x="0.0" y="0.0" width="365" height="130"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AgI-42-GN7">
-                                <rect key="frame" x="-2" y="57" width="88" height="17"/>
+                                <rect key="frame" x="-2" y="61" width="88" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="email address" id="ie6-ix-81j">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -137,7 +137,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CpQ-D4-tc7">
-                                <rect key="frame" x="23" y="25" width="63" height="17"/>
+                                <rect key="frame" x="23" y="29" width="63" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="password" id="a3O-vG-gUE">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -145,7 +145,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oDY-SB-O5V">
-                                <rect key="frame" x="92" y="54" width="273" height="22"/>
+                                <rect key="frame" x="92" y="58" width="273" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="4pe-wi-rAD"/>
                                 </constraints>
@@ -159,7 +159,7 @@
                                 </connections>
                             </textField>
                             <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mB4-Z1-BU4">
-                                <rect key="frame" x="92" y="22" width="273" height="22"/>
+                                <rect key="frame" x="92" y="26" width="273" height="22"/>
                                 <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="never stored" drawsBackground="YES" usesSingleLineMode="YES" id="ZMn-4F-meU">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -173,7 +173,7 @@
                                 </connections>
                             </secureTextField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="jic-nM-A25">
-                                <rect key="frame" x="-2" y="84" width="369" height="42"/>
+                                <rect key="frame" x="-2" y="88" width="369" height="42"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="wPd-OZ-akN">
                                     <font key="font" metaFont="smallSystem"/>
                                     <string key="title">Your email address and password will be used to retrieve an API token for accessing your default workspace, projects and reports from toggl</string>
@@ -181,38 +181,33 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Y5J-qH-SCf">
-                                <rect key="frame" x="234" y="0.0" width="133" height="14"/>
-                                <gestureRecognizers>
-                                    <clickGestureRecognizer delaysPrimaryMouseButtonEvents="YES" numberOfClicksRequired="1" id="5f0-xd-LOt">
-                                        <connections>
-                                            <action selector="switchToDirectTokenEntry:" target="Luk-hD-CZ9" id="XBC-JN-OIt"/>
-                                        </connections>
-                                    </clickGestureRecognizer>
-                                </gestureRecognizers>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="enter API token directly" id="5za-YF-kyu">
-                                    <font key="font" metaFont="systemSemibold" size="11"/>
-                                    <color key="textColor" red="0.0" green="0.58980089430000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5SX-NP-rak">
+                                <rect key="frame" x="222" y="-1" width="143" height="19"/>
+                                <buttonCell key="cell" type="recessed" title="enter API token manually" bezelStyle="recessed" alignment="center" scrollable="YES" lineBreakMode="clipping" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="84F-Y3-9no">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" size="11" name=".SFNSText"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="switchToDirectTokenEntry:" target="Luk-hD-CZ9" id="F5r-jN-tnT"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="mB4-Z1-BU4" firstAttribute="leading" secondItem="oDY-SB-O5V" secondAttribute="leading" id="2CH-N8-9M3"/>
                             <constraint firstItem="AgI-42-GN7" firstAttribute="leading" secondItem="EAt-GK-mDh" secondAttribute="leading" id="2KM-Cc-DbC"/>
+                            <constraint firstItem="5SX-NP-rak" firstAttribute="top" secondItem="mB4-Z1-BU4" secondAttribute="bottom" constant="8" symbolic="YES" id="A4z-dn-VYV"/>
                             <constraint firstAttribute="trailing" secondItem="oDY-SB-O5V" secondAttribute="trailing" id="Gms-RS-POQ"/>
                             <constraint firstItem="mB4-Z1-BU4" firstAttribute="top" secondItem="oDY-SB-O5V" secondAttribute="bottom" constant="10" symbolic="YES" id="PX1-PT-kt7"/>
-                            <constraint firstAttribute="trailing" secondItem="Y5J-qH-SCf" secondAttribute="trailing" id="am7-dg-SqN"/>
+                            <constraint firstAttribute="trailing" secondItem="5SX-NP-rak" secondAttribute="trailing" id="UAF-Ym-JQe"/>
+                            <constraint firstAttribute="bottom" secondItem="5SX-NP-rak" secondAttribute="bottom" id="YLg-S3-TJy"/>
                             <constraint firstItem="oDY-SB-O5V" firstAttribute="top" secondItem="jic-nM-A25" secondAttribute="bottom" constant="8" symbolic="YES" id="b2R-1I-soZ"/>
                             <constraint firstItem="oDY-SB-O5V" firstAttribute="baseline" secondItem="AgI-42-GN7" secondAttribute="baseline" id="cTT-iW-U87"/>
                             <constraint firstAttribute="trailing" secondItem="mB4-Z1-BU4" secondAttribute="trailing" id="lEb-Mx-IMI"/>
                             <constraint firstItem="mB4-Z1-BU4" firstAttribute="baseline" secondItem="CpQ-D4-tc7" secondAttribute="baseline" id="lHO-LU-l4D"/>
                             <constraint firstAttribute="trailing" secondItem="jic-nM-A25" secondAttribute="trailing" id="mXC-AG-XcE"/>
-                            <constraint firstAttribute="bottom" secondItem="Y5J-qH-SCf" secondAttribute="bottom" id="o6a-0h-ECw"/>
                             <constraint firstItem="jic-nM-A25" firstAttribute="top" secondItem="EAt-GK-mDh" secondAttribute="top" id="pwW-Am-yt2"/>
                             <constraint firstItem="oDY-SB-O5V" firstAttribute="leading" secondItem="AgI-42-GN7" secondAttribute="trailing" constant="8" symbolic="YES" id="wGW-8w-YBf"/>
                             <constraint firstItem="jic-nM-A25" firstAttribute="leading" secondItem="EAt-GK-mDh" secondAttribute="leading" id="xCP-Xa-n0B"/>
-                            <constraint firstItem="Y5J-qH-SCf" firstAttribute="top" secondItem="mB4-Z1-BU4" secondAttribute="bottom" constant="8" symbolic="YES" id="xn3-ba-kYU"/>
                             <constraint firstItem="mB4-Z1-BU4" firstAttribute="leading" secondItem="CpQ-D4-tc7" secondAttribute="trailing" constant="8" symbolic="YES" id="zhe-zy-xH2"/>
                         </constraints>
                     </view>
@@ -317,11 +312,11 @@
             <objects>
                 <viewController id="ySu-bD-nwW" customClass="APITokenViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="d9g-Vu-E5t">
-                        <rect key="frame" x="0.0" y="0.0" width="416" height="66"/>
+                        <rect key="frame" x="0.0" y="0.0" width="416" height="70"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="B0e-u9-7hF">
-                                <rect key="frame" x="-2" y="25" width="62" height="17"/>
+                                <rect key="frame" x="-2" y="29" width="62" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="API token" id="4FU-Dn-LAc">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -329,30 +324,15 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Zmy-Gi-epx">
-                                <rect key="frame" x="-2" y="52" width="420" height="14"/>
+                                <rect key="frame" x="-2" y="56" width="420" height="14"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="You can find your API token in your profile settings page in the toggl web app" id="KI3-o6-5P0">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gsB-cP-m42">
-                                <rect key="frame" x="269" y="0.0" width="149" height="14"/>
-                                <gestureRecognizers>
-                                    <clickGestureRecognizer delaysPrimaryMouseButtonEvents="YES" numberOfClicksRequired="1" id="Yzg-zz-GQB">
-                                        <connections>
-                                            <action selector="switchToEmailPasswordEntry:" target="ySu-bD-nwW" id="U5h-iW-1Lb"/>
-                                        </connections>
-                                    </clickGestureRecognizer>
-                                </gestureRecognizers>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="fetch my API token for me!" id="g7z-dI-rtd">
-                                    <font key="font" metaFont="systemSemibold" size="11"/>
-                                    <color key="textColor" red="0.0" green="0.58980089430000004" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nc2-ol-WcM">
-                                <rect key="frame" x="66" y="22" width="350" height="22"/>
+                                <rect key="frame" x="66" y="26" width="350" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="HCd-hZ-Y9D"/>
                                 </constraints>
@@ -362,17 +342,27 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UTy-eG-7hT">
+                                <rect key="frame" x="266" y="-1" width="150" height="19"/>
+                                <buttonCell key="cell" type="recessed" title="fetch my API token for me" bezelStyle="recessed" alignment="center" scrollable="YES" lineBreakMode="clipping" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SsQ-mn-B1j">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="smallSystem"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="switchToEmailPasswordEntry:" target="ySu-bD-nwW" id="CCs-Ll-LNI"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="nc2-ol-WcM" firstAttribute="baseline" secondItem="B0e-u9-7hF" secondAttribute="baseline" id="ARe-id-lpL"/>
                             <constraint firstAttribute="trailing" secondItem="nc2-ol-WcM" secondAttribute="trailing" id="CUJ-OZ-cOj"/>
+                            <constraint firstItem="UTy-eG-7hT" firstAttribute="top" secondItem="nc2-ol-WcM" secondAttribute="bottom" constant="8" symbolic="YES" id="Emh-vc-sqV"/>
                             <constraint firstItem="Zmy-Gi-epx" firstAttribute="leading" secondItem="d9g-Vu-E5t" secondAttribute="leading" id="MO6-X7-yxy"/>
-                            <constraint firstItem="gsB-cP-m42" firstAttribute="top" secondItem="nc2-ol-WcM" secondAttribute="bottom" constant="8" symbolic="YES" id="Mrj-Y1-MzU"/>
-                            <constraint firstAttribute="bottom" secondItem="gsB-cP-m42" secondAttribute="bottom" id="S6i-Pu-IFi"/>
                             <constraint firstItem="nc2-ol-WcM" firstAttribute="leading" secondItem="B0e-u9-7hF" secondAttribute="trailing" constant="8" symbolic="YES" id="VFg-QU-GCs"/>
                             <constraint firstItem="Zmy-Gi-epx" firstAttribute="top" secondItem="d9g-Vu-E5t" secondAttribute="top" id="WEZ-bQ-fVC"/>
-                            <constraint firstAttribute="trailing" secondItem="gsB-cP-m42" secondAttribute="trailing" id="hYi-vZ-jjl"/>
+                            <constraint firstAttribute="trailing" secondItem="UTy-eG-7hT" secondAttribute="trailing" id="WGB-tp-2JV"/>
                             <constraint firstItem="B0e-u9-7hF" firstAttribute="leading" secondItem="d9g-Vu-E5t" secondAttribute="leading" id="lC3-cV-dlY"/>
+                            <constraint firstAttribute="bottom" secondItem="UTy-eG-7hT" secondAttribute="bottom" id="lfW-Ly-LAB"/>
                             <constraint firstItem="nc2-ol-WcM" firstAttribute="top" secondItem="Zmy-Gi-epx" secondAttribute="bottom" constant="8" symbolic="YES" id="nmt-ev-d1u"/>
                             <constraint firstAttribute="trailing" secondItem="Zmy-Gi-epx" secondAttribute="trailing" id="we8-bw-3HM"/>
                         </constraints>
