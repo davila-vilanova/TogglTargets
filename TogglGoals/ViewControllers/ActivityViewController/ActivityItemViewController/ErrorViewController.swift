@@ -73,7 +73,7 @@ fileprivate func localizedDescription(for error: APIAccessError) -> String {
 
 fileprivate func recovery(for error: APIAccessError) -> RecoveryAction? {
     switch error {
-    case .noCredentials:
+    case .noCredentials, .authenticationError:
         return RecoveryAction {
             NotificationCenter.default.post(name: ConfigureUserAccountRequestedNotificationName, object: nil)
             return SignalProducer<Void, NoError>.empty
@@ -84,7 +84,7 @@ fileprivate func recovery(for error: APIAccessError) -> RecoveryAction? {
 
 fileprivate func recoveryDescription(for error: APIAccessError) -> String {
     switch error {
-    case .noCredentials:
+    case .noCredentials, .authenticationError:
         return "Open Preferences"
     default:
         return "Retry"
