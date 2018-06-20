@@ -62,14 +62,14 @@
             <objects>
                 <viewController id="dvF-Cf-Qok" customClass="LoginViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kBz-yA-1xn">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="252"/>
+                        <rect key="frame" x="0.0" y="0.0" width="432" height="252"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Nal-sn-bL2">
-                                <rect key="frame" x="326" y="23" width="16" height="16"/>
+                                <rect key="frame" x="308" y="23" width="16" height="16"/>
                             </progressIndicator>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eiy-Oe-NmO">
-                                <rect key="frame" x="344" y="13" width="92" height="32"/>
+                                <rect key="frame" x="326" y="13" width="92" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="80" id="3gS-wa-TY4"/>
                                 </constraints>
@@ -79,8 +79,9 @@
                                 </buttonCell>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="sK3-Rd-Chx">
-                                <rect key="frame" x="20" y="61" width="410" height="171"/>
+                                <rect key="frame" x="20" y="61" width="392" height="171"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="500" id="Uxr-w4-pdD"/>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="hJh-vE-gdJ"/>
                                 </constraints>
                             </customView>
@@ -117,7 +118,7 @@
                 </viewController>
                 <customObject id="e6B-cn-KmC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1302" y="-522"/>
+            <point key="canvasLocation" x="1248" y="-522"/>
         </scene>
         <!--Email Password View Controller-->
         <scene sceneID="WoN-Sb-uiO">
@@ -145,6 +146,9 @@
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oDY-SB-O5V">
                                 <rect key="frame" x="92" y="54" width="273" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="4pe-wi-rAD"/>
+                                </constraints>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="axF-BO-hro">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -170,7 +174,7 @@
                             </secureTextField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="jic-nM-A25">
                                 <rect key="frame" x="-2" y="84" width="369" height="42"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="wPd-OZ-akN">
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="wPd-OZ-akN">
                                     <font key="font" metaFont="smallSystem"/>
                                     <string key="title">Your email address and password will be used to retrieve an API token for accessing your default workspace, projects and reports from toggl.</string>
                                     <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
@@ -313,7 +317,7 @@
             <objects>
                 <viewController id="ySu-bD-nwW" customClass="APITokenViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="d9g-Vu-E5t">
-                        <rect key="frame" x="0.0" y="0.0" width="363" height="80"/>
+                        <rect key="frame" x="0.0" y="0.0" width="416" height="66"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="B0e-u9-7hF">
@@ -325,15 +329,15 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Zmy-Gi-epx">
-                                <rect key="frame" x="-2" y="52" width="367" height="28"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="You can find your API token in your profile settings page in the toggl web app." id="KI3-o6-5P0">
+                                <rect key="frame" x="-2" y="52" width="420" height="14"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="You can find your API token in your profile settings page in the toggl web app." id="KI3-o6-5P0">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gsB-cP-m42">
-                                <rect key="frame" x="216" y="0.0" width="149" height="14"/>
+                                <rect key="frame" x="269" y="0.0" width="149" height="14"/>
                                 <gestureRecognizers>
                                     <clickGestureRecognizer delaysPrimaryMouseButtonEvents="YES" numberOfClicksRequired="1" id="Yzg-zz-GQB">
                                         <connections>
@@ -348,7 +352,10 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nc2-ol-WcM">
-                                <rect key="frame" x="66" y="22" width="297" height="22"/>
+                                <rect key="frame" x="66" y="22" width="350" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="HCd-hZ-Y9D"/>
+                                </constraints>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="YBy-cJ-99e">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -511,6 +518,7 @@
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="1kO-gf-Psr" secondAttribute="trailing" constant="20" symbolic="YES" id="lJ0-ll-PvI"/>
                             <constraint firstItem="oZs-KT-MV2" firstAttribute="leading" secondItem="kQJ-7X-Tb0" secondAttribute="leading" constant="20" symbolic="YES" id="u9c-gi-I1P"/>
                             <constraint firstItem="qLC-9r-PPb" firstAttribute="top" secondItem="1kO-gf-Psr" secondAttribute="bottom" constant="8" symbolic="YES" id="vt2-Ep-r0r"/>
+                            <constraint firstAttribute="trailing" secondItem="1kO-gf-Psr" secondAttribute="trailing" constant="20" symbolic="YES" id="wnb-gQ-1zS"/>
                         </constraints>
                     </view>
                     <connections>
