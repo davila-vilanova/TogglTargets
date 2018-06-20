@@ -10,6 +10,8 @@ import Foundation
 import Result
 import ReactiveSwift
 
+internal var overrideRootAPIURLString: String? // e.g. "http://localhost:8080/toggl"
+
 extension URLSession {
     convenience init(togglAPICredential: TogglAPICredential?) {
         let config = URLSessionConfiguration.ephemeral
@@ -31,7 +33,7 @@ extension URLSession {
         }
 
         func resourceURL(for endpoint: String) -> URL {
-            let rootAPIURLString = "http://localhost:8080/toggl"
+            let rootAPIURLString = overrideRootAPIURLString ?? "https://toggl.com"
             let resourceURLString = rootAPIURLString + endpoint
             return URL(string: resourceURLString)!
         }

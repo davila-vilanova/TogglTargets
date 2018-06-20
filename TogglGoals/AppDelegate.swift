@@ -70,6 +70,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        processLaunchArguments()
+
         let mainWindow = mainWindowController.window
         mainWindow!.makeKeyAndOrderFront(nil)
 
@@ -92,6 +94,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                object: nil,
                                                queue: OperationQueue.main,
                                                using: { _ in self.presentPreferences(jumpingTo: .account) })
+    }
+
+    private func processLaunchArguments() {
+        let environment = ProcessInfo.processInfo.environment
+        if let customBaseTogglAPIURL = environment["customBaseTogglAPIURL"] {
+            if URL(string: customBaseTogglAPIURL) != nil { // valid URL
+                overrideRootAPIURLString = customBaseTogglAPIURL
+                print ("Using custom base Toggl API URL: \(customBaseTogglAPIURL)")
+            } else {
+                print ("Ignoring invalid value of customBaseTogglAPIURL environment variable")
+            }
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
