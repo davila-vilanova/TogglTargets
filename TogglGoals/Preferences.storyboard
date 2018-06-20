@@ -268,9 +268,20 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="tdS-eB-WB6" userLabel="Width Limiting View">
+                                <rect key="frame" x="0.0" y="0.0" width="385" height="0.0"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" priority="990" constant="450" id="3zr-tw-OAd"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="350" id="inm-Qs-Dfe"/>
+                                    <constraint firstAttribute="height" id="otn-I4-Sbx"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="8oS-If-VvO" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="bbO-aV-ldp" secondAttribute="trailing" constant="138" id="GhN-yr-gkB"/>
+                            <constraint firstAttribute="bottom" secondItem="tdS-eB-WB6" secondAttribute="bottom" id="ABs-bJ-Biv"/>
+                            <constraint firstItem="tdS-eB-WB6" firstAttribute="leading" secondItem="vu3-r7-Up7" secondAttribute="leading" id="Ay5-kX-hjg"/>
+                            <constraint firstItem="8oS-If-VvO" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="bbO-aV-ldp" secondAttribute="trailing" constant="8" symbolic="YES" id="GhN-yr-gkB"/>
+                            <constraint firstAttribute="trailing" secondItem="tdS-eB-WB6" secondAttribute="trailing" id="M8D-CA-Ugn"/>
                             <constraint firstItem="8oS-If-VvO" firstAttribute="top" secondItem="bbO-aV-ldp" secondAttribute="top" id="Obm-y8-eL4"/>
                             <constraint firstItem="t7O-3j-gdB" firstAttribute="leading" secondItem="Abd-Jb-nxS" secondAttribute="leading" id="eE8-nN-BFL"/>
                             <constraint firstItem="Abd-Jb-nxS" firstAttribute="leading" secondItem="vu3-r7-Up7" secondAttribute="leading" constant="20" symbolic="YES" id="jL2-xw-hPu"/>
@@ -289,7 +300,7 @@
                 </viewController>
                 <customObject id="u81-RR-zKe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1269.5" y="-226.5"/>
+            <point key="canvasLocation" x="1269.5" y="-227"/>
         </scene>
         <!--Account-->
         <scene sceneID="1J4-f2-Wpf">
