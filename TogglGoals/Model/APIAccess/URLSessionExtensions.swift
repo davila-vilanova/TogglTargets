@@ -77,7 +77,7 @@ fileprivate func catchHTTPErrors(data: Data, response: URLResponse) -> Result<(D
     }
     switch (httpResponse.statusCode) {
     case 200...299, 100...199, 300...399: break
-    case 401: return .failure(APIAccessError.authenticationError(response: httpResponse))
+    case 401, 403: return .failure(APIAccessError.authenticationError(response: httpResponse))
     case 500...599: return .failure(APIAccessError.serverHiccups(response: httpResponse, data: data))
     case 400...499: return .failure(APIAccessError.otherHTTPError(response: httpResponse))
     default: return .failure(APIAccessError.otherHTTPError(response: httpResponse))
