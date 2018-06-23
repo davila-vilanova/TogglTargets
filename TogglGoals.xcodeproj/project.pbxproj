@@ -128,6 +128,10 @@
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639F38F2208FA4D500AE96CF /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */; };
 		639F38F3208FA4D500AE96CF /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */; };
+		639F8B6020DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */; };
+		639F8B6120DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */; };
+		639F8B6220DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */; };
+		639F8B6320DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */; };
 		63A67F311FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */; };
 		63A67F321FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */; };
 		63A67F331FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */; };
@@ -347,6 +351,7 @@
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainmentSegue.swift; sourceTree = "<group>"; };
 		639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
+		639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalizedErrors.swift; path = ViewControllers/LocalizedErrors.swift; sourceTree = "<group>"; };
 		63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProfileNetworkAction.swift; sourceTree = "<group>"; };
 		63A67F351FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProjectsNetworkAction.swift; sourceTree = "<group>"; };
 		63A67F3A1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveReportsNetworkAction.swift; sourceTree = "<group>"; };
@@ -561,6 +566,7 @@
 				637A32341EE16FD600667FC3 /* DayProgressViewController.swift */,
 				63FF9EEA208FA3BC0087DD1C /* Preferences */,
 				639F38EF208FA4D500AE96CF /* Util */,
+				639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -898,6 +904,7 @@
 				635A25862052917B00EFCE90 /* ProjectCollectionViewItem.swift in Sources */,
 				63A67F311FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
 				63FF9EEE208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift in Sources */,
+				639F8B6020DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */,
 				635DCE1A1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */,
 				6333B6CE1F974690002CF189 /* Profile.swift in Sources */,
 				63A67F561FCDA1E1004BEFC6 /* StoreProfileCacheAction.swift in Sources */,
@@ -970,6 +977,7 @@
 				6333B6CF1F974690002CF189 /* Profile.swift in Sources */,
 				636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */,
 				63DC61981FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift in Sources */,
+				639F8B6120DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */,
 				63A67F411FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
 				63A67F321FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
 				63B1BBE81FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,
@@ -1021,6 +1029,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63A67F3D1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
+				639F8B6220DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */,
 				63A67F381FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				63A67F4C1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
 				63A67F331FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
@@ -1089,6 +1098,7 @@
 				63A67F541FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift in Sources */,
 				63AB08311FB77CB500565D87 /* RunningEntry.swift in Sources */,
 				6334A8FF20D98CC30017606F /* RetrieveProjectsCacheAction.swift in Sources */,
+				639F8B6320DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */,
 				63AB083C1FB77CB500565D87 /* Period.swift in Sources */,
 				63AB08321FB77CB500565D87 /* ModelCoordinator.swift in Sources */,
 				63AB083D1FB77CB500565D87 /* PeriodPreference.swift in Sources */,
