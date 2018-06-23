@@ -27,15 +27,15 @@ class GoalProgress {
     // MARK: - Outputs
 
     public lazy var timeGoal: SignalProducer<TimeInterval, NoError> = {
-        return _goal.producer.skipNil().map { TimeInterval.from(hours: $0.hoursTarget) }
+        return _goal.producer.skipNil().skipRepeats().map { TimeInterval.from(hours: $0.hoursTarget) }
     }()
 
     // Will be nil if start or end are invalid dates
     public lazy var totalWorkDays: SignalProducer<Int?, NoError> = {
-        return SignalProducer.combineLatest(_goal.producer.skipNil(),
-                                            _startGoalDay.producer.skipNil(),
-                                            _endGoalDay.producer.skipNil(),
-                                            _calendar.producer.skipNil())
+        return SignalProducer.combineLatest(_goal.producer.skipNil().skipRepeats(),
+                                            _startGoalDay.producer.skipNil().skipRepeats(),
+                                            _endGoalDay.producer.skipNil().skipRepeats(),
+                                            _calendar.producer.skipNil().skipRepeats())
             .map { (goal, startGoalDay, endGoalDay, calendar) in
                 return try? calendar.countWeekdaysMatching(goal.workWeekdays, from: startGoalDay, to: endGoalDay)
         }
@@ -43,28 +43,28 @@ class GoalProgress {
 
     // Will be nil if start or end are invalid dates
     public lazy var remainingWorkDays: SignalProducer<Int?, NoError> = {
-        return SignalProducer.combineLatest(_goal.producer.skipNil(),
-                                            _startStrategyDay.producer.skipNil(),
-                                            _endGoalDay.producer.skipNil(),
-                                            _calendar.producer.skipNil())
+        return SignalProducer.combineLatest(_goal.producer.skipNil().skipRepeats(),
+                                            _startStrategyDay.producer.skipNil().skipRepeats(),
+                                            _endGoalDay.producer.skipNil().skipRepeats(),
+                                            _calendar.producer.skipNil().skipRepeats())
             .map { (goal, startStrategyDay, endGoalDay, calendar) in
                 return try? calendar.countWeekdaysMatching(goal.workWeekdays, from: startStrategyDay, to: endGoalDay)
         }
     }()
 
     public lazy var strategyStartsToday: SignalProducer<Bool, NoError> = {
-        return SignalProducer.combineLatest(_startStrategyDay.producer.skipNil(),
-                                            _currentDate.producer.skipNil(),
-                                            _calendar.producer.skipNil())
+        return SignalProducer.combineLatest(_startStrategyDay.producer.skipNil().skipRepeats(),
+                                            _currentDate.producer.skipNil().skipRepeats(),
+                                            _calendar.producer.skipNil().skipRepeats())
             .map { (startStrategyDay, currentDate, calendar) in
                 return calendar.dayComponents(from: currentDate) == startStrategyDay
         }
     }()
 
     public lazy var workedTime: SignalProducer<TimeInterval, NoError> = {
-        return SignalProducer.combineLatest(_report.producer,
-                                            strategyStartsToday,
-                                            runningEntryTime)
+        return SignalProducer.combineLatest(_report.producer.skipRepeats(),
+                                            strategyStartsToday.skipRepeats(),
+                                            runningEntryTime.skipRepeats())
             .map { (reportOrNil, strategyStartsToday, runningEntryTime) -> TimeInterval in
                 if strategyStartsToday {
                     return reportOrNil?.workedTimeUntilDayBeforeRequest ?? 0
@@ -75,8 +75,8 @@ class GoalProgress {
     }()
 
     public lazy var remainingTimeToGoal: SignalProducer<TimeInterval, NoError>  = {
-        return SignalProducer.combineLatest(timeGoal,
-                                            workedTime)
+        return SignalProducer.combineLatest(timeGoal.skipRepeats(),
+                                            workedTime.skipRepeats())
             .map { (timeGoal, workedTime) in
                 return Double.maximum(timeGoal - workedTime, 0.0)
         }
@@ -84,8 +84,8 @@ class GoalProgress {
 
     // dayBaseline will publish nil values when totalWorkDays itself returns nil
     public lazy var dayBaseline: SignalProducer<TimeInterval?, NoError> = {
-        return SignalProducer.combineLatest(timeGoal,
-                                            totalWorkDays)
+        return SignalProducer.combineLatest(timeGoal.skipRepeats(),
+                                            totalWorkDays.skipRepeats())
             .map { (timeGoal, totalWorkDays) -> TimeInterval? in
                 guard let totalWorkDays = totalWorkDays else {
                     return nil
@@ -100,8 +100,8 @@ class GoalProgress {
 
     // dayBaselineAdjustedToProgress will publish nil values when remainingWorkDays itself returns nil
     public lazy var dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError> = {
-        return SignalProducer.combineLatest(remainingWorkDays,
-                                            remainingTimeToGoal)
+        return SignalProducer.combineLatest(remainingWorkDays.skipRepeats(),
+                                            remainingTimeToGoal.skipRepeats())
             .map { (remainingWorkDays, remainingTimeToGoal) -> TimeInterval? in
                 guard let remainingWorkDays = remainingWorkDays else {
                     return nil
@@ -115,8 +115,8 @@ class GoalProgress {
 
     // dayBaselineDifferential will publish nil values if either dayBaseline or dayBaselineAdjustedToProgress are nil
     public lazy var dayBaselineDifferential: SignalProducer<Double?, NoError>  = {
-        return SignalProducer.combineLatest(dayBaseline,
-                                            dayBaselineAdjustedToProgress)
+        return SignalProducer.combineLatest(dayBaseline.skipRepeats().logValues("dayBaseline"),
+                                            dayBaselineAdjustedToProgress.skipRepeats().logValues("adjusted"))
             .map { (dayBaseline, dayBaselineAdjustedToProgress) -> Double? in
                 guard let dayBaseline = dayBaseline else {
                     return nil
@@ -130,8 +130,8 @@ class GoalProgress {
     }()
 
     public lazy var timeWorkedToday: SignalProducer<TimeInterval, NoError>  = {
-        return SignalProducer.combineLatest(_report,
-                                            runningEntryTime)
+        return SignalProducer.combineLatest(_report.skipRepeats(),
+                                            runningEntryTime.skipRepeats())
             .map { (report, runningEntryTime) in
                 let workedTimeToday = report?.workedTimeOnDayOfRequest ?? 0
                 return workedTimeToday + runningEntryTime
@@ -142,9 +142,9 @@ class GoalProgress {
     // * today's date is not included in the period for which the goal-accomplishing strategy is being calculated (there is no day baseline),
     // * dayBaselineAdjustedToProgress itself returns nil
     public lazy var remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError> = {
-        return SignalProducer.combineLatest(strategyStartsToday,
-                                            dayBaselineAdjustedToProgress,
-                                            timeWorkedToday)
+        return SignalProducer.combineLatest(strategyStartsToday.skipRepeats(),
+                                            dayBaselineAdjustedToProgress.skipRepeats(),
+                                            timeWorkedToday.skipRepeats())
             .map { (strategyStartsToday, dayBaselineAdjustedToProgress, timeWorkedToday) -> TimeInterval? in
                 guard strategyStartsToday else {
                     return nil
@@ -173,9 +173,9 @@ class GoalProgress {
     // MARK: - Intermediates
 
     private lazy var runningEntryTime: SignalProducer<TimeInterval, NoError> = {
-        return SignalProducer.combineLatest(_projectId.producer.skipNil(),
-                                            _runningEntry,
-                                            _currentDate.producer.skipNil())
+        return SignalProducer.combineLatest(_projectId.producer.skipNil().skipRepeats(),
+                                            _runningEntry.skipRepeats(),
+                                            _currentDate.producer.skipNil().skipRepeats())
             .map { (projectId, runningEntry, currentDate) in
                 guard let runningEntry = runningEntry else {
                     return 0
