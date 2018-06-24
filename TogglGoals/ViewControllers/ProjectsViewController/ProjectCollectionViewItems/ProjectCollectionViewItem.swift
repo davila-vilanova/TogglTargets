@@ -24,13 +24,6 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-    private let runningEntry = MutableProperty<RunningEntry?>(nil)
-    private let currentDate = MutableProperty<Date?>(nil)
-    private let project = MutableProperty<Project?>(nil)
-    private let goal = MutableProperty<Goal?>(nil)
-    private let periodPreference = MutableProperty<PeriodPreference?>(nil)
-    private let report = MutableProperty<TwoPartTimeReport?>(nil)
-
 
     // MARK: - Outlets
 
@@ -66,18 +59,18 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
-        currentDate <~ lastBinding.latestOutput { $0.currentDate }
-        project <~ lastBinding.latestOutput { $0.project }
-        goal <~ lastBinding.latestOutput { $0.goal }
-        periodPreference <~ lastBinding.latestOutput { $0.periodPreference }
-        report <~ lastBinding.latestOutput { $0.report }
+        let runningEntry = lastBinding.latestOutput { $0.runningEntry }
+        let currentDate = lastBinding.latestOutput { $0.currentDate }
+        let project = lastBinding.latestOutput { $0.project }
+        let goal = lastBinding.latestOutput { $0.goal }
+        let periodPreference = lastBinding.latestOutput { $0.periodPreference }
+        let report = lastBinding.latestOutput { $0.report }
 
         projectNameLabel.reactive.text <~ project.map { project -> String in
             return project?.name ?? "(nothing)"
         }
 
-        goalLabel.reactive.text <~ goal.producer.combineLatest(with: periodPreference.producer.skipNil())
+        goalLabel.reactive.text <~ goal.combineLatest(with: periodPreference)
             .map { goal, periodPreference -> String in
                 let targetPeriodDescription: String
                 switch periodPreference {
@@ -93,14 +86,12 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
         let workedTimeFromReport = report.map { (reportValueOrNil) -> TimeInterval in
             return reportValueOrNil?.workedTime ?? 0.0
         }
-        let workedTimeFromRunningEntry = SignalProducer.combineLatest(project.producer.skipNil(),
-                                                                      runningEntry.producer,
-                                                                      currentDate.producer.skipNil())
+        let workedTimeFromRunningEntry = SignalProducer.combineLatest(project, runningEntry, currentDate)
             .map { (project, runningEntryOrNil, currentDate) -> TimeInterval in
                 guard let runningEntry = runningEntryOrNil else {
                     return 0.0
                 }
-                guard runningEntry.projectId == project.id else {
+                guard runningEntry.projectId == project?.id else {
                     return 0.0
                 }
                 return runningEntry.runningTime(at: currentDate)
