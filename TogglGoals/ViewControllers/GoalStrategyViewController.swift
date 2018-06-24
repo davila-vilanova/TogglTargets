@@ -26,15 +26,6 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
-    // MARK: - Backing properties
-
-    private let timeGoal = MutableProperty<TimeInterval>(0)
-    private let dayBaseline = MutableProperty<TimeInterval?>(nil)
-    private let dayBaselineAdjustedToProgress = MutableProperty<TimeInterval?>(nil)
-    private let dayBaselineDifferential = MutableProperty<Double?>(nil)
-    private let feasibility = MutableProperty<GoalFeasibility?>(nil)
-
-
     // MARK: - Formatters
 
     private lazy var timeFormatter: DateComponentsFormatter = {
@@ -64,17 +55,17 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        timeGoal <~ lastBinding.latestOutput { $0.timeGoal }
-        dayBaseline <~ lastBinding.latestOutput { $0.dayBaseline }
-        dayBaselineAdjustedToProgress <~ lastBinding.latestOutput { $0.dayBaselineAdjustedToProgress }
-        dayBaselineDifferential <~ lastBinding.latestOutput { $0.dayBaselineDifferential }
-        feasibility <~ lastBinding.latestOutput { $0.feasibility }
+        let timeGoal = lastBinding.latestOutput { $0.timeGoal }
+        let dayBaseline = lastBinding.latestOutput { $0.dayBaseline }
+        let dayBaselineAdjustedToProgress = lastBinding.latestOutput { $0.dayBaselineAdjustedToProgress }
+        let dayBaselineDifferential = lastBinding.latestOutput { $0.dayBaselineDifferential }
+        let feasibility = lastBinding.latestOutput { $0.feasibility }
 
         // Update total hours and hours per day with the values of the corresponding signals, formatted to a time string
-        totalHoursStrategyLabel.reactive.text <~ timeGoal.producer.mapToString(timeFormatter: timeFormatter)
-        hoursPerDayLabel.reactive.text <~ dayBaselineAdjustedToProgress.producer.mapToString(timeFormatter: timeFormatter)
+        totalHoursStrategyLabel.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
+        hoursPerDayLabel.reactive.text <~ dayBaselineAdjustedToProgress.mapToString(timeFormatter: timeFormatter)
 
-        let formattedDifferential = dayBaselineDifferential.producer
+        let formattedDifferential = dayBaselineDifferential
             .map { $0?.magnitude }
             .map { (differential) -> NSNumber? in
             guard let differential = differential else { return nil }
@@ -82,18 +73,18 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
             }
             .mapToNumberFormattedString(numberFormatter: percentFormatter)
 
-        let baselineCalculationErrors = SignalProducer.combineLatest(dayBaselineAdjustedToProgress.producer.filter { $0 == nil },
-                                                                     dayBaseline.producer.filter { $0 == nil },
-                                                                     dayBaselineDifferential.producer.filter { $0 == nil },
-                                                                     feasibility.producer.filter { $0 == nil })
+        let baselineCalculationErrors = SignalProducer.combineLatest(dayBaselineAdjustedToProgress.filter { $0 == nil },
+                                                                     dayBaseline.filter { $0 == nil },
+                                                                     dayBaselineDifferential.filter { $0 == nil },
+                                                                     feasibility.filter { $0 == nil })
             .map { _ in "The day baseline could not be calculated" }
 
         let feasibleCaseDescriptions =
-            SignalProducer.combineLatest(feasibility.producer.skipNil(),
-                                         dayBaselineDifferential.producer.skipNil(),
+            SignalProducer.combineLatest(feasibility.skipNil(),
+                                         dayBaselineDifferential.skipNil(),
                                          formattedDifferential,
-                                         dayBaseline.producer.skipNil(),
-                                         dayBaseline.producer.mapToString(timeFormatter: timeFormatter))
+                                         dayBaseline.skipNil(),
+                                         dayBaseline.mapToString(timeFormatter: timeFormatter))
                 .filter { (feasibility, _, _, _, _) in
                     return feasibility.isFeasible
                 }.map { (_, differential, formattedDifferential, baseline, formattedBaseline) -> String in
@@ -105,10 +96,10 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
                     }
         }
 
-        let unfeasibleCaseDescriptions = feasibility.producer.skipNil().filter { $0.isUnfeasible }
+        let unfeasibleCaseDescriptions = feasibility.skipNil().filter { $0.isUnfeasible }
             .map { _ in "This may be possible if you sleep very little and have superhuman focusing abilities"  }
 
-        let impossibleCaseDescriptions = feasibility.producer.skipNil().filter { $0.isImpossible }
+        let impossibleCaseDescriptions = feasibility.skipNil().filter { $0.isImpossible }
             .map { _ in "This would require more than a full day of work per day" }
 
         baselineDifferentialLabel.reactive.stringValue <~
@@ -128,8 +119,6 @@ class GoalReachedViewController: NSViewController, BindingTargetProvider {
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
-    private let timeGoal = MutableProperty<TimeInterval>(0)
-
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
         f.allowedUnits = [.hour, .minute]
@@ -143,7 +132,7 @@ class GoalReachedViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        timeGoal <~ lastBinding.latestOutput { $0 }
-        totalHoursLabel.reactive.text <~ timeGoal.producer.mapToString(timeFormatter: timeFormatter)
+        let timeGoal = lastBinding.latestOutput { $0 }
+        totalHoursLabel.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
     }
 }
