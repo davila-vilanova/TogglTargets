@@ -29,12 +29,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     worked time for the corresponding project.
     ///   - currentDate: A signal producer that emits `Date` values corresponding to the current date as time passes.
     ///     This is useful to calculate the elapsed running time of the active time entry provided by `runningEntry`.
-    ///   - readProject: An `Action` this controller will apply to obtain project `Property` instances
-    ///     corresponding to its input project IDs.
+    ///   - readProject: A function this controller will use to read projects corresponding
+    ///     to its input project IDs.
     ///   - readGoal: A function this controller will use to read goals corresponding
     ///     to its input project IDs.
-    ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s
-    ///     corresponding to its input project IDs.
+    ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s corresponding
+    ///     to its input project IDs.
     internal typealias Interface = (
         projectIDsByGoals: ProjectIDsByGoalsProducer,
         selectedProjectId: BindingTarget<ProjectID?>,
@@ -192,7 +192,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
 
-        // TODO: De-force-unwrap
         projectItem <~ SignalProducer<ProjectCollectionViewItem.Interface, NoError>(
             value: (runningEntry.producer,
                     currentDate.producer.skipNil(),
