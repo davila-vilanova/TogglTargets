@@ -84,7 +84,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
                 SignalProducer(value: (timeGoal: goalProgress.timeGoal,
                                        dayBaseline: goalProgress.dayBaseline,
                                        dayBaselineAdjustedToProgress: goalProgress.dayBaselineAdjustedToProgress,
-                                       dayBaselineDifferential: goalProgress.dayBaselineDifferential))
+                                       dayBaselineDifferential: goalProgress.dayBaselineDifferential,
+                                       feasibility: goalProgress.feasibility))
         }
     }
 
@@ -98,7 +99,8 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
         didSet {
             dayProgressViewController <~
                 SignalProducer(value: (timeWorkedToday: goalProgress.timeWorkedToday.producer,
-                                       remainingTimeToDayBaseline: goalProgress.remainingTimeToDayBaseline.producer))
+                                       remainingTimeToDayBaseline: goalProgress.remainingTimeToDayBaseline.producer,
+                                       feasibility: goalProgress.feasibility))
         }
     }
 

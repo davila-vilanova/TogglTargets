@@ -16,7 +16,8 @@ class DayProgressViewController: NSViewController, BindingTargetProvider {
     // MARK: Interface
 
     internal typealias Interface = (timeWorkedToday: SignalProducer<TimeInterval, NoError>,
-        remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError>)
+        remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError>,
+        feasibility: SignalProducer<GoalFeasibility?, NoError>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -58,8 +59,6 @@ class DayProgressViewController: NSViewController, BindingTargetProvider {
         // Update worked and remaining time today with the values of the corresponding signals formatted to a time string
         // TODO: do not include English text directly in inline constant strings
 
-        let isTimeRemainingMissing = remainingTimeToDayBaseline.producer.map { $0 == nil }
-
         timeWorkedTodayLabel.reactive.text <~ timeWorkedToday.producer.map { [timeFormatter] time in
             "\(timeFormatter.string(from: time) ?? "-") worked today"
         }
@@ -67,18 +66,18 @@ class DayProgressViewController: NSViewController, BindingTargetProvider {
             "\(timeFormatter.string(from: time) ?? "-") left to meet your goal today"
         }
 
-        // Show or hide time remaining and progress indicator
-        isTimeRemainingMissing.observe(on: UIScheduler()).startWithValues { [timeRemainingToWorkTodayLabel, todayProgressIndicator] isTimeRemainingMissing in
-            timeRemainingToWorkTodayLabel?.isHidden = isTimeRemainingMissing
-            todayProgressIndicator?.isIndeterminate = isTimeRemainingMissing
-        }
-
         // Update progress indicator
-        SignalProducer.combineLatest(timeWorkedToday.producer,
-                                     remainingTimeToDayBaseline.producer.skipNil())
-            .observe(on: UIScheduler()).startWithValues { [todayProgressIndicator] (worked, remaining) in
-                todayProgressIndicator?.maxValue = worked + remaining
-                todayProgressIndicator?.doubleValue = worked
-        }
+        todayProgressIndicator.reactive.makeBindingTarget { (progress, times) in
+            let (worked, remaining) = times
+            progress.maxValue = worked + remaining
+            progress.doubleValue = worked
+            } <~ SignalProducer.combineLatest(timeWorkedToday.producer, remainingTimeToDayBaseline.producer.skipNil())
+
+        // Show or hide time remaining and progress indicator
+        let isTimeRemainingMissing = remainingTimeToDayBaseline.producer.map { $0 == nil }
+        let isGoalImpossible = lastBinding.latestOutput { $0.feasibility }.map { $0?.isImpossible ?? true }
+        let hide = isTimeRemainingMissing.or(isGoalImpossible)
+        timeRemainingToWorkTodayLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ hide
+        todayProgressIndicator.reactive.makeBindingTarget { $0.isIndeterminate = $1 } <~ hide
     }
 }

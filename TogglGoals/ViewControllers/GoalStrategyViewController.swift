@@ -19,7 +19,8 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
         timeGoal: SignalProducer<TimeInterval, NoError>,
         dayBaseline: SignalProducer<TimeInterval?, NoError>,
         dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError>,
-        dayBaselineDifferential: SignalProducer<Double?, NoError>)
+        dayBaselineDifferential: SignalProducer<Double?, NoError>,
+        feasibility: SignalProducer<GoalFeasibility?, NoError>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -31,6 +32,7 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
     private let dayBaseline = MutableProperty<TimeInterval?>(nil)
     private let dayBaselineAdjustedToProgress = MutableProperty<TimeInterval?>(nil)
     private let dayBaselineDifferential = MutableProperty<Double?>(nil)
+    private let feasibility = MutableProperty<GoalFeasibility?>(nil)
 
 
     // MARK: - Formatters
@@ -66,6 +68,7 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
         dayBaseline <~ lastBinding.latestOutput { $0.dayBaseline }
         dayBaselineAdjustedToProgress <~ lastBinding.latestOutput { $0.dayBaselineAdjustedToProgress }
         dayBaselineDifferential <~ lastBinding.latestOutput { $0.dayBaselineDifferential }
+        feasibility <~ lastBinding.latestOutput { $0.feasibility }
 
         // Update total hours and hours per day with the values of the corresponding signals, formatted to a time string
         totalHoursStrategyLabel.reactive.text <~ timeGoal.producer.mapToString(timeFormatter: timeFormatter)
@@ -79,25 +82,37 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
             }
             .mapToNumberFormattedString(numberFormatter: percentFormatter)
 
-        baselineDifferentialLabel.reactive.text <~
-            SignalProducer.combineLatest(dayBaselineDifferential.producer,
-                                         formattedDifferential,
-                                         dayBaseline.producer,
-                                         dayBaseline.producer.mapToString(timeFormatter: timeFormatter))
-                .map { (differential, formattedDifferential, baseline, formattedBaseline) -> String in
-                    guard let differential = differential,
-                        baseline != nil else {
-                            return "The day baseline could not be calculated"
-                    }
-                    let absoluteDifferential = abs(differential)
+        let baselineCalculationErrors = SignalProducer.combineLatest(dayBaselineAdjustedToProgress.producer.filter { $0 == nil },
+                                                                     dayBaseline.producer.filter { $0 == nil },
+                                                                     dayBaselineDifferential.producer.filter { $0 == nil },
+                                                                     feasibility.producer.filter { $0 == nil })
+            .map { _ in "The day baseline could not be calculated" }
 
-                    if absoluteDifferential < 0.01 {
-                        return "That prety much matches your baseline of \(formattedBaseline)"
+        let feasibleCaseDescriptions =
+            SignalProducer.combineLatest(feasibility.producer.skipNil(),
+                                         dayBaselineDifferential.producer.skipNil(),
+                                         formattedDifferential,
+                                         dayBaseline.producer.skipNil(),
+                                         dayBaseline.producer.mapToString(timeFormatter: timeFormatter))
+                .filter { (feasibility, _, _, _, _) in
+                    return feasibility.isFeasible
+                }.map { (_, differential, formattedDifferential, baseline, formattedBaseline) -> String in
+                    if abs(differential) < 0.01 {
+                        return "That pretty much matches your baseline of \(formattedBaseline)"
                     } else {
                         let adverb = differential > 0 ? "more" : "less"
                         return "That is \(formattedDifferential) \(adverb) than your baseline of \(formattedBaseline)"
                     }
         }
+
+        let unfeasibleCaseDescriptions = feasibility.producer.skipNil().filter { $0.isUnfeasible }
+            .map { _ in "This may be possible if you sleep very little and have superhuman focusing abilities"  }
+
+        let impossibleCaseDescriptions = feasibility.producer.skipNil().filter { $0.isImpossible }
+            .map { _ in "This would require more than a full day of work per day" }
+
+        baselineDifferentialLabel.reactive.stringValue <~
+            SignalProducer.merge(feasibleCaseDescriptions, unfeasibleCaseDescriptions, impossibleCaseDescriptions, baselineCalculationErrors)
     }
 }
 

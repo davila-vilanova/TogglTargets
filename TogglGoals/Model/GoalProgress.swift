@@ -113,10 +113,18 @@ class GoalProgress {
         }
     }()
 
+    public lazy var feasibility: SignalProducer<GoalFeasibility?, NoError> =
+        dayBaselineAdjustedToProgress.map {
+            guard let baseline = $0 else {
+                return nil
+            }
+            return GoalFeasibility.from(dayBaseline: baseline)
+    }
+
     // dayBaselineDifferential will publish nil values if either dayBaseline or dayBaselineAdjustedToProgress are nil
     public lazy var dayBaselineDifferential: SignalProducer<Double?, NoError>  = {
-        return SignalProducer.combineLatest(dayBaseline.skipRepeats().logValues("dayBaseline"),
-                                            dayBaselineAdjustedToProgress.skipRepeats().logValues("adjusted"))
+        return SignalProducer.combineLatest(dayBaseline.skipRepeats(),
+                                            dayBaselineAdjustedToProgress.skipRepeats())
             .map { (dayBaseline, dayBaselineAdjustedToProgress) -> Double? in
                 guard let dayBaseline = dayBaseline else {
                     return nil
