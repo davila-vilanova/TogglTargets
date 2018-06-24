@@ -13,10 +13,9 @@ struct Goal {
     var hoursTarget: Int
     var workWeekdays: WeekdaySelection
 
-    // TODO: rename argument labels
-    init(forProjectId projectId: Int64, hoursPerMonth: Int, workWeekdays: WeekdaySelection) {
+    init(for projectId: Int64, hoursTarget: Int, workWeekdays: WeekdaySelection) {
         self.projectId = projectId
-        self.hoursTarget = hoursPerMonth
+        self.hoursTarget = hoursTarget
         self.workWeekdays = workWeekdays
     }
 }
@@ -37,14 +36,14 @@ extension Goal: Comparable {
 
 extension Goal {
     static var empty: Goal {
-        return Goal(forProjectId: 0, hoursPerMonth: 0, workWeekdays: WeekdaySelection.empty)
+        return Goal(for: 0, hoursTarget: 0, workWeekdays: WeekdaySelection.empty)
     }
 }
 
 extension Goal: CustomDebugStringConvertible {
     var debugDescription: String {
         get {
-            return "Goal(forProjectId: \(projectId), hoursPerMonth: \(hoursTarget), workWeekdays: \(workWeekdays))"
+            return "Goal(for: \(projectId), hoursTarget: \(hoursTarget), workWeekdays: \(workWeekdays))"
         }
     }
 }

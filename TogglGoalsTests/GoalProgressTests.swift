@@ -19,7 +19,7 @@ fileprivate let runningEntryProjectA = makeRunningEntry(projectId: projectIdA, r
 fileprivate let runningEntryProjectB = makeRunningEntry(projectId: projectIdB, runningTime: timeRunningEntryB)
 
 fileprivate let hoursPerMonthGoal = 95
-fileprivate let goal = Goal(forProjectId: projectIdA, hoursPerMonth: hoursPerMonthGoal, workWeekdays: .exceptWeekend)
+fileprivate let goal = Goal(for: projectIdA, hoursTarget: hoursPerMonthGoal, workWeekdays: .exceptWeekend)
 fileprivate let todayComponents = DayComponents(year: 2017, month: 10, day: 11)
 fileprivate let tomorrowComponents = DayComponents(year: 2017, month: 10, day: 12)
 fileprivate let period = Period(start: DayComponents(year: 2017, month: 10, day: 1), end: todayComponents)

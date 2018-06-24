@@ -97,10 +97,10 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        indexedGoals = [ 71 : Goal(forProjectId: 71, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend),
-                         25 : Goal(forProjectId: 25, hoursPerMonth: 20, workWeekdays: WeekdaySelection.wholeWeek),
-                         90 : Goal(forProjectId: 90, hoursPerMonth: 50, workWeekdays: WeekdaySelection.exceptWeekend),
-                         48 : Goal(forProjectId: 48, hoursPerMonth: 30, workWeekdays: WeekdaySelection.exceptWeekend) ]
+        indexedGoals = [ 71 : Goal(for: 71, hoursTarget: 10, workWeekdays: WeekdaySelection.exceptWeekend),
+                         25 : Goal(for: 25, hoursTarget: 20, workWeekdays: WeekdaySelection.wholeWeek),
+                         90 : Goal(for: 90, hoursTarget: 50, workWeekdays: WeekdaySelection.exceptWeekend),
+                         48 : Goal(for: 48, hoursTarget: 30, workWeekdays: WeekdaySelection.exceptWeekend) ]
         projectIDs = [30, 12, 25, 89, 22, 48, 71, 60]
 
         idsByGoals = ProjectIDsByGoals(projectIDs: projectIDs!, goals: indexedGoals!)
@@ -130,7 +130,7 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             return
         }
 
-        setUpForProjectId(48, newGoal: Goal(forProjectId: 48, hoursPerMonth: 15, workWeekdays: WeekdaySelection.exceptWeekend))
+        setUpForProjectId(48, newGoal: Goal(for: 48, hoursTarget: 15, workWeekdays: WeekdaySelection.exceptWeekend))
         guard let projectId = projectId else {
             XCTFail(SetupFailureNilProjectId)
             return
@@ -207,7 +207,7 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             return
         }
 
-        setUpForProjectId(22, newGoal: Goal(forProjectId: 22, hoursPerMonth: 16, workWeekdays: WeekdaySelection.exceptWeekend))
+        setUpForProjectId(22, newGoal: Goal(for: 22, hoursTarget: 16, workWeekdays: WeekdaySelection.exceptWeekend))
         guard let projectId = projectId else {
             XCTFail(SetupFailureNilProjectId)
             return

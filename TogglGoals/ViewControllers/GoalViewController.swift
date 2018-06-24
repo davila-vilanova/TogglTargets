@@ -199,7 +199,7 @@ class NoGoalViewController: NSViewController, BindingTargetProvider {
         goalCreatedPipe.output.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.goalCreated })
 
         createGoalAction = Action<Void, Goal, NoError>(unwrapping: projectId) {
-            SignalProducer(value: Goal(forProjectId: $0, hoursPerMonth: 10, workWeekdays: WeekdaySelection.exceptWeekend))
+            SignalProducer(value: Goal(for: $0, hoursTarget: 10, workWeekdays: WeekdaySelection.exceptWeekend))
         }
 
         createGoalButton.reactive.pressed = CocoaAction<NSButton>(createGoalAction)

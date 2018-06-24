@@ -234,8 +234,8 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             let projectIdValue = retrievedRow[projectIdExpression]
             let hoursPerMonthValue = retrievedRow[hoursPerMonthExpression]
             let workWeekdaysValue = try! /* TODO */ retrievedRow.get(workWeekdaysExpression) // [1]
-            let goal = Goal(forProjectId: projectIdValue,
-                            hoursPerMonth: hoursPerMonthValue,
+            let goal = Goal(for: projectIdValue,
+                            hoursTarget: hoursPerMonthValue,
                             workWeekdays: workWeekdaysValue)
             retrievedGoals[projectIdValue] = goal
         }

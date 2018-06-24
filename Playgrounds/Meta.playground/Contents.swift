@@ -9,7 +9,7 @@ let day2 = DayComponents(year: 2018, month: 06, day: 21)
 let day3 = DayComponents(year: 2018, month: 06, day: 24)
 
 let pid = MutableProperty(ProjectID(12))
-let goal = MutableProperty(Goal(forProjectId: 12, hoursPerMonth: 40, workWeekdays: .exceptWeekend))
+let goal = MutableProperty(Goal(for: 12, hoursTarget: 40, workWeekdays: .exceptWeekend))
 let report = MutableProperty<TwoPartTimeReport?>(
     TwoPartTimeReport(projectId: 12,
                       period: Period(start: day1,
@@ -39,7 +39,7 @@ let d = gp.dayBaseline.producer.start {
 }
 
 pid.value = 15
-goal.value = Goal(forProjectId: 15, hoursPerMonth: 30, workWeekdays: .exceptWeekend)
+goal.value = Goal(for: 15, hoursTarget: 30, workWeekdays: .exceptWeekend)
 report.value =
     TwoPartTimeReport(projectId: 12,
                       period: Period(start: day1,
