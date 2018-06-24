@@ -461,7 +461,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
                                                                      _twoPartReportPeriod.producer.skipNil())
             .throttle(while: retrieveReportsNetworkAction.isExecuting, on: scheduler)
 
-        updateRunningEntry <~ SignalProducer(value: ())
+        updateRunningEntry <~ _apiCredential.producer.skipNil().map { _ in () }
 
         // Nudge retrieve cache actions to pump the pipes
         retrieveProfileCacheAction <~ SignalProducer(value: ())
