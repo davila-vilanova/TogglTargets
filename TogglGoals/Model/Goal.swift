@@ -8,12 +8,14 @@
 
 import Foundation
 
+typealias HoursTargetType = Int
+
 struct Goal {
     let projectId: Int64
-    var hoursTarget: Int
+    var hoursTarget: HoursTargetType
     var workWeekdays: WeekdaySelection
 
-    init(for projectId: Int64, hoursTarget: Int, workWeekdays: WeekdaySelection) {
+    init(for projectId: Int64, hoursTarget: HoursTargetType, workWeekdays: WeekdaySelection) {
         self.projectId = projectId
         self.hoursTarget = hoursTarget
         self.workWeekdays = workWeekdays

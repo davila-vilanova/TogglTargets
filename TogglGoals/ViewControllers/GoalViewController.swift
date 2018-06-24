@@ -23,12 +23,10 @@ class GoalViewController: NSViewController, BindingTargetProvider {
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-    private let goal = MutableProperty<Goal?>(nil)
-
 
     // MARK: - Output
 
-    private var userUpdatesPipe = Signal<Goal?, NoError>.pipe()
+    private var userUpdates = MutableProperty<Goal?>(nil)
 
 
     // MARK: - Outlets
@@ -39,122 +37,97 @@ class GoalViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var deleteGoalButton: NSButton!
 
 
-    // MARK: -
+    // MARK: - Wiring
+
     private let (lifetime, token) = Lifetime.make()
 
-    private let didLoadViewProperty = MutableProperty(false)
+    /// Populates the active weekdays control with short weekday symbols
+    /// taken from the received Calendar values.
+    private lazy var weekdaySegments = weekWorkdaysControl.reactive
+        .makeBindingTarget(on: UIScheduler()) { (control: NSSegmentedControl, calendar: Calendar) in
+            let daySymbols = calendar.veryShortWeekdaySymbols
+            let dayCount = daySymbols.count
+            assert(dayCount == Weekday.allDays.count)
+            control.segmentCount = dayCount
 
-    private var weekdaysToSegments = Dictionary<Weekday, Int>()
+            for dayIndex in 0..<dayCount {
+                control.setLabel(daySymbols[dayIndex], forSegment: dayIndex)
+            }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Connect interface
         let calendar = lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
-        goal <~ lastBinding.producer.skipNil().map { $0.goal }.flatten(.latest)
-        userUpdatesPipe.output.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.userUpdates })
+        let goal = lastBinding.producer.skipNil().map { $0.goal }.flatten(.latest)
+        userUpdates.signal.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.userUpdates })
 
-        // Set up view
-        calendar.observe(on: UIScheduler()).startWithValues { [unowned self] (cal) in
-            self.populateWeekWorkDaysControl(calendar: cal)
-        }
+        // Populate controls that depend on calendar values
+        weekdaySegments <~ calendar
 
-        // Bind input to UI
+        // Emits non nil goal values coming through the interface
+        let nonNilGoal = goal.producer.skipNil()
+
+        // Enable controls only if goal exists
         let goalExists = goal.producer.map { $0 != nil }.skipRepeats()
-        monthlyHoursGoalField.reactive.isEnabled <~ goalExists
-        weekWorkdaysControl.reactive.isEnabled <~ goalExists
-        deleteGoalButton.reactive.isEnabled <~ goalExists
-
-        selectedWeekdaySegments <~ goal.map { $0?.workWeekdays }.producer
-            .skipRepeats { $0 == $1 }
-            .throttle(while: isWeekWorkdayControlPopulated.negate(), on: UIScheduler())
-
-        monthlyHoursGoalField.reactive.text <~ goal.map { [monthlyHoursGoalFormatter] goal in
-            if let formatter = monthlyHoursGoalFormatter,
-                let goal = goal,
-                let hoursString = formatter.string(from: NSNumber(value: goal.hoursTarget)) {
-                return hoursString
-            } else {
-                return "---"
-            }
+        for control in [monthlyHoursGoalField, weekWorkdaysControl, deleteGoalButton] as [NSControl] {
+            control.reactive.isEnabled <~ goalExists
         }
 
-        // Bind UI to output (and to internal state)
-        weekWorkdaysControl.reactive.selectedSegmentIndexes.observeValues { [unowned self] _ in
-            var newSelection = WeekdaySelection.empty
+        // Bind goal values to the values displayed in the controls
+        monthlyHoursGoalField.reactive.text <~ nonNilGoal.map { $0.hoursTarget }
+            .map(NSNumber.init)
+            .map(monthlyHoursGoalFormatter.string(from:))
+            .map { $0 ?? "" }
 
-            for (day, segmentIndex) in self.weekdaysToSegments {
-                assert(segmentIndex < self.weekWorkdaysControl.segmentCount)
-                if self.weekWorkdaysControl.isSelected(forSegment: segmentIndex) {
-                    newSelection.select(day)
+        weekWorkdaysControl.reactive
+            .makeBindingTarget(on: UIScheduler()) { $0.setSelected($1.0, forSegment: $1.1) }
+            <~ Property(value: Weekday.allDaysOrdered).producer
+                .sample(on: nonNilGoal.map { _ in () })
+                .map(SignalProducer<Weekday, NoError>.init)
+                .flatten(.latest)
+                .withLatest(from: nonNilGoal.map { $0.workWeekdays })
+                .map { ($1.isSelected($0), $0.indexInGregorianCalendarSymbolsArray) }
+
+        // Bind UI to output
+        let goalFromEditedHours = monthlyHoursGoalField.reactive.stringValues
+            .map { [weak formatter = monthlyHoursGoalFormatter] (text) -> HoursTargetType? in
+                formatter?.number(from: text)?.intValue
+            }
+            .skipNil()
+            .producer
+            .withLatest(from: nonNilGoal)
+            .map { Goal(for: $1.projectId, hoursTarget: $0, workWeekdays: $1.workWeekdays) }
+
+        let goalFromEditedActiveWeekdays = weekWorkdaysControl.reactive.selectedSegmentIndexes
+            .map { [weak weekWorkdaysControl] (_) -> WeekdaySelection? in
+                guard let control = weekWorkdaysControl else {
+                    return nil
                 }
-            }
-            guard var goalValue = self.goal.value else {
-                return
-            }
-            goalValue.workWeekdays = newSelection
-            self.goal.value = goalValue
-            self.userUpdatesPipe.input.send(value: goalValue)
-        }
+                var newSelection = WeekdaySelection.empty
 
-
-        monthlyHoursGoalField.reactive.stringValues.observeValues { [unowned self] (text) in
-            if let parsedHours = self.monthlyHoursGoalFormatter.number(from: text) {
-
-                guard var goalValue = self.goal.value else {
-                    return
+                for day in Weekday.allDaysOrdered {
+                    if control.isSelected(forSegment: day.indexInGregorianCalendarSymbolsArray) {
+                        newSelection.select(day)
+                    }
                 }
-                goalValue.hoursTarget = parsedHours.intValue
-                self.goal.value = goalValue
-                self.userUpdatesPipe.input.send(value: goalValue)
-            }
-        }
 
-        didLoadViewProperty.value = true
-    }
+                return newSelection
+            }.skipNil()
+            .producer
+            .withLatest(from: nonNilGoal)
+            .map { Goal(for: $1.projectId, hoursTarget: $1.hoursTarget, workWeekdays: $0) }
 
-    private let isWeekWorkdayControlPopulated = MutableProperty(false)
-    private func populateWeekWorkDaysControl(calendar: Calendar) {
-        let weekdaySymbols = calendar.veryShortWeekdaySymbols
-        weekWorkdaysControl.segmentCount = weekdaySymbols.count
+        let editedGoal = SignalProducer.merge(goalFromEditedHours,
+                                              goalFromEditedActiveWeekdays)
 
-        let startFrom = Weekday.monday
-        var dayIndex = startFrom.rawValue
-        var segmentIndex = 0
+        let deleteGoal = Action<Void, Void, NoError> { SignalProducer(value: ()) }
+        deleteGoalButton.reactive.pressed = CocoaAction(deleteGoal)
 
-        weekdaysToSegments.removeAll()
+        let deletedGoal = deleteGoal.values.map { nil as Goal? }.producer
 
-        func addSegment(_ day: Weekday) {
-            let daySymbol = weekdaySymbols[day.rawValue]
-            weekWorkdaysControl.setLabel(daySymbol, forSegment: segmentIndex)
-            weekdaysToSegments[day] = segmentIndex
-            segmentIndex += 1
-        }
-
-        while let day = Weekday(rawValue: dayIndex) {
-            addSegment(day)
-            dayIndex += 1
-        }
-
-        dayIndex = 0
-        while let day = Weekday(rawValue: dayIndex), dayIndex < startFrom.rawValue {
-            addSegment(day)
-            dayIndex += 1
-        }
-        isWeekWorkdayControlPopulated.value = true
-    }
-
-    private lazy var selectedWeekdaySegments = BindingTarget<WeekdaySelection?>(on: UIScheduler(), lifetime: lifetime) { [weak self] in
-        guard let _self = self else {
-            return
-        }
-        for (day, segmentIndex) in _self.weekdaysToSegments {
-            _self.weekWorkdaysControl.setSelected($0?.isSelected(day) ?? false, forSegment: segmentIndex)
-        }
-    }
-
-    @IBAction func deleteGoal(_ sender: Any) {
-        goal.value = nil
-        userUpdatesPipe.input.send(value: goal.value)
+        userUpdates <~ SignalProducer.merge(editedGoal.map { Optional($0) }, deletedGoal)
     }
 }
 
