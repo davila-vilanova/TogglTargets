@@ -24,7 +24,6 @@ class GoalViewController: NSViewController, BindingTargetProvider {
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
     private let goal = MutableProperty<Goal?>(nil)
-    private var calendar = MutableProperty<Calendar?>(nil)
 
 
     // MARK: - Output
@@ -51,12 +50,12 @@ class GoalViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        calendar <~ lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
+        let calendar = lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
         goal <~ lastBinding.producer.skipNil().map { $0.goal }.flatten(.latest)
         userUpdatesPipe.output.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.userUpdates })
 
         // Set up view
-        calendar.producer.skipNil().observe(on: UIScheduler()).startWithValues { [unowned self] (cal) in
+        calendar.observe(on: UIScheduler()).startWithValues { [unowned self] (cal) in
             self.populateWeekWorkDaysControl(calendar: cal)
         }
 
