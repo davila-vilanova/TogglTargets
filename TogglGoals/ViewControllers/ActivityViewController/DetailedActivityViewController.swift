@@ -17,7 +17,6 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-    private let activityStatuses = MutableProperty([ActivityStatus]())
 
     private weak var profileContainer: NSView!
     private weak var projectsContainer: NSView!
@@ -86,9 +85,8 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
         rootStackView.addArrangedSubview(reportsContainer)
         rootStackView.addArrangedSubview(runningEntryContainer)
 
+        let activityStatuses = lastBinding.latestOutput { $0 }
         updateActivities <~ activityStatuses.combinePrevious([ActivityStatus]())
-
-        self.activityStatuses <~ lastBinding.latestOutput { $0 }
     }
 
     private func updateActivitiesState(from previousStatus: [ActivityStatus],
