@@ -44,7 +44,6 @@ class GoalViewController: NSViewController, BindingTargetProvider {
 
     private let didLoadViewProperty = MutableProperty(false)
 
-    private var segmentsToWeekdays = Dictionary<Int, Weekday>()
     private var weekdaysToSegments = Dictionary<Weekday, Int>()
 
     override func viewDidLoad() {
@@ -122,13 +121,11 @@ class GoalViewController: NSViewController, BindingTargetProvider {
         var dayIndex = startFrom.rawValue
         var segmentIndex = 0
 
-        segmentsToWeekdays.removeAll()
         weekdaysToSegments.removeAll()
 
         func addSegment(_ day: Weekday) {
             let daySymbol = weekdaySymbols[day.rawValue]
             weekWorkdaysControl.setLabel(daySymbol, forSegment: segmentIndex)
-            segmentsToWeekdays[segmentIndex] = day
             weekdaysToSegments[day] = segmentIndex
             segmentIndex += 1
         }
@@ -160,6 +157,7 @@ class GoalViewController: NSViewController, BindingTargetProvider {
         userUpdatesPipe.input.send(value: goal.value)
     }
 }
+
 
 // MARK: -
 
