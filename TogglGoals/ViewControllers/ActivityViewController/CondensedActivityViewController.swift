@@ -13,7 +13,6 @@ import ReactiveSwift
 class CondensedActivityViewController: NSViewController, BindingTargetProvider {
     private let (lifetime, token) = Lifetime.make()
 
-    private let activityStatuses = MutableProperty([ActivityStatus]())
     private let requestExpandDetails = MutableProperty(false)
 
     // MARK: - Interface
@@ -34,12 +33,12 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        activityStatuses <~ lastBinding.latestOutput { $0.activityStatuses }
+        let activityStatuses = lastBinding.latestOutput { $0.activityStatuses }
         requestExpandDetails.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.expandDetails } )
 
         horizontalLine.reactive.makeBindingTarget { $0.animator().isHidden = !$1 } <~ requestExpandDetails
 
-        let stateProducer = makeStateProducer(from: activityStatuses.producer)
+        let stateProducer = makeStateProducer(from: activityStatuses)
         let syncingStates = stateProducer.filter(State.isSyncing)
         let errorStates = stateProducer.filter(State.isErrors)
         let singleErrorStates = errorStates.filter(State.hasSingleItem)
