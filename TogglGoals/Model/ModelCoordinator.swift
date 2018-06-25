@@ -90,12 +90,10 @@ internal class ModelCoordinator: NSObject {
 
     /// Apply this action to attempt a refresh and update of the currently
     /// running entry.
-
-
     var updateRunningEntry: RefreshAction { return togglDataRetriever.updateRunningEntry }
 
     /// Used to schedule the next automatic refresh of the currently running entry.
-    private lazy var runningEntryUpdateTimer: RunningEntryUpdateTimer = RunningEntryUpdateTimer()
+    private let runningEntryUpdateTimer: RunningEntryUpdateTimer
 
 
     // MARK: - Goals
@@ -148,6 +146,9 @@ internal class ModelCoordinator: NSObject {
         self.goalsStore = goalsStore
         self.currentDateGenerator = currentDateGenerator
         self.reportPeriodsProducer = reportPeriodsProducer
+        self.runningEntryUpdateTimer =
+            RunningEntryUpdateTimer(now: currentDateGenerator.currentDate.producer,
+                                    lastEntryStart: togglDataRetriever.runningEntry.producer.map { $0?.start })
 
         super.init()
 
@@ -157,7 +158,6 @@ internal class ModelCoordinator: NSObject {
         togglDataRetriever.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod.skipRepeats()
         currentDateGenerator.updateTrigger <~ retrievalStatus.map { _ in () }.throttle(1.0, on: QueueScheduler())
 
-        runningEntryUpdateTimer.lastEntryStart <~ runningEntry.map { $0?.start }
         updateRunningEntry <~ runningEntryUpdateTimer.trigger
 
         let runningEntryStopped = runningEntry.producer
@@ -173,33 +173,12 @@ internal class ModelCoordinator: NSObject {
 
 // MARK: -
 
+fileprivate let oneMinute = TimeInterval.from(minutes: 1)
+fileprivate let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
+
 /// Emits empty values that act as triggers to update the currently running entry
 /// based on whether a running entry is currently running and its start date.
 fileprivate class RunningEntryUpdateTimer {
-
-    /// Binding target to receive the start date of the currently running entry,
-    /// or `nil` if there is no time entry currently running.
-    lazy var lastEntryStart: BindingTarget<Date?> = BindingTarget(on: scheduler, lifetime: lifetime) { [unowned self] (runningEntryStartDate: Date?) in
-        let oneMinute = TimeInterval.from(minutes: 1)
-        let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
-
-        let scheduleDate: Date = {
-            guard let startDate = runningEntryStartDate,
-                let date = self.scheduler.closestFutureDateIncrementing(date: startDate, byMultipleOf: oneMinute) else {
-                    return self.scheduler.currentDate.addingTimeInterval(oneMinute)
-            }
-            return date
-        }()
-        if let disposable = self.scheduledTickDisposable {
-            disposable.dispose()
-        }
-        self.scheduledTickDisposable = self.scheduler.schedule(after: scheduleDate,
-                                                               interval: oneMinuteDispatch,
-                                                               action: { [update = self.updateRunningEntryPipe.input] in
-            update.send(value: ())
-        })
-    }
-
     /// Emits empty values that act as triggers to update the currently running entry
     var trigger: Signal<(), NoError> { return updateRunningEntryPipe.output }
 
@@ -214,22 +193,39 @@ fileprivate class RunningEntryUpdateTimer {
 
     /// The lifetime associated with `runningEntryStart` and its token.
     private let (lifetime, token) = Lifetime.make()
+
+    init(now: SignalProducer<Date, NoError>, lastEntryStart: SignalProducer<Date?, NoError>) {
+        let scheduleDates = SignalProducer.combineLatest(now, lastEntryStart).map { (arg) -> Date in
+            let (now, timeEntryStartDate) = arg
+            guard let start = timeEntryStartDate,
+                let target = now.closestFutureDateIncrementing(start, byMultipleOf: oneMinute) else {
+                    return now.addingTimeInterval(oneMinute)
+            }
+            return target
+        }
+        lifetime += scheduleDates.startWithValues { [unowned self] in
+            if let disposable = self.scheduledTickDisposable {
+                disposable.dispose()
+            }
+            self.scheduledTickDisposable = self.scheduler.schedule(after: $0, interval: oneMinuteDispatch, action: { [update = self.updateRunningEntryPipe.input] in update.send(value: ()) })
+        }
+    }
 }
 
-fileprivate extension QueueScheduler {
+fileprivate extension Date {
     /// Finds the closest future date that is a minute increment over the input date.
     ///
     /// - note: the input date must be a date in the past.
     ///
     /// - parameters:
     ///   - inputDate: The `Date` used as reference to calculate the future `Date`.
-    ///   - byMultipleOf: The `TimeInterval` to use as discrete step over the
+    ///   - unit: The `TimeInterval` to use as discrete step over the
     ///     input `Date` to calculate the return `Date`
     /// - returns: A `Date` representing the closest future date that is a future
     ///   of `inputDate` by a multiple of `byMultipleOf`, or or nil if `inputDate`
     ///   is itself in the future.
-    func closestFutureDateIncrementing(date inputDate: Date, byMultipleOf unit: TimeInterval) -> Date? {
-        let now = currentDate
+    func closestFutureDateIncrementing(_ inputDate: Date, byMultipleOf unit: TimeInterval) -> Date? {
+        let now = self
         guard now > inputDate else {
             return nil
         }
