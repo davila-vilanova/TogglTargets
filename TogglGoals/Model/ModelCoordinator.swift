@@ -45,11 +45,6 @@ internal class ModelCoordinator: NSObject {
     /// requested time reports.
     internal var periodPreference: BindingTarget<PeriodPreference> { return reportPeriodsProducer.periodPreference }
 
-    /// Binding target for the current `Calendar` used to perform calendrical
-    /// computations.
-    internal var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
-    private var _calendar = MutableProperty<Calendar?>(nil)
-
 
     // MARK: - Profile
 
@@ -162,7 +157,7 @@ internal class ModelCoordinator: NSObject {
         super.init()
 
         self.goalsStore.projectIDs <~ self.togglDataRetriever.projects.producer.skipNil().map { [ProjectID]($0.keys) }
-        reportPeriodsProducer.calendar <~ _calendar.producer.skipNil()
+        reportPeriodsProducer.calendar <~ calendar
         reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
         togglDataRetriever.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod.skipRepeats()
         updateRunningEntry <~ runningEntryUpdateTimer.trigger

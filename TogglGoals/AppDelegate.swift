@@ -66,7 +66,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         super.init()
 
-        modelCoordinator.calendar <~ calendar
         modelCoordinator.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
     }
 
