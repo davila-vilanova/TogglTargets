@@ -58,6 +58,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
                                                 goalsStore: goalsStore,
                                                 currentDateGenerator: currentDateGenerator,
+                                                calendar: calendar.producer,
                                                 reportPeriodsProducer: ReportPeriodsProducer())
         } else {
             fatalError("Goals store failed to initialize")

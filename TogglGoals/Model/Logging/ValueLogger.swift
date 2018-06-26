@@ -9,6 +9,13 @@
 import Foundation
 import ReactiveSwift
 
+fileprivate let dateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .none
+    formatter.timeStyle = .medium
+    return formatter
+}()
+
 extension Signal {
     public func logValues(_ identifier: String, logger: @escaping EventLogger = cleanEventLog) -> Signal<Value, Error> {
         return logEvents(identifier: identifier, events: [.value], logger: cleanEventLog)
@@ -22,5 +29,5 @@ extension SignalProducer {
 }
 
 public func cleanEventLog(identifier: String, event: String, fileName: String, functionName: String, lineNumber: Int) {
-    print("[\(identifier)] \(event)")
+    print("\(dateFormatter.string(from: Date())): [\(identifier)] \(event)")
 }

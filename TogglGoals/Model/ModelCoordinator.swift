@@ -14,8 +14,7 @@ import ReactiveSwift
 /// Combines data from the Toggl API, the user's goals and the system's time and date.
 /// Determines the dates of the reports to retrieve based on the user's period
 /// preference and the current date.
-/// Keeps the running entry up to date and triggers updates to the current date
-/// generator.
+/// Keeps the running entry up to date and triggers updates to the current date generator.
 internal class ModelCoordinator: NSObject {
 
     /// MARK: - Internal dependencies
@@ -96,6 +95,11 @@ internal class ModelCoordinator: NSObject {
     private let runningEntryUpdateTimer: RunningEntryUpdateTimer
 
 
+    // MARK: - Updating time
+
+    private let currentDateUpdateTimer: CurrentDateUpdateTimer
+
+
     // MARK: - Goals
 
     /// Function which takes a project ID as input and returns a producer that
@@ -141,14 +145,19 @@ internal class ModelCoordinator: NSObject {
     internal init(togglDataRetriever: TogglAPIDataRetriever,
                   goalsStore: ProjectIDsByGoalsProducingGoalsStore,
                   currentDateGenerator: CurrentDateGeneratorProtocol,
+                  calendar: SignalProducer<Calendar, NoError>,
                   reportPeriodsProducer: ReportPeriodsProducer) {
         self.togglDataRetriever = togglDataRetriever
         self.goalsStore = goalsStore
         self.currentDateGenerator = currentDateGenerator
         self.reportPeriodsProducer = reportPeriodsProducer
-        self.runningEntryUpdateTimer =
-            RunningEntryUpdateTimer(now: currentDateGenerator.currentDate.producer,
-                                    lastEntryStart: togglDataRetriever.runningEntry.producer.map { $0?.start })
+        self.runningEntryUpdateTimer = RunningEntryUpdateTimer(now: currentDateGenerator.producer,
+                                                               lastEntryStart: togglDataRetriever.runningEntry.producer.map { $0?.start},
+                                                               calendar: calendar)
+
+        self.currentDateUpdateTimer = CurrentDateUpdateTimer(now: currentDateGenerator.currentDate.producer,
+                                                             runningEntry: togglDataRetriever.runningEntry.producer,
+                                                             calendar: calendar)
 
         super.init()
 
@@ -156,9 +165,8 @@ internal class ModelCoordinator: NSObject {
         reportPeriodsProducer.calendar <~ _calendar.producer.skipNil()
         reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
         togglDataRetriever.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod.skipRepeats()
-        currentDateGenerator.updateTrigger <~ retrievalStatus.map { _ in () }.throttle(1.0, on: QueueScheduler())
-
         updateRunningEntry <~ runningEntryUpdateTimer.trigger
+        currentDateGenerator.updateTrigger <~ currentDateUpdateTimer.trigger
 
         let runningEntryStopped = runningEntry.producer
             .skipRepeats { $0 == $1 }
@@ -180,10 +188,10 @@ fileprivate let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
 /// based on whether a running entry is currently running and its start date.
 fileprivate class RunningEntryUpdateTimer {
     /// Emits empty values that act as triggers to update the currently running entry
-    var trigger: Signal<(), NoError> { return updateRunningEntryPipe.output }
+    var trigger: Signal<(), NoError> { return triggerPipe.output }
 
-    /// The pipe used to convey values to `updateRunningEntry`
-    private let updateRunningEntryPipe = Signal<(), NoError>.pipe()
+    /// The pipe used to convey values to `trigger`
+    private let triggerPipe = Signal<(), NoError>.pipe()
 
     /// The `QueueScheduler` used to schedule actions in the future.
     private let scheduler = QueueScheduler(name: "RunningEntryUpdateTimer-scheduler")
@@ -191,47 +199,65 @@ fileprivate class RunningEntryUpdateTimer {
     /// Keeps the `Disposable` corresponding to the latest scheduled action.
     private var scheduledTickDisposable: Disposable?
 
-    /// The lifetime associated with `runningEntryStart` and its token.
+    /// The associated lifetime and its token.
     private let (lifetime, token) = Lifetime.make()
 
-    init(now: SignalProducer<Date, NoError>, lastEntryStart: SignalProducer<Date?, NoError>) {
-        let scheduleDates = SignalProducer.combineLatest(now, lastEntryStart).map { (arg) -> Date in
-            let (now, timeEntryStartDate) = arg
-            guard let start = timeEntryStartDate,
-                let target = now.closestFutureDateIncrementing(start, byMultipleOf: oneMinute) else {
-                    return now.addingTimeInterval(oneMinute)
-            }
-            return target
+    init(now: SignalProducer<Date, NoError>, lastEntryStart: SignalProducer<Date?, NoError>, calendar: SignalProducer<Calendar, NoError>) {
+        let dates = SignalProducer.combineLatest(calendar,
+                                                 lastEntryStart.skipRepeats().withLatest(from: now))
+            .map { (calendar, dates) -> Date in
+                let (runningEntryStart, now) = dates
+                let secondsOffset: Int
+                if let start = runningEntryStart {
+                    secondsOffset = calendar.component(.second, from: start)
+                } else {
+                    secondsOffset = 0
+                }
+                return findClosestDate(after: now, matching: secondsOffset, using: calendar)
         }
-        lifetime += scheduleDates.startWithValues { [unowned self] in
-            if let disposable = self.scheduledTickDisposable {
-                disposable.dispose()
-            }
-            self.scheduledTickDisposable = self.scheduler.schedule(after: $0, interval: oneMinuteDispatch, action: { [update = self.updateRunningEntryPipe.input] in update.send(value: ()) })
+
+
+        lifetime += dates.startWithValues { [unowned self] in
+            self.scheduledTickDisposable?.dispose()
+            self.scheduledTickDisposable =
+                self.scheduler.schedule(after: $0, interval: oneMinuteDispatch, action: { [update = self.triggerPipe.input] in update.send(value: ()) })
         }
     }
 }
 
-fileprivate extension Date {
-    /// Finds the closest future date that is a minute increment over the input date.
-    ///
-    /// - note: the input date must be a date in the past.
-    ///
-    /// - parameters:
-    ///   - inputDate: The `Date` used as reference to calculate the future `Date`.
-    ///   - unit: The `TimeInterval` to use as discrete step over the
-    ///     input `Date` to calculate the return `Date`
-    /// - returns: A `Date` representing the closest future date that is a future
-    ///   of `inputDate` by a multiple of `byMultipleOf`, or or nil if `inputDate`
-    ///   is itself in the future.
-    func closestFutureDateIncrementing(_ inputDate: Date, byMultipleOf unit: TimeInterval) -> Date? {
-        let now = self
-        guard now > inputDate else {
-            return nil
+fileprivate class CurrentDateUpdateTimer {
+    /// Emits empty values that act as triggers to update the current date
+    var trigger: Signal<(), NoError> { return triggerPipe.output }
+
+    /// The pipe used to convey values to `trigger`
+    private let triggerPipe = Signal<(), NoError>.pipe()
+
+    /// The `QueueScheduler` used to schedule actions in the future.
+    private let scheduler = QueueScheduler(name: "CurrentDateUpdateTimer-scheduler")
+
+    private var scheduledMinuteOnTheClockTickDisposable: Disposable?
+
+    /// The associated lifetime and its token.
+    private let (lifetime, token) = Lifetime.make()
+
+    init(now: SignalProducer<Date, NoError>, runningEntry: SignalProducer<RunningEntry?, NoError>, calendar: SignalProducer<Calendar, NoError>) {
+        let trigger = { [unowned self] in self.triggerPipe.input.send(value: ()) }
+
+        // Trigger updates each minute on the clock
+        lifetime += SignalProducer.zip(now, calendar).take(first: 1)
+            .map { findClosestDate(after: $0, matching: 0, using: $1) }
+            .startWithValues { [unowned self] in
+            self.scheduledMinuteOnTheClockTickDisposable?.dispose()
+            self.scheduledMinuteOnTheClockTickDisposable = self.scheduler.schedule(after: $0, interval: oneMinuteDispatch, action: trigger)
         }
-        let diff = now.timeIntervalSinceReferenceDate - inputDate.timeIntervalSinceReferenceDate
-        let elapsedFullUnitPeriods = floor(diff / unit)
-        let closestFutureInterval = inputDate.timeIntervalSinceReferenceDate + (unit * (elapsedFullUnitPeriods + 1))
-        return Date(timeIntervalSinceReferenceDate: closestFutureInterval)
+
+        // Trigger updates each time a new running entry becomes available
+        lifetime += runningEntry.skipRepeats().startWithValues { _ in trigger() }
     }
+}
+
+fileprivate func findClosestDate(after date: Date, matching secondsComponent: Int, using calendar: Calendar) -> Date {
+    let seconds = calendar.component(.second, from: date)
+    let offset = (seconds < secondsComponent ? 0 : 60) + secondsComponent - seconds
+    return Date(timeIntervalSinceReferenceDate: date.timeIntervalSinceReferenceDate + TimeInterval(offset))
 }
