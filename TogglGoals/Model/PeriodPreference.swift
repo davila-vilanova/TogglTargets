@@ -69,3 +69,39 @@ extension PeriodPreference: StorableInUserDefaults {
         }
     }
 }
+
+
+extension PeriodPreference {
+    var isMonthly: Bool {
+        switch self {
+        case .monthly: return true
+        default: return false
+        }
+    }
+
+    var isWeekly: Bool {
+        switch self {
+        case .weekly: return true
+        default: return false
+        }
+    }
+
+    var selectedWeekday: Weekday? {
+        switch self {
+        case .weekly(let weekday): return weekday
+        default: return nil
+        }
+    }
+}
+
+func isMonthly(_ p: PeriodPreference) -> Bool {
+    return p.isMonthly
+}
+
+func isWeekly(_ p: PeriodPreference) -> Bool {
+    return p.isWeekly
+}
+
+func selectedWeekday(_ p: PeriodPreference) -> Weekday? {
+    return p.selectedWeekday
+}

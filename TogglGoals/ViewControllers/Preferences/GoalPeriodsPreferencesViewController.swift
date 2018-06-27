@@ -196,39 +196,3 @@ fileprivate func boolToControlStateValue(_ bool: Bool) -> NSControl.StateValue {
 fileprivate func weekdayFromSelection(in popup: NSPopUpButton) -> Weekday {
     return Weekday.fromIndexInGregorianCalendarSymbolsArray(popup.indexOfSelectedItem)!
 }
-
-fileprivate extension PeriodPreference {
-    var isMonthly: Bool {
-        switch self {
-        case .monthly: return true
-        default: return false
-        }
-    }
-
-    var isWeekly: Bool {
-        switch self {
-        case .weekly: return true
-        default: return false
-        }
-    }
-
-    var selectedWeekday: Weekday? {
-        switch self {
-        case .weekly(let weekday): return weekday
-        default: return nil
-        }
-    }
-}
-
-fileprivate func isMonthly(_ p: PeriodPreference) -> Bool {
-    return p.isMonthly
-}
-
-fileprivate func isWeekly(_ p: PeriodPreference) -> Bool {
-    return p.isWeekly
-}
-
-fileprivate func selectedWeekday(_ p: PeriodPreference) -> Weekday? {
-    return p.selectedWeekday
-}
-

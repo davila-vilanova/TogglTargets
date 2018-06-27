@@ -70,19 +70,14 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             return project?.name ?? "(nothing)"
         }
 
-        goalLabel.reactive.text <~ goal.combineLatest(with: periodPreference)
-            .map { goal, periodPreference -> String in
-                let targetPeriodDescription: String
-                switch periodPreference {
-                case .monthly: targetPeriodDescription = "hours per month"
-                case .weekly: targetPeriodDescription = "hours per week"
-                }
-                if let goal = goal {
-                    return "\(goal.hoursTarget) \(targetPeriodDescription)"
-                } else {
-                    return "(no goal)"
-                }
-        }
+        let targetPeriodDescription = SignalProducer.merge(periodPreference.filter(isMonthly).map { _ in "hours per month" },
+                                                           periodPreference.filter(isWeekly).map { _ in "hours per week" })
+
+        goalLabel.reactive.text <~ goal.skipNil().combineLatest(with: targetPeriodDescription)
+            .map { "\($0.hoursTarget) \($1)" }
+
+        goalLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ goal.map { $0 == nil }
+
         let workedTimeFromReport = report.map { (reportValueOrNil) -> TimeInterval in
             return reportValueOrNil?.workedTime ?? 0.0
         }
