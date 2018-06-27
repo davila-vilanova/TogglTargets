@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
         <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
@@ -19,45 +20,54 @@
             </connections>
         </collectionViewItem>
         <customView wantsLayer="YES" id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="140" height="83"/>
+            <rect key="frame" x="0.0" y="0.0" width="140" height="51"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="484-m5-m2m">
-                    <rect key="frame" x="6" y="58" width="128" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="project name" id="MGk-G1-zEk">
-                        <font key="font" metaFont="systemMedium" size="13"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pcZ-U4-eHq">
-                    <rect key="frame" x="6" y="33" width="128" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="goal" id="8g6-dx-UR5">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oej-8K-uOr" userLabel="Report Label">
-                    <rect key="frame" x="6" y="8" width="128" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="report" id="qMh-YV-Zys">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
+                <stackView distribution="fillEqually" orientation="vertical" alignment="leading" spacing="3" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zmb-G0-m3D">
+                    <rect key="frame" x="8" y="0.0" width="132" height="51"/>
+                    <subviews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="484-m5-m2m">
+                            <rect key="frame" x="-2" y="34" width="86" height="17"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="project name" id="MGk-G1-zEk">
+                                <font key="font" metaFont="systemMedium" size="13"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pcZ-U4-eHq">
+                            <rect key="frame" x="-2" y="17" width="27" height="14"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="goal" id="8g6-dx-UR5">
+                                <font key="font" metaFont="smallSystem"/>
+                                <color key="textColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Oej-8K-uOr" userLabel="Report Label">
+                            <rect key="frame" x="-2" y="0.0" width="37" height="14"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="report" id="qMh-YV-Zys">
+                                <font key="font" metaFont="smallSystem"/>
+                                <color key="textColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
+                    <visibilityPriorities>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                        <integer value="1000"/>
+                    </visibilityPriorities>
+                    <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                        <real value="3.4028234663852886e+38"/>
+                    </customSpacing>
+                </stackView>
             </subviews>
             <constraints>
-                <constraint firstItem="Oej-8K-uOr" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" identifier="report leading" id="1EF-e8-Nhb"/>
-                <constraint firstAttribute="trailing" secondItem="pcZ-U4-eHq" secondAttribute="trailing" constant="8" identifier="goal trailing" id="3pW-7B-mpa"/>
-                <constraint firstItem="Oej-8K-uOr" firstAttribute="top" secondItem="pcZ-U4-eHq" secondAttribute="bottom" constant="8" symbolic="YES" identifier="report top" id="8Rd-h7-gVz"/>
-                <constraint firstItem="pcZ-U4-eHq" firstAttribute="top" secondItem="484-m5-m2m" secondAttribute="bottom" constant="8" identifier="goal top" id="A63-7C-V3T"/>
-                <constraint firstAttribute="bottom" secondItem="Oej-8K-uOr" secondAttribute="bottom" constant="8" identifier="report bottom" id="I6v-Pd-oeK"/>
-                <constraint firstAttribute="trailing" secondItem="484-m5-m2m" secondAttribute="trailing" constant="8" identifier="project name trailing" id="XeB-F8-cAv"/>
-                <constraint firstItem="pcZ-U4-eHq" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" identifier="goal leading" id="Z0D-uH-Wlq"/>
-                <constraint firstAttribute="trailing" secondItem="Oej-8K-uOr" secondAttribute="trailing" constant="8" identifier="report trailing" id="ga8-Xs-S1E"/>
-                <constraint firstItem="484-m5-m2m" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="8" identifier="project name top" id="qji-UA-orE"/>
-                <constraint firstItem="484-m5-m2m" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" identifier="project name leading" id="vhf-oB-iXd"/>
+                <constraint firstItem="Zmb-G0-m3D" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="2PT-wr-ExR"/>
+                <constraint firstAttribute="trailing" secondItem="Zmb-G0-m3D" secondAttribute="trailing" id="FzT-wU-K6m"/>
+                <constraint firstItem="Zmb-G0-m3D" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="MIU-38-Tvh"/>
+                <constraint firstAttribute="bottom" secondItem="Zmb-G0-m3D" secondAttribute="bottom" id="jsm-2I-0gL"/>
             </constraints>
             <point key="canvasLocation" x="-509.5" y="-642.5"/>
         </customView>

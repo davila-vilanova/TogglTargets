@@ -14,7 +14,7 @@ internal class ListLayout: NSCollectionViewLayout {
 
     private var contentSize = NSZeroSize
 
-    var itemHeight = CGFloat(80)
+    var itemHeight = CGFloat(55)
     var itemMargin = NSEdgeInsets(top: -4, left: -2, bottom: -4, right: -2)
 
     override func prepare() {
