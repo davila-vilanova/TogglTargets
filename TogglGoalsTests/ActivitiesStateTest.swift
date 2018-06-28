@@ -10,7 +10,7 @@ import XCTest
 import Result
 import ReactiveSwift
 
-fileprivate let OutputTimeout = TimeInterval(1)
+fileprivate let OutputTimeout = TimeInterval(3)
 
 class ActivitiesStateTest: XCTestCase {
     let scheduler = QueueScheduler()
@@ -85,7 +85,6 @@ class ActivitiesStateTest: XCTestCase {
         }
 
         var iterator = value.makeIterator()
-        XCTAssertEqual(iterator.next(), .succeeded(.syncProfile))
         XCTAssertEqual(iterator.next(), .succeeded(.syncProjects))
         XCTAssertEqual(iterator.next(), .executing(.syncReports))
         XCTAssertNil(iterator.next())

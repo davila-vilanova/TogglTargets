@@ -209,7 +209,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Generates a `URLSession` instance based on the latest value received through `apiCredential`.
     private lazy var urlSession = Property<URLSession?>(
-        initial: nil, then: _apiCredential.producer.map(URLSession.init))
+        initial: nil, then: _apiCredential.signal.map(URLSession.init))
 
     private lazy var noCredentialsEvents: Signal<(), NoError> = retrieveProfileNetworkAction.errors.filter(isNoCredentialsError).map { _ in () }
 

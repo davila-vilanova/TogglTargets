@@ -63,7 +63,11 @@ class TogglAPIDataRetrieverTest: XCTestCase {
     var retrieveProfileCacheAction: RetrieveProfileCacheAction!
     var storeProfileCacheAction: StoreProfileCacheAction!
     var retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction!
+    var retrieveProjectsCacheAction: RetrieveProjectsCacheAction!
+    var storeProjectsCacheAction: StoreProjectsCacheAction!
     var retrieveReportsNetworkAction: RetrieveReportsNetworkAction!
+    var retrieveReportsCacheAction: RetrieveReportsCacheAction!
+    var storeReportsCacheAction: StoreReportsCacheAction!
     var retrieveRunningEntryAction: RetrieveRunningEntryNetworkAction!
 
 
@@ -97,6 +101,8 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             }
             return SignalProducer(value: testProjects)
         }
+        retrieveProjectsCacheAction = RetrieveProjectsCacheAction { _ in SignalProducer(value: nil) }
+        storeProjectsCacheAction = StoreProjectsCacheAction { _ in SignalProducer.empty }
 
         retrieveReportsNetworkAction = RetrieveReportsNetworkAction { (workspaceIDs, period) in
             // Return empty reports if the workspace IDs don't match the expected ones
@@ -105,6 +111,8 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             }
             return SignalProducer(value: testReports)
         }
+        retrieveReportsCacheAction = RetrieveReportsCacheAction { _ in SignalProducer(value: nil) }
+        storeReportsCacheAction = StoreReportsCacheAction { _ in SignalProducer.empty }
 
         retrieveRunningEntryAction = RetrieveRunningEntryNetworkAction { _ in SignalProducer(value: testRunningEntry) }
 
@@ -121,11 +129,15 @@ class TogglAPIDataRetrieverTest: XCTestCase {
     }
 
     private func makeDataRetriever() {
-        dataRetriever = CachedTogglAPIDataRetriever(retrieveProfileNetworkActionMaker: { [action = retrieveProfileNetworkAction!] _ in action },
+        dataRetriever = CachedTogglAPIDataRetriever(retrieveProfileNetworkActionMaker: { [action = retrieveProfileNetworkAction!] in action },
                                                     retrieveProfileCacheAction: retrieveProfileCacheAction,
                                                     storeProfileCacheAction: storeProfileCacheAction,
                                                     retrieveProjectsNetworkActionMaker: { [action = retrieveProjectsNetworkAction!] _ in action },
+                                                    retrieveProjectsCacheAction: retrieveProjectsCacheAction,
+                                                    storeProjectsCacheAction: storeProjectsCacheAction,
                                                     retrieveReportsNetworkActionMaker: { [action = retrieveReportsNetworkAction!] _ in action },
+                                                    retrieveReportsCacheAction: retrieveReportsCacheAction,
+                                                    storeReportsCacheAction: storeReportsCacheAction,
                                                     retrieveRunningEntryNetworkActionMaker: { [action = retrieveRunningEntryAction!] _ in action })
         retrievedProfile = Property(initial: nil, then: dataRetriever.profile.producer)
         retrievedProjects = Property(initial: nil, then: dataRetriever.projects.producer)
@@ -166,14 +178,26 @@ class TogglAPIDataRetrieverTest: XCTestCase {
     }
 
     func testRetrieveRunningEntryOnDemand() {
-        testRetrieval(of: retrievedRunningEntry, satisfying: {
-            XCTAssertEqual($0.id, testRunningEntry.id)
-            XCTAssertEqual($0.projectId, testRunningEntry.projectId)
-            XCTAssertEqual($0.start, testRunningEntry.start)
-            XCTAssertEqual($0.retrieved, testRunningEntry.retrieved)
-        }) { [unowned self] in
-            self.dataRetriever.updateRunningEntry <~ SignalProducer(value: ())
+        makeDataRetriever()
+
+        XCTAssertNil(retrievedRunningEntry.value)
+        XCTAssertNil(lastError.value)
+        let automaticRetrievalExpectation = expectation(description: "Expecting automatically retrieved value for running entry")
+        retrievedRunningEntry.producer.skip(first: 1).take(first: 1).startWithValues {
+            XCTAssertNotNil($0)
+            automaticRetrievalExpectation.fulfill()
         }
+
+        feedAPICredentialIntoDataRetriever()
+        wait(for: [automaticRetrievalExpectation], timeout: timeoutForExpectations)
+
+        let onDemandRetrievalExpectation = expectation(description: "Expecting on demand retrieved value for running entry")
+        retrievedRunningEntry.producer.skip(first: 1).take(first: 1).startWithValues {
+            XCTAssertNotNil($0)
+            onDemandRetrievalExpectation.fulfill()
+        }
+        dataRetriever.updateRunningEntry <~ SignalProducer(value: ())
+        wait(for: [onDemandRetrievalExpectation], timeout: timeoutForExpectations)
     }
 
     private func testRetrieval<T>(of propertyProvider: @autoclosure () -> Property<T?>, satisfying test: @escaping (T) -> (), after trigger: () -> ()) {
@@ -288,16 +312,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         }
     }
 
-    func testErrorWhenRetrievingRunningEntryIsMadeAvailable() {
-        retrieveRunningEntryAction = RetrieveRunningEntryNetworkAction { _ in
-            SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
-        }
-
-        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) } ) { [unowned self] in
-            self.dataRetriever.updateRunningEntry <~ SignalProducer(value: ())
-        }
-    }
-
     private func testError(satisfies test: @escaping (APIAccessError) -> (), after trigger: () -> ()) {
         makeDataRetriever()
         XCTAssertNil(lastError.value)
@@ -349,12 +363,14 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         let reportsActionExecutionEndedExpectation = expectation(description: "retrieveReportsNetworkAction action execution ended")
         let runningEntryActionExecutionEndedExpectation = expectation(description: "retrieveRunningEntryAction action execution ended")
 
+        let (lifetime, token) = Lifetime.make()
+
         func setUpExpectationFulfillment<T, U>(for action: Action<T, U, APIAccessError>,
                                          start: XCTestExpectation, end: XCTestExpectation) {
             let executionStartedProducer = action.isExecuting.producer.filter { $0 }.map { _ in () }
-            executionStartedProducer.startWithValues { start.fulfill() }
+            lifetime += executionStartedProducer.startWithValues { start.fulfill() }
             let executionEndedProvider = action.isExecuting.producer.filter { !$0 }.map { _ in () }
-            executionEndedProvider.skip(until: executionStartedProducer).startWithValues { end.fulfill() }
+            lifetime += executionEndedProvider.skip(until: executionStartedProducer).startWithValues { end.fulfill() }
         }
 
         setUpExpectationFulfillment(for: retrieveProfileNetworkAction, start: profileActionExecutionStartedExpectation, end: profileActionExecutionEndedExpectation)
