@@ -13,7 +13,7 @@ struct Profile: Decodable {
     let name: String?
     let email: String
     let imageUrl: URL?
-    let timezone:String?
+    let timezone: String?
     let workspaces: [Workspace]
     let apiToken: String?
 
