@@ -105,7 +105,7 @@ fileprivate class TogglAPIDataPersistenceProviderMock: TogglAPIDataPersistencePr
 
     func deleteProfile() {
         defer {
-            deleteProjectsExpectation.fulfill()
+            deleteProfileExpectation.fulfill()
         }
         persistedProfile = nil
     }
