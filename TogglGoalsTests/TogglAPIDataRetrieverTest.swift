@@ -66,8 +66,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
     var retrieveProjectsCacheAction: RetrieveProjectsCacheAction!
     var storeProjectsCacheAction: StoreProjectsCacheAction!
     var retrieveReportsNetworkAction: RetrieveReportsNetworkAction!
-    var retrieveReportsCacheAction: RetrieveReportsCacheAction!
-    var storeReportsCacheAction: StoreReportsCacheAction!
     var retrieveRunningEntryAction: RetrieveRunningEntryNetworkAction!
 
 
@@ -111,8 +109,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             }
             return SignalProducer(value: testReports)
         }
-        retrieveReportsCacheAction = RetrieveReportsCacheAction { _ in SignalProducer(value: nil) }
-        storeReportsCacheAction = StoreReportsCacheAction { _ in SignalProducer.empty }
 
         retrieveRunningEntryAction = RetrieveRunningEntryNetworkAction { _ in SignalProducer(value: testRunningEntry) }
 
@@ -136,8 +132,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
                                                     retrieveProjectsCacheAction: retrieveProjectsCacheAction,
                                                     storeProjectsCacheAction: storeProjectsCacheAction,
                                                     retrieveReportsNetworkActionMaker: { [action = retrieveReportsNetworkAction!] _ in action },
-                                                    retrieveReportsCacheAction: retrieveReportsCacheAction,
-                                                    storeReportsCacheAction: storeReportsCacheAction,
                                                     retrieveRunningEntryNetworkActionMaker: { [action = retrieveRunningEntryAction!] _ in action })
         retrievedProfile = Property(initial: nil, then: dataRetriever.profile.producer)
         retrievedProjects = Property(initial: nil, then: dataRetriever.projects.producer)

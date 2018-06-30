@@ -10,7 +10,7 @@ import Foundation
 import Result
 import ReactiveSwift
 
-typealias StoreProfileCacheAction  = Action<Profile?, (), NoError>
+typealias StoreProfileCacheAction = Action<Profile?, (), NoError>
 func makeStoreProfileCacheAction() -> StoreProfileCacheAction {
     return StoreProfileCacheAction { profile in
         if profile != nil {
