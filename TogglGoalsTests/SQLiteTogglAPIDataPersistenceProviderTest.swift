@@ -1,5 +1,5 @@
 //
-//  TogglAPIDataPersistenceProviderTest.swift
+//  SQLiteTogglAPIDataPersistenceProviderTest.swift
 //  TogglGoalsTests
 //
 //  Created by David Dávila on 29.06.18.
@@ -21,7 +21,7 @@ fileprivate let testProjects: [Project] = [Project(id: 100, name: "first", activ
                                            Project(id: 300, name: "third", active: true, workspaceId: 2)]
 
 
-class TogglAPIDataPersistenceProviderTest: XCTestCase {
+class SQLiteTogglAPIDataPersistenceProviderTest: XCTestCase {
 
     var persistenceProvider: TogglAPIDataPersistenceProvider?
 
