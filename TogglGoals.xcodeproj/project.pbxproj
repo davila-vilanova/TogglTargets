@@ -145,6 +145,11 @@
 		639F8B7220E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */; };
 		639F8B7320E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */; };
 		639F8B7420E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */; };
+		639F8B7620E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7520E641AE00FDC8C1 /* TogglAPIDataCache.swift */; };
+		639F8B7720E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7520E641AE00FDC8C1 /* TogglAPIDataCache.swift */; };
+		639F8B7820E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7520E641AE00FDC8C1 /* TogglAPIDataCache.swift */; };
+		639F8B7920E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7520E641AE00FDC8C1 /* TogglAPIDataCache.swift */; };
+		639F8B7B20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7A20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift */; };
 		63A67F311FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */; };
 		63A67F321FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */; };
 		63A67F331FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */; };
@@ -369,6 +374,8 @@
 		639F8B6920E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataPersistenceProvider.swift; sourceTree = "<group>"; };
 		639F8B6E20E6343000FDC8C1 /* TogglAPIDataPersistenceProviderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataPersistenceProviderTest.swift; sourceTree = "<group>"; };
 		639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportDirectoryProvider.swift; sourceTree = "<group>"; };
+		639F8B7520E641AE00FDC8C1 /* TogglAPIDataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataCache.swift; sourceTree = "<group>"; };
+		639F8B7A20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataCacheTest.swift; sourceTree = "<group>"; };
 		63A67F301FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProfileNetworkAction.swift; sourceTree = "<group>"; };
 		63A67F351FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveProjectsNetworkAction.swift; sourceTree = "<group>"; };
 		63A67F3A1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrieveReportsNetworkAction.swift; sourceTree = "<group>"; };
@@ -499,6 +506,7 @@
 				63C329321FEFBA63008AB9F2 /* MakeRetrieveReportsNetworkActionTest.swift */,
 				637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */,
 				639F8B6E20E6343000FDC8C1 /* TogglAPIDataPersistenceProviderTest.swift */,
+				639F8B7A20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift */,
 			);
 			path = TogglGoalsTests;
 			sourceTree = "<group>";
@@ -636,8 +644,9 @@
 		63A67F4E1FCDA18F004BEFC6 /* OfflineCache */ = {
 			isa = PBXGroup;
 			children = (
-				63A67F4F1FCDA1A0004BEFC6 /* CacheActions */,
 				639F8B6920E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift */,
+				639F8B7520E641AE00FDC8C1 /* TogglAPIDataCache.swift */,
+				63A67F4F1FCDA1A0004BEFC6 /* CacheActions */,
 			);
 			path = OfflineCache;
 			sourceTree = "<group>";
@@ -920,6 +929,7 @@
 				63D4BBA81F7D821800B87298 /* GoalProgress.swift in Sources */,
 				6334B4A420703EC000A5B796 /* SingleActivityViewController.swift in Sources */,
 				63A67F3B1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
+				639F8B7620E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */,
 				63A67F361FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				63A67F4A1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
 				635A25862052917B00EFCE90 /* ProjectCollectionViewItem.swift in Sources */,
@@ -1028,6 +1038,7 @@
 				63415BC320852A650083E40B /* ReadByProjectID.swift in Sources */,
 				63D4BBB31F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				6333B6D71F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
+				639F8B7B20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift in Sources */,
 				639F8B6F20E6343000FDC8C1 /* TogglAPIDataPersistenceProviderTest.swift in Sources */,
 				63A67F521FCDA1CF004BEFC6 /* RetrieveProfileCacheAction.swift in Sources */,
 				637DA2212034760F000D7EB8 /* ValueLogger.swift in Sources */,
@@ -1041,6 +1052,7 @@
 				6355C5B81FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */,
 				6334A90320D98CE90017606F /* StoreProjectsCacheAction.swift in Sources */,
+				639F8B7720E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */,
 				63A67F4B1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
 				63DC619B1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */,
 				63D4BBBC1F7D821800B87298 /* TogglAPICredential.swift in Sources */,
@@ -1100,6 +1112,7 @@
 				63D4BBC81F7D821900B87298 /* TogglAPICredential.swift in Sources */,
 				6355C5BE1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
 				63415BC420852A650083E40B /* ReadByProjectID.swift in Sources */,
+				639F8B7820E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */,
 				6333B6D41F9746E6002CF189 /* Project.swift in Sources */,
 				63D4BBC11F7D821900B87298 /* GoalsStore.swift in Sources */,
 				637A32511EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */,
@@ -1150,6 +1163,7 @@
 				63A67F3E1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
 				637DA2232034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				639F8B6820DE7CE800FDC8C1 /* GoalFeasibility.swift in Sources */,
+				639F8B7920E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */,
 				63AB08381FB77CB500565D87 /* DateTimeExtensions.swift in Sources */,
 				63AB082E1FB77CB500565D87 /* WeekdaySelection.swift in Sources */,
 				63A67F4D1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
