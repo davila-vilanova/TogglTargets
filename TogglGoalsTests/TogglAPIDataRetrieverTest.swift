@@ -61,13 +61,12 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
     var retrieveProfileNetworkAction: RetrieveProfileNetworkAction!
     var retrieveProfileCacheAction: RetrieveProfileCacheAction!
-    var storeProfileCacheAction: StoreProfileCacheAction!
+    var cachedProfile: MutableProperty<Profile?>!
     var retrieveProjectsNetworkAction: RetrieveProjectsNetworkAction!
     var retrieveProjectsCacheAction: RetrieveProjectsCacheAction!
-    var storeProjectsCacheAction: StoreProjectsCacheAction!
+    var cachedProjects: MutableProperty<IndexedProjects?>!
     var retrieveReportsNetworkAction: RetrieveReportsNetworkAction!
     var retrieveRunningEntryAction: RetrieveRunningEntryNetworkAction!
-
 
     var dataRetriever: CachedTogglAPIDataRetriever!
 
@@ -90,7 +89,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             return SignalProducer(value: testProfile)
         }
         retrieveProfileCacheAction = RetrieveProfileCacheAction { _ in SignalProducer(value: nil) }
-        storeProfileCacheAction = StoreProfileCacheAction { _ in SignalProducer.empty }
+        cachedProfile = MutableProperty(nil)
 
         retrieveProjectsNetworkAction = RetrieveProjectsNetworkAction { workspaceIDs in
             // Return empty projects if the workspace IDs don't match the expected ones
@@ -100,7 +99,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             return SignalProducer(value: testProjects)
         }
         retrieveProjectsCacheAction = RetrieveProjectsCacheAction { _ in SignalProducer(value: nil) }
-        storeProjectsCacheAction = StoreProjectsCacheAction { _ in SignalProducer.empty }
+        cachedProjects = MutableProperty(nil)
 
         retrieveReportsNetworkAction = RetrieveReportsNetworkAction { (workspaceIDs, period) in
             // Return empty reports if the workspace IDs don't match the expected ones
@@ -111,26 +110,37 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         }
 
         retrieveRunningEntryAction = RetrieveRunningEntryNetworkAction { _ in SignalProducer(value: testRunningEntry) }
+    }
 
-
-        // Clear data retriever and properties that must be reset by `makeDataRetriever()`
+    override func tearDown() {
+        retrieveProfileNetworkAction = nil
+        retrieveProfileCacheAction = nil
+        cachedProfile = nil
+        retrieveProjectsNetworkAction = nil
+        retrieveProjectsCacheAction = nil
+        cachedProjects = nil
+        retrieveReportsNetworkAction = nil
+        retrieveRunningEntryAction = nil
 
         dataRetriever = nil
+
         retrievedProfile = nil
         retrievedProjects = nil
         retrievedReports = nil
         retrievedRunningEntry = nil
         lastActivity = nil
         lastError = nil
+
+        super.tearDown()
     }
 
     private func makeDataRetriever() {
         dataRetriever = CachedTogglAPIDataRetriever(retrieveProfileNetworkActionMaker: { [action = retrieveProfileNetworkAction!] in action },
-                                                    retrieveProfileCacheAction: retrieveProfileCacheAction,
-                                                    storeProfileCacheAction: storeProfileCacheAction,
+                                                    retrieveProfileFromCache: retrieveProfileCacheAction,
+                                                    storeProfileInCache: cachedProfile.bindingTarget,
                                                     retrieveProjectsNetworkActionMaker: { [action = retrieveProjectsNetworkAction!] _ in action },
-                                                    retrieveProjectsCacheAction: retrieveProjectsCacheAction,
-                                                    storeProjectsCacheAction: storeProjectsCacheAction,
+                                                    retrieveProjectsFromCache: retrieveProjectsCacheAction,
+                                                    storeProjectsInCache: cachedProjects.bindingTarget,
                                                     retrieveReportsNetworkActionMaker: { [action = retrieveReportsNetworkAction!] _ in action },
                                                     retrieveRunningEntryNetworkActionMaker: { [action = retrieveRunningEntryAction!] _ in action })
         retrievedProfile = Property(initial: nil, then: dataRetriever.profile.producer)
@@ -458,12 +468,11 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
     func testProfileFromNetworkIsStoredInCache() {
         let cacheStoreExpectation = expectation(description: "Expecting incoming Profile value to be stored in cache.")
-
-        storeProfileCacheAction = StoreProfileCacheAction {
+        cachedProfile.producer.skipNil().startWithValues {
             XCTAssertEqual($0, testProfile)
             cacheStoreExpectation.fulfill()
-            return SignalProducer.empty
         }
+
 
         makeDataRetriever()
 

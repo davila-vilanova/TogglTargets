@@ -32,6 +32,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let (applicationLifetime, token) = Lifetime.make()
 
     private let modelCoordinator: ModelCoordinator
+    private let togglAPIDataCache: TogglAPIDataCache
 
     override init() {
         let supportDir: URL
@@ -42,14 +43,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             fatalError("Can't access app support directory")
         }
 
-        if let goalsStore = SQLiteGoalsStore(baseDirectory: supportDir) {
+        if let goalsStore = SQLiteGoalsStore(baseDirectory: supportDir),
+            let cachePersistenceProvider = SQLiteTogglAPIDataPersistenceProvider(baseDirectory: supportDir) {
+            togglAPIDataCache = TogglAPIDataCache(persistenceProvider: cachePersistenceProvider)
             let togglAPIDataRetriever =
                 CachedTogglAPIDataRetriever(retrieveProfileNetworkActionMaker: makeRetrieveProfileNetworkAction,
-                                            retrieveProfileCacheAction: makeRetrieveProfileCacheAction(),
-                                            storeProfileCacheAction: makeStoreProfileCacheAction(),
+                                            retrieveProfileFromCache: togglAPIDataCache.retrieveProfile,
+                                            storeProfileInCache: togglAPIDataCache.storeProfile,
                                             retrieveProjectsNetworkActionMaker: makeRetrieveProjectsNetworkAction,
-                                            retrieveProjectsCacheAction: makeRetrieveProjectsCacheAction(),
-                                            storeProjectsCacheAction: makeStoreProjectsCacheAction(),
+                                            retrieveProjectsFromCache: togglAPIDataCache.retrieveProjects,
+                                            storeProjectsInCache: togglAPIDataCache.storeProjects,
                                             retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
                                             retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
 

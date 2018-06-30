@@ -10,14 +10,18 @@ import Foundation
 import Result
 import ReactiveSwift
 
+typealias RetrieveProfileCacheAction = Action<(), Profile?, NoError>
+typealias RetrieveProjectsCacheAction = Action<(), IndexedProjects?, NoError>
+
 internal class TogglAPIDataCache {
     private let persistenceProvider: TogglAPIDataPersistenceProvider
-    private var scheduler: QueueScheduler
+    private let scheduler: QueueScheduler
+    private let (lifetime, token) = Lifetime.make()
 
     internal let retrieveProfile: RetrieveProfileCacheAction
     internal let retrieveProjects: RetrieveProjectsCacheAction
-    internal let storeProfileCacheAction: StoreProfileCacheAction
-    internal let storeProjectsCacheAction: StoreProjectsCacheAction
+    internal let storeProfile: BindingTarget<Profile?>
+    internal let storeProjects: BindingTarget<IndexedProjects?>
 
     init(persistenceProvider: TogglAPIDataPersistenceProvider) {
         self.persistenceProvider = persistenceProvider
@@ -50,22 +54,20 @@ internal class TogglAPIDataCache {
             }
         }
 
-        storeProfileCacheAction = StoreProfileCacheAction {
+        storeProfile = BindingTarget(on: scheduler, lifetime: lifetime) {
             if let profile = $0 {
                 scheduler.schedule { persistenceProvider.persist(profile: profile) }
             } else {
                 scheduler.schedule { persistenceProvider.deleteProfile() }
             }
-            return SignalProducer.empty
         }
 
-        storeProjectsCacheAction = StoreProjectsCacheAction {
+        storeProjects = BindingTarget(on: scheduler, lifetime: lifetime) {
             if let projects = $0 {
                 scheduler.schedule { persistenceProvider.persist(projects: [Project](projects.values)) }
             } else {
                 scheduler.schedule { persistenceProvider.deleteProjects() }
             }
-            return SignalProducer.empty
         }
     }
 }

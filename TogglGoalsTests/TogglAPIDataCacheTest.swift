@@ -48,7 +48,7 @@ class TogglAPIDataCacheTest: XCTestCase {
     }
 
     func testStoreAndRetrieveProfile() {
-        cache.storeProfileCacheAction <~ SignalProducer(value: testProfile)
+        cache.storeProfile <~ SignalProducer(value: testProfile)
         let retrieved = Property(initial: nil, then: cache.retrieveProfile.values)
         cache.retrieveProfile.apply().start()
         wait(for: [persistenceProvider.persistProfileExpectation, persistenceProvider.retrieveProfileExpectation],
@@ -57,12 +57,14 @@ class TogglAPIDataCacheTest: XCTestCase {
     }
 
     func testDeleteProfile() {
-        cache.storeProfileCacheAction <~ SignalProducer(value: testProfile)
-        cache.storeProfileCacheAction <~ SignalProducer(value: nil)
+        cache.storeProfile <~ SignalProducer(value: testProfile)
+        cache.storeProfile <~ SignalProducer(value: nil)
         let retrieved = Property(initial: nil, then: cache.retrieveProfile.values)
         cache.retrieveProfile.apply().start()
-        wait(for: [persistenceProvider.persistProfileExpectation, persistenceProvider.deleteProfileExpectation, persistenceProvider.retrieveProfileExpectation],
-             timeout: timeoutForExpectations, enforceOrder: true)
+        wait(for: [persistenceProvider.persistProfileExpectation,
+                   persistenceProvider.deleteProfileExpectation,
+                   persistenceProvider.retrieveProfileExpectation],
+             timeout: timeoutForExpectations, enforceOrder: false)
         XCTAssertNil(retrieved.value)
     }
 }
