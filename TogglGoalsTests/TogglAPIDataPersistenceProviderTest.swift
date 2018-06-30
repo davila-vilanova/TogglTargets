@@ -31,7 +31,7 @@ class TogglAPIDataPersistenceProviderTest: XCTestCase {
             XCTFail()
             return
         }
-        persistenceProvider = TogglAPIDataPersistenceProvider(baseDirectory: supportDirectory)
+        persistenceProvider = SQLiteTogglAPIDataPersistenceProvider(baseDirectory: supportDirectory)
         guard persistenceProvider != nil else {
             XCTFail()
             return

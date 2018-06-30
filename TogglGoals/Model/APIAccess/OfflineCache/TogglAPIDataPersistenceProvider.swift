@@ -9,7 +9,16 @@
 import Foundation
 import SQLite
 
-class TogglAPIDataPersistenceProvider {
+protocol TogglAPIDataPersistenceProvider {
+    func persist(profile: Profile)
+    func retrieveProfile() -> Profile?
+    func deleteProfile()
+    func persist(projects: [Project])
+    func retrieveProjects() -> [Project]?
+    func deleteProjects()
+}
+
+class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
     private let db: Connection
 
     private let profileTable = Table("profile")
