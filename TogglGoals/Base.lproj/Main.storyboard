@@ -800,12 +800,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="482" height="53"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BIp-TP-Df8" userLabel="StackView">
-                                <rect key="frame" x="20" y="18" width="240" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BIp-TP-Df8" userLabel="StackView">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="53"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hwc-UV-UQs">
-                                        <rect key="frame" x="-2" y="0.0" width="190" height="18"/>
+                                        <rect key="frame" x="-2" y="35" width="190" height="18"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="you've reached your goal of" id="Ogv-Oq-G53">
                                             <font key="font" size="14" name=".AppleSystemUIFontDemi"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -813,7 +812,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YY1-cH-juf">
-                                        <rect key="frame" x="186" y="0.0" width="56" height="18"/>
+                                        <rect key="frame" x="186" y="35" width="56" height="18"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="4dX-c5-ofg">
                                             <font key="font" size="14" name=".AppleSystemUIFontDemi"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -831,6 +830,12 @@
                                 </customSpacing>
                             </stackView>
                         </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="BIp-TP-Df8" secondAttribute="trailing" id="0SR-qf-WP5"/>
+                            <constraint firstItem="BIp-TP-Df8" firstAttribute="leading" secondItem="3In-vf-KdN" secondAttribute="leading" id="Dqt-gB-gSK"/>
+                            <constraint firstAttribute="bottom" secondItem="BIp-TP-Df8" secondAttribute="bottom" id="SNn-Vh-RrK"/>
+                            <constraint firstItem="BIp-TP-Df8" firstAttribute="top" secondItem="3In-vf-KdN" secondAttribute="top" id="mmB-bo-ObE"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="totalHoursLabel" destination="YY1-cH-juf" id="3ge-ME-xLR"/>
