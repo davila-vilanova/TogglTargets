@@ -44,27 +44,34 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
     }
 
     private func ensureSchemaCreated() {
-        try! db.run(profileTable.create(ifNotExists: true) { t in
-            t.column(profileIdExpression, primaryKey: true)
-            t.column(userNameExpression)
-            t.column(emailExpression)
-            t.column(timezoneExpression)
-        })
+        do {
+            try db.run(profileTable.create(ifNotExists: true) { t in
+                t.column(profileIdExpression, primaryKey: true)
+                t.column(userNameExpression)
+                t.column(emailExpression)
+                t.column(timezoneExpression)
+            })
 
-        try! db.run(projectTable.create(ifNotExists: true) { t in
-            t.column(projectIdExpression, primaryKey: true)
-            t.column(projectNameExpression)
-            t.column(workspaceIdExpression)
-        })
+            try db.run(projectTable.create(ifNotExists: true) { t in
+                t.column(projectIdExpression, primaryKey: true)
+                t.column(projectNameExpression)
+                t.column(workspaceIdExpression)
+            })
+        } catch let error {
+            print("Failed to ensure that schema is created - error=\(error)")
+        }
     }
 
     func persist(profile: Profile) {
         do {
-            try db.run(profileTable.insert(or: .replace,
-                                           profileIdExpression <- profile.id,
-                                           userNameExpression <- profile.name,
-                                           emailExpression <- profile.email,
-                                           timezoneExpression <- profile.timezone))
+            try db.transaction {
+                try db.run(profileTable.delete())
+                try db.run(profileTable.insert(or: .replace,
+                                               profileIdExpression <- profile.id,
+                                               userNameExpression <- profile.name,
+                                               emailExpression <- profile.email,
+                                               timezoneExpression <- profile.timezone))
+            }
         } catch let error {
             print("Failed to persist profile - error=\(error)")
         }
@@ -85,19 +92,26 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
     }
 
     func deleteProfile() {
-        try! db.run(profileTable.delete())
+        do {
+            try db.run(profileTable.delete())
+        } catch let error {
+            print("Failed to delete profile - error=\(error)")
+        }
     }
 
     func persist(projects: [Project]) {
-        for project in projects {
-            do {
-                try db.run(projectTable.insert(or: .replace,
-                                               projectIdExpression <- project.id,
-                                               projectNameExpression <- project.name,
-                                               workspaceIdExpression <- project.workspaceId))
-            } catch let error {
-                print("Failed to persist project - error=\(error)")
+        do {
+            try db.run(projectTable.delete())
+            try db.transaction {
+                for project in projects {
+                    try db.run(projectTable.insert(or: .replace,
+                                                   projectIdExpression <- project.id,
+                                                   projectNameExpression <- project.name,
+                                                   workspaceIdExpression <- project.workspaceId))
+                }
             }
+        } catch let error {
+            print("Failed to persist projects - error=\(error)")
         }
     }
 
@@ -119,6 +133,10 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
     }
 
     func deleteProjects() {
-        try! db.run(projectTable.delete())
+        do {
+            try db.run(projectTable.delete())
+        } catch let error {
+            print("Failed to delete projects - error=\(error)")
+        }
     }
 }

@@ -66,6 +66,35 @@ class SQLiteTogglAPIDataPersistenceProviderTest: XCTestCase {
         }
     }
 
+    func testStoringProjectsIsNotAccumulative() {
+        persistenceProvider!.persist(projects: testProjects)
+        let subset = [testProjects[0], testProjects[1]]
+        persistenceProvider!.persist(projects: subset)
+        let retrieved = persistenceProvider!.retrieveProjects()
+        XCTAssertNotNil(retrieved)
+        XCTAssertEqual(retrieved?.count, subset.count)
+    }
+
+    func testNewProjectValuesOverwriteOldOnes() {
+        persistenceProvider!.persist(projects: testProjects)
+        let overwritingValues = [Project(id: 100, name: "primero", active: true, workspaceId: 1),
+                                 Project(id: 200, name: "segundo", active: true, workspaceId: 1),
+                                 Project(id: 300, name: "tercero", active: true, workspaceId: 2)]
+
+        persistenceProvider!.persist(projects: overwritingValues)
+        let retrieved = persistenceProvider!.retrieveProjects()
+        XCTAssertNotNil(retrieved)
+        XCTAssertEqual(retrieved?.count, overwritingValues.count)
+        for project in overwritingValues {
+            let match = retrieved?.first(where: { (candidate) -> Bool in
+                return candidate.id == project.id &&
+                    candidate.name == project.name &&
+                    candidate.workspaceId == project.workspaceId
+            })
+            XCTAssertNotNil(match, "Can't find a match for \(project)")
+        }
+    }
+
     func testProfileDeletion() {
         persistenceProvider!.persist(profile: testProfile)
         XCTAssertNotNil(persistenceProvider!.retrieveProfile())
