@@ -17,9 +17,9 @@ fileprivate let testProfile = Profile(id: 118030,
                                       workspaces: [Workspace](),
                                       apiToken: nil)
 
-fileprivate let testProjects: [Project] = [Project(id: 100, name: "first", active: true, workspaceId: 1),
-                                           Project(id: 200, name: "second", active: true, workspaceId: 1),
-                                           Project(id: 300, name: "third", active: true, workspaceId: 2)]
+fileprivate let testProjects: IndexedProjects = [100 : Project(id: 100, name: "first", active: true, workspaceId: 1),
+                                                 200 : Project(id: 200, name: "second", active: true, workspaceId: 1),
+                                                 300 : Project(id: 300, name: "third", active: true, workspaceId: 2)]
 
 fileprivate let timeoutForExpectations = TimeInterval(0.5)
 
@@ -66,6 +66,22 @@ class TogglAPIDataCacheTest: XCTestCase {
                    persistenceProvider.retrieveProfileExpectation],
              timeout: timeoutForExpectations, enforceOrder: false)
         XCTAssertNil(retrieved.value)
+    }
+
+    func testRetrieveNonStoredProjects() {
+        let retrieved = Property(initial: nil, then: cache.retrieveProjects.values)
+        cache.retrieveProjects.apply().start()
+        wait(for: [persistenceProvider.retrieveProjectsExpectation], timeout: timeoutForExpectations)
+        XCTAssertNil(retrieved.value)
+    }
+
+    func testStoreAndRetrieveProjects() {
+        cache.storeProjects <~ SignalProducer(value: testProjects)
+        let retrieved = Property(initial: nil, then: cache.retrieveProjects.values)
+        cache.retrieveProjects.apply().start()
+        wait(for: [persistenceProvider.persistProjectsExpectation, persistenceProvider.retrieveProjectsExpectation],
+             timeout: timeoutForExpectations)
+        XCTAssertEqual(retrieved.value, testProjects)
     }
 }
 
