@@ -73,7 +73,20 @@ internal class ModelCoordinator: NSObject {
     /// emits values over time corresponding to the report associated with that
     /// project ID.
     internal lazy var readReport: ReadReport = { projectID in
-        self.togglDataRetriever.reports.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
+        let reports = self.togglDataRetriever.reports.producer
+
+        let noReportData = SignalProducer<TwoPartTimeReport?, NoError>(value: nil)
+            .sample(on: reports.filter { $0 == nil }.map { _ in () })
+        let retrievedReports = reports.skipNil().map { $0[projectID] }
+        let retrievedPresentReports = retrievedReports.skipNil()
+        let retrievedAbsentReports =
+            SignalProducer.combineLatest(SignalProducer(value: projectID),
+                                         self.reportPeriodsProducer.twoPartPeriod.map { $0.scope }
+                                            .sample(on: retrievedReports.filter { $0 == nil }.map { _ in () }))
+                .map (makeZeroReport)
+        let reportData = SignalProducer.merge(retrievedPresentReports, retrievedAbsentReports).map { Optional($0) }
+
+        return SignalProducer.merge(noReportData, reportData)
     }
 
 

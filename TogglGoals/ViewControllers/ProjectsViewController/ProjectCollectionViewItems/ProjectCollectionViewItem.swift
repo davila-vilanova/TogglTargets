@@ -78,9 +78,8 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
         goalLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ goal.map { $0 == nil }
 
-        let workedTimeFromReport = report.map { (reportValueOrNil) -> TimeInterval in
-            return reportValueOrNil?.workedTime ?? 0.0
-        }
+        let noReport = report.filter { $0 == nil }.map { _ in () }
+        let workedTimeFromReport = report.skipNil().map { $0.workedTime }
         let workedTimeFromRunningEntry = SignalProducer.combineLatest(project, runningEntry, currentDate)
             .map { (project, runningEntryOrNil, currentDate) -> TimeInterval in
                 guard let runningEntry = runningEntryOrNil else {
@@ -95,6 +94,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             .map { (t0, t1) in return t0 + t1 }
 
         let formattedTime = totalWorkedTime.mapToString(timeFormatter: timeFormatter)
-        reportLabel.reactive.text <~ formattedTime.map { "\($0) worked" }
+        reportLabel.reactive.text <~ SignalProducer.merge(noReport.map { "no report data" },
+                                                          formattedTime.map { "\($0) worked" })
     }
 }

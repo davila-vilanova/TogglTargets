@@ -51,6 +51,11 @@ extension TwoPartTimeReport: Equatable {
     }
 }
 
+
+func makeZeroReport(for projectId: ProjectID, period: Period) -> TwoPartTimeReport {
+    return TwoPartTimeReport(projectId: projectId, period: period, workedTimeUntilDayBeforeRequest: 0, workedTimeOnDayOfRequest: 0)
+}
+
 struct ReportEntry: Decodable {
     let id: Int64
     let time: TimeInterval
