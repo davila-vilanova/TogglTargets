@@ -126,7 +126,6 @@
 		639F8B6D20E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6920E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift */; };
 		639F8B6F20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6E20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift */; };
 		639F8B7120E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */; };
-		639F8B7220E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */; };
 		639F8B7320E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */; };
 		639F8B7420E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */; };
 		639F8B7620E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B7520E641AE00FDC8C1 /* TogglAPIDataCache.swift */; };
@@ -955,7 +954,6 @@
 				63DC61981FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift in Sources */,
 				639F8B6120DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */,
 				63A67F411FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
-				639F8B7220E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */,
 				63A67F321FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
 				63B1BBE81FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,
 				635DCE1B1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */,
@@ -1100,11 +1098,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		632957551DBA99F000E11A10 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 632957411DBA99F000E11A10 /* TogglGoals */;
-			targetProxy = 632957541DBA99F000E11A10 /* PBXContainerItemProxy */;
-		};
 		632957601DBA99F000E11A10 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 632957411DBA99F000E11A10 /* TogglGoals */;

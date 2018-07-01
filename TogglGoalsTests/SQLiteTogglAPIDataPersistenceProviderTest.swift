@@ -27,11 +27,8 @@ class SQLiteTogglAPIDataPersistenceProviderTest: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        guard let supportDirectory = try? SupportDirectoryProvider.shared.appSupportDirectory() else {
-            XCTFail()
-            return
-        }
-        persistenceProvider = SQLiteTogglAPIDataPersistenceProvider(baseDirectory: supportDirectory)
+
+        persistenceProvider = SQLiteTogglAPIDataPersistenceProvider(baseDirectory: FileManager.default.temporaryDirectory)
         guard persistenceProvider != nil else {
             XCTFail()
             return
