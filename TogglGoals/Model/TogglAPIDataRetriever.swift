@@ -448,8 +448,9 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
         updateRunningEntry <~ _apiCredential.producer.skipNil().map { _ in () }
 
-        // Nudge retrieve cache actions to pump the pipes
-        retrieveProfileFromCache <~ SignalProducer(value: ())
+        // Retrieve data from cache immediately
+        retrieveProfileFromCache.apply().start()
+        retrieveProjectsFromCache.apply().start()
     }
 }
 
