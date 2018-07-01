@@ -603,6 +603,7 @@
                     </view>
                     <connections>
                         <outlet property="hoursLeftAmountLabel" destination="fVt-59-ONL" id="6BB-C6-MvN"/>
+                        <outlet property="hoursLeftTextLabel" destination="hJS-zc-pdz" id="2L5-x8-NQO"/>
                         <outlet property="hoursWorkedAmountLabel" destination="o1i-ce-N1e" id="a4B-zG-ibg"/>
                         <outlet property="hoursWorkedTextLabel" destination="4yk-5Q-RMX" id="SEA-mJ-GN5"/>
                         <outlet property="remainingWorkdaysAmountLabel" destination="aip-6w-xT7" id="s5O-GQ-ywc"/>

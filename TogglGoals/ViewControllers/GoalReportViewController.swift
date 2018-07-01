@@ -72,6 +72,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
                 SignalProducer(value: (timeGoal: goalProgress.timeGoal,
                                        totalWorkDays: goalProgress.totalWorkDays,
                                        remainingWorkDays: goalProgress.remainingWorkDays,
+                                       reportAvailable: goalProgress.reportAvailable.producer,
                                        workedTime: goalProgress.workedTime,
                                        remainingTimeToGoal: goalProgress.remainingTimeToGoal,
                                        strategyStartsToday: goalProgress.strategyStartsToday))

@@ -61,6 +61,8 @@ class GoalProgress {
         }
     }()
 
+    public lazy var reportAvailable = _report.map { $0 != nil }
+
     public lazy var workedTime: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(_report.producer.skipRepeats(),
                                             strategyStartsToday.skipRepeats(),

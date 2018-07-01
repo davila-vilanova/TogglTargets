@@ -19,6 +19,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider {
         timeGoal: SignalProducer<TimeInterval, NoError>,
         totalWorkDays: SignalProducer<Int?, NoError>,
         remainingWorkDays: SignalProducer<Int?, NoError>,
+        reportAvailable: SignalProducer<Bool, NoError>,
         workedTime: SignalProducer<TimeInterval, NoError>,
         remainingTimeToGoal: SignalProducer<TimeInterval, NoError>,
         strategyStartsToday: SignalProducer<Bool, NoError>)
@@ -32,6 +33,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider {
     private let timeGoal = MutableProperty<TimeInterval>(0)
     private let totalWorkDays = MutableProperty<Int?>(nil)
     private let remainingWorkDays = MutableProperty<Int?>(nil)
+    private let reportAvailable = MutableProperty<Bool>(false)
     private let workedTime = MutableProperty<TimeInterval>(0)
     private let remainingTimeToGoal = MutableProperty<TimeInterval>(0)
     private let strategyStartsToday = MutableProperty<Bool?>(nil)
@@ -70,7 +72,12 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider {
     }
     @IBOutlet weak var hoursWorkedAmountLabel: NSTextField! {
         didSet {
-            hoursWorkedAmountLabel.reactive.text <~ workedTime.producer.mapToString(timeFormatter: timeFormatter)
+            let formattedTime = workedTime.producer.mapToString(timeFormatter: timeFormatter)
+            let noReportAvailableText = SignalProducer(value: "no report data")
+
+            hoursWorkedAmountLabel.reactive.text <~
+                SignalProducer.merge(formattedTime.throttle(while: reportAvailable.negate(), on: UIScheduler()),
+                                     noReportAvailableText.sample(on: reportAvailable.producer.negate().filter { $0 }.map { _ in () }))
         }
     }
     @IBOutlet weak var hoursWorkedTextLabel: NSTextField! {
@@ -79,11 +86,18 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider {
                 .map { (strategyStartsToday) -> String in
                     return strategyStartsToday ? "worked (not including today)" : "worked (including today)"
             }
+            hoursWorkedTextLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ reportAvailable.negate()
         }
     }
     @IBOutlet weak var hoursLeftAmountLabel: NSTextField! {
         didSet {
             hoursLeftAmountLabel.reactive.text <~ remainingTimeToGoal.producer.mapToString(timeFormatter: timeFormatter)
+            hoursLeftAmountLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ reportAvailable.negate()
+        }
+    }
+    @IBOutlet weak var hoursLeftTextLabel: NSTextField! {
+        didSet {
+            hoursLeftTextLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ reportAvailable.negate()
         }
     }
 
@@ -111,6 +125,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider {
                     // No hard limit (nothing prevents one from exceeding their time goal)
                     indicator!.doubleValue = workedTime
             }
+            workHoursProgressIndicator.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ reportAvailable.negate()
         }
     }
 
@@ -120,6 +135,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider {
         timeGoal <~ lastBinding.latestOutput { $0.timeGoal }
         totalWorkDays <~ lastBinding.latestOutput { $0.totalWorkDays }
         remainingWorkDays <~ lastBinding.latestOutput { $0.remainingWorkDays }
+        reportAvailable <~ lastBinding.latestOutput { $0.reportAvailable }
         workedTime <~ lastBinding.latestOutput { $0.workedTime }
         remainingTimeToGoal <~ lastBinding.latestOutput { $0.remainingTimeToGoal }
         strategyStartsToday <~ lastBinding.latestOutput { $0.strategyStartsToday }
