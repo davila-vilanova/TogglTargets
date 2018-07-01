@@ -32,7 +32,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let (applicationLifetime, token) = Lifetime.make()
 
     private let modelCoordinator: ModelCoordinator
-    private let togglAPIDataCache: TogglAPIDataCache
 
     override init() {
         let supportDir: URL
@@ -45,7 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         if let goalsStore = SQLiteGoalsStore(baseDirectory: supportDir),
             let cachePersistenceProvider = SQLiteTogglAPIDataPersistenceProvider(baseDirectory: supportDir) {
-            togglAPIDataCache = TogglAPIDataCache(persistenceProvider: cachePersistenceProvider)
+            let togglAPIDataCache = TogglAPIDataCache(persistenceProvider: cachePersistenceProvider)
             let togglAPIDataRetriever =
                 CachedTogglAPIDataRetriever(retrieveProfileNetworkActionMaker: makeRetrieveProfileNetworkAction,
                                             retrieveProfileFromCache: togglAPIDataCache.retrieveProfile,
@@ -61,6 +60,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                 currentDateGenerator: currentDateGenerator,
                                                 calendar: calendar.producer,
                                                 reportPeriodsProducer: ReportPeriodsProducer())
+            applicationLifetime.observeEnded {
+                _ = togglAPIDataCache
+            }
         } else {
             fatalError("Goals store failed to initialize")
         }
