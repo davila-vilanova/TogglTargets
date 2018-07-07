@@ -48,7 +48,15 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
         let credentialUpstream = Signal.combineLatest(usernameField.reactive.continuousStringValues,
                                                       passwordField.reactive.continuousStringValues)
             .map(TogglAPIEmailCredential.init)
-            .map { $0 as TogglAPICredential? }
+            // The following mapping should be much simpler but for some reason I cannot condense it without upsetting the compiler
+            // Generalize the optional TogglAPIEmailCredential values to optional TogglAPICredential values
+            .map { credentialOrNil -> TogglAPICredential? in
+                if let emailCredential = credentialOrNil {
+                    return emailCredential as TogglAPICredential
+                } else {
+                    return nil
+                }
+        }
 
         let validBindings = lastBinding.producer.skipNil()
         credentialUpstream.bindOnlyToLatest(validBindings.map { $0.credentialUpstream })
