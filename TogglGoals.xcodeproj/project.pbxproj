@@ -74,6 +74,22 @@
 		635DCE1C1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */; };
 		635DCE1D1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */; };
 		636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */; };
+		6368FDB120F217920059AE2F /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDB020F217920059AE2F /* Result.framework */; };
+		6368FDB220F217920059AE2F /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDB020F217920059AE2F /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6368FDB520F217A50059AE2F /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDB420F217A50059AE2F /* ReactiveSwift.framework */; };
+		6368FDB620F217A50059AE2F /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDB420F217A50059AE2F /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6368FDB820F217AD0059AE2F /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDB720F217AD0059AE2F /* ReactiveCocoa.framework */; };
+		6368FDB920F217AD0059AE2F /* ReactiveCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDB720F217AD0059AE2F /* ReactiveCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6368FDBB20F217B70059AE2F /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDBA20F217B70059AE2F /* SQLite.framework */; };
+		6368FDBC20F217B70059AE2F /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDBA20F217B70059AE2F /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6368FDBE20F218120059AE2F /* ReactiveCocoa.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6368FDBD20F218120059AE2F /* ReactiveCocoa.framework.dSYM */; };
+		6368FDC220F218290059AE2F /* ReactiveSwift.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6368FDC120F218290059AE2F /* ReactiveSwift.framework.dSYM */; };
+		6368FDC420F218300059AE2F /* Result.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6368FDC320F218300059AE2F /* Result.framework.dSYM */; };
+		6368FDC620F218370059AE2F /* SQLite.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6368FDC520F218370059AE2F /* SQLite.framework.dSYM */; };
+		6368FDC720F219540059AE2F /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDB720F217AD0059AE2F /* ReactiveCocoa.framework */; };
+		6368FDC820F219540059AE2F /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDBF20F218190059AE2F /* ReactiveSwift.framework */; };
+		6368FDC920F219540059AE2F /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDB020F217920059AE2F /* Result.framework */; };
+		6368FDCA20F219540059AE2F /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6368FDBA20F217B70059AE2F /* SQLite.framework */; };
 		637485611FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637485601FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift */; };
 		637A323E1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A32341EE16FD600667FC3 /* DayProgressViewController.swift */; };
 		637A323F1EE16FD600667FC3 /* DayProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A32341EE16FD600667FC3 /* DayProgressViewController.swift */; };
@@ -92,10 +108,6 @@
 		637A324E1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */; };
 		637A32501EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */; };
 		637A32511EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */; };
-		637DA204202A302A000D7EB8 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA12008C2BB00635AD1 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		637DA205202A3030000D7EB8 /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA02008C2BB00635AD1 /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		637DA206202A3037000D7EB8 /* ReactiveCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EA9F2008C2BB00635AD1 /* ReactiveCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		637DA207202A303F000D7EB8 /* SQLite.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA22008C2BB00635AD1 /* SQLite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		637DA20F202F7659000D7EB8 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */; };
 		637DA210202F7659000D7EB8 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */; };
 		637DA211202F7659000D7EB8 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */; };
@@ -208,10 +220,6 @@
 		63D4FF2F1F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
 		63D4FF301F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
 		63D4FF311F5AD839006368A3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63D4FF2E1F5AD839006368A3 /* MainMenu.xib */; };
-		63D7EA9B2008C2BB00635AD1 /* ReactiveCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EA9F2008C2BB00635AD1 /* ReactiveCocoa.framework */; };
-		63D7EA9C2008C2BB00635AD1 /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA02008C2BB00635AD1 /* ReactiveSwift.framework */; };
-		63D7EA9D2008C2BB00635AD1 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA12008C2BB00635AD1 /* Result.framework */; };
-		63D7EA9E2008C2BB00635AD1 /* SQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63D7EAA22008C2BB00635AD1 /* SQLite.framework */; };
 		63DC61981FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */; };
 		63DC619A1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
 		63DC619B1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
@@ -247,27 +255,31 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		632EEBEF1E42789100608D01 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				637DA207202A303F000D7EB8 /* SQLite.framework in Embed Frameworks */,
-				637DA206202A3037000D7EB8 /* ReactiveCocoa.framework in Embed Frameworks */,
-				637DA205202A3030000D7EB8 /* ReactiveSwift.framework in Embed Frameworks */,
-				637DA204202A302A000D7EB8 /* Result.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		632EEBF01E4278CD00608D01 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
+				6368FDBE20F218120059AE2F /* ReactiveCocoa.framework.dSYM in CopyFiles */,
+				6368FDC220F218290059AE2F /* ReactiveSwift.framework.dSYM in CopyFiles */,
+				6368FDC420F218300059AE2F /* Result.framework.dSYM in CopyFiles */,
+				6368FDC620F218370059AE2F /* SQLite.framework.dSYM in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6368FDB320F217920059AE2F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6368FDB220F217920059AE2F /* Result.framework in Embed Frameworks */,
+				6368FDB920F217AD0059AE2F /* ReactiveCocoa.framework in Embed Frameworks */,
+				6368FDBC20F217B70059AE2F /* SQLite.framework in Embed Frameworks */,
+				6368FDB620F217A50059AE2F /* ReactiveSwift.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -317,6 +329,15 @@
 		635A25822052917A00EFCE90 /* ProjectsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsListViewController.swift; sourceTree = "<group>"; };
 		635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectIDsByGoals.swift; sourceTree = "<group>"; };
 		636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountWeekdaysTests.swift; sourceTree = "<group>"; };
+		6368FDB020F217920059AE2F /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/Mac/Result.framework; sourceTree = "<group>"; };
+		6368FDB420F217A50059AE2F /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = Carthage/Build/Mac/ReactiveSwift.framework; sourceTree = "<group>"; };
+		6368FDB720F217AD0059AE2F /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/Mac/ReactiveCocoa.framework; sourceTree = "<group>"; };
+		6368FDBA20F217B70059AE2F /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/Mac/SQLite.framework; sourceTree = "<group>"; };
+		6368FDBD20F218120059AE2F /* ReactiveCocoa.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = ReactiveCocoa.framework.dSYM; path = Carthage/Build/Mac/ReactiveCocoa.framework.dSYM; sourceTree = "<group>"; };
+		6368FDBF20F218190059AE2F /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = Carthage/Build/Mac/ReactiveSwift.framework; sourceTree = "<group>"; };
+		6368FDC120F218290059AE2F /* ReactiveSwift.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = ReactiveSwift.framework.dSYM; path = Carthage/Build/Mac/ReactiveSwift.framework.dSYM; sourceTree = "<group>"; };
+		6368FDC320F218300059AE2F /* Result.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Result.framework.dSYM; path = Carthage/Build/Mac/Result.framework.dSYM; sourceTree = "<group>"; };
+		6368FDC520F218370059AE2F /* SQLite.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = SQLite.framework.dSYM; path = Carthage/Build/Mac/SQLite.framework.dSYM; sourceTree = "<group>"; };
 		637485601FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectIDsByGoalsTests.swift; sourceTree = "<group>"; };
 		637A32341EE16FD600667FC3 /* DayProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DayProgressViewController.swift; path = ViewControllers/DayProgressViewController.swift; sourceTree = "<group>"; };
 		637A32351EE16FD600667FC3 /* EmptySelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmptySelectionViewController.swift; path = ViewControllers/EmptySelectionViewController.swift; sourceTree = "<group>"; };
@@ -383,10 +404,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63D7EA9D2008C2BB00635AD1 /* Result.framework in Frameworks */,
-				63D7EA9C2008C2BB00635AD1 /* ReactiveSwift.framework in Frameworks */,
-				63D7EA9B2008C2BB00635AD1 /* ReactiveCocoa.framework in Frameworks */,
-				63D7EA9E2008C2BB00635AD1 /* SQLite.framework in Frameworks */,
+				6368FDB120F217920059AE2F /* Result.framework in Frameworks */,
+				6368FDB820F217AD0059AE2F /* ReactiveCocoa.framework in Frameworks */,
+				6368FDBB20F217B70059AE2F /* SQLite.framework in Frameworks */,
+				6368FDB520F217A50059AE2F /* ReactiveSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +429,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6368FDC720F219540059AE2F /* ReactiveCocoa.framework in Frameworks */,
+				6368FDC820F219540059AE2F /* ReactiveSwift.framework in Frameworks */,
+				6368FDC920F219540059AE2F /* Result.framework in Frameworks */,
+				6368FDCA20F219540059AE2F /* SQLite.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,6 +442,15 @@
 		632957391DBA99F000E11A10 = {
 			isa = PBXGroup;
 			children = (
+				6368FDC520F218370059AE2F /* SQLite.framework.dSYM */,
+				6368FDC320F218300059AE2F /* Result.framework.dSYM */,
+				6368FDC120F218290059AE2F /* ReactiveSwift.framework.dSYM */,
+				6368FDBF20F218190059AE2F /* ReactiveSwift.framework */,
+				6368FDBD20F218120059AE2F /* ReactiveCocoa.framework.dSYM */,
+				6368FDBA20F217B70059AE2F /* SQLite.framework */,
+				6368FDB720F217AD0059AE2F /* ReactiveCocoa.framework */,
+				6368FDB420F217A50059AE2F /* ReactiveSwift.framework */,
+				6368FDB020F217920059AE2F /* Result.framework */,
 				632957441DBA99F000E11A10 /* TogglGoals */,
 				632957561DBA99F000E11A10 /* TogglGoalsTests */,
 				632957611DBA99F000E11A10 /* TogglGoalsUITests */,
@@ -700,8 +734,9 @@
 				6329573E1DBA99F000E11A10 /* Sources */,
 				6329573F1DBA99F000E11A10 /* Frameworks */,
 				632957401DBA99F000E11A10 /* Resources */,
-				632EEBEF1E42789100608D01 /* Embed Frameworks */,
 				632EEBF01E4278CD00608D01 /* CopyFiles */,
+				6368FDB320F217920059AE2F /* Embed Frameworks */,
+				6368FDCB20F219720059AE2F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -867,6 +902,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6368FDCB20F219720059AE2F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage outdated --xcode-warnings";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6329573E1DBA99F000E11A10 /* Sources */ = {
@@ -1235,7 +1286,6 @@
 		632957681DBA99F000E11A10 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7ZT9GY93K7;
@@ -1255,7 +1305,6 @@
 		632957691DBA99F000E11A10 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7ZT9GY93K7;
@@ -1361,6 +1410,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "TogglGoals-MacOS/Info.plist";
@@ -1391,6 +1444,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "TogglGoals-MacOS/Info.plist";
