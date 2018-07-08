@@ -52,10 +52,13 @@ protocol ProjectIDsByGoalsProducing {
     var projectIDsByGoalsProducer: ProjectIDsByGoalsProducer { get }
 }
 
-/// Represents an entity that conforms to both the `GoalsStore` and `ProjectIDsByGoalsProducing` protocols.
-protocol ProjectIDsByGoalsProducingGoalsStore: GoalsStore, ProjectIDsByGoalsProducing { }
+protocol GoalPersistenceProvider {
+    var persistGoal: BindingTarget<Goal> { get }
+    var deleteGoal: BindingTarget<ProjectID> { get }
+    var allGoals: SignalProducer<ProjectIndexedGoals, NoError> { get }
+}
 
-class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
+class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
     /// The database connection used to store and retrieve goals.
     private let db: Connection
 
@@ -64,13 +67,53 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
     private let goalsTable = Table("time_goal")
     private let idExpression = Expression<Int64>("id")
     private let projectIdExpression = Expression<ProjectID>("project_id")
-    private let hoursPerMonthExpression = Expression<Int>("hours_per_month")
+    private let hoursTargetExpression = Expression<Int>("hours")
     private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
+
+
+    // MARK: -
 
     private let (lifetime, token) = Lifetime.make()
     private lazy var scheduler = QueueScheduler()
 
-    // MARK: -
+    /// Persists the provided goal into the database synchronously.
+    lazy var persistGoal = BindingTarget<Goal>(on: scheduler, lifetime: lifetime) { [unowned self] goal in
+        try! self.db.run(self.goalsTable.insert(or: .replace,
+                                                self.projectIdExpression <- goal.projectId,
+                                                self.hoursTargetExpression <- goal.hoursTarget,
+                                                self.workWeekdaysExpression <- goal.workWeekdays))
+        // TODO: synchronize periodically instead of writing immediately
+    }
+
+    /// Deletes synchronously from the database the goal corresponding to the
+    /// provided project ID.
+    lazy var deleteGoal = BindingTarget<ProjectID>(on: scheduler, lifetime: lifetime) { [unowned self] projectId in
+        let q = self.goalsTable.filter(self.projectIdExpression == projectId)
+        try! self.db.run(q.delete())
+    }
+
+    lazy var allGoals: SignalProducer<ProjectIndexedGoals, NoError>
+        = SignalProducer({ [weak self] in self?.retrieveAllGoals() ?? ProjectIndexedGoals() })
+
+    /// Retrieves all goals from the database
+    private func retrieveAllGoals() -> ProjectIndexedGoals {
+        var retrievedGoals = ProjectIndexedGoals()
+        let retrievedRows = try! db.prepare(goalsTable)
+        for retrievedRow in retrievedRows {
+            let projectIdValue = retrievedRow[projectIdExpression]
+            let hoursTargetValue = retrievedRow[hoursTargetExpression]
+            let workWeekdaysValue = try! /* TODO */ retrievedRow.get(workWeekdaysExpression) // [1]
+            let goal = Goal(for: projectIdValue,
+                            hoursTarget: hoursTargetValue,
+                            workWeekdays: workWeekdaysValue)
+            retrievedGoals[projectIdValue] = goal
+        }
+
+        return retrievedGoals
+        // [1] Can't use subscripts with custom types.
+        // https://github.com/stephencelis/SQLite.swift/blob/master/Documentation/Index.md#custom-type-caveats
+        // (f3da195)
+    }
 
     /// Initialize an instance that will read and write its database in the provided base directory.
     /// If no database file exists under the provided directory it will create one.
@@ -87,12 +130,45 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             return nil
         }
 
+        ensureSchemaCreated()
+    }
+
+    /// Creates the underlying database schema if not already created.
+    private func ensureSchemaCreated() {
+        try! db.run(goalsTable.create(ifNotExists: true) { t in
+            t.column(idExpression, primaryKey: .autoincrement)
+            t.column(projectIdExpression, unique: true)
+            t.column(hoursTargetExpression)
+            t.column(workWeekdaysExpression)
+        })
+    }
+
+    private func deleteGoal(for projectId: ProjectID) {
+        let q = goalsTable.filter(projectIdExpression == projectId)
+        try! db.run(q.delete())
+    }
+}
+
+/// Represents an entity that conforms to both the `GoalsStore` and `ProjectIDsByGoalsProducing` protocols.
+protocol ProjectIDsByGoalsProducingGoalsStore: GoalsStore, ProjectIDsByGoalsProducing { }
+
+class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
+
+    private let (lifetime, token) = Lifetime.make()
+
+    private let persistenceProvider: GoalPersistenceProvider
+
+    init(persistenceProvider: GoalPersistenceProvider) {
+        self.persistenceProvider = persistenceProvider
+
         let writeGoalProducer = _writeGoal.producer.skipNil()
         let deleteGoalProducer = _deleteGoal.producer.skipNil()
 
-        let singleGoalUpdateComputer = Property(
+        let retrievedGoals = Property<ProjectIndexedGoals?>(initial: nil, then: persistenceProvider.allGoals)
+
+        let singleGoalUpdateComputer = Property<SingleGoalUpdateComputer?>(
             initial: nil,
-            then: SignalProducer.combineLatest(goalsRetrievedFromDatabase.output, projectIDsByGoalsFullRefresh)
+            then: SignalProducer.combineLatest(retrievedGoals.producer.skipNil(), projectIDsByGoalsFullRefresh)
                 .map { [unowned self] (indexedGoalsState, projectIDsByGoalsState) in
                     SingleGoalUpdateComputer(initialStateIndexedGoals: indexedGoalsState,
                                              initialStateProjectIDsByGoals: projectIDsByGoalsState,
@@ -104,7 +180,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
 
         let indexedGoalsState = Property<IndexedGoalsState?>(
             initial: nil,
-            then: goalsRetrievedFromDatabase.output.producer
+            then: retrievedGoals.producer.skipNil()
                 .map { [unowned self] retrievedGoals in
                     IndexedGoalsState(initialStateIndexedGoals: retrievedGoals,
                                       inputWriteGoal: writeGoalProducer,
@@ -118,11 +194,8 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             _ = indexedGoalsState
         }
 
-        writeGoalInDatabase <~ writeGoalProducer
-        deleteGoalFromDatabase <~ deleteGoalProducer
-
-        ensureSchemaCreated()
-        retrieveAllGoals()
+        persistenceProvider.persistGoal <~ writeGoalProducer
+        persistenceProvider.deleteGoal <~ deleteGoalProducer
     }
 
     // MARK: - All goals kept in memory
@@ -188,66 +261,6 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             // Send any updates to a single goal that happen from now on
             projectIDsByGoalsLastSingleUpdate.producer.skipNil().map (ProjectIDsByGoals.Update.singleGoal)
     )
-
-
-    // MARK: -
-
-    private let goalsRetrievedFromDatabase = Signal<ProjectIndexedGoals, NoError>.pipe()
-
-    private lazy var writeGoalInDatabase = BindingTarget<(Goal)>(on: scheduler, lifetime: lifetime) { [weak self] in
-        self?.storeGoal($0)
-    }
-
-    private lazy var deleteGoalFromDatabase = BindingTarget<(ProjectID)>(on: scheduler, lifetime: lifetime) { [weak self] in
-        self?.deleteGoal(for: $0)
-    }
-
-    /// Stores the provided goal into the database synchronously.
-    private func storeGoal(_ goal: Goal) {
-        try! db.run(goalsTable.insert(or: .replace,
-                                      projectIdExpression <- goal.projectId,
-                                      hoursPerMonthExpression <- goal.hoursTarget,
-                                      workWeekdaysExpression <- goal.workWeekdays))
-        // TODO: synchronize periodically instead of writing immediately
-    }
-
-    /// Deletes synchronously from the database the goal corresponding to the
-    /// provided project ID.
-    private func deleteGoal(for projectId: ProjectID) {
-        let q = goalsTable.filter(projectIdExpression == projectId)
-        try! db.run(q.delete())
-    }
-
-    /// Creates the underlying database schema if not already created.
-    private func ensureSchemaCreated() {
-        try! db.run(goalsTable.create(ifNotExists: true) { t in
-            t.column(idExpression, primaryKey: .autoincrement)
-            t.column(projectIdExpression, unique: true)
-            t.column(hoursPerMonthExpression)
-            t.column(workWeekdaysExpression)
-        })
-    }
-
-    /// Retrieves all goals from the database and sends them through the `goalsRetrievedFromDatabase` pipe.
-    private func retrieveAllGoals() {
-        var retrievedGoals = ProjectIndexedGoals()
-        let retrievedRows = try! db.prepare(goalsTable)
-        for retrievedRow in retrievedRows {
-            let projectIdValue = retrievedRow[projectIdExpression]
-            let hoursPerMonthValue = retrievedRow[hoursPerMonthExpression]
-            let workWeekdaysValue = try! /* TODO */ retrievedRow.get(workWeekdaysExpression) // [1]
-            let goal = Goal(for: projectIdValue,
-                            hoursTarget: hoursPerMonthValue,
-                            workWeekdays: workWeekdaysValue)
-            retrievedGoals[projectIdValue] = goal
-        }
-
-        goalsRetrievedFromDatabase.input.send(value: retrievedGoals)
-
-        // [1] Can't use subscripts with custom types.
-        // https://github.com/stephencelis/SQLite.swift/blob/master/Documentation/Index.md#custom-type-caveats
-        // (f3da195)
-    }
 }
 
 extension WeekdaySelection: Value {

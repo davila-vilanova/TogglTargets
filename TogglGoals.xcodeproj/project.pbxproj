@@ -119,6 +119,7 @@
 		637DA22520385096000D7EB8 /* ActivitiesStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */; };
 		6392AB4720CFFC10002CC903 /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */; };
 		6392AB4820CFFC2C002CC903 /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */; };
+		639C5BBF20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */; };
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
@@ -351,6 +352,7 @@
 		637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
 		637DA21F2034760F000D7EB8 /* ValueLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueLogger.swift; sourceTree = "<group>"; };
 		637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesStateTest.swift; sourceTree = "<group>"; };
+		639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteGoalPersistenceProviderTests.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainmentSegue.swift; sourceTree = "<group>"; };
 		639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
@@ -503,6 +505,7 @@
 				637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */,
 				639F8B6E20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift */,
 				639F8B7A20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift */,
+				639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */,
 			);
 			path = TogglGoalsTests;
 			sourceTree = "<group>";
@@ -1026,6 +1029,7 @@
 				63D4BBB31F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				6333B6D71F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				639F8B7B20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift in Sources */,
+				639C5BBF20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift in Sources */,
 				639F8B6F20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift in Sources */,
 				637DA2212034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */,
