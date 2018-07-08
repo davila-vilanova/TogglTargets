@@ -70,6 +70,8 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
     private let (lifetime, token) = Lifetime.make()
     private lazy var scheduler = QueueScheduler()
 
+    // MARK: -
+
     /// Initialize an instance that will read and write its database in the provided base directory.
     /// If no database file exists under the provided directory it will create one.
     /// Returns `nil` if the database file cannot be opened and cannot be created.
@@ -100,7 +102,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
             }
         )
 
-        let indexedGoalsState = Property(
+        let indexedGoalsState = Property<IndexedGoalsState?>(
             initial: nil,
             then: goalsRetrievedFromDatabase.output.producer
                 .map { [unowned self] retrievedGoals in
@@ -226,7 +228,7 @@ class SQLiteGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
         })
     }
 
-    /// Retrieves all goals from the database and stores them in the value of the `allGoals` property.
+    /// Retrieves all goals from the database and sends them through the `goalsRetrievedFromDatabase` pipe.
     private func retrieveAllGoals() {
         var retrievedGoals = ProjectIndexedGoals()
         let retrievedRows = try! db.prepare(goalsTable)
