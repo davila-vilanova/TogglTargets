@@ -739,7 +739,6 @@
 				632957401DBA99F000E11A10 /* Resources */,
 				632EEBF01E4278CD00608D01 /* CopyFiles */,
 				6368FDB320F217920059AE2F /* Embed Frameworks */,
-				6368FDCB20F219720059AE2F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -905,22 +904,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		6368FDCB20F219720059AE2F /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage outdated --xcode-warnings";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6329573E1DBA99F000E11A10 /* Sources */ = {
