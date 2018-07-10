@@ -241,7 +241,7 @@
                                     </textField>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uBt-VL-2yl">
                                         <rect key="frame" x="83" y="2" width="56" height="14"/>
-                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Loading..." id="BDl-Q1-KMd">
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="BDl-Q1-KMd">
                                             <font key="font" metaFont="smallSystem"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -258,8 +258,8 @@
                                         </buttonCell>
                                     </button>
                                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bbO-aV-ldp">
-                                        <rect key="frame" x="-2" y="0.0" width="42" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Name" id="7vC-wV-KJR">
+                                        <rect key="frame" x="-2" y="0.0" width="54" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="7vC-wV-KJR">
                                             <font key="font" metaFont="systemBold"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -434,18 +434,18 @@
             <objects>
                 <viewController title="Goal Periods" id="DPU-zp-q1w" customClass="GoalPeriodsPreferencesViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kQJ-7X-Tb0">
-                        <rect key="frame" x="0.0" y="0.0" width="351" height="120"/>
+                        <rect key="frame" x="0.0" y="0.0" width="351" height="121"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6U9-Og-MS6">
-                                <rect key="frame" x="116" y="82" width="71" height="18"/>
+                                <rect key="frame" x="116" y="83" width="71" height="18"/>
                                 <buttonCell key="cell" type="radio" title="monthly" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="psz-Uk-uK7">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
                             <textField horizontalHuggingPriority="271" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="drt-Fg-Fko">
-                                <rect key="frame" x="18" y="83" width="95" height="17"/>
+                                <rect key="frame" x="18" y="84" width="95" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="establish goals" id="D8W-TC-6OP">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -502,14 +502,14 @@
                                 </customSpacing>
                             </stackView>
                             <button horizontalHuggingPriority="270" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H9z-u0-oBU">
-                                <rect key="frame" x="116" y="60" width="64" height="18"/>
+                                <rect key="frame" x="116" y="61" width="64" height="18"/>
                                 <buttonCell key="cell" type="radio" title="weekly" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Fbz-3b-gLb">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
                             <textField horizontalHuggingPriority="271" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mUX-SE-Fka">
-                                <rect key="frame" x="182" y="61" width="70" height="17"/>
+                                <rect key="frame" x="182" y="62" width="70" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="starting on" id="yo1-u9-dge">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" red="0.4756349325" green="0.47564673419999998" blue="0.47564041610000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -518,12 +518,12 @@
                             </textField>
                             <popUpButton horizontalHuggingPriority="260" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ufd-f2-Rcb">
                                 <rect key="frame" x="256" y="55" width="78" height="26"/>
-                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="t8l-6d-ioJ" id="oeo-BS-D5I">
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="t8l-6d-ioJ" id="oeo-BS-D5I">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="UfI-u9-66w">
                                         <items>
-                                            <menuItem title="Item 1" state="on" id="t8l-6d-ioJ"/>
+                                            <menuItem state="on" id="t8l-6d-ioJ"/>
                                             <menuItem title="Item 2" id="AU2-4Z-XsJ"/>
                                             <menuItem title="Item 3" id="GRk-c3-T3z"/>
                                         </items>
