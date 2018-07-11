@@ -428,189 +428,96 @@
             <objects>
                 <viewController id="7US-0q-kKJ" customClass="TimeProgressViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="RdO-bs-OdZ">
-                        <rect key="frame" x="0.0" y="0.0" width="482" height="68"/>
+                        <rect key="frame" x="0.0" y="0.0" width="482" height="58"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="6HK-x0-iDc" userLabel="Goal Progress Box">
-                                <rect key="frame" x="0.0" y="0.0" width="482" height="68"/>
+                                <rect key="frame" x="0.0" y="0.0" width="482" height="58"/>
                                 <view key="contentView" id="jPF-kb-6cT">
-                                    <rect key="frame" x="1" y="1" width="480" height="66"/>
+                                    <rect key="frame" x="1" y="1" width="480" height="56"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SpN-xt-yQh" userLabel="Stack View: Work Days">
-                                            <rect key="frame" x="6" y="46" width="142" height="14"/>
-                                            <subviews>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mr0-lQ-SYF">
-                                                    <rect key="frame" x="-2" y="0.0" width="82" height="14"/>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="this period has" id="7e4-Lp-UR5">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yof-zU-gan">
-                                                    <rect key="frame" x="78" y="0.0" width="11" height="14"/>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0" id="ZK7-ki-uk1">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mUc-4Q-yMz">
-                                                    <rect key="frame" x="87" y="0.0" width="57" height="14"/>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="work days" id="ldx-lH-73i">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
-                                            </subviews>
-                                            <visibilityPriorities>
-                                                <integer value="1000"/>
-                                                <integer value="1000"/>
-                                                <integer value="1000"/>
-                                            </visibilityPriorities>
-                                            <customSpacing>
-                                                <real value="3.4028234663852886e+38"/>
-                                                <real value="3.4028234663852886e+38"/>
-                                                <real value="3.4028234663852886e+38"/>
-                                            </customSpacing>
-                                        </stackView>
-                                        <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vYd-8C-BCX" userLabel="Stack View: Remaining Full Workdays">
-                                            <rect key="frame" x="391" y="46" width="83" height="14"/>
-                                            <subviews>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aip-6w-xT7">
-                                                    <rect key="frame" x="-2" y="0.0" width="11" height="14"/>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0" id="CHM-5b-fU1">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dri-Hn-Hg3">
-                                                    <rect key="frame" x="7" y="0.0" width="78" height="14"/>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="work days left" id="Bvj-NV-ap5" userLabel="full work days left">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
-                                            </subviews>
-                                            <visibilityPriorities>
-                                                <integer value="1000"/>
-                                                <integer value="1000"/>
-                                            </visibilityPriorities>
-                                            <customSpacing>
-                                                <real value="3.4028234663852886e+38"/>
-                                                <real value="3.4028234663852886e+38"/>
-                                            </customSpacing>
-                                        </stackView>
-                                        <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="69d-sn-O9n" userLabel="Work Days Progress Indicator">
-                                            <rect key="frame" x="6" y="27" width="468" height="20"/>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F3h-la-ipt">
+                                            <rect key="frame" x="6" y="36" width="4" height="14"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="otH-g0-ics">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dw8-fM-wEJ">
+                                            <rect key="frame" x="470" y="36" width="4" height="14"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="GLG-pq-kiT">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <progressIndicator wantsLayer="YES" verticalHuggingPriority="251" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="69d-sn-O9n" userLabel="Work Days Progress Indicator">
+                                            <rect key="frame" x="8" y="27" width="464" height="10"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="8" id="AU1-u4-S0m"/>
+                                            </constraints>
                                         </progressIndicator>
                                         <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="dEQ-iu-srg" userLabel="Work Hours Progress Indicator">
-                                            <rect key="frame" x="6" y="19" width="468" height="20"/>
+                                            <rect key="frame" x="8" y="19" width="464" height="10"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="8" id="hHv-bK-iWW"/>
+                                            </constraints>
                                         </progressIndicator>
-                                        <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LUB-2Q-CUx" userLabel="Stack View: Worked Hours">
-                                            <rect key="frame" x="6" y="6" width="140" height="14"/>
-                                            <subviews>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o1i-ce-N1e">
-                                                    <rect key="frame" x="-2" y="0.0" width="44" height="14"/>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="4fg-oX-1vU">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4yk-5Q-RMX">
-                                                    <rect key="frame" x="40" y="0.0" width="102" height="14"/>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="worked this period" id="iQs-r9-NM1">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
-                                            </subviews>
-                                            <visibilityPriorities>
-                                                <integer value="1000"/>
-                                                <integer value="1000"/>
-                                            </visibilityPriorities>
-                                            <customSpacing>
-                                                <real value="3.4028234663852886e+38"/>
-                                                <real value="3.4028234663852886e+38"/>
-                                            </customSpacing>
-                                        </stackView>
-                                        <stackView distribution="fill" orientation="horizontal" alignment="top" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NCo-Sl-i3R" userLabel="Stack View: Hours Left to Goal">
-                                            <rect key="frame" x="414" y="6" width="60" height="14"/>
-                                            <subviews>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fVt-59-ONL">
-                                                    <rect key="frame" x="-2" y="0.0" width="44" height="14"/>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 hours" id="LuI-Oz-RRt">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
-                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hJS-zc-pdz">
-                                                    <rect key="frame" x="40" y="0.0" width="22" height="14"/>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="left" id="aRy-d8-lYh">
-                                                        <font key="font" metaFont="smallSystem"/>
-                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                    </textFieldCell>
-                                                </textField>
-                                            </subviews>
-                                            <visibilityPriorities>
-                                                <integer value="1000"/>
-                                                <integer value="1000"/>
-                                            </visibilityPriorities>
-                                            <customSpacing>
-                                                <real value="3.4028234663852886e+38"/>
-                                                <real value="3.4028234663852886e+38"/>
-                                            </customSpacing>
-                                        </stackView>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Mzo-sz-PVv">
+                                            <rect key="frame" x="6" y="6" width="4" height="14"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="VHf-8q-chh">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qaU-xc-YBb">
+                                            <rect key="frame" x="470" y="6" width="4" height="14"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="Jzz-qe-FIL">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="NCo-Sl-i3R" firstAttribute="trailing" secondItem="vYd-8C-BCX" secondAttribute="trailing" id="DTi-W7-7RT"/>
-                                        <constraint firstItem="dEQ-iu-srg" firstAttribute="top" secondItem="SpN-xt-yQh" secondAttribute="bottom" constant="8" symbolic="YES" id="HZD-jK-JBG"/>
-                                        <constraint firstItem="SpN-xt-yQh" firstAttribute="top" secondItem="jPF-kb-6cT" secondAttribute="top" constant="6" id="KNS-7o-auj"/>
-                                        <constraint firstItem="vYd-8C-BCX" firstAttribute="centerY" secondItem="SpN-xt-yQh" secondAttribute="centerY" id="Trj-nP-pNC"/>
-                                        <constraint firstItem="dEQ-iu-srg" firstAttribute="leading" secondItem="SpN-xt-yQh" secondAttribute="leading" id="YAo-hr-5gi"/>
-                                        <constraint firstAttribute="bottom" secondItem="LUB-2Q-CUx" secondAttribute="bottom" constant="6" id="Zix-Id-cnH"/>
-                                        <constraint firstAttribute="trailing" secondItem="vYd-8C-BCX" secondAttribute="trailing" constant="6" id="chg-QZ-nxv"/>
-                                        <constraint firstItem="69d-sn-O9n" firstAttribute="leading" secondItem="SpN-xt-yQh" secondAttribute="leading" id="hYI-ap-Sod"/>
-                                        <constraint firstItem="dEQ-iu-srg" firstAttribute="trailing" secondItem="69d-sn-O9n" secondAttribute="trailing" id="iEd-s8-TfL"/>
-                                        <constraint firstItem="NCo-Sl-i3R" firstAttribute="baseline" secondItem="LUB-2Q-CUx" secondAttribute="baseline" id="nCa-8E-Jal"/>
-                                        <constraint firstItem="dEQ-iu-srg" firstAttribute="trailing" secondItem="69d-sn-O9n" secondAttribute="trailing" id="r3Y-pk-5Ad"/>
-                                        <constraint firstItem="LUB-2Q-CUx" firstAttribute="leading" secondItem="SpN-xt-yQh" secondAttribute="leading" id="sjS-Dw-oiF"/>
-                                        <constraint firstItem="69d-sn-O9n" firstAttribute="top" secondItem="SpN-xt-yQh" secondAttribute="bottom" id="uka-ey-pnt"/>
-                                        <constraint firstItem="SpN-xt-yQh" firstAttribute="leading" secondItem="jPF-kb-6cT" secondAttribute="leading" constant="6" id="vRo-K0-Rag"/>
-                                        <constraint firstItem="LUB-2Q-CUx" firstAttribute="top" secondItem="dEQ-iu-srg" secondAttribute="bottom" id="vcO-9p-495"/>
-                                        <constraint firstItem="vYd-8C-BCX" firstAttribute="trailing" secondItem="69d-sn-O9n" secondAttribute="trailing" id="vq7-gv-EBf"/>
+                                        <constraint firstItem="dw8-fM-wEJ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="F3h-la-ipt" secondAttribute="trailing" constant="8" symbolic="YES" id="1go-MO-kmG"/>
+                                        <constraint firstItem="dEQ-iu-srg" firstAttribute="top" secondItem="69d-sn-O9n" secondAttribute="bottom" id="3ZG-ld-a0H"/>
+                                        <constraint firstItem="69d-sn-O9n" firstAttribute="top" secondItem="F3h-la-ipt" secondAttribute="bottom" id="4hc-jy-7sy"/>
+                                        <constraint firstItem="dw8-fM-wEJ" firstAttribute="trailing" secondItem="69d-sn-O9n" secondAttribute="trailing" id="4wb-oE-AgE"/>
+                                        <constraint firstItem="dw8-fM-wEJ" firstAttribute="top" secondItem="jPF-kb-6cT" secondAttribute="top" constant="6" id="Q5y-1A-CyS"/>
+                                        <constraint firstItem="dEQ-iu-srg" firstAttribute="trailing" secondItem="69d-sn-O9n" secondAttribute="trailing" id="WDq-2Z-Emk"/>
+                                        <constraint firstAttribute="trailing" secondItem="dw8-fM-wEJ" secondAttribute="trailing" constant="8" id="XzI-cV-JcN"/>
+                                        <constraint firstItem="qaU-xc-YBb" firstAttribute="trailing" secondItem="69d-sn-O9n" secondAttribute="trailing" id="giS-7K-ali"/>
+                                        <constraint firstAttribute="bottom" secondItem="Mzo-sz-PVv" secondAttribute="bottom" constant="6" id="hNh-4v-zIt"/>
+                                        <constraint firstAttribute="bottom" secondItem="qaU-xc-YBb" secondAttribute="bottom" constant="6" id="i54-JX-Aeb"/>
+                                        <constraint firstItem="69d-sn-O9n" firstAttribute="leading" secondItem="F3h-la-ipt" secondAttribute="leading" id="q6n-7g-aKX"/>
+                                        <constraint firstItem="F3h-la-ipt" firstAttribute="leading" secondItem="jPF-kb-6cT" secondAttribute="leading" constant="8" id="rJg-4r-ehg"/>
+                                        <constraint firstItem="Mzo-sz-PVv" firstAttribute="top" secondItem="dEQ-iu-srg" secondAttribute="bottom" id="rTL-VL-0TS"/>
+                                        <constraint firstItem="Mzo-sz-PVv" firstAttribute="leading" secondItem="F3h-la-ipt" secondAttribute="leading" id="tu5-ft-zm3"/>
+                                        <constraint firstItem="F3h-la-ipt" firstAttribute="top" secondItem="jPF-kb-6cT" secondAttribute="top" constant="6" id="upM-gA-B07"/>
+                                        <constraint firstItem="qaU-xc-YBb" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Mzo-sz-PVv" secondAttribute="trailing" constant="8" symbolic="YES" id="z7H-Iv-skY"/>
+                                        <constraint firstItem="dEQ-iu-srg" firstAttribute="leading" secondItem="F3h-la-ipt" secondAttribute="leading" id="zpZ-4P-g6u"/>
                                     </constraints>
                                 </view>
-                                <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="68" id="YBQ-tg-gnz"/>
-                                </constraints>
                             </box>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="6HK-x0-iDc" secondAttribute="trailing" id="5dZ-Ev-PlV"/>
-                            <constraint firstAttribute="bottom" secondItem="6HK-x0-iDc" secondAttribute="bottom" id="R5P-k1-eK6"/>
-                            <constraint firstItem="6HK-x0-iDc" firstAttribute="top" secondItem="RdO-bs-OdZ" secondAttribute="top" id="lpF-mV-gok"/>
-                            <constraint firstItem="6HK-x0-iDc" firstAttribute="leading" secondItem="RdO-bs-OdZ" secondAttribute="leading" id="vkt-Ui-2kf"/>
+                            <constraint firstAttribute="bottom" secondItem="6HK-x0-iDc" secondAttribute="bottom" id="O2r-Uz-hNQ"/>
+                            <constraint firstItem="6HK-x0-iDc" firstAttribute="leading" secondItem="RdO-bs-OdZ" secondAttribute="leading" id="Oan-ye-GM7"/>
+                            <constraint firstAttribute="trailing" secondItem="6HK-x0-iDc" secondAttribute="trailing" id="SB5-kw-CNP"/>
+                            <constraint firstItem="6HK-x0-iDc" firstAttribute="top" secondItem="RdO-bs-OdZ" secondAttribute="top" id="w95-tN-9qQ"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="hoursLeftAmountLabel" destination="fVt-59-ONL" id="6BB-C6-MvN"/>
-                        <outlet property="hoursLeftTextLabel" destination="hJS-zc-pdz" id="2L5-x8-NQO"/>
-                        <outlet property="hoursWorkedAmountLabel" destination="o1i-ce-N1e" id="a4B-zG-ibg"/>
-                        <outlet property="hoursWorkedTextLabel" destination="4yk-5Q-RMX" id="SEA-mJ-GN5"/>
-                        <outlet property="remainingWorkdaysAmountLabel" destination="aip-6w-xT7" id="s5O-GQ-ywc"/>
-                        <outlet property="remainingWorkdaysTextLabel" destination="dri-Hn-Hg3" id="DRg-aF-141"/>
-                        <outlet property="totalWorkdaysLabel" destination="yof-zU-gan" id="2lv-wk-jLc"/>
+                        <outlet property="remainingHoursField" destination="qaU-xc-YBb" id="a70-AE-eaJ"/>
+                        <outlet property="remainingWorkdaysField" destination="dw8-fM-wEJ" id="Q15-DG-9DU"/>
                         <outlet property="workDaysProgressIndicator" destination="69d-sn-O9n" id="XYR-ZF-VUJ"/>
                         <outlet property="workHoursProgressIndicator" destination="dEQ-iu-srg" id="cJy-mh-ojO"/>
+                        <outlet property="workdaysInPeriodField" destination="F3h-la-ipt" id="frl-MV-JOp"/>
+                        <outlet property="workedHoursField" destination="Mzo-sz-PVv" id="BoB-li-AVJ"/>
                     </connections>
                 </viewController>
                 <customObject id="cML-ha-SWx" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
