@@ -129,12 +129,13 @@ class GoalReachedViewController: NSViewController, BindingTargetProvider {
         return f
     }()
 
-    @IBOutlet weak var totalHoursLabel: NSTextField!
+    @IBOutlet weak var goalReachedField: NSTextField!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let timeGoal = lastBinding.latestOutput { $0 }
-        totalHoursLabel.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
+        goalReachedField.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
+            .map { "you have reached your goal of \($0)" }
     }
 }
