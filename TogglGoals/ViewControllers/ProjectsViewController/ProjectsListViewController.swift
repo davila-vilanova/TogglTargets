@@ -210,7 +210,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                                                         withIdentifier: SectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
             switch ProjectIDsByGoals.Section(rawValue: indexPath.section)! {
-            case .withGoal: header.title = "projects with goals"
+            case .withGoal: header.title = NSLocalizedString("projects with goals",
+                                                             comment: "header of the 'projects with goals' sections of the project list")
             case .withoutGoal: header.title = "projects without goals"
             }
         }
