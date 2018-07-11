@@ -1,5 +1,5 @@
 /* header of the 'projects with goals' sections of the project list */
-"project-list.header.with-goals" = "proyectos con metas";
+"project-list.header.with-goals" = "projects with goals";
 
 /* header of the 'projects without goals' section of the project list */
-"project-list.header.without-goals" = "proyectos sin metas";
+"project-list.header.without-goals" = "projects without goals";

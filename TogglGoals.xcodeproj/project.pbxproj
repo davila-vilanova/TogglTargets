@@ -387,7 +387,7 @@
 		63D4BBA21F7D80FC00B87298 /* PropertyExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyExtensions.swift; sourceTree = "<group>"; };
 		63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalProducerExtensions.swift; sourceTree = "<group>"; };
 		63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
-		63D4FF2E1F5AD839006368A3 /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		63D4FF2E1F5AD839006368A3 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
 		63D7EA9F2008C2BB00635AD1 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReactiveCocoa.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		63D7EAA02008C2BB00635AD1 /* ReactiveSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReactiveSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		63D7EAA12008C2BB00635AD1 /* Result.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Result.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -407,6 +407,7 @@
 		63F76BA320F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		63F76BA620F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		63F76BA820F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
+		63F76BA920F66A830024939B /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalPeriodsPreferencesViewController.swift; sourceTree = "<group>"; };
 		63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
@@ -1200,6 +1201,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				63F76BA020F6212D0024939B /* es */,
+				63F76BA920F66A830024939B /* Base */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
