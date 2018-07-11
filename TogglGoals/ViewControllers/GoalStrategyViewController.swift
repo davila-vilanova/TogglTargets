@@ -45,9 +45,9 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Outlets
 
-    @IBOutlet weak var totalHoursStrategyLabel: NSTextField!
-    @IBOutlet weak var hoursPerDayLabel: NSTextField!
-    @IBOutlet weak var baselineDifferentialLabel: NSTextField!
+    @IBOutlet weak var totalHoursStrategyField: NSTextField!
+    @IBOutlet weak var baselineField: NSTextField!
+    @IBOutlet weak var baselineDifferentialField: NSTextField!
 
 
     // MARK: - Wiring
@@ -61,9 +61,11 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
         let dayBaselineDifferential = lastBinding.latestOutput { $0.dayBaselineDifferential }
         let feasibility = lastBinding.latestOutput { $0.feasibility }
 
-        // Update total hours and hours per day with the values of the corresponding signals, formatted to a time string
-        totalHoursStrategyLabel.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
-        hoursPerDayLabel.reactive.text <~ dayBaselineAdjustedToProgress.mapToString(timeFormatter: timeFormatter)
+        // Update total hours and hours per day with the values of the corresponding signals
+        totalHoursStrategyField.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
+            .map { "to reach your goal of \($0)" }
+        baselineField.reactive.text <~ dayBaselineAdjustedToProgress.mapToString(timeFormatter: timeFormatter)
+            .map { "work \($0) per day" }
 
         let formattedDifferential = dayBaselineDifferential
             .map { $0?.magnitude }
@@ -102,7 +104,7 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
         let impossibleCaseDescriptions = feasibility.skipNil().filter { $0.isImpossible }
             .map { _ in "This would require more than a full day of work per day" }
 
-        baselineDifferentialLabel.reactive.stringValue <~
+        baselineDifferentialField.reactive.stringValue <~
             SignalProducer.merge(feasibleCaseDescriptions, unfeasibleCaseDescriptions, impossibleCaseDescriptions, baselineCalculationErrors)
     }
 }
