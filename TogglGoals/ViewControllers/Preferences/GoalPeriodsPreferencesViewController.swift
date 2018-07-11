@@ -43,8 +43,7 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
     @IBOutlet weak var preferWeeklyGoalPeriodsButton: NSButton!
     @IBOutlet weak var weeklyGoalStartDayLabel: NSTextField!
     @IBOutlet weak var weeklyGoalStartDayPopUp: NSPopUpButton!
-    @IBOutlet weak var currentPeriodStart: NSTextField!
-    @IBOutlet weak var currentPeriodEnd: NSTextField!
+    @IBOutlet weak var currentPeriodDescription: NSTextField!
 
     // MARK: - State
 
@@ -173,8 +172,11 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
                 }
         }
 
-        currentPeriodStart.reactive.stringValue <~ formattedDayComponents(currentPeriod.map { $0.start })
-        currentPeriodEnd.reactive.stringValue <~ formattedDayComponents(currentPeriod.map { $0.end })
+        currentPeriodDescription.reactive.stringValue <~
+            SignalProducer.combineLatest(formattedDayComponents(currentPeriod.map { $0.start }),
+                                         formattedDayComponents(currentPeriod.map { $0.end }))
+                .map { "\($0) to \($1)" }
+
     }
 }
 
