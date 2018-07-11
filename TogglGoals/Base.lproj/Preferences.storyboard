@@ -498,16 +498,10 @@
                             </textField>
                             <popUpButton horizontalHuggingPriority="260" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ufd-f2-Rcb">
                                 <rect key="frame" x="256" y="55" width="78" height="26"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="t8l-6d-ioJ" id="oeo-BS-D5I">
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="oeo-BS-D5I">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
-                                    <menu key="menu" id="UfI-u9-66w">
-                                        <items>
-                                            <menuItem state="on" id="t8l-6d-ioJ"/>
-                                            <menuItem title="Item 2" id="AU2-4Z-XsJ"/>
-                                            <menuItem title="Item 3" id="GRk-c3-T3z"/>
-                                        </items>
-                                    </menu>
+                                    <menu key="menu" id="UfI-u9-66w"/>
                                 </popUpButtonCell>
                             </popUpButton>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="x5m-RE-YLk" userLabel="Width Limiting View">
