@@ -3,3 +3,15 @@
 
 /* header of the 'projects without goals' section of the project list */
 "project-list.header.without-goals" = "proyectos sin metas";
+
+/* target amount of time per month as it appears in each of the project list items */
+"project-list.item.goal.target.monthly" = "%@ por mes";
+
+/* target amount of time per week as it appears in each of the project list items */
+"project-list.item.goal.target.weekly" = "%@ por semana";
+
+/* message to show in each of the project list items when there is no report data */
+"project-list.item.report.no-data" = "esperando datos del informe";
+
+/* formatted worked time for the project represented by a project list item */
+"project-list.item.report.worked-time" = "trabajados: %@"; // sometimes you gotta get a little robotic

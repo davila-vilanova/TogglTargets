@@ -431,7 +431,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="482" height="58"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="6HK-x0-iDc" userLabel="Goal Progress Box">
+                            <box boxType="custom" cornerRadius="4" translatesAutoresizingMaskIntoConstraints="NO" id="6HK-x0-iDc" userLabel="Goal Progress Box">
                                 <rect key="frame" x="0.0" y="0.0" width="482" height="58"/>
                                 <view key="contentView" id="jPF-kb-6cT">
                                     <rect key="frame" x="1" y="1" width="480" height="56"/>
@@ -588,7 +588,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="482" height="45"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="ftS-M4-F1d" userLabel="Day Progress Box">
+                            <box boxType="custom" cornerRadius="4" translatesAutoresizingMaskIntoConstraints="NO" id="ftS-M4-F1d" userLabel="Day Progress Box">
                                 <rect key="frame" x="0.0" y="0.0" width="482" height="45"/>
                                 <view key="contentView" id="EI2-Ya-YqH">
                                     <rect key="frame" x="1" y="1" width="480" height="43"/>

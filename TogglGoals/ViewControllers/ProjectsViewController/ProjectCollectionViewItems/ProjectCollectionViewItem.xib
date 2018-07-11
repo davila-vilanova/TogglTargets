@@ -13,9 +13,9 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <collectionViewItem id="xT6-c0-85Y" customClass="ProjectCollectionViewItem" customModule="TogglGoals" customModuleProvider="target">
             <connections>
-                <outlet property="goalLabel" destination="pcZ-U4-eHq" id="8f4-J9-CRf"/>
-                <outlet property="projectNameLabel" destination="484-m5-m2m" id="Wnc-OK-DKc"/>
-                <outlet property="reportLabel" destination="Oej-8K-uOr" id="Bir-Wb-u11"/>
+                <outlet property="goalField" destination="pcZ-U4-eHq" id="8f4-J9-CRf"/>
+                <outlet property="projectNameField" destination="484-m5-m2m" id="Wnc-OK-DKc"/>
+                <outlet property="reportField" destination="Oej-8K-uOr" id="Bir-Wb-u11"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="dv5-AE-MPs"/>
             </connections>
         </collectionViewItem>

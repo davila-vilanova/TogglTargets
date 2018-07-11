@@ -3,3 +3,15 @@
 
 /* header of the 'projects without goals' section of the project list */
 "project-list.header.without-goals" = "projects without goals";
+
+/* target amount of time per month as it appears in each of the project list items */
+"project-list.item.goal.target.monthly" = "%@ per month";
+
+/* target amount of time per week as it appears in each of the project list items */
+"project-list.item.goal.target.weekly" = "%@ per week";
+
+/* message to show in each of the project list items when there is no report data */
+"project-list.item.report.no-data" = "no report data";
+
+/* formatted worked time for the project represented by a project list item */
+"project-list.item.report.worked-time" = "%@ worked";

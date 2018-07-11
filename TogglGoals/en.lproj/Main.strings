@@ -1,33 +1,32 @@
 /* Class = "NSTextFieldCell"; title = "compute strategy"; ObjectID = "7bC-a5-7cw"; */
-"7bC-a5-7cw.title" = "calcular estrategia";
+"7bC-a5-7cw.title" = "compute strategy";
 
 /* Class = "NSTextFieldCell"; title = "active weekdays:"; ObjectID = "A2l-u7-QTD"; */
-"A2l-u7-QTD.title" = "días de la semana activos:";
+"A2l-u7-QTD.title" = "active weekdays:";
 
 /* Class = "NSMenuItem"; title = "from today"; ObjectID = "CSh-kF-rVJ"; */
-"CSh-kF-rVJ.title" = "desde hoy";
+"CSh-kF-rVJ.title" = "from today";
 
 /* Class = "NSTextFieldCell"; title = "this period:"; ObjectID = "DLh-SV-l1J"; */
-"DLh-SV-l1J.title" = "este periodo";
+"DLh-SV-l1J.title" = "this period:";
 
 /* Class = "NSTextFieldCell"; title = "please select a project"; ObjectID = "EHa-P4-qQ6"; */
-"EHa-P4-qQ6.title" = "por favor, elige un proyecto";
+"EHa-P4-qQ6.title" = "please select a project";
 
 /* Class = "NSWindow"; title = "TogglGoals"; ObjectID = "IQv-IB-iLA"; */
 "IQv-IB-iLA.title" = "TogglGoals";
 
 /* Class = "NSTextFieldCell"; title = "to see its progress here"; ObjectID = "QYP-lQ-gLI"; */
-"QYP-lQ-gLI.title" = "para ver su progreso aquí";
+"QYP-lQ-gLI.title" = "to see its progress here";
 
 /* Class = "NSTextFieldCell"; title = "hours goal:"; ObjectID = "RWg-38-I3M"; */
-"RWg-38-I3M.title" = "horas de trabajo deseadas:";
-
-/* Class = "NSButtonCell"; title = "create a goal"; ObjectID = "sHt-AE-o6F"; */
-"sHt-AE-o6F.title" = "crear una meta";
+"RWg-38-I3M.title" = "hours goal:";
 
 /* Class = "NSMenuItem"; title = "from next work day"; ObjectID = "UN6-Eu-Zua"; */
-"UN6-Eu-Zua.title" = "desde el próximo día de trabajo";
+"UN6-Eu-Zua.title" = "from next work day";
+
+/* Class = "NSButtonCell"; title = "create a goal"; ObjectID = "sHt-AE-o6F"; */
+"sHt-AE-o6F.title" = "create a goal";
 
 /* Class = "NSButtonCell"; title = "delete goal"; ObjectID = "zWP-RY-LYD"; */
-"zWP-RY-LYD.title" = "borrar meta";
-
+"zWP-RY-LYD.title" = "delete goal";

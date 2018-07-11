@@ -27,9 +27,9 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
     // MARK: - Outlets
 
-    @IBOutlet weak var projectNameLabel: NSTextField!
-    @IBOutlet weak var goalLabel: NSTextField!
-    @IBOutlet weak var reportLabel: NSTextField!
+    @IBOutlet weak var projectNameField: NSTextField!
+    @IBOutlet weak var goalField: NSTextField!
+    @IBOutlet weak var reportField: NSTextField!
 
 
     // MARK: - NSCollectionViewItem
@@ -66,17 +66,25 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
         let periodPreference = lastBinding.latestOutput { $0.periodPreference }
         let report = lastBinding.latestOutput { $0.report }
 
-        projectNameLabel.reactive.text <~ project.map { project -> String in
-            return project?.name ?? "(nothing)"
+        projectNameField.reactive.text <~ project.map { project -> String in
+            return project?.name ?? ""
         }
 
-        let targetPeriodDescription = SignalProducer.merge(periodPreference.filter(isMonthly).map { _ in "hours per month" },
-                                                           periodPreference.filter(isWeekly).map { _ in "hours per week" })
+        let targetPeriodFormat = SignalProducer.merge(
+            periodPreference.filter(isMonthly).map { _ in
+                NSLocalizedString("project-list.item.goal.target.monthly", comment: "target amount of time per month as it appears in each of the project list items")
+            },
+            periodPreference.filter(isWeekly).map { _ in
+                NSLocalizedString("project-list.item.goal.target.weekly", comment: "target amount of time per week as it appears in each of the project list items")
+        })
 
-        goalLabel.reactive.text <~ goal.skipNil().combineLatest(with: targetPeriodDescription)
-            .map { "\($0.hoursTarget) \($1)" }
+        goalField.reactive.text <~ goal.skipNil().map{ $0.hoursTarget }
+            .map { TimeInterval.from(hours: $0) }
+            .mapToString(timeFormatter: timeFormatter)
+            .combineLatest(with: targetPeriodFormat)
+            .map { String.localizedStringWithFormat($1, $0) }
 
-        goalLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ goal.map { $0 == nil }
+        goalField.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ goal.map { $0 == nil }
 
         let noReport = report.filter { $0 == nil }.map { _ in () }
         let workedTimeFromReport = report.skipNil().map { $0.workedTime }
@@ -94,7 +102,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             .map { (t0, t1) in return t0 + t1 }
 
         let formattedTime = totalWorkedTime.mapToString(timeFormatter: timeFormatter)
-        reportLabel.reactive.text <~ SignalProducer.merge(noReport.map { "no report data" },
-                                                          formattedTime.map { "\($0) worked" })
+        reportField.reactive.text <~ SignalProducer.merge(noReport.map { NSLocalizedString("project-list.item.report.no-data", comment: "message to show in each of the project list items when there is no report data") },
+                                                          formattedTime.map { String.localizedStringWithFormat(NSLocalizedString("project-list.item.report.worked-time", comment: "formatted worked time for the project represented by a project list item"), $0) })
     }
 }
