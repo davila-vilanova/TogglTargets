@@ -27,3 +27,30 @@
 
 /* amount of time remaining to achieve the goal */
 "time-progress.report.goal.remaining" = "para cumplir la meta: %@";
+
+/* header of the strategy section -- describing the target hours of the goal */
+"goal-strategy.header" = "para lograr tu meta de %@";
+
+/* amount of time to work per day to achieve the goal (adjusted day baseline) */
+"goal-strategy.adjusted-baseline" = "trabaja %@ por día";
+
+/* the adjusted day baseline could not be calculated */
+"goal-strategy.cannot-calculate-baseline" = "no se pudo calcular el tiempo diario de trabajo";
+
+/* the adjusted baseline approximately matches the a priori baseline */
+"goal-strategy.adusted-baseline-matches" = "Esto es similar a tu base de %@";
+
+/* need to catch up to achieve the goal */
+"goal-strategy.differential.more" = " Esto es %@ más que tu base de %@";
+
+/* could work less and still achieve the goal */
+"goal-strategy.differential.less" = "Esto es %@ menos que tu base de %@";
+
+/* reaching the goal is unfeasible but not impossible */
+"goal-strategy.unfeasible" = "Lograr tu meta sería posible si durmieras muy poquito y tuvieras una capacidad sobrehumana de concentración";
+
+/* reaching the goal is impossible */
+"goal-strategy.impossible" = "Para lograr tu meta deberías de trabajar más de 24 horas al día";
+
+/* the goal has been achieved */
+"goal-reached" = "¡Has logrado tu meta de %@!";
