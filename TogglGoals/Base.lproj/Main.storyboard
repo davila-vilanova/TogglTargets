@@ -311,42 +311,9 @@
             <objects>
                 <viewController id="a81-xu-Ddi" customClass="GoalViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="rb9-j4-yIz">
-                        <rect key="frame" x="0.0" y="0.0" width="477" height="47"/>
+                        <rect key="frame" x="0.0" y="0.0" width="477" height="51"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="equalCentering" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vf1-h0-Slh" userLabel="Montly Hours Goal Stack View">
-                                <rect key="frame" x="0.0" y="25" width="140" height="22"/>
-                                <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vdS-WN-Sq2" userLabel="monthly goal label">
-                                        <rect key="frame" x="-2" y="3" width="72" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="hours goal:" id="RWg-38-I3M">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CBy-PQ-RVY" userLabel="hours goal field">
-                                        <rect key="frame" x="76" y="0.0" width="64" height="22"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="0" drawsBackground="YES" id="fF3-3F-u0v">
-                                            <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="Mc7-ow-3HZ"/>
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="140" id="Rip-hq-2vS"/>
-                                </constraints>
-                                <visibilityPriorities>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                </visibilityPriorities>
-                                <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                </customSpacing>
-                            </stackView>
                             <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DU9-Bc-oT1" userLabel="Work Days Per Week Stack View">
                                 <rect key="frame" x="0.0" y="0.0" width="280" height="21"/>
                                 <subviews>
@@ -400,16 +367,39 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vdS-WN-Sq2" userLabel="hours goal label">
+                                <rect key="frame" x="-2" y="32" width="72" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="hours goal:" id="RWg-38-I3M">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CBy-PQ-RVY" userLabel="hours goal field">
+                                <rect key="frame" x="76" y="29" width="40" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="KJb-dv-HWZ"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="0" drawsBackground="YES" id="fF3-3F-u0v">
+                                    <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="Mc7-ow-3HZ"/>
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="DU9-Bc-oT1" firstAttribute="top" secondItem="Vf1-h0-Slh" secondAttribute="bottom" constant="4" id="6DO-zD-D9h"/>
                             <constraint firstItem="Hu7-xe-b5d" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="DU9-Bc-oT1" secondAttribute="trailing" constant="8" symbolic="YES" id="6Wy-UG-KCU"/>
                             <constraint firstItem="DU9-Bc-oT1" firstAttribute="leading" secondItem="rb9-j4-yIz" secondAttribute="leading" id="7M7-ot-3fL"/>
-                            <constraint firstItem="Vf1-h0-Slh" firstAttribute="top" secondItem="rb9-j4-yIz" secondAttribute="top" id="CoL-tB-ypN"/>
-                            <constraint firstItem="Vf1-h0-Slh" firstAttribute="leading" secondItem="rb9-j4-yIz" secondAttribute="leading" id="FpC-FV-kp7"/>
+                            <constraint firstItem="CBy-PQ-RVY" firstAttribute="top" secondItem="rb9-j4-yIz" secondAttribute="top" id="AtM-Yq-Lem"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="CBy-PQ-RVY" secondAttribute="trailing" id="CjG-Uv-R75"/>
+                            <constraint firstItem="vdS-WN-Sq2" firstAttribute="leading" secondItem="rb9-j4-yIz" secondAttribute="leading" id="Hga-qr-bg2"/>
                             <constraint firstAttribute="bottom" secondItem="Hu7-xe-b5d" secondAttribute="bottom" id="Hs9-GJ-xTP"/>
                             <constraint firstAttribute="bottom" secondItem="DU9-Bc-oT1" secondAttribute="bottom" id="PsY-3O-nfH"/>
+                            <constraint firstItem="DU9-Bc-oT1" firstAttribute="top" secondItem="CBy-PQ-RVY" secondAttribute="bottom" constant="8" symbolic="YES" id="WVh-qC-4fO"/>
                             <constraint firstAttribute="trailing" secondItem="Hu7-xe-b5d" secondAttribute="trailing" id="hty-hd-nva"/>
+                            <constraint firstItem="CBy-PQ-RVY" firstAttribute="leading" secondItem="vdS-WN-Sq2" secondAttribute="trailing" constant="8" symbolic="YES" id="iMU-r5-K7D"/>
+                            <constraint firstItem="CBy-PQ-RVY" firstAttribute="baseline" secondItem="vdS-WN-Sq2" secondAttribute="baseline" id="pcV-Ce-xUv"/>
                         </constraints>
                     </view>
                     <connections>
