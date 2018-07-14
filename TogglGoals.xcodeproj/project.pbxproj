@@ -291,6 +291,7 @@
 /* Begin PBXFileReference section */
 		630274D420FA392800DE2698 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		630274D620FA3BAD00DE2698 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		630274D820FAA6EB00DE2698 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6310EFCA1FAC6D3700B42C44 /* Period.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Period.swift; sourceTree = "<group>"; };
 		6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodPreference.swift; sourceTree = "<group>"; };
 		632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveProjectsNetworkActionTest.swift; sourceTree = "<group>"; };
@@ -393,7 +394,6 @@
 		63F76BA320F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		63F76BA620F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		63F76BA820F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
-		63F76BA920F66A830024939B /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		63F76BC320F6716E0024939B /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/Mac/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		63F76BC420F6716E0024939B /* ReactiveSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveSwift.framework; path = Carthage/Build/Mac/ReactiveSwift.framework; sourceTree = "<group>"; };
 		63F76BC520F6716F0024939B /* SQLite.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SQLite.framework; path = Carthage/Build/Mac/SQLite.framework; sourceTree = "<group>"; };
@@ -1203,7 +1203,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				63F76BA020F6212D0024939B /* es */,
-				63F76BA920F66A830024939B /* Base */,
+				630274D820FAA6EB00DE2698 /* en */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
