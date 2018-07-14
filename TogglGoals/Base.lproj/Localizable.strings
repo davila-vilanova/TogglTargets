@@ -10,8 +10,20 @@
 /* target amount of time per week as it appears in each of the project list items */
 "project-list.item.goal.target.weekly" = "%@ per week";
 
-/* message to show in each of the project list items when there is no report data */
+/* message to show in each of the project list items when there is no report data yet */
 "project-list.item.report.no-data" = "no report data";
 
 /* formatted worked time for the project represented by a project list item */
 "project-list.item.report.worked-time" = "%@ worked";
+
+/* message to show in the time progress view controller when there is no report data yet */
+"time-progress.report.no-data" = "no report data";
+
+/* worked time including today */
+"time-progress.report.worked-time.including-today" = "%@ worked (including today)";
+
+/* worked time not including today */
+"time-progress.report.worked-time.excluding-today" = "%@ worked (not including today)";
+
+/* amount of time remaining to achieve the goal */
+"time-progress.report.goal.remaining" = "%@ remaining";

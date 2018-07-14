@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>time-progress.workdays.total</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@workdays@</string>
+		<key>workdays</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>hay %d día de trabajo en este período</string>
+			<key>other</key>
+			<string>hay %d días de trabajo en este período</string>
+		</dict>
+	</dict>
+	<key>time-progress.workdays.left.including-today</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@workdays@</string>
+		<key>workdays</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>queda %d día de trabajo (incluyendo hoy)</string>
+			<key>other</key>
+			<string>quedan %d días de trabajo (incluyendo hoy)</string>
+		</dict>
+	</dict>
+	<key>time-progress.workdays.left.excluding-today</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@workdays@</string>
+		<key>workdays</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>queda %d día de trabajo (sin incluir hoy)</string>
+			<key>other</key>
+			<string>quedan %d días de trabajo (sin incluir hoy)</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

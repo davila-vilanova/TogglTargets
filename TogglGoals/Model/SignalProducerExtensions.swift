@@ -32,6 +32,16 @@ extension SignalProducer where Value == Int? {
             }
         }
     }
+
+    func mapToNonNil(valueForNil: Int = 0) -> SignalProducer<Int, Error> {
+        return map { (valueOrNil: Int?) -> Int in
+            if let value = valueOrNil {
+                return value
+            } else {
+                return valueForNil
+            }
+        }
+    }
 }
 
 // TODO: Extension on DateComponentsFormatter?

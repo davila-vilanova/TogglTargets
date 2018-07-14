@@ -15,3 +15,15 @@
 
 /* formatted worked time for the project represented by a project list item */
 "project-list.item.report.worked-time" = "trabajados: %@"; // sometimes you gotta get a little robotic
+
+/* message to show in the time progress view controller when there is no report data yet */
+"time-progress.report.no-data" = "esperando datos del informe";
+
+/* worked time including today */
+"time-progress.report.worked-time.including-today" = "trabajado: %@ (incluyendo hoy)";
+
+/* worked time not including today */
+"time-progress.report.worked-time.excluding-today" = "trabajado: %@ (sin incluir hoy)";
+
+/* amount of time remaining to achieve the goal */
+"time-progress.report.goal.remaining" = "para cumplir la meta: %@";
