@@ -31,8 +31,8 @@ class GoalViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Outlets
 
-    @IBOutlet weak var monthlyHoursGoalField: NSTextField!
-    @IBOutlet weak var monthlyHoursGoalFormatter: NumberFormatter!
+    @IBOutlet weak var hoursGoalField: NSTextField!
+    @IBOutlet weak var hoursGoalFormatter: NumberFormatter!
     @IBOutlet weak var weekWorkdaysControl: NSSegmentedControl!
     @IBOutlet weak var deleteGoalButton: NSButton!
 
@@ -71,14 +71,14 @@ class GoalViewController: NSViewController, BindingTargetProvider {
 
         // Enable controls only if goal exists
         let goalExists = goal.producer.map { $0 != nil }.skipRepeats()
-        for control in [monthlyHoursGoalField, weekWorkdaysControl, deleteGoalButton] as [NSControl] {
+        for control in [hoursGoalField, weekWorkdaysControl, deleteGoalButton] as [NSControl] {
             control.reactive.isEnabled <~ goalExists
         }
 
         // Bind goal values to the values displayed in the controls
-        monthlyHoursGoalField.reactive.text <~ nonNilGoal.map { $0.hoursTarget }
+        hoursGoalField.reactive.text <~ nonNilGoal.map { $0.hoursTarget }
             .map(NSNumber.init)
-            .map(monthlyHoursGoalFormatter.string(from:))
+            .map(hoursGoalFormatter.string(from:))
             .map { $0 ?? "" }
 
         weekWorkdaysControl.reactive
@@ -91,8 +91,8 @@ class GoalViewController: NSViewController, BindingTargetProvider {
                 .map { ($1.isSelected($0), $0.indexInGregorianCalendarSymbolsArray) }
 
         // Bind UI to output
-        let goalFromEditedHours = monthlyHoursGoalField.reactive.stringValues
-            .map { [weak formatter = monthlyHoursGoalFormatter] (text) -> HoursTargetType? in
+        let goalFromEditedHours = hoursGoalField.reactive.stringValues
+            .map { [weak formatter = hoursGoalFormatter] (text) -> HoursTargetType? in
                 formatter?.number(from: text)?.intValue
             }
             .skipNil()

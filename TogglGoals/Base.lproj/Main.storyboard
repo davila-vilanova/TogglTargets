@@ -404,8 +404,8 @@
                     </view>
                     <connections>
                         <outlet property="deleteGoalButton" destination="Hu7-xe-b5d" id="xnR-O7-WEf"/>
-                        <outlet property="monthlyHoursGoalField" destination="CBy-PQ-RVY" id="aH3-g3-aNr"/>
-                        <outlet property="monthlyHoursGoalFormatter" destination="Mc7-ow-3HZ" id="LlJ-68-FpM"/>
+                        <outlet property="hoursGoalField" destination="CBy-PQ-RVY" id="aH3-g3-aNr"/>
+                        <outlet property="hoursGoalFormatter" destination="Mc7-ow-3HZ" id="LlJ-68-FpM"/>
                         <outlet property="weekWorkdaysControl" destination="xET-i9-eZV" id="PTn-vG-Jd5"/>
                     </connections>
                 </viewController>
