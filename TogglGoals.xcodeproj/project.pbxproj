@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		630274D320FA392800DE2698 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 630274D520FA392800DE2698 /* Localizable.stringsdict */; };
+		630274DB20FAB31000DE2698 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 630274D920FAB31000DE2698 /* Localizable.stringsdict */; };
 		6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
 		6310EFCC1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
 		6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
@@ -289,9 +289,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		630274D420FA392800DE2698 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		630274D620FA3BAD00DE2698 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		630274D820FAA6EB00DE2698 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		630274DA20FAB31000DE2698 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		630274DC20FAB31F00DE2698 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		6310EFCA1FAC6D3700B42C44 /* Period.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Period.swift; sourceTree = "<group>"; };
 		6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodPreference.swift; sourceTree = "<group>"; };
 		632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveProjectsNetworkActionTest.swift; sourceTree = "<group>"; };
@@ -450,7 +450,6 @@
 		632957391DBA99F000E11A10 = {
 			isa = PBXGroup;
 			children = (
-				630274D520FA392800DE2698 /* Localizable.stringsdict */,
 				632957441DBA99F000E11A10 /* TogglGoals */,
 				632957561DBA99F000E11A10 /* TogglGoalsTests */,
 				632957611DBA99F000E11A10 /* TogglGoalsUITests */,
@@ -477,6 +476,7 @@
 				6329574E1DBA99F000E11A10 /* Info.plist */,
 				63F76BA220F6212D0024939B /* InfoPlist.strings */,
 				63F76B9F20F6212D0024939B /* Localizable.strings */,
+				630274D920FAB31000DE2698 /* Localizable.stringsdict */,
 				63D4FF2E1F5AD839006368A3 /* MainMenu.xib */,
 				632957451DBA99F000E11A10 /* AppDelegate.swift */,
 				639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */,
@@ -882,11 +882,11 @@
 				63F76BD720F672940024939B /* Preferences.storyboard in Resources */,
 				6334B4AA2071A81600A5B796 /* ErrorViewController.xib in Resources */,
 				6334B4A520703EC000A5B796 /* ActivitySuccessViewController.xib in Resources */,
+				630274DB20FAB31000DE2698 /* Localizable.stringsdict in Resources */,
 				635A25872052917B00EFCE90 /* ProjectCollectionViewItem.xib in Resources */,
 				6329574D1DBA99F000E11A10 /* Main.storyboard in Resources */,
 				6334B4A320703EC000A5B796 /* ActivityErrorViewController.xib in Resources */,
 				635A25852052917B00EFCE90 /* ProjectCollectionViewHeader.xib in Resources */,
-				630274D320FA392800DE2698 /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1164,11 +1164,11 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		630274D520FA392800DE2698 /* Localizable.stringsdict */ = {
+		630274D920FAB31000DE2698 /* Localizable.stringsdict */ = {
 			isa = PBXVariantGroup;
 			children = (
-				630274D420FA392800DE2698 /* es */,
-				630274D620FA3BAD00DE2698 /* en */,
+				630274DA20FAB31000DE2698 /* en */,
+				630274DC20FAB31F00DE2698 /* es */,
 			);
 			name = Localizable.stringsdict;
 			sourceTree = "<group>";
