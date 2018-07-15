@@ -76,25 +76,25 @@
 /* all data up to date */
 "status.condensed.all-data.synced" = "All Data Synchronized";
 
-/* error: unknown error */
+/* condensed error message: unknown error */
 "status.condensed.error.unknown" = "Unknown";
 
-/* error: no credentials configured (in condensed activity view) */
+/* condensed error message: no credentials configured */
 "status.condensed.error.no-credentials" = "No Credentials Configured";
 
-/* error: authentication failed (in condensed activity view) */
+/* condensed error message: authentication failed */
 "status.condensed.error.auth-failure" = "Authentication Error";
 
-/* error: server returned an internal error */
+/* condensed error message: server returned an internal error */
 "status.condensed.error.server-hiccups" = "Internal Server Error (%@)";
 
-/* error: unexpected JSON in response */
+/* condensed error message: response body's JSON is unexpectedly formed */
 "status.condensed.error.unexpected-json" = "Unexpected JSON in Response";
 
-/* error: unexpected response type */
-"status.condensed.error.unexpected-response-type" = "Unexpected Response Type";
+/* condensed error message: received a non-http response */
+"status.condensed.error.non-http" = "Unexpected Response Type";
 
-/* error: other HTTP error */
+/* condensed error message: other HTTP error */
 "status.condensed.error.other-http" = "HTTP Error %@";
 
 /* syncing profile */
@@ -153,3 +153,24 @@
 
 /* login error: cannot verify credential due to unexpected error */
 "login.error.cannot-verify.unexpected" = "Cannot verify: an unexpected error occurred. Feel free to try again.";
+
+/* error description: no credentials configured */
+"error.no-credentials" = "No credentials configured. Please configure your Toggl credentials.";
+
+/* error description: authentication failed */
+"error.auth-failure" = "Authentication error. Check your Toggl credentials.";
+
+/* error description: request failed with underlying error */
+"error.subsystem-error" = "The request failed with the following error:\n%@";
+
+/* error description: server returned an internal error */
+"error.server-hiccups" = "It seems like the Toggl server is experiencing internal difficulties. Response code is %@.";
+
+/* error description: response body's JSON is unexpectedly formed */
+"error.unexpected-json" = "Got some unexpectedly formed JSON as part of the response.";
+
+/* error description: received a non-http response */
+"error.non-http" = "Received what seems not to be an HTTP response: %@";
+
+/* error description: other HTTP error */
+"error.other-http" = "Received an HTTP error that I don't know how to handle. Response code is %@";

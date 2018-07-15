@@ -187,31 +187,31 @@ fileprivate extension APIAccessError {
     static func localizedDescription(from error: APIAccessError?) -> String {
         guard let error = error else {
             return NSLocalizedString("status.condensed.error.unknown",
-                                     comment: "error: unknown error")
+                                     comment: "condensed error message: unknown error")
         }
         switch error {
         case .noCredentials:
             return NSLocalizedString("status.condensed.error.no-credentials",
-                                     comment: "error: no credentials configured (in condensed activity view)")
+                                     comment: "condensed error message: no credentials configured")
         case .authenticationError(response: _):
             return NSLocalizedString("status.condensed.error.auth-failure",
-                                     comment: "error: authentication failed (in condensed activity view)")
+                                     comment: "condensed error message: authentication failed")
         case .loadingSubsystemError(underlyingError: let underlyingError):
             return underlyingError.localizedDescription
         case .serverHiccups(response: let response, data: _):
             return String.localizedStringWithFormat(
                 NSLocalizedString("status.condensed.error.server-hiccups",
-                                  comment: "error: server returned an internal error"),
+                                  comment: "condensed error message: server returned an internal error"),
                 response.statusCode)
         case .invalidJSON(underlyingError: _, data: _):
             return NSLocalizedString("status.condensed.error.unexpected-json",
-                                     comment: "error: unexpected JSON in response")
+                                     comment: "condensed error message: response body's JSON is unexpectedly formed")
         case .nonHTTPResponseReceived(response: _):
-            return NSLocalizedString("status.condensed.error.unexpected-response-type",
-                                     comment: "error: unexpected response type")
+            return NSLocalizedString("status.condensed.error.non-http",
+                                     comment: "condensed error message: received a non-http response")
         case .otherHTTPError(response: let response):
             return String.localizedStringWithFormat(NSLocalizedString("status.condensed.error.other-http",
-                                                                      comment: "error: other HTTP error"), response.statusCode)
+                                                                      comment: "condensed error message: other HTTP error"), response.statusCode)
         }
     }
 }

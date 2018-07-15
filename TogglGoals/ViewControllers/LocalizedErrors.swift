@@ -11,18 +11,27 @@ import Foundation
 func localizedDescription(for error: APIAccessError) -> String {
     switch error {
     case .noCredentials:
-        return "No credentials configured. Please configure your Toggl credentials."
+        return NSLocalizedString("error.no-credentials", comment: "error description: no credentials configured")
     case .authenticationError(response: _):
-        return "Authentication error. Check your Toggl credentials."
+        return NSLocalizedString("error.auth-failure", comment: "Authentication error. Check your Toggl credentials.")
     case .loadingSubsystemError(underlyingError: let underlyingError):
-        return "The request failed with the following error:\n\(underlyingError.localizedDescription)"
+        return String.localizedStringWithFormat(NSLocalizedString("error.subsystem-error",
+                                                                  comment: "error description: request failed with underlying error"),
+                                                underlyingError.localizedDescription)
     case .serverHiccups(response: let response, data: _):
-        return "It seems like the Toggl server is experiencing internal difficulties. Response code is \(response.statusCode)."
+        return String.localizedStringWithFormat(NSLocalizedString("error.server-hiccups",
+                                                                  comment: "error description: server returned an internal error"),
+                                                response.statusCode)
     case .invalidJSON(underlyingError: _, data: _):
-        return "Got some unexpectedly formed JSON as part of the response."
+        return NSLocalizedString("error.unexpected-json",
+                                 comment: "error description: response body's JSON is unexpectedly formed")
     case .nonHTTPResponseReceived(response: let response):
-        return "Received what seems not to be an HTTP response: \(response.description)"
+        return String.localizedStringWithFormat(NSLocalizedString("error.non-http",
+                                                                  comment: "error description: received a non-http response"),
+                                                response.description)
     case .otherHTTPError(response: let response):
-        return "Received an HTTP error that I don't know how to handle. Response code is \(response.statusCode)."
+        return String.localizedStringWithFormat(NSLocalizedString("error.other-http",
+                                                                  comment: "error description: other HTTP error"),
+                                                response.statusCode)
     }
 }
