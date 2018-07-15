@@ -144,13 +144,6 @@ fileprivate func isNoCredentialsError(_ status: ActivityStatus) -> Bool {
     }
 }
 
-fileprivate func isAuthenticationError(_ status: ActivityStatus) -> Bool {
-    switch status.error {
-    case .some(.authenticationError): return true
-    default: return false
-    }
-}
-
 fileprivate func isOtherError(_ status: ActivityStatus) -> Bool {
-    return !isNoCredentialsError(status) && !isAuthenticationError(status)
+    return !isNoCredentialsError(status)
 }
