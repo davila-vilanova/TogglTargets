@@ -18,7 +18,7 @@
 "DPU-zp-q1w.title" = "Periodos";
 
 /* Class = "NSButtonCell"; title = "weekly"; ObjectID = "Fbz-3b-gLb"; */
-"Fbz-3b-gLb.title" = "Semanalmente";
+"Fbz-3b-gLb.title" = "semanalmente";
 
 /* Class = "NSButtonCell"; title = "Log Out"; ObjectID = "I6L-rN-tXA"; */
 "I6L-rN-tXA.title" = "Desconectar";
