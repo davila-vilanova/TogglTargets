@@ -195,31 +195,11 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
                 return String.localizedStringWithFormat(
                     NSLocalizedString("login.error.cannot-verify",
                                       comment: "login error: cannot verify credential due to underlying error"),
-                    err.shortLocalizedDescription)
+                    localizedDescription(for: err))
             case .other:
                 return NSLocalizedString("login.error.cannot-verify.unexpected",
                                          comment: "login error: cannot verify credential due to unexpected error")
             }
-        }
-    }
-}
-
-// MARK: -
-
-fileprivate extension APIAccessError {
-    var shortLocalizedDescription: String {
-        switch self {
-        case .loadingSubsystemError(let underlyingError): return underlyingError.localizedDescription
-        case .serverHiccups(response: _, data: _):
-            return NSLocalizedString("login.error.cannot-verify.underlying.server-hiccups",
-                                     comment: "Server triggered an exception")
-        case .otherHTTPError(response: let response):
-            return String.localizedStringWithFormat(
-                NSLocalizedString("login.error.cannot-verify.underlying.other-http",
-                                  comment: "login error: underlying error: other http error"),
-                response)
-        default: return NSLocalizedString("login.error.cannot-verify.underlying.other",
-                                          comment: "login error: other underlying error")
         }
     }
 }

@@ -153,12 +153,3 @@
 
 /* login error: cannot verify credential due to unexpected error */
 "login.error.cannot-verify.unexpected" = "No se pueden verificar las credenciales: ha ocurrido un error inesperado. Inténtalo de nuevo.";
-
-/* login error: underlying error: internal server error */
-"login.error.cannot-verify.underlying.server-hiccups" = "El servidor ha fallado con un error interno";
-
-/* login error: underlying error: other http error */
-"login.error.cannot-verify.underlying.other-http" = "El servidor ha devuelto un error con código HTTP %@";
-
-/* login error: other underlying error */
-"login.error.cannot-verify.underlying.other" = "Algo inesperado ha pasado";
