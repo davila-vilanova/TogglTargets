@@ -41,7 +41,7 @@
 "goal-strategy.adusted-baseline-matches" = "Esto es similar a tu base de %@";
 
 /* need to catch up to achieve the goal */
-"goal-strategy.differential.more" = " Esto es %@ más que tu base de %@";
+"goal-strategy.differential.more" = "Esto es %@ más que tu base de %@";
 
 /* could work less and still achieve the goal */
 "goal-strategy.differential.less" = "Esto es %@ menos que tu base de %@";
