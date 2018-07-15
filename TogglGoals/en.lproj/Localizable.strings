@@ -54,3 +54,9 @@
 
 /* the goal has been achieved */
 "goal-reached" = "You have achieved your goal of %@";
+
+/* loading profile status description */
+"logged-in.loading-profile" = "Loading...";
+
+/* reenter credentials button caption */
+"logged-in.reenter-credentials" = "Reenter Credentials";

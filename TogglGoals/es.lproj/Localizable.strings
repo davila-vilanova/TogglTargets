@@ -54,3 +54,9 @@
 
 /* the goal has been achieved */
 "goal-reached" = "¡Has logrado tu meta de %@!";
+
+/* loading profile status description */
+"logged-in.loading-profile" = "Cargando...";
+
+/* reenter credentials button caption */
+"logged-in.reenter-credentials" = "Reintroducir Credenciales";

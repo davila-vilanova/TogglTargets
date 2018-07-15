@@ -73,21 +73,26 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
         retryButton.reactive.makeBindingTarget { $0.isHidden = $1 } <~ SignalProducer.merge(profiles.map { _ in true },
                                                                                             errors.map { _ in false })
 
-        statusLabel.reactive.stringValue <~ SignalProducer.merge(profiles.map { _ in "" },
-                                                                 busyStates.filter { $0 }.map { _ in "Loading..." },
-                                                                 errors.map(localizedDescription))
+        statusLabel.reactive.stringValue <~
+            SignalProducer.merge(profiles.map { _ in "" },
+                                 busyStates.filter { $0 }
+                                    .map { _ in
+                                        NSLocalizedString("logged-in.loading-profile",
+                                                          comment: "loading profile status description") },
+                                 errors.map(localizedDescription))
 
         fullNameField.reactive.stringValue <~ SignalProducer.merge(profiles.map { $0.name }.skipNil(),
                                                                    errors.map { _ in "" })
         profileImageView.reactive.image <~ SignalProducer.merge(profiles.map { $0.imageUrl }.skipNil().map { NSImage(contentsOf: $0) }.skipNil(),
                                                                 errors.map { _ in NSImage(named: NSImage.Name.user) }.skipNil())
 
-        let logOutTitle = "Log Out"
+        let logOutTitle = logOutButton.title
         logOutButton.reactive.makeBindingTarget { $0.title = $1 } <~
             SignalProducer.merge(
                 errors.map {
                     switch $0 {
-                    case .noCredentials, .authenticationError: return "Reenter Credentials"
+                    case .noCredentials, .authenticationError:
+                        return NSLocalizedString("logged-in.reenter-credentials", comment: "reenter credentials button caption")
                     default: return logOutTitle
                     }
                 },
