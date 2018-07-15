@@ -86,7 +86,7 @@
 "status.condensed.error.auth-failure" = "Credenciales No Válidas";
 
 /* condensed error message: server returned an internal error */
-"status.condensed.error.server-hiccups" = "Error Interno del Servidor (%@)";
+"status.condensed.error.server-hiccups" = "Error Interno del Servidor (%d)";
 
 /* condensed error message: response body's JSON is unexpectedly formed */
 "status.condensed.error.unexpected-json" = "La Respuesta del Servidor Es Inválida";
@@ -95,7 +95,7 @@
 "status.condensed.error.non-http" = "La Respuesta del Servidor Es Inválida";
 
 /* condensed error message: other HTTP error */
-"status.condensed.error.other-http" = "Error de HTTP %@";
+"status.condensed.error.other-http" = "Error de HTTP %d";
 
 /* syncing profile */
 "status.activity.syncing.profile" = "Sincronizando Profile";
@@ -164,7 +164,7 @@
 "error.subsystem-error" = "La operación ha fallado con el siguiente error:\n%@";
 
 /* error description: server returned an internal error */
-"error.server-hiccups" = "Parece quqe el servidor de Toggl está sufriendo dificultades internas. El código de error HTTP es %@.";
+"error.server-hiccups" = "Parece quqe el servidor de Toggl está sufriendo dificultades internas. El código de error HTTP es %d.";
 
 /* error description: response body's JSON is unexpectedly formed */
 "error.unexpected-json" = "El formato de la respuesta del servidor parece inválido.";
@@ -173,4 +173,4 @@
 "error.non-http" = "He recibido una respuesta que no es HTTP: %@";
 
 /* error description: other HTTP error */
-"error.other-http" = "He recibido un error de HTTP que no sé cómo interpretar. El código es %@";
+"error.other-http" = "He recibido un error de HTTP que no sé cómo interpretar. El código es %d";
