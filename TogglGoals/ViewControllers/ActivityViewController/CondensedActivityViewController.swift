@@ -57,7 +57,7 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
                 String.localizedStringWithFormat(NSLocalizedString("status.condensed.all-data.ops-in-progress",
                                                                    comment: "count of operations in progress"), $0)
             },
-            singleErrorStates.map(State.firstError).map(APIAccessError.shortDescriptionForUser),
+            singleErrorStates.map(State.firstError).map(APIAccessError.localizedDescription),
             multipleErrorStates.map(State.getCount).map {
                 String.localizedStringWithFormat(NSLocalizedString("status.condensed.all-data.ops-with-errors",
                                                                    comment: "count of operations with errors"), $0)
@@ -180,19 +180,22 @@ fileprivate func makeStateProducer(from statusesProducer: SignalProducer<[Activi
 }
 
 fileprivate extension APIAccessError {
-    var shortDescriptionForUser: String {
-        return APIAccessError.shortDescriptionForUser(from: self)
+    var localizeDescription: String {
+        return APIAccessError.localizedDescription(from: self)
     }
 
-    static func shortDescriptionForUser(from error: APIAccessError?) -> String {
+    static func localizedDescription(from error: APIAccessError?) -> String {
         guard let error = error else {
-            return NSLocalizedString("status.condensed.error.unknown", comment: "error: unknown error")
+            return NSLocalizedString("status.condensed.error.unknown",
+                                     comment: "error: unknown error")
         }
         switch error {
         case .noCredentials:
-            return NSLocalizedString("status.condensed.error.no-credentials", comment: "error: no credentials configured (in condensed activity view)")
+            return NSLocalizedString("status.condensed.error.no-credentials",
+                                     comment: "error: no credentials configured (in condensed activity view)")
         case .authenticationError(response: _):
-            return NSLocalizedString("status.condensed.error.auth-failure", comment: "error: authentication failed (in condensed activity view)")
+            return NSLocalizedString("status.condensed.error.auth-failure",
+                                     comment: "error: authentication failed (in condensed activity view)")
         case .loadingSubsystemError(underlyingError: let underlyingError):
             return underlyingError.localizedDescription
         case .serverHiccups(response: let response, data: _):
@@ -201,12 +204,14 @@ fileprivate extension APIAccessError {
                                   comment: "error: server returned an internal error"),
                 response.statusCode)
         case .invalidJSON(underlyingError: _, data: _):
-            return NSLocalizedString("status.condensed.error.unexpected-json", comment: "error: unexpected JSON in response")
+            return NSLocalizedString("status.condensed.error.unexpected-json",
+                                     comment: "error: unexpected JSON in response")
         case .nonHTTPResponseReceived(response: _):
-            return NSLocalizedString("status.condensed.error.unexpected-response-type", comment: "error: unexpected response type")
+            return NSLocalizedString("status.condensed.error.unexpected-response-type",
+                                     comment: "error: unexpected response type")
         case .otherHTTPError(response: let response):
-            return String.localizedStringWithFormat(NSLocalizedString("status.condensed.error.other-http", comment: "error: other HTTP error"), response.statusCode)
+            return String.localizedStringWithFormat(NSLocalizedString("status.condensed.error.other-http",
+                                                                      comment: "error: other HTTP error"), response.statusCode)
         }
     }
 }
-
