@@ -141,3 +141,25 @@
 
 /* error recovery description: open app preferences to configure credentials */
 "status.activity.error.recovery.open-preferences" = "Open Preferences";
+
+/* login button's title inviting to retry after login fails */
+"login.loginButton.retry" = "Retry";
+
+/* login error: invalid credential */
+"login.error.invalid-credential" = "Credential is not valid";
+
+/* login error: cannot verify credential due to underlying error */
+"login.error.cannot-verify" = "Cannot verify: %@";
+
+/* login error: cannot verify credential due to unexpected error */
+"login.error.cannot-verify.unexpected" = "Cannot verify: an unexpected error occurred. Feel free to try again.";
+
+/* login error: underlying error: internal server error */
+"login.error.cannot-verify.underlying.server-hiccups" = "Server triggered an exception";
+
+/* login error: underlying error: other http error */
+"login.error.cannot-verify.underlying.other-http" = "Server returned error with status code %@";
+
+/* login error: other underlying error */
+"login.error.cannot-verify.underlying.other" = "Something unexpected happened";
+

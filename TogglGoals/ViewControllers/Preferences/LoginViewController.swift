@@ -150,7 +150,9 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
         loginButton.reactive.pressed = CocoaAction(validateCredential)
         loginButton.reactive.makeBindingTarget {
             $0.title = $1
-        } <~ validateCredential.values.filter { $0.isError }.map { _ in "retry" }
+        } <~ validateCredential.values.filter { $0.isError }.map { _ in
+            NSLocalizedString("login.loginButton.retry", comment: "login button's title inviting to retry after login fails")
+        }
 
 
         // Take validated / resolved token credential from action's output
@@ -185,10 +187,18 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
 
         errorField.reactive.stringValue <~ validateCredential.values.map { (result) -> String in
             switch result {
-            case .valid(_, _): return ""
-            case .invalid: return "Credential is not valid"
-            case let .error(err): return "Cannot verify: \(err.shortLocalizedDescription)"
-            case .other: return "Cannot verify: an unexpected error occurred. Feel free to try again."
+            case .valid(_, _):
+                return ""
+            case .invalid:
+                return NSLocalizedString("login.error.invalid-credential", comment: "login error: invalid credential")
+            case let .error(err):
+                return String.localizedStringWithFormat(
+                    NSLocalizedString("login.error.cannot-verify",
+                                      comment: "login error: cannot verify credential due to underlying error"),
+                    err.shortLocalizedDescription)
+            case .other:
+                return NSLocalizedString("login.error.cannot-verify.unexpected",
+                                         comment: "login error: cannot verify credential due to unexpected error")
             }
         }
     }
@@ -200,9 +210,16 @@ fileprivate extension APIAccessError {
     var shortLocalizedDescription: String {
         switch self {
         case .loadingSubsystemError(let underlyingError): return underlyingError.localizedDescription
-        case .serverHiccups(response: _, data: _): return "Server triggered an exception"
-        case .otherHTTPError(response: let response): return "Server returned error with status code \(response.statusCode)"
-        default: return "something unexpected happened"
+        case .serverHiccups(response: _, data: _):
+            return NSLocalizedString("login.error.cannot-verify.underlying.server-hiccups",
+                                     comment: "Server triggered an exception")
+        case .otherHTTPError(response: let response):
+            return String.localizedStringWithFormat(
+                NSLocalizedString("login.error.cannot-verify.underlying.other-http",
+                                  comment: "login error: underlying error: other http error"),
+                response)
+        default: return NSLocalizedString("login.error.cannot-verify.underlying.other",
+                                          comment: "login error: other underlying error")
         }
     }
 }
