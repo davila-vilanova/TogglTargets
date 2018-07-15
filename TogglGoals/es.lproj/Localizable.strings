@@ -60,3 +60,9 @@
 
 /* reenter credentials button caption */
 "logged-in.reenter-credentials" = "Reintroducir Credenciales";
+
+/* amount of time worked today */
+"day-progress.worked-today" = "trabajado hoy: %@";
+
+/* amount of time left to meet daily goal */
+"day-progress.to-work-today" = "resta para cumplir tu objetivo diario: %@";
