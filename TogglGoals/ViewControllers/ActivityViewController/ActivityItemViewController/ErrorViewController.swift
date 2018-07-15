@@ -21,8 +21,8 @@ class ErrorViewController: NSViewController {
     @IBOutlet weak var descriptionLabel: NSTextField!
     @IBOutlet weak var recoveryButton: NSButton!
 
-    func displayError(_ error: APIAccessError, for activityDescription: String, retryAction: RetryAction) {
-        representedError.value = (error, activityDescription, retryAction)
+    func displayError(_ error: APIAccessError, title: String, retryAction: RetryAction) {
+        representedError.value = (error, title, retryAction)
         print(error.debugDescription)
     }
 
@@ -34,7 +34,7 @@ class ErrorViewController: NSViewController {
 
         let representedErrorProducer = representedError.producer.skipNil()
 
-        titleLabel.reactive.text <~ representedErrorProducer.map { $0.1 }.map(errorTitle)
+        titleLabel.reactive.text <~ representedErrorProducer.map { $0.1 }
         descriptionLabel.reactive.text <~ representedErrorProducer.map { $0.0 }.map(localizedDescription)
 
         recoveryButton.reactive.makeBindingTarget(on: UIScheduler()) { (button, action) in
@@ -47,10 +47,6 @@ class ErrorViewController: NSViewController {
             button.title = title
         }) <~ representedErrorProducer.map { $0.0 }.map(recoveryDescription)
     }
-}
-
-fileprivate func errorTitle(with activityDescription: String) -> String {
-    return "An error occured while \(activityDescription)"
 }
 
 fileprivate func recovery(for error: APIAccessError) -> RecoveryAction? {
@@ -67,9 +63,11 @@ fileprivate func recovery(for error: APIAccessError) -> RecoveryAction? {
 fileprivate func recoveryDescription(for error: APIAccessError) -> String {
     switch error {
     case .noCredentials, .authenticationError:
-        return "Open Preferences"
+        return NSLocalizedString("status.activity.error.recovery.open-preferences",
+                                 comment: "error recovery description: open app preferences to configure credentials")
     default:
-        return "Retry"
+        return NSLocalizedString("status.activity.error.recovery.retry",
+                                 comment: "error recovery description: retry operation")
     }
 }
 

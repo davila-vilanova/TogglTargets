@@ -97,3 +97,41 @@
 /* error: other HTTP error */
 "status.condensed.error.other-http" = "Error de HTTP %@";
 
+/* syncing profile */
+"status.activity.syncing.profile" = "Sincronizando Profile";
+
+/* syncing projects */
+"status.activity.syncing.projects" = "Sincronizando Proyectos";
+
+/* syncing reports */
+"status.activity.syncing.projects" = "Sincronizando Informes";
+
+/* syncing running entry */
+"status.activity.syncing.running-entry" = "Sincronizando Temporizador";
+
+/* synced profile */
+"status.activity.synced.profile" = "Profile Sincronizado";
+
+/* synced projects */
+"status.activity.synced.projects" = "Proyectos Sincronizados";
+
+/* synced reports */
+"status.activity.synced.reports" = "Informes Sincronizados";
+
+/* synced running entry */
+"status.activity.synced.running-entry" = "Temporizador Sincronizado";
+
+/* error syncing profile */
+"status.activity.error.profile" = "Error Sincronizando Profile";
+
+/* error syncing projects */
+"status.activity.error.projects" = "Error Sincronizando Proyectos";
+
+/* error syncing reports */
+"status.activity.error.reports" = "Error Sincronizando Informes";
+
+/* error syncing running entry */
+"status.activity.error.running-entry" = "Error Sincronizando Temporizador";
+
+/* error: no credentials configured (in single activity view) */
+"status.activity.error.no-credentials" = "Credenciales No Configuradas";

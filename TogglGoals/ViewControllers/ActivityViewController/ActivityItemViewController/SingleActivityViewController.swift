@@ -23,18 +23,49 @@ class SingleActivityViewController: NSViewController {
     }
 
     fileprivate let representedActivityStatus = MutableProperty<ActivityStatus?>(nil)
-
-    fileprivate lazy var representedActivity = representedActivityStatus.map { $0?.activity }
 }
 
-fileprivate extension ActivityStatus.Activity {
-    var descriptionForUI: String {
+fileprivate extension ActivityStatus {
+    var localizedDescription: String {
         switch self {
-        case .syncProfile: return "profile"
-        case .syncProjects: return "projects"
-        case .syncReports: return "reports"
-        case .syncRunningEntry: return "running entry"
+        case .executing(let activity):
+            switch activity {
+            case .syncProfile:
+                return NSLocalizedString("status.activity.syncing.profile", comment: "syncing profile")
+            case .syncProjects:
+                return NSLocalizedString("status.activity.syncing.projects", comment: "syncing projects")
+            case .syncReports:
+                return NSLocalizedString("status.activity.syncing.projects", comment: "syncing reports")
+            case .syncRunningEntry:
+                return NSLocalizedString("status.activity.syncing.running-entry", comment: "syncing running entry")
+            }
+        case .succeeded(let activity):
+            switch activity {
+            case .syncProfile:
+                return NSLocalizedString("status.activity.synced.profile", comment: "synced profile")
+            case .syncProjects:
+                return NSLocalizedString("status.activity.synced.projects", comment: "synced projects")
+            case .syncReports:
+                return NSLocalizedString("status.activity.synced.reports", comment: "synced reports")
+            case .syncRunningEntry:
+                return NSLocalizedString("status.activity.synced.running-entry", comment: "synced running entry")
+            }
+        case .error(let activity, _, _):
+            switch activity {
+            case .syncProfile:
+                return NSLocalizedString("status.activity.error.profile", comment: "error syncing profile")
+            case .syncProjects:
+                return NSLocalizedString("status.activity.error.projects", comment: "error syncing projects")
+            case .syncReports:
+                return NSLocalizedString("status.activity.error.reports", comment: "error syncing reports")
+            case .syncRunningEntry:
+                return NSLocalizedString("status.activity.error.running-entry", comment: "error syncing running entry")
+            }
         }
+    }
+
+    static func localizedDescription(for status: ActivityStatus) -> String {
+        return status.localizedDescription
     }
 }
 
@@ -46,14 +77,14 @@ class SyncingActivityViewController: SingleActivityViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         progressIndicator.startAnimation(nil)
-        label.reactive.text <~ representedActivity.producer.skipNil().map { "Syncing \($0.descriptionForUI)" }
+        label.reactive.text <~ representedActivityStatus.producer.skipNil().map(ActivityStatus.localizedDescription)
     }
 }
 
 class ActivitySuccessViewController: SingleActivityViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        label.reactive.text <~ representedActivity.producer.skipNil().map { "Synced \($0.descriptionForUI)" }
+        label.reactive.text <~ representedActivityStatus.producer.skipNil().map(ActivityStatus.localizedDescription)
     }
 }
 
@@ -78,7 +109,7 @@ class ActivityErrorViewController: SingleActivityViewController, NSPopoverDelega
         }
         let controller = ErrorViewController()
         controller.displayError(error,
-                                for: "syncing \(errorActivityStatus.activity.descriptionForUI)",
+                                title: errorActivityStatus.localizedDescription,
                                 retryAction: retryAction)
         let popover = NSPopover()
         popover.behavior = .transient
@@ -94,10 +125,15 @@ class ActivityErrorViewController: SingleActivityViewController, NSPopoverDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         let statuses = representedActivityStatus.producer.skipNil()
-        label.reactive.text <~
-            SignalProducer.merge(statuses.filter(isNoCredentialsError).map { _ in "No credentials configured" },
-                                 statuses.filter(isAuthenticationError).map { "\($0.activity.descriptionForUI): authentication error" },
-                                 statuses.filter(isOtherError).map { "Error syncing \($0.activity.descriptionForUI)" })
+
+        // Single out no credentials errors
+        let noCredentialsErrorDescriptions = statuses.filter(isNoCredentialsError).map { _ in
+            NSLocalizedString("status.activity.error.no-credentials",
+                              comment: "error: no credentials configured (in single activity view)")
+        }
+
+        label.reactive.text <~ SignalProducer.merge(noCredentialsErrorDescriptions,
+                                                    statuses.filter(isOtherError).map(ActivityStatus.localizedDescription))
     }
 }
 

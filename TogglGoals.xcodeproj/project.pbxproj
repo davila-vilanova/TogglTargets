@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		630274DB20FAB31000DE2698 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 630274D920FAB31000DE2698 /* Localizable.stringsdict */; };
+		630274DD20FB659D00DE2698 /* ActivityErrorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 630274DF20FB659D00DE2698 /* ActivityErrorViewController.xib */; };
 		6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
 		6310EFCC1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
 		6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
@@ -42,7 +43,6 @@
 		6334B4A020703EC000A5B796 /* ActivitiesState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334B49620703EBF00A5B796 /* ActivitiesState.swift */; };
 		6334B4A120703EC000A5B796 /* DetailedActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334B49720703EBF00A5B796 /* DetailedActivityViewController.swift */; };
 		6334B4A220703EC000A5B796 /* SyncingActivityViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B49920703EBF00A5B796 /* SyncingActivityViewController.xib */; };
-		6334B4A320703EC000A5B796 /* ActivityErrorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B49A20703EBF00A5B796 /* ActivityErrorViewController.xib */; };
 		6334B4A420703EC000A5B796 /* SingleActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334B49B20703EBF00A5B796 /* SingleActivityViewController.swift */; };
 		6334B4A520703EC000A5B796 /* ActivitySuccessViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6334B49C20703EBF00A5B796 /* ActivitySuccessViewController.xib */; };
 		6334B4A92071A81600A5B796 /* ErrorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334B4A72071A81600A5B796 /* ErrorViewController.swift */; };
@@ -292,6 +292,9 @@
 		630274D820FAA6EB00DE2698 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		630274DA20FAB31000DE2698 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		630274DC20FAB31F00DE2698 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		630274DE20FB659D00DE2698 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ActivityErrorViewController.xib; sourceTree = "<group>"; };
+		630274E120FB659F00DE2698 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/ActivityErrorViewController.strings; sourceTree = "<group>"; };
+		630274E320FB65A100DE2698 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/ActivityErrorViewController.strings; sourceTree = "<group>"; };
 		6310EFCA1FAC6D3700B42C44 /* Period.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Period.swift; sourceTree = "<group>"; };
 		6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodPreference.swift; sourceTree = "<group>"; };
 		632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveProjectsNetworkActionTest.swift; sourceTree = "<group>"; };
@@ -316,7 +319,6 @@
 		6334B49620703EBF00A5B796 /* ActivitiesState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivitiesState.swift; sourceTree = "<group>"; };
 		6334B49720703EBF00A5B796 /* DetailedActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailedActivityViewController.swift; sourceTree = "<group>"; };
 		6334B49920703EBF00A5B796 /* SyncingActivityViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SyncingActivityViewController.xib; sourceTree = "<group>"; };
-		6334B49A20703EBF00A5B796 /* ActivityErrorViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActivityErrorViewController.xib; sourceTree = "<group>"; };
 		6334B49B20703EBF00A5B796 /* SingleActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleActivityViewController.swift; sourceTree = "<group>"; };
 		6334B49C20703EBF00A5B796 /* ActivitySuccessViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActivitySuccessViewController.xib; sourceTree = "<group>"; };
 		6334B4A72071A81600A5B796 /* ErrorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorViewController.swift; sourceTree = "<group>"; };
@@ -539,7 +541,7 @@
 			children = (
 				6334B49B20703EBF00A5B796 /* SingleActivityViewController.swift */,
 				6334B49920703EBF00A5B796 /* SyncingActivityViewController.xib */,
-				6334B49A20703EBF00A5B796 /* ActivityErrorViewController.xib */,
+				630274DF20FB659D00DE2698 /* ActivityErrorViewController.xib */,
 				6334B49C20703EBF00A5B796 /* ActivitySuccessViewController.xib */,
 				6334B4A72071A81600A5B796 /* ErrorViewController.swift */,
 				6334B4A82071A81600A5B796 /* ErrorViewController.xib */,
@@ -885,7 +887,7 @@
 				630274DB20FAB31000DE2698 /* Localizable.stringsdict in Resources */,
 				635A25872052917B00EFCE90 /* ProjectCollectionViewItem.xib in Resources */,
 				6329574D1DBA99F000E11A10 /* Main.storyboard in Resources */,
-				6334B4A320703EC000A5B796 /* ActivityErrorViewController.xib in Resources */,
+				630274DD20FB659D00DE2698 /* ActivityErrorViewController.xib in Resources */,
 				635A25852052917B00EFCE90 /* ProjectCollectionViewHeader.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1171,6 +1173,16 @@
 				630274DC20FAB31F00DE2698 /* es */,
 			);
 			name = Localizable.stringsdict;
+			sourceTree = "<group>";
+		};
+		630274DF20FB659D00DE2698 /* ActivityErrorViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				630274DE20FB659D00DE2698 /* Base */,
+				630274E120FB659F00DE2698 /* en */,
+				630274E320FB65A100DE2698 /* es */,
+			);
+			name = ActivityErrorViewController.xib;
 			sourceTree = "<group>";
 		};
 		6329574B1DBA99F000E11A10 /* Main.storyboard */ = {

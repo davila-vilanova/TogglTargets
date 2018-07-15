@@ -96,3 +96,48 @@
 
 /* error: other HTTP error */
 "status.condensed.error.other-http" = "HTTP Error %@";
+
+/* syncing profile */
+"status.activity.syncing.profile" = "Syncing Profile";
+
+/* syncing projects */
+"status.activity.syncing.projects" = "Syncing Projects";
+
+/* syncing reports */
+"status.activity.syncing.projects" = "Syncing Reports";
+
+/* syncing running entry */
+"status.activity.syncing.running-entry" = "Syncing Running Entry";
+
+/* synced profile */
+"status.activity.synced.profile" = "Synced Profile";
+
+/* synced projects */
+"status.activity.synced.projects" = "Synced Projects";
+
+/* synced reports */
+"status.activity.synced.reports" = "Synced Reports";
+
+/* synced running entry */
+"status.activity.synced.running-entry" = "Synced Running Entry";
+
+/* error syncing profile */
+"status.activity.error.profile" = "Error Syncing Profile";
+
+/* error syncing projects */
+"status.activity.error.projects" = "Error Syncing Projects";
+
+/* error syncing reports */
+"status.activity.error.reports" = "Error Syncing Reports";
+
+/* error syncing running entry */
+"status.activity.error.running-entry" = "Error Syncing Running Entry";
+
+/* error: no credentials configured (in single activity view) */
+"status.activity.error.no-credentials" = "No Credentials Configured";
+
+/* error recovery description: retry operation */
+"status.activity.error.recovery.retry" = "Retry";
+
+/* error recovery description: open app preferences to configure credentials */
+"status.activity.error.recovery.open-preferences" = "Open Preferences";
