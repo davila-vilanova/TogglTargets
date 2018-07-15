@@ -50,5 +50,37 @@
 			<string>%d work days left (not including today)</string>
 		</dict>
 	</dict>
+	<key>status.condensed.all-data.ops-in-progress</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@operations@</string>
+		<key>operations</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d syncing operation in progress</string>
+			<key>other</key>
+			<string>%d syncing operations in progress</string>
+		</dict>
+	</dict>
+	<key>status.condensed.all-data.ops-with-errors</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@operations@</string>
+		<key>operations</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d syncing operation has errors</string>
+			<key>other</key>
+			<string>%d syncing operations have errors</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

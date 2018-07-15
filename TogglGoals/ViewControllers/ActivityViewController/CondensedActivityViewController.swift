@@ -47,15 +47,21 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
         let idleStates = stateProducer.filter(State.isIdle)
 
         statusDescriptionLabel.reactive.text <~ SignalProducer.merge(
-            syncingStates.map { _ in "Syncing..."},
-            errorStates.map { _ in "Could Not Syncronize All Data" },
-            successStates.map { _ in "All Data Synchronized" }
+            syncingStates.map { _ in NSLocalizedString("status.condensed.all-data.syncing", comment: "data syncing in progress") },
+            errorStates.map { _ in NSLocalizedString("status.condensed.all-data.error", comment: "there were errors while syncing data") },
+            successStates.map { _ in NSLocalizedString("status.condensed.all-data.synced", comment: "all data up to date") }
         )
 
         statusDetailLabel.reactive.text <~ SignalProducer.merge(
-            syncingStates.map(State.getCount).map { (count: Int) in "\(count) syncing \(count == 1 ? "operation" : "operations") in progress" },
+            syncingStates.map(State.getCount).map {
+                String.localizedStringWithFormat(NSLocalizedString("status.condensed.all-data.ops-in-progress",
+                                                                   comment: "count of operations in progress"), $0)
+            },
             singleErrorStates.map(State.firstError).map(APIAccessError.shortDescriptionForUser),
-            multipleErrorStates.map(State.getCount).map { "\($0) syncing operations have errors" }
+            multipleErrorStates.map(State.getCount).map {
+                String.localizedStringWithFormat(NSLocalizedString("status.condensed.all-data.ops-with-errors",
+                                                                   comment: "count of operations with errors"), $0)
+            }
         )
 
         let showStatusDetail = SignalProducer.merge(
@@ -180,23 +186,26 @@ fileprivate extension APIAccessError {
 
     static func shortDescriptionForUser(from error: APIAccessError?) -> String {
         guard let error = error else {
-            return "undefined"
+            return NSLocalizedString("status.condensed.error.unknown", comment: "error: unknown error")
         }
         switch error {
         case .noCredentials:
-            return "No credentials Configured"
+            return NSLocalizedString("status.condensed.error.no-credentials", comment: "error: no credentials configured (in condensed activity view)")
         case .authenticationError(response: _):
-            return "Authentication Error"
+            return NSLocalizedString("status.condensed.error.auth-failure", comment: "error: authentication failed (in condensed activity view)")
         case .loadingSubsystemError(underlyingError: let underlyingError):
             return underlyingError.localizedDescription
         case .serverHiccups(response: let response, data: _):
-            return "Server Error (\(response.statusCode))"
+            return String.localizedStringWithFormat(
+                NSLocalizedString("status.condensed.error.server-hiccups",
+                                  comment: "error: server returned an internal error"),
+                response.statusCode)
         case .invalidJSON(underlyingError: _, data: _):
-            return "Unexpected JSON in Response"
+            return NSLocalizedString("status.condensed.error.unexpected-json", comment: "error: unexpected JSON in response")
         case .nonHTTPResponseReceived(response: _):
-            return "Unexpected Response Type"
+            return NSLocalizedString("status.condensed.error.unexpected-response-type", comment: "error: unexpected response type")
         case .otherHTTPError(response: let response):
-            return "HTTP error (\(response.statusCode))"
+            return String.localizedStringWithFormat(NSLocalizedString("status.condensed.error.other-http", comment: "error: other HTTP error"), response.statusCode)
         }
     }
 }
