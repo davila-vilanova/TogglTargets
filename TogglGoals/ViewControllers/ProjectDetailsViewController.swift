@@ -161,7 +161,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
 
     private func setupLocalProjectDisplay() {
         project.producer.observe(on: UIScheduler()).startWithValues { [unowned self] projectOrNil in
-            self.projectName.stringValue = projectOrNil?.name ?? (projectOrNil != nil ? "(unnamed project)" : "(no project selected)")
+            self.projectName.stringValue = projectOrNil?.name ?? ""
         }
     }
 }
