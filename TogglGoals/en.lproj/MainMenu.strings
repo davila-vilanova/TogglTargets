@@ -1,0 +1,114 @@
+
+/* Class = "NSMenuItem"; title = "Hide TogglGoals"; ObjectID = "1bG-DD-KFI"; */
+"1bG-DD-KFI.title" = "Hide TogglGoals";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "35e-Go-SDS"; */
+"35e-Go-SDS.title" = "Hide Others";
+
+/* Class = "NSMenuItem"; title = "About TogglGoals"; ObjectID = "3BC-FC-Gqa"; */
+"3BC-FC-Gqa.title" = "About TogglGoals";
+
+/* Class = "NSMenu"; title = "Services"; ObjectID = "96M-lv-qei"; */
+"96M-lv-qei.title" = "Services";
+
+/* Class = "NSMenu"; title = "Window"; ObjectID = "Ap6-nD-qPV"; */
+"Ap6-nD-qPV.title" = "Window";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "DGV-An-EvN"; */
+"DGV-An-EvN.title" = "Redo";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "EBE-hZ-lnS"; */
+"EBE-hZ-lnS.title" = "Edit";
+
+/* Class = "NSMenuItem"; title = "TogglGoals"; ObjectID = "GhY-j3-QHx"; */
+"GhY-j3-QHx.title" = "TogglGoals";
+
+/* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "J9v-Yu-7mm"; */
+"J9v-Yu-7mm.title" = "Zoom";
+
+/* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "LBQ-N3-wxk"; */
+"LBQ-N3-wxk.title" = "Stop Speaking";
+
+/* Class = "NSMenuItem"; title = "TogglGoals Help"; ObjectID = "Mps-NS-KAM"; */
+"Mps-NS-KAM.title" = "TogglGoals Help";
+
+/* Class = "NSMenuItem"; title = "Window"; ObjectID = "OFV-CG-5zD"; */
+"OFV-CG-5zD.title" = "Window";
+
+/* Class = "NSMenuItem"; title = "Speech"; ObjectID = "RZB-1q-ULa"; */
+"RZB-1q-ULa.title" = "Speech";
+
+/* Class = "NSMenu"; title = "TogglGoals"; ObjectID = "RbL-PE-34I"; */
+"RbL-PE-34I.title" = "TogglGoals";
+
+/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "SmX-EA-7gS"; */
+"SmX-EA-7gS.title" = "Enter Full Screen";
+
+/* Class = "NSMenu"; title = "View"; ObjectID = "TbP-c1-eOl"; */
+"TbP-c1-eOl.title" = "View";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "VeB-aD-8j2"; */
+"VeB-aD-8j2.title" = "Preferences…";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "Vq3-ZU-IuE"; */
+"Vq3-ZU-IuE.title" = "Minimize";
+
+/* Class = "NSMenu"; title = "File"; ObjectID = "Ww3-eD-T8i"; */
+"Ww3-eD-T8i.title" = "File";
+
+/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "Y6S-V3-X6T"; */
+"Y6S-V3-X6T.title" = "Main Menu";
+
+/* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "Z7z-1t-mTw"; */
+"Z7z-1t-mTw.title" = "Bring All to Front";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "ZEa-bF-3Ki"; */
+"ZEa-bF-3Ki.title" = "Help";
+
+/* Class = "NSMenuItem"; title = "Reload Data from Toggl"; ObjectID = "adQ-LM-TqZ"; */
+"adQ-LM-TqZ.title" = "Reload Data from Toggl";
+
+/* Class = "NSMenuItem"; title = "Quit TogglGoals"; ObjectID = "asV-Tm-J8V"; */
+"asV-Tm-J8V.title" = "Quit TogglGoals";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "eix-1Z-DdL"; */
+"eix-1Z-DdL.title" = "Delete";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "gEQ-gC-Nq2"; */
+"gEQ-gC-Nq2.title" = "Edit";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gJZ-2X-wSD"; */
+"gJZ-2X-wSD.title" = "Paste";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "icm-Vh-Sgo"; */
+"icm-Vh-Sgo.title" = "Help";
+
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "isn-x2-HQ0"; */
+"isn-x2-HQ0.title" = "Show All";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "kHU-V8-soL"; */
+"kHU-V8-soL.title" = "Undo";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "ooh-Nm-7kf"; */
+"ooh-Nm-7kf.title" = "Select All";
+
+/* Class = "NSMenu"; title = "Speech"; ObjectID = "pah-4o-yLO"; */
+"pah-4o-yLO.title" = "Speech";
+
+/* Class = "NSMenuItem"; title = "View"; ObjectID = "qGa-Wr-X9q"; */
+"qGa-Wr-X9q.title" = "View";
+
+/* Class = "NSMenuItem"; title = "File"; ObjectID = "u2m-ff-T6O"; */
+"u2m-ff-T6O.title" = "File";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "vhJ-2L-cFd"; */
+"vhJ-2L-cFd.title" = "Cut";
+
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "wcS-fg-e0z"; */
+"wcS-fg-e0z.title" = "Services";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "x3m-9J-rKv"; */
+"x3m-9J-rKv.title" = "Copy";
+
+/* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "z4P-cz-l1S"; */
+"z4P-cz-l1S.title" = "Start Speaking";

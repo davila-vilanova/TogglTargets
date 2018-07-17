@@ -68,12 +68,6 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="Ww3-eD-T8i">
                         <items>
-                            <menuItem title="Close" keyEquivalent="w" id="gJN-eW-OXT">
-                                <connections>
-                                    <action selector="performClose:" target="-1" id="Gjd-xn-nNr"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="3OO-bC-V13"/>
                             <menuItem title="Reload Data from Toggl" keyEquivalent="r" id="adQ-LM-TqZ">
                                 <connections>
                                     <action selector="refreshAllData:" target="Mk7-Bv-jsF" id="AjC-Bm-Kxi"/>
@@ -150,25 +144,6 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="View" id="TbP-c1-eOl">
                         <items>
-                            <menuItem title="Show Toolbar" keyEquivalent="t" id="lma-1y-pmX">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="toggleToolbarShown:" target="-1" id="MRL-I0-tvp"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Customize Toolbar…" id="TpX-0S-Leh">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="runToolbarCustomizationPalette:" target="-1" id="O4U-Qb-Vi6"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="zRZ-qM-wN7"/>
-                            <menuItem title="Show Sidebar" keyEquivalent="s" id="qbb-sG-izn">
-                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
-                                <connections>
-                                    <action selector="toggleSourceList:" target="-1" id="fqd-Fq-Q7E"/>
-                                </connections>
-                            </menuItem>
                             <menuItem title="Enter Full Screen" keyEquivalent="f" id="SmX-EA-7gS">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
