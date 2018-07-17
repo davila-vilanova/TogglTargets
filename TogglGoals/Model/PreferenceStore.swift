@@ -22,7 +22,8 @@ class PreferenceStore<PreferenceType: StorableInUserDefaults> {
     let input: BindingTarget<PreferenceType?>
 
     init(userDefaults: Property<UserDefaults>,
-         scheduler: Scheduler) {
+         scheduler: Scheduler,
+         defaultValue: PreferenceType? = nil) {
         self.userDefaults = userDefaults
         self.scheduler = scheduler
 
@@ -41,6 +42,7 @@ class PreferenceStore<PreferenceType: StorableInUserDefaults> {
         outputBacker <~ userDefaults.producer
             .map { PreferenceType(userDefaults: $0) }
             .take(first: 1)
+            .map { $0 ?? defaultValue }
 
         // The latest source assigned to input will:
         //  * update the persisted value

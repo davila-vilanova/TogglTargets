@@ -28,7 +28,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private lazy var credentialStore = PreferenceStore<TogglAPITokenCredential>(userDefaults: userDefaults,
                                                                                 scheduler: scheduler)
     private lazy var periodPreferenceStore = PreferenceStore<PeriodPreference>(userDefaults: userDefaults,
-                                                                               scheduler: scheduler)
+                                                                               scheduler: scheduler,
+                                                                               defaultValue: PeriodPreference.monthly)
     private let (applicationLifetime, token) = Lifetime.make()
 
     private let modelCoordinator: ModelCoordinator
