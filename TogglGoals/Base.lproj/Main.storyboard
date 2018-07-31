@@ -887,19 +887,30 @@
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DHb-ma-adO">
-                                <rect key="frame" x="155" y="141" width="141" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="please select a project" id="EHa-P4-qQ6">
-                                    <font key="font" metaFont="message"/>
-                                    <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                                <accessibility identifier="EmptySelectionViewController"/>
-                            </textField>
+                            <visualEffectView appearanceType="vibrantLight" blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="xSK-pP-iz5">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DHb-ma-adO">
+                                        <rect key="frame" x="154" y="142" width="141" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="please select a project" id="EHa-P4-qQ6">
+                                            <font key="font" metaFont="message"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <accessibility identifier="EmptySelectionViewController"/>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="DHb-ma-adO" firstAttribute="centerY" secondItem="xSK-pP-iz5" secondAttribute="centerY" id="Ovt-x7-UJ4"/>
+                                    <constraint firstItem="DHb-ma-adO" firstAttribute="centerX" secondItem="xSK-pP-iz5" secondAttribute="centerX" id="jTH-aN-2aS"/>
+                                </constraints>
+                            </visualEffectView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="DHb-ma-adO" firstAttribute="centerY" secondItem="MjY-gb-2eL" secondAttribute="centerY" id="FJu-g4-8fZ"/>
-                            <constraint firstItem="DHb-ma-adO" firstAttribute="centerX" secondItem="MjY-gb-2eL" secondAttribute="centerX" id="NUl-Rk-OMN"/>
+                            <constraint firstItem="xSK-pP-iz5" firstAttribute="leading" secondItem="MjY-gb-2eL" secondAttribute="leading" id="0Et-d5-t4e"/>
+                            <constraint firstItem="xSK-pP-iz5" firstAttribute="top" secondItem="MjY-gb-2eL" secondAttribute="top" id="bA6-LP-dgh"/>
+                            <constraint firstAttribute="trailing" secondItem="xSK-pP-iz5" secondAttribute="trailing" id="c0w-il-IXN"/>
+                            <constraint firstAttribute="bottom" secondItem="xSK-pP-iz5" secondAttribute="bottom" id="cS0-pb-A3J"/>
                         </constraints>
                     </view>
                 </viewController>
