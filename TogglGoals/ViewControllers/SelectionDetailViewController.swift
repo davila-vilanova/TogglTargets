@@ -51,15 +51,15 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining,
 
 
     private func setupContainedViewControllerVisibility() {
-        selectedProject.producer.map { $0 != nil }.observe(on: UIScheduler())
-            .startWithValues { [projectDetailsViewController, emptySelectionViewController, view] projectAvailable in
-                guard let projectDetailsViewController = projectDetailsViewController,
-                    let emptySelectionViewController = emptySelectionViewController else {
-                        return
-                }
-                let containedVC = projectAvailable ? projectDetailsViewController : emptySelectionViewController
-                displayController(containedVC, in: view)
+        let selectedController = selectedProject.producer
+            .map { [unowned self] in
+                $0 == nil ? self.emptySelectionViewController : self.projectDetailsViewController
+            }
+        let debounceScheduler = QueueScheduler()
+        lifetime.observeEnded {
+            _ = debounceScheduler
         }
+        setupContainment(of: selectedController.debounce(0.1, on: debounceScheduler), in: self, view: self.view)
     }
 
 
@@ -81,6 +81,8 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining,
 
 
     // MARK: -
+
+    private let (lifetime, token) = Lifetime.make()
 
     override func viewDidLoad() {
         super.viewDidLoad()

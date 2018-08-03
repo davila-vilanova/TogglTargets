@@ -169,19 +169,19 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
     }
 
     private func setupContainedViewControllerVisibility() {
-        displayController(timeProgressViewController, in: goalProgressView) // Display always
-        displayController(dayProgressViewController, in: dayProgressView) // Display always
+        setupContainment(of: timeProgressViewController, in: self, view: goalProgressView)
+        setupContainment(of: dayProgressViewController, in: self, view: dayProgressView)
 
-        goalProgress.remainingTimeToGoal
+        let isGoalReached = goalProgress.remainingTimeToGoal
             .map { (remainingTime: TimeInterval) -> Bool in
                 remainingTime == 0.0
-            }
-            .map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
-                return isGoalReached ? goalReachedViewController! : goalStrategyViewController!
-            }
-            .observe(on: UIScheduler()).startWithValues { [unowned self] (controller) in
-                displayController(controller, in: self.goalStrategyView)
         }
+
+        let selectedGoalStrategyController = isGoalReached.map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
+            return isGoalReached ? goalReachedViewController! : goalStrategyViewController!
+        }
+
+        setupContainment(of: selectedGoalStrategyController, in: self, view: goalStrategyView)
     }
 
     

@@ -57,11 +57,11 @@ class AccountViewController: NSViewController, ViewControllerContaining, Binding
                                                        testURLSessionAction: $0.testURLSessionAction,
                                                        logOut: logOutRequested.bindingTarget) }
 
-        let selectedController = BindingTarget(on: UIScheduler(), lifetime: lifetime) { [unowned self] in
-            displayController($0, in: self.view)
+        let selectedController = lastBinding.latestOutput { $0.existingCredential }
+            .map { [unowned self] (cred: TogglAPITokenCredential?) -> NSViewController in
+                return (cred == nil) ? self.loginViewController : self.loggedInViewController
         }
 
-        selectedController <~ lastBinding.latestOutput { $0.existingCredential }
-            .map { [unowned self] in $0 == nil ? self.loginViewController : self.loggedInViewController }
+        setupContainment(of: selectedController, in: self, view: self.view)
     }
 }

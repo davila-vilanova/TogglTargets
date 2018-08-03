@@ -96,18 +96,26 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
         // Set up the displaying of the right view controller
 
         typealias SelectViewControllerInput = (NSViewController, SignalProducer<TogglAPICredential?, NoError>)
-        let selectViewController = BindingTarget<SelectViewControllerInput>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (controller, credentialsSource) in
-            displayController(controller, in: self.credentialsView)
-            self.selectedCredentialSource.value = credentialsSource
-            if let keyViewsProvider = controller as? KeyViewsProviding {
-                keyViewsProvider.lastKeyView.nextKeyView = self.loginButton
-            }
+
+        let selectedViewControllerInput = MutableProperty<SelectViewControllerInput?>(nil)
+        lifetime.observeEnded {
+            _ = selectedViewControllerInput
         }
+        setupContainment(of: selectedViewControllerInput.producer.skipNil().map { $0.0 }, in: self, view: self.credentialsView)
+
+        self.loginButton.reactive.makeBindingTarget { button, controller in
+            if let keyViewsProvider = controller as? KeyViewsProviding {
+                keyViewsProvider.lastKeyView.nextKeyView = button
+            }
+        } <~ selectedViewControllerInput.producer.skipNil().map { $0.0 }
+
+        selectedCredentialSource <~ selectedViewControllerInput.producer.skipNil().map { $0.1 }
+
 
         // Token controller is displayed by default, email+password upon request
         // Take producer from displayTokenViewController and signal from displayEmailPasswordViewController
-        selectViewController <~ displayTokenViewController.producer.map { [unowned self] _ -> SelectViewControllerInput in (self.apiTokenViewController, self.credentialFromToken.producer) }
-        selectViewController <~ displayEmailPasswordViewController.signal.map { [unowned self] _ -> SelectViewControllerInput in (self.emailPasswordViewController, self.credentialFromEmail.producer) }
+        selectedViewControllerInput <~ displayTokenViewController.producer.map { [unowned self] _ -> SelectViewControllerInput in (self.apiTokenViewController, self.credentialFromToken.producer) }
+        selectedViewControllerInput <~ displayEmailPasswordViewController.signal.map { [unowned self] _ -> SelectViewControllerInput in (self.emailPasswordViewController, self.credentialFromEmail.producer) }
 
 
         // Set up validation of credentials entered by the user

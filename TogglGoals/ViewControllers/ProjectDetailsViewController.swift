@@ -85,15 +85,13 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     }
 
     private func setupContainedViewControllerVisibility() {
-        displayController(goalViewController, in: goalView) // Display always
+        setupContainment(of: goalViewController, in: self, view: goalView)
 
-        goalForCurrentProject.filter { $0 == nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
-            displayController(self.noGoalViewController, in: self.goalReportView)
+        let selectedGoalController = goalForCurrentProject.map { [unowned self] in
+            $0 == nil ? self.noGoalViewController : self.goalReportViewController
         }
 
-        goalForCurrentProject.filter { $0 != nil }.observe(on: UIScheduler()).startWithValues { [unowned self] _ in
-            displayController(self.goalReportViewController, in: self.goalReportView)
-        }
+        setupContainment(of: selectedGoalController, in: self, view: goalReportView)
     }
 
 
@@ -152,7 +150,7 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
         }
 
         lifetime += updateDeleteGoal.producer.skipNil().bindOnlyToLatest(lastValidBinding.map { $0.writeGoal })
-        lifetime += projectId.producer.sample(on: updateDeleteGoal.producer.filter { $0 == nil}.map { _ in () }).bindOnlyToLatest(lastValidBinding.map { $0.deleteGoal })
+        lifetime += projectId.producer.sample(on: updateDeleteGoal.signal.filter { $0 == nil}.map { _ in () }).bindOnlyToLatest(lastValidBinding.map { $0.deleteGoal })
 
         setupLocalProjectDisplay()
         setupContainedViewControllerVisibility()
