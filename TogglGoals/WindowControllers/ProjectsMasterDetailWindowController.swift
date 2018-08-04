@@ -12,7 +12,6 @@ class ProjectsMasterDetailWindowController: NSWindowController {
 
     override func windowDidLoad() {
         super.windowDidLoad()
-        self.window!.styleMask.insert(.fullSizeContentView)
     }
 
 }

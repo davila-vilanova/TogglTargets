@@ -24,7 +24,7 @@ internal class ProjectsListLayout: NSCollectionViewLayout {
 
         let width = collectionView.bounds.size.width
         let itemSize = CGSize(width: width, height: itemHeight)
-        let headerSize = CGSize(width: width, height: 32)
+        let headerSize = CGSize(width: width, height: 38)
         let headerMargin = NSEdgeInsets(top: -8, left: -2, bottom: -4, right: -2)
 
         itemRects.removeAll()
