@@ -98,8 +98,11 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             .mapToString(timeFormatter: timeFormatter)
             .combineLatest(with: targetPeriodFormat)
             .map { String.localizedStringWithFormat($1, $0) }
+        goalField.reactive.text <~ goal.filter { $0 == nil }
+            .map { _ in () }
+            .map { NSLocalizedString("project-list.item.goal.no-goal", comment: "message to show in each of the project list items when there is no associated goal") }
 
-        goalField.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ goal.map { $0 == nil }
+        goalField.reactive.textColor <~ goal.map { $0 != nil ? NSColor.secondaryLabelColor : NSColor.tertiaryLabelColor }
 
         let noReport = report.filter { $0 == nil }.map { _ in () }
         let workedTimeFromReport = report.skipNil().map { $0.workedTime }
