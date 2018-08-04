@@ -73,7 +73,7 @@
                                         <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb">
                                             <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <collectionViewLayout key="collectionViewLayout" id="tRH-Rt-gTE" customClass="ListLayout" customModule="TogglGoals" customModuleProvider="target"/>
+                                            <collectionViewLayout key="collectionViewLayout" id="tRH-Rt-gTE" customClass="ProjectsListLayout" customModule="TogglGoals" customModuleProvider="target"/>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
                                             <connections>
@@ -498,6 +498,7 @@
                                         <constraint firstItem="dEQ-iu-srg" firstAttribute="leading" secondItem="F3h-la-ipt" secondAttribute="leading" id="zpZ-4P-g6u"/>
                                     </constraints>
                                 </view>
+                                <font key="titleFont" metaFont="message" size="11"/>
                             </box>
                         </subviews>
                         <constraints>
@@ -625,6 +626,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="ZE1-Ws-NmB"/>
                                 </constraints>
+                                <font key="titleFont" metaFont="message" size="11"/>
                             </box>
                         </subviews>
                         <constraints>

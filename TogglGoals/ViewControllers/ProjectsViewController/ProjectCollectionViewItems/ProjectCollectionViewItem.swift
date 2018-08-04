@@ -30,6 +30,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     @IBOutlet weak var projectNameField: NSTextField!
     @IBOutlet weak var goalField: NSTextField!
     @IBOutlet weak var reportField: NSTextField!
+    @IBOutlet weak var bottomLining: NSBox!
 
 
     // MARK: - NSCollectionViewItem
@@ -41,11 +42,25 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
             let color = selected ? NSColor.controlHighlightColor : NSColor.clear
             self.view.layer?.backgroundColor = color.cgColor
+            refreshBottomLiningVisibility()
         }
 
         get {
             return super.isSelected
         }
+    }
+
+
+    // MARK: -
+
+    var isLastItemInSection: Bool = false {
+        didSet {
+            refreshBottomLiningVisibility()
+        }
+    }
+
+    private func refreshBottomLiningVisibility() {
+        bottomLining.isHidden = isSelected || isLastItemInSection
     }
 
     private lazy var timeFormatter: DateComponentsFormatter = {

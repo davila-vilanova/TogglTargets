@@ -13,6 +13,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <collectionViewItem id="xT6-c0-85Y" customClass="ProjectCollectionViewItem" customModule="TogglGoals" customModuleProvider="target">
             <connections>
+                <outlet property="bottomLining" destination="Wsi-lo-unf" id="uLe-f5-Wpr"/>
                 <outlet property="goalField" destination="pcZ-U4-eHq" id="8f4-J9-CRf"/>
                 <outlet property="projectNameField" destination="484-m5-m2m" id="Wnc-OK-DKc"/>
                 <outlet property="reportField" destination="Oej-8K-uOr" id="Bir-Wb-u11"/>
@@ -24,7 +25,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <stackView distribution="fillEqually" orientation="vertical" alignment="leading" spacing="3" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zmb-G0-m3D">
-                    <rect key="frame" x="8" y="0.0" width="132" height="51"/>
+                    <rect key="frame" x="20" y="0.0" width="120" height="51"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="484-m5-m2m">
                             <rect key="frame" x="-2" y="34" width="86" height="17"/>
@@ -62,12 +63,18 @@
                         <real value="3.4028234663852886e+38"/>
                     </customSpacing>
                 </stackView>
+                <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Wsi-lo-unf">
+                    <rect key="frame" x="20" y="-2" width="120" height="5"/>
+                </box>
             </subviews>
             <constraints>
+                <constraint firstAttribute="bottom" secondItem="Wsi-lo-unf" secondAttribute="bottom" id="05l-bB-3hy"/>
                 <constraint firstItem="Zmb-G0-m3D" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="2PT-wr-ExR"/>
                 <constraint firstAttribute="trailing" secondItem="Zmb-G0-m3D" secondAttribute="trailing" id="FzT-wU-K6m"/>
-                <constraint firstItem="Zmb-G0-m3D" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="MIU-38-Tvh"/>
+                <constraint firstItem="Zmb-G0-m3D" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="MIU-38-Tvh"/>
+                <constraint firstItem="Wsi-lo-unf" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="Rla-3n-RrC"/>
                 <constraint firstAttribute="bottom" secondItem="Zmb-G0-m3D" secondAttribute="bottom" id="jsm-2I-0gL"/>
+                <constraint firstAttribute="trailing" secondItem="Wsi-lo-unf" secondAttribute="trailing" id="nqg-5e-vvc"/>
             </constraints>
             <point key="canvasLocation" x="-509.5" y="-642.5"/>
         </customView>

@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
-        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ProjectCollectionViewHeader" customModule="TogglGoals" customModuleProvider="target"/>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY" customClass="ProjectCollectionViewHeader" customModule="TogglGoals" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="160" height="25"/>
+            <rect key="frame" x="0.0" y="0.0" width="160" height="26"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField identifier="titleLabel" horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jxe-5E-Uhe">
-                    <rect key="frame" x="6" y="4" width="148" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="title label" id="7Zx-Sg-xFN">
-                        <font key="font" metaFont="systemSemibold" size="13"/>
+                <textField identifier="titleLabel" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jxe-5E-Uhe">
+                    <rect key="frame" x="2" y="4" width="152" height="19"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="title label" id="7Zx-Sg-xFN">
+                        <font key="font" metaFont="systemBold" size="15"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="zMn-ux-hJh">
+                    <rect key="frame" x="0.0" y="-2" width="160" height="5"/>
+                </box>
             </subviews>
             <constraints>
-                <constraint firstItem="jxe-5E-Uhe" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="4" id="B0m-kU-nYk"/>
+                <constraint firstAttribute="bottom" secondItem="zMn-ux-hJh" secondAttribute="bottom" id="9Yr-mm-5kd"/>
+                <constraint firstAttribute="trailing" secondItem="zMn-ux-hJh" secondAttribute="trailing" id="IMi-rp-CPH"/>
                 <constraint firstAttribute="bottom" secondItem="jxe-5E-Uhe" secondAttribute="bottom" constant="4" id="JnS-ei-58x"/>
                 <constraint firstAttribute="trailing" secondItem="jxe-5E-Uhe" secondAttribute="trailing" constant="8" id="MkO-Ki-zBd"/>
-                <constraint firstItem="jxe-5E-Uhe" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="MrI-2p-Jox"/>
+                <constraint firstItem="jxe-5E-Uhe" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="4" id="MrI-2p-Jox"/>
+                <constraint firstItem="jxe-5E-Uhe" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="3" id="mCv-L8-FhZ"/>
+                <constraint firstItem="zMn-ux-hJh" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="r6s-SH-NFV"/>
             </constraints>
-            <point key="canvasLocation" x="87" y="94.5"/>
+            <point key="canvasLocation" x="87" y="161.5"/>
         </customView>
     </objects>
 </document>

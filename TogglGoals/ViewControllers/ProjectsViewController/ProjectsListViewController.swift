@@ -82,7 +82,28 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: -
 
-    override func viewDidLoad() {
+    private func numberOfItems(in section: Int) -> Int {
+        switch ProjectIDsByGoals.Section(rawValue: section)! {
+        case .withGoal: return currentProjectIDs.countOfProjectsWithGoals
+        case .withoutGoal: return currentProjectIDs.countOfProjectsWithoutGoals
+        }
+    }
+
+    private func indexPathOfLastItem(in section: Int) -> IndexPath {
+        return IndexPath(item: numberOfItems(in: section) - 1, section: section)
+    }
+
+    private func isIndexPathOfLastItemInSection(_ indexPath: IndexPath) -> Bool {
+        return (indexPath == indexPathOfLastItem(in: indexPath.section))
+    }
+
+    private func setLastItemInSectionStatus(for projectItem: ProjectCollectionViewItem, at indexPath: IndexPath) {
+        projectItem.isLastItemInSection = isIndexPathOfLastItemInSection(indexPath)
+    }
+
+    // MARK: -
+
+override func viewDidLoad() {
         super.viewDidLoad()
 
         initializeProjectsCollectionView()
@@ -147,9 +168,24 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let oldIndexPath = beforeMove.indexPath(forElementAt: update.indexChange.old)!
         let newIndexPath = afterMove.indexPath(forElementAt: update.indexChange.new)!
 
-        self.currentProjectIDs = afterMove
-        self.projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
-        self.scrollToSelection()
+        currentProjectIDs = afterMove
+        projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
+        scrollToSelection()
+
+        //
+        var possiblyAffectedItems: Set<IndexPath> = [newIndexPath,
+                                                indexPathOfLastItem(in: ProjectIDsByGoals.Section.withGoal.rawValue),
+                                                indexPathOfLastItem(in: ProjectIDsByGoals.Section.withoutGoal.rawValue)]
+
+        if newIndexPath == indexPathOfLastItem(in: newIndexPath.section), newIndexPath.item > 0 {
+            possiblyAffectedItems.insert(IndexPath(item: newIndexPath.item - 1, section: newIndexPath.section))
+        }
+
+        for ip in possiblyAffectedItems {
+            if let item = projectsCollectionView.item(at: ip) as? ProjectCollectionViewItem { // will only determine the status of already cached items
+                setLastItemInSectionStatus(for: item, at: ip)
+            }
+        }
     }
 
     /// Sends the value of the selected project through the `selectedProject` output.
@@ -179,10 +215,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     func collectionView(_ collectionView: NSCollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        switch ProjectIDsByGoals.Section(rawValue: section)! {
-        case .withGoal: return currentProjectIDs.countOfProjectsWithGoals
-        case .withoutGoal: return currentProjectIDs.countOfProjectsWithoutGoals
-        }
+        return numberOfItems(in: section)
     }
 
     func collectionView(_ collectionView: NSCollectionView,
@@ -199,6 +232,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                     readGoal.value!(projectId),
                     periodPreference.producer.skipNil(),
                     readReport.value!(projectId)))
+
+        setLastItemInSectionStatus(for: projectItem, at: indexPath)
 
         return projectItem
     }

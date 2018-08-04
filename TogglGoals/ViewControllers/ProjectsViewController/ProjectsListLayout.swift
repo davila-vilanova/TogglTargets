@@ -1,5 +1,5 @@
 //
-//  ListLayout.swift
+//  ProjectsListLayout.swift
 //  TogglGoals
 //
 //  Created by David Dávila on 18.10.17.
@@ -8,7 +8,7 @@
 
 import Cocoa
 
-internal class ListLayout: NSCollectionViewLayout {
+internal class ProjectsListLayout: NSCollectionViewLayout {
     private var itemRects = Dictionary<IndexPath, CGRect>()
     private var headerRects = Dictionary<IndexPath, CGRect>()
 
@@ -24,7 +24,7 @@ internal class ListLayout: NSCollectionViewLayout {
 
         let width = collectionView.bounds.size.width
         let itemSize = CGSize(width: width, height: itemHeight)
-        let headerSize = CGSize(width: width, height: 25)
+        let headerSize = CGSize(width: width, height: 32)
         let headerMargin = NSEdgeInsets(top: -8, left: -2, bottom: -4, right: -2)
 
         itemRects.removeAll()
