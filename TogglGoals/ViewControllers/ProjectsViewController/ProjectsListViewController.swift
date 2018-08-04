@@ -79,8 +79,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// project ID order and the structure of the current `ProjectIDsByGoals` value.
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
 
-    @IBOutlet weak var projectsCollectionScrollView: NSScrollView!
-
 
     // MARK: -
 
@@ -105,7 +103,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: -
 
-    override func viewDidLoad() {
+override func viewDidLoad() {
         super.viewDidLoad()
 
         initializeProjectsCollectionView()
@@ -120,16 +118,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         readGoal <~ lastValidBinding.map { $0.readGoal }
         readReport <~ lastValidBinding.map { $0.readReport }
         lifetime += selectedProjectID.bindOnlyToLatest(lastValidBinding.map { $0.selectedProjectId })
-
-        projectsCollectionScrollView.reactive.makeBindingTarget { (scrollView, heightOffset) in
-            scrollView.contentInsets = NSEdgeInsets(top: heightOffset, left: 0, bottom: 0, right: 0)
-            } <~ view.reactive.producer(forKeyPath: "window").filterMap { $0 as? NSWindow }
-                .map { (window: NSWindow) -> SignalProducer<CGFloat, NoError> in
-                    let heights = window.reactive.producer(forKeyPath: "frame").filterMap { $0 as? CGRect }.map(NSHeight)
-                    let contentLayoutRects = window.reactive.producer(forKeyPath: "contentLayoutRect").filterMap { $0 as? CGRect }                .map(NSMaxY)
-                    return SignalProducer.combineLatest(heights, contentLayoutRects).map { $0 - $1 }
-                }.flatten(.latest)
-                .logValues("offsetHeight")
     }
 
     private func initializeProjectsCollectionView() {
