@@ -14,7 +14,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" customClass="ProjectsMasterDetailWindowController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="TogglGoals" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" tabbingMode="disallowed" id="IQv-IB-iLA">
+                    <window key="window" title="TogglGoals" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
@@ -87,6 +87,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="eXF-ou-lGI"/>
                                 </constraints>
+                                <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="EPZ-py-eHf">
                                     <rect key="frame" x="2" y="282" width="157" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
@@ -105,6 +106,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="projectsCollectionScrollView" destination="Kat-8d-Ff9" id="95N-c0-ZNI"/>
                         <outlet property="projectsCollectionView" destination="UNJ-j2-pFb" id="nZ3-Sq-hgm"/>
                     </connections>
                 </viewController>
@@ -498,7 +500,6 @@
                                         <constraint firstItem="dEQ-iu-srg" firstAttribute="leading" secondItem="F3h-la-ipt" secondAttribute="leading" id="zpZ-4P-g6u"/>
                                     </constraints>
                                 </view>
-                                <font key="titleFont" metaFont="message" size="11"/>
                             </box>
                         </subviews>
                         <constraints>
@@ -626,7 +627,6 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="ZE1-Ws-NmB"/>
                                 </constraints>
-                                <font key="titleFont" metaFont="message" size="11"/>
                             </box>
                         </subviews>
                         <constraints>
