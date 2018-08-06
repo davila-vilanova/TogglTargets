@@ -94,5 +94,16 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.deleteGoal,
                      binding.readReport)
         }
+
+        let heightSink = MutableProperty<CGFloat>(0.0)
+        lifetime.observeEnded {
+            _ = heightSink
+        }
+        heightSink <~ view.reactive.producer(forKeyPath: "window").filterMap { $0 as? NSWindow }
+            .map { (window: NSWindow) -> SignalProducer<CGFloat, NoError> in
+                let heights = window.reactive.producer(forKeyPath: "frame").filterMap { $0 as? CGRect }.map(NSHeight)
+                let contentLayoutRects = window.reactive.producer(forKeyPath: "contentLayoutRect").filterMap { $0 as? CGRect }.map(NSMaxY)
+                return SignalProducer.combineLatest(heights, contentLayoutRects).map { $0 - $1 }
+        }.flatten(.latest).logValues("offsetHeight")
     }
 }
