@@ -110,12 +110,12 @@
                 </viewController>
                 <customObject id="rJd-f4-lqu" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-140" y="1746"/>
+            <point key="canvasLocation" x="-116" y="1721"/>
         </scene>
         <!--Activity View Controller-->
         <scene sceneID="mbv-uH-b3T">
             <objects>
-                <viewController id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ActivityViewController" id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="Zto-kN-hsB">
                         <rect key="frame" x="0.0" y="0.0" width="180" height="34"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -139,7 +139,7 @@
                 </viewController>
                 <customObject id="ytj-7m-2MR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="69" y="1737"/>
+            <point key="canvasLocation" x="154" y="1740"/>
         </scene>
         <!--Condensed Activity View Controller-->
         <scene sceneID="NSH-HH-SX2">
@@ -208,7 +208,7 @@
                 </viewController>
                 <customObject id="mIm-2B-d87" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="393.5" y="1614.5"/>
+            <point key="canvasLocation" x="479" y="1617"/>
         </scene>
         <!--Detailed Activity View Controller-->
         <scene sceneID="Qxj-pa-5eC">
@@ -235,7 +235,7 @@
                 </viewController>
                 <customObject id="1d0-u5-Upv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="396" y="1796"/>
+            <point key="canvasLocation" x="481" y="1799"/>
         </scene>
         <!--Project Details View Controller-->
         <scene sceneID="huO-mY-84c">
@@ -849,6 +849,20 @@
                         <subviews>
                             <stackView identifier="ProjectsListActivityStackView" wantsLayer="YES" orientation="vertical" alignment="leading" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jyy-RP-JY6">
                                 <rect key="frame" x="0.0" y="0.0" width="163" height="300"/>
+                                <beginningViews>
+                                    <containerView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lPc-Ui-xhw">
+                                        <rect key="frame" x="0.0" y="0.0" width="163" height="300"/>
+                                        <connections>
+                                            <segue destination="uJx-25-i9K" kind="embed" id="ha7-Yy-ANQ"/>
+                                        </connections>
+                                    </containerView>
+                                </beginningViews>
+                                <visibilityPriorities>
+                                    <integer value="1000"/>
+                                </visibilityPriorities>
+                                <customSpacing>
+                                    <real value="3.4028234663852886e+38"/>
+                                </customSpacing>
                             </stackView>
                         </subviews>
                         <constraints>
@@ -860,8 +874,6 @@
                     </view>
                     <connections>
                         <outlet property="stackView" destination="jyy-RP-JY6" id="s5J-0g-zPy"/>
-                        <segue destination="uJx-25-i9K" kind="custom" identifier="ProjectsListVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="hR2-lZ-TOo"/>
-                        <segue destination="tS7-EF-bJw" kind="custom" identifier="ActivityVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="8jC-9L-IZN"/>
                     </connections>
                 </viewController>
                 <customObject id="OkY-uy-qWM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

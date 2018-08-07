@@ -13,7 +13,7 @@ import ReactiveSwift
 fileprivate let ProjectsListVCContainment = "ProjectsListVCContainment"
 fileprivate let ActivityVCContainment = "ActivityVCContainment"
 
-class ProjectsListActivityViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
+class ProjectsListActivityViewController: NSViewController, BindingTargetProvider {
 
     // Interface
 
@@ -36,20 +36,32 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
 
     // MARK: - Contained view controllers
 
-    private var projectsListViewController: ProjectsListViewController!
-    private var activityViewController: ActivityViewController!
+    private var projectsListViewController: ProjectsListViewController?
+    lazy private var activityViewController: ActivityViewController = {
+        let activity = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("ActivityViewController")) as! ActivityViewController
+        addChildViewController(activity)
+        stackView.addView(activity.view, in: .bottom)
+        activity.view.leadingAnchor.constraint(equalTo: stackView.leadingAnchor).isActive = true
+        activity.view.trailingAnchor.constraint(equalTo: stackView.trailingAnchor).isActive = true
+        return activity
+    }()
 
     @IBOutlet weak var stackView: NSStackView!
 
-    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        if let projectsListVC = controller as? ProjectsListViewController {
-            self.projectsListViewController = projectsListVC
-            stackView.addView(projectsListVC.view, in: .top)
-        } else if let activityVC = controller as? ActivityViewController {
-            self.activityViewController = activityVC
-            stackView.addView(activityVC.view, in: .bottom)
-            activityVC.view.leadingAnchor.constraint(equalTo: stackView.leadingAnchor).isActive = true
-            activityVC.view.trailingAnchor.constraint(equalTo: stackView.trailingAnchor).isActive = true
+    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
+        if let projects = segue.destinationController as? ProjectsListViewController {
+            projectsListViewController = projects
+
+            projects <~ lastBinding.producer.skipNil().map {
+                ($0.projectIDsByGoals,
+                 $0.selectedProjectId,
+                 $0.runningEntry,
+                 $0.currentDate,
+                 $0.periodPreference,
+                 $0.readProject,
+                 $0.readGoal,
+                 $0.readReport)
+            }
         }
     }
 
@@ -59,19 +71,6 @@ class ProjectsListActivityViewController: NSViewController, ViewControllerContai
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        initializeControllerContainment(containmentIdentifiers: [ProjectsListVCContainment, ActivityVCContainment])
-
-        projectsListViewController <~ lastBinding.producer.skipNil().map {
-            ($0.projectIDsByGoals,
-             $0.selectedProjectId,
-             $0.runningEntry,
-             $0.currentDate,
-             $0.periodPreference,
-             $0.readProject,
-             $0.readGoal,
-             $0.readReport)
-        }
 
         activityViewController <~ SignalProducer<ActivityViewController.Interface, NoError>(
             value: (lastBinding.latestOutput { $0.modelRetrievalStatus },
