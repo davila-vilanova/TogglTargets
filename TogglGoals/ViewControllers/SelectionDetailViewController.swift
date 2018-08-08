@@ -13,7 +13,7 @@ import Result
 fileprivate let ProjectDetailsVCContainment = "ProjectDetailsVCContainment"
 fileprivate let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
 
-class SelectionDetailViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
+class SelectionDetailViewController: NSTabViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -50,51 +50,39 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining,
         .flatten(.latest)
 
 
-    private func setupContainedViewControllerVisibility() {
-        let selectedController = selectedProject.producer
-            .map { [unowned self] in
-                $0 == nil ? self.emptySelectionViewController : self.projectDetailsViewController
-            }
-        let debounceScheduler = QueueScheduler()
-        lifetime.observeEnded {
-            _ = debounceScheduler
-        }
-        setupContainment(of: selectedController.debounce(0.1, on: debounceScheduler), in: self, view: self.view)
-    }
-
-
     // MARK: - Contained view controllers
 
-    var projectDetailsViewController: ProjectDetailsViewController!
+    private enum ContainedControllerType {
+        case projectDetails
+        case emptySelection
 
-    var emptySelectionViewController: EmptySelectionViewController!
-
-    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        switch controller {
-        case _ where (controller as? ProjectDetailsViewController) != nil:
-            projectDetailsViewController = controller as! ProjectDetailsViewController
-        case _ where (controller as? EmptySelectionViewController) != nil:
-            emptySelectionViewController = controller as! EmptySelectionViewController
-        default: break
+        static func from(_ controller: NSViewController) -> ContainedControllerType? {
+            if controller as? ProjectDetailsViewController != nil {
+                return .projectDetails
+            } else if controller as? EmptySelectionViewController != nil {
+                return .emptySelection
+            } else {
+                return nil
+            }
         }
     }
 
+    private var connectedControllersTypes = Set<ContainedControllerType>()
 
-    // MARK: -
+    override func tabView(_ tabView: NSTabView, willSelect tabViewItem: NSTabViewItem?) {
+        super.tabView(tabView, willSelect: tabViewItem)
 
-    private let (lifetime, token) = Lifetime.make()
+        guard let controller = tabViewItem?.viewController,
+        let type = ContainedControllerType.from(controller),
+        !connectedControllersTypes.contains(type) else {
+            return
+        }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+        connectedControllersTypes.insert(type)
 
-        initializeControllerContainment(containmentIdentifiers: [ProjectDetailsVCContainment, EmtpySelectionVCContainment])
-
-        selectedProjectID <~ lastBinding.latestOutput { $0.projectId }
-        readProject <~ lastBinding.producer.skipNil().map { $0.readProject }
-
-        projectDetailsViewController <~
-            SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
-                                         lastBinding.producer.skipNil())
+        if let details = controller as? ProjectDetailsViewController {
+            details <~ SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
+                                                    lastBinding.producer.skipNil())
                 .map {
                     selectedProjectProducer, binding in
                     (selectedProjectProducer,
@@ -106,8 +94,27 @@ class SelectionDetailViewController: NSViewController, ViewControllerContaining,
                      binding.writeGoal,
                      binding.deleteGoal,
                      binding.readReport)
+            }
         }
+    }
 
-        setupContainedViewControllerVisibility()
+
+    // MARK: -
+
+    private let (lifetime, token) = Lifetime.make()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        selectedProjectID <~ lastBinding.latestOutput { $0.projectId }
+        readProject <~ lastBinding.producer.skipNil().map { $0.readProject }
+
+        let debounceScheduler = QueueScheduler()
+        lifetime.observeEnded {
+            _ = debounceScheduler
+        }
+        reactive.makeBindingTarget { $0.selectedTabViewItemIndex = $1 } <~ selectedProjectID.map { ($0 != nil) ? 1 : 0 }.producer.debounce(0.1, on: debounceScheduler)
+
+        transitionOptions = NSViewController.TransitionOptions.allowUserInteraction
     }
 }
