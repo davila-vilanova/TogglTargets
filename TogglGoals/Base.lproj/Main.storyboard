@@ -265,18 +265,25 @@
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="k1G-X5-OO2">
                                         <rect key="frame" x="20" y="374" width="482" height="5"/>
                                     </box>
-                                    <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="47" translatesAutoresizingMaskIntoConstraints="NO" id="6Nr-Rc-1SN">
-                                        <rect key="frame" x="20" y="321" width="482" height="47"/>
-                                    </customView>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HTW-ic-thd">
+                                        <rect key="frame" x="20" y="320" width="482" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="48" id="qwP-0d-hpi"/>
+                                        </constraints>
+                                        <connections>
+                                            <segue destination="a81-xu-Ddi" kind="embed" id="QZe-xy-55G"/>
+                                        </connections>
+                                    </containerView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="OOB-9P-pYC">
-                                        <rect key="frame" x="20" y="20" width="482" height="293"/>
+                                        <rect key="frame" x="20" y="20" width="482" height="292"/>
                                     </customView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="OOB-9P-pYC" firstAttribute="leading" secondItem="5LN-R4-Z6o" secondAttribute="leading" constant="20" symbolic="YES" id="1EL-pH-Igs"/>
+                                    <constraint firstAttribute="trailing" secondItem="HTW-ic-thd" secondAttribute="trailing" constant="20" symbolic="YES" id="1PZ-ml-z9v"/>
+                                    <constraint firstItem="HTW-ic-thd" firstAttribute="leading" secondItem="5LN-R4-Z6o" secondAttribute="leading" constant="20" symbolic="YES" id="81W-qy-RwW"/>
                                     <constraint firstAttribute="trailing" secondItem="OOB-9P-pYC" secondAttribute="trailing" constant="20" symbolic="YES" id="8uh-Xy-B86"/>
                                     <constraint firstItem="k1G-X5-OO2" firstAttribute="top" secondItem="KmV-P0-dzM" secondAttribute="bottom" constant="8" symbolic="YES" id="9vW-iH-R7H"/>
-                                    <constraint firstItem="OOB-9P-pYC" firstAttribute="top" secondItem="6Nr-Rc-1SN" secondAttribute="bottom" constant="8" symbolic="YES" id="CBz-r6-FxE"/>
                                     <constraint firstItem="KmV-P0-dzM" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ifD-zz-iY5" secondAttribute="trailing" constant="8" symbolic="YES" id="EMo-Ju-c2z"/>
                                     <constraint firstItem="KmV-P0-dzM" firstAttribute="height" secondItem="ifD-zz-iY5" secondAttribute="height" id="FxG-R3-rrl"/>
                                     <constraint firstItem="k1G-X5-OO2" firstAttribute="leading" secondItem="5LN-R4-Z6o" secondAttribute="leading" constant="20" symbolic="YES" id="JLQ-UE-Kt8"/>
@@ -286,9 +293,8 @@
                                     <constraint firstAttribute="trailing" secondItem="k1G-X5-OO2" secondAttribute="trailing" constant="20" symbolic="YES" id="cH2-At-1p4"/>
                                     <constraint firstAttribute="trailing" secondItem="KmV-P0-dzM" secondAttribute="trailing" constant="20" symbolic="YES" id="clH-oA-RTh"/>
                                     <constraint firstItem="KmV-P0-dzM" firstAttribute="top" secondItem="5LN-R4-Z6o" secondAttribute="top" constant="20" symbolic="YES" id="hE5-Fa-qrW"/>
-                                    <constraint firstItem="6Nr-Rc-1SN" firstAttribute="leading" secondItem="5LN-R4-Z6o" secondAttribute="leading" constant="20" symbolic="YES" id="hl0-8P-LRg"/>
-                                    <constraint firstAttribute="trailing" secondItem="6Nr-Rc-1SN" secondAttribute="trailing" constant="20" symbolic="YES" id="ifX-wt-zXI"/>
-                                    <constraint firstItem="6Nr-Rc-1SN" firstAttribute="top" secondItem="k1G-X5-OO2" secondAttribute="bottom" constant="8" symbolic="YES" id="rTY-Kg-IBC"/>
+                                    <constraint firstItem="OOB-9P-pYC" firstAttribute="top" secondItem="HTW-ic-thd" secondAttribute="bottom" constant="8" symbolic="YES" id="lfF-sT-rEC"/>
+                                    <constraint firstItem="HTW-ic-thd" firstAttribute="top" secondItem="k1G-X5-OO2" secondAttribute="bottom" constant="8" symbolic="YES" id="nqp-fM-wMB"/>
                                 </constraints>
                             </visualEffectView>
                         </subviews>
@@ -301,9 +307,7 @@
                     </view>
                     <connections>
                         <outlet property="goalReportView" destination="OOB-9P-pYC" id="69Z-CY-Vgu"/>
-                        <outlet property="goalView" destination="6Nr-Rc-1SN" id="2bI-i1-7x2"/>
                         <outlet property="projectName" destination="ifD-zz-iY5" id="pO9-jg-jgp"/>
-                        <segue destination="a81-xu-Ddi" kind="custom" identifier="GoalVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="567-cz-qxm"/>
                         <segue destination="uCS-Tc-pwg" kind="custom" identifier="NoGoalVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="E9p-9R-sF8"/>
                         <segue destination="xQT-IJ-aTE" kind="custom" identifier="GoalReportVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="OYc-wi-5Av"/>
                     </connections>
@@ -444,7 +448,7 @@
                 </viewController>
                 <customObject id="2PQ-kn-80x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2387" y="855"/>
+            <point key="canvasLocation" x="1717" y="1105"/>
         </scene>
         <!--Time Progress View Controller-->
         <scene sceneID="j3N-S5-RVt">

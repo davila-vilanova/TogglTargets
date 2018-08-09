@@ -44,6 +44,8 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     private let readGoal = MutableProperty<ReadGoal?>(nil)
     private let readReport = MutableProperty<ReadReport?>(nil)
 
+    private let updateDeleteGoal = MutableProperty<Goal?>(nil)
+
 
     // MARK: - Derived input
 
@@ -66,16 +68,12 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
 
     // MARK: - Contained view controllers
 
-    var goalViewController: GoalViewController!
-
     var goalReportViewController: GoalReportViewController!
 
     var noGoalViewController: NoGoalViewController!
 
     func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
         switch controller { // TODO: rework cases
-        case _ where (controller as? GoalViewController) != nil:
-            goalViewController = controller as! GoalViewController
         case _ where (controller as? GoalReportViewController) != nil:
             goalReportViewController = controller as! GoalReportViewController
         case _ where (controller as? NoGoalViewController) != nil:
@@ -85,22 +83,31 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     }
 
     private func setupContainedViewControllerVisibility() {
-        setupContainment(of: goalViewController, in: self, view: goalView)
-
         let selectedGoalController = goalForCurrentProject.map { [unowned self] in
             $0 == nil ? self.noGoalViewController : self.goalReportViewController
         }
-
         setupContainment(of: selectedGoalController, in: self, view: goalReportView)
     }
 
+    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
+        if let goalController = segue.destinationController as? GoalViewController {
+            goalController <~
+                SignalProducer.combineLatest(
+                    lastBinding.producer.skipNil().map { $0.calendar },
+                    SignalProducer(value: goalForCurrentProject.producer),
+                    SignalProducer(value: updateDeleteGoal.bindingTarget))
+                    .map {
+                        (calendar: $0,
+                         goal: $1,
+                         userUpdates: $2)
+            }
+        }
+    }
 
     // MARK: - Outlets
 
     @IBOutlet weak var projectName: NSTextField!
-    @IBOutlet weak var goalView: NSView!
     @IBOutlet weak var goalReportView: NSView!
-
 
     //  MARK: -
     
@@ -123,22 +130,6 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
                     calendar: lastBinding.latestOutput { $0.calendar },
                     currentDate: lastBinding.latestOutput { $0.currentDate },
                     periodPreference: lastBinding.latestOutput { $0.periodPreference }))
-
-        let updateDeleteGoal = MutableProperty<Goal?>(nil)
-        lifetime.observeEnded {
-            _ = updateDeleteGoal
-        }
-
-        self.goalViewController <~
-            SignalProducer.combineLatest(
-                lastValidBinding.map { $0.calendar },
-                SignalProducer(value: goalForCurrentProject.producer),
-                SignalProducer(value: updateDeleteGoal.bindingTarget))
-                .map {
-                    (calendar: $0,
-                     goal: $1,
-                     userUpdates: $2)
-        }
 
         self.noGoalViewController <~
             SignalProducer.combineLatest(
