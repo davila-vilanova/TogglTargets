@@ -56,9 +56,7 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
     // MARK: - Outlets
     
     @IBOutlet weak var periodDescriptionLabel: NSTextField!
-    @IBOutlet weak var goalProgressView: NSView!
     @IBOutlet weak var goalStrategyView: NSView!
-    @IBOutlet weak var dayProgressView: NSView!
     @IBOutlet weak var computeStrategyFromButton: NSPopUpButton!
     @IBOutlet weak var fromTodayItem: NSMenuItem!
     @IBOutlet weak var fromNextWorkDayItem: NSMenuItem!
@@ -103,6 +101,37 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
                                        remainingTimeToDayBaseline: goalProgress.remainingTimeToDayBaseline.producer,
                                        feasibility: goalProgress.feasibility))
         }
+    }
+
+    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
+        switch controller {
+        case _ where (controller as? GoalStrategyViewController) != nil:
+            goalStrategyViewController = controller as! GoalStrategyViewController
+        case _ where (controller as? GoalReachedViewController) != nil:
+            goalReachedViewController = controller as! GoalReachedViewController
+        default: break
+        }
+    }
+
+    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
+        if let timeProgress = segue.destinationController as? TimeProgressViewController {
+            timeProgressViewController = timeProgress
+        } else if let dayProgress = segue.destinationController as? DayProgressViewController {
+            dayProgressViewController = dayProgress
+        }
+    }
+
+    private func setupContainedViewControllerVisibility() {
+        let isGoalReached = goalProgress.remainingTimeToGoal
+            .map { (remainingTime: TimeInterval) -> Bool in
+                remainingTime == 0.0
+        }
+
+        let selectedGoalStrategyController = isGoalReached.map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
+            return isGoalReached ? goalReachedViewController! : goalStrategyViewController!
+        }
+
+        setupContainment(of: selectedGoalStrategyController, in: self, view: goalStrategyView)
     }
 
     
@@ -152,36 +181,6 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
         setupComputeStrategyFromButton()
         connectPropertiesToGoalProgress()
         setupContainedViewControllerVisibility()
-    }
-    
-    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        switch controller {
-        case _ where (controller as? TimeProgressViewController) != nil:
-            timeProgressViewController = controller as! TimeProgressViewController
-        case _ where (controller as? GoalStrategyViewController) != nil:
-            goalStrategyViewController = controller as! GoalStrategyViewController
-        case _ where (controller as? GoalReachedViewController) != nil:
-            goalReachedViewController = controller as! GoalReachedViewController
-        case _ where (controller as? DayProgressViewController) != nil:
-            dayProgressViewController = controller as! DayProgressViewController
-        default: break
-        }
-    }
-
-    private func setupContainedViewControllerVisibility() {
-        setupContainment(of: timeProgressViewController, in: self, view: goalProgressView)
-        setupContainment(of: dayProgressViewController, in: self, view: dayProgressView)
-
-        let isGoalReached = goalProgress.remainingTimeToGoal
-            .map { (remainingTime: TimeInterval) -> Bool in
-                remainingTime == 0.0
-        }
-
-        let selectedGoalStrategyController = isGoalReached.map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
-            return isGoalReached ? goalReachedViewController! : goalStrategyViewController!
-        }
-
-        setupContainment(of: selectedGoalStrategyController, in: self, view: goalStrategyView)
     }
 
     

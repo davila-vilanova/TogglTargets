@@ -448,7 +448,7 @@
                 </viewController>
                 <customObject id="2PQ-kn-80x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1717" y="1105"/>
+            <point key="canvasLocation" x="1737" y="921"/>
         </scene>
         <!--Time Progress View Controller-->
         <scene sceneID="j3N-S5-RVt">
@@ -549,7 +549,7 @@
                 </viewController>
                 <customObject id="cML-ha-SWx" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3433" y="1159"/>
+            <point key="canvasLocation" x="2682" y="1109"/>
         </scene>
         <!--Goal Strategy View Controller-->
         <scene sceneID="H6m-Ts-Ik0">
@@ -605,7 +605,7 @@
                 </viewController>
                 <customObject id="OpA-Hm-EXQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3433" y="1294"/>
+            <point key="canvasLocation" x="2682" y="1245"/>
         </scene>
         <!--Day Progress View Controller-->
         <scene sceneID="uoF-Pf-sPn">
@@ -674,7 +674,7 @@
                 </viewController>
                 <customObject id="MKp-Ev-lcr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3433" y="1573"/>
+            <point key="canvasLocation" x="2682" y="1475"/>
         </scene>
         <!--Goal Reached View Controller-->
         <scene sceneID="6vA-eI-u7E">
@@ -706,7 +706,7 @@
                 </viewController>
                 <customObject id="raR-zX-gAF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3433" y="1423"/>
+            <point key="canvasLocation" x="2682" y="1359"/>
         </scene>
         <!--No Goal View Controller-->
         <scene sceneID="PGj-gw-9GS">
@@ -795,6 +795,15 @@
                                     <real value="3.4028234663852886e+38"/>
                                 </customSpacing>
                             </stackView>
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="msW-X0-dhQ">
+                                <rect key="frame" x="0.0" y="267" width="477" height="70"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="70" placeholder="YES" id="5yC-YI-1uv"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="7US-0q-kKJ" kind="embed" id="dge-aU-6zx"/>
+                                </connections>
+                            </containerView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hE0-PS-Rau">
                                 <rect key="frame" x="212" y="348" width="111" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="compute strategy" id="7bC-a5-7cw">
@@ -816,59 +825,61 @@
                                     </menu>
                                 </popUpButtonCell>
                             </popUpButton>
-                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="68" translatesAutoresizingMaskIntoConstraints="NO" id="Cmp-ld-qcb">
-                                <rect key="frame" x="0.0" y="269" width="477" height="68"/>
-                            </customView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="x0L-tp-DvU">
-                                <rect key="frame" x="0.0" y="258" width="477" height="5"/>
+                                <rect key="frame" x="0.0" y="256" width="477" height="5"/>
                             </box>
                             <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="59" translatesAutoresizingMaskIntoConstraints="NO" id="oap-Fn-wNg">
-                                <rect key="frame" x="0.0" y="193" width="477" height="59"/>
+                                <rect key="frame" x="0.0" y="190" width="477" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="djf-F0-Pvj"/>
+                                </constraints>
                             </customView>
-                            <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="IDR-Hi-ehm">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="19c-UZ-5DC">
                                 <rect key="frame" x="0.0" y="8" width="477" height="45"/>
-                            </customView>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" placeholder="YES" id="phu-ow-2mM"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="hvJ-dC-Kbs" kind="embed" id="qAh-Oy-JuE"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="msW-X0-dhQ" secondAttribute="trailing" id="4Zq-ia-D2J"/>
+                            <constraint firstItem="19c-UZ-5DC" firstAttribute="top" relation="greaterThanOrEqual" secondItem="oap-Fn-wNg" secondAttribute="bottom" constant="8" symbolic="YES" id="ACC-Ca-29p"/>
                             <constraint firstAttribute="trailing" secondItem="mFI-rM-DT6" secondAttribute="trailing" id="Bjh-Y7-kou"/>
-                            <constraint firstAttribute="trailing" secondItem="IDR-Hi-ehm" secondAttribute="trailing" id="DkJ-2j-2xy"/>
-                            <constraint firstAttribute="trailing" secondItem="Cmp-ld-qcb" secondAttribute="trailing" id="IHb-dk-nbu"/>
                             <constraint firstAttribute="trailing" secondItem="x0L-tp-DvU" secondAttribute="trailing" id="L7s-cq-3dz"/>
+                            <constraint firstAttribute="bottom" secondItem="19c-UZ-5DC" secondAttribute="bottom" constant="8" id="LFN-st-Ehs"/>
                             <constraint firstItem="0Yd-FG-N7Y" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="LL0-5w-Vgy"/>
                             <constraint firstItem="oap-Fn-wNg" firstAttribute="top" secondItem="x0L-tp-DvU" secondAttribute="bottom" constant="8" symbolic="YES" id="Mh4-BV-apX"/>
                             <constraint firstItem="mFI-rM-DT6" firstAttribute="top" secondItem="AwW-7C-Ykd" secondAttribute="top" id="RyJ-rD-FR5"/>
-                            <constraint firstAttribute="bottom" secondItem="IDR-Hi-ehm" secondAttribute="bottom" constant="8" id="Tqr-S9-Fkd"/>
-                            <constraint firstItem="IDR-Hi-ehm" firstAttribute="top" relation="greaterThanOrEqual" secondItem="oap-Fn-wNg" secondAttribute="bottom" constant="16" id="VPN-9L-u9d"/>
+                            <constraint firstItem="x0L-tp-DvU" firstAttribute="top" secondItem="msW-X0-dhQ" secondAttribute="bottom" constant="8" symbolic="YES" id="TZl-34-9rx"/>
                             <constraint firstItem="hE0-PS-Rau" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="0Yd-FG-N7Y" secondAttribute="trailing" constant="8" symbolic="YES" id="Wjx-fc-IPH"/>
+                            <constraint firstAttribute="trailing" secondItem="19c-UZ-5DC" secondAttribute="trailing" id="bX9-w7-3sC"/>
                             <constraint firstItem="hE0-PS-Rau" firstAttribute="baseline" secondItem="0Yd-FG-N7Y" secondAttribute="baseline" id="eG5-kZ-0Tn"/>
+                            <constraint firstItem="msW-X0-dhQ" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="f6E-fk-lkz"/>
                             <constraint firstAttribute="trailing" secondItem="oap-Fn-wNg" secondAttribute="trailing" id="fTd-Xb-sex"/>
                             <constraint firstItem="mFI-rM-DT6" firstAttribute="leading" secondItem="hE0-PS-Rau" secondAttribute="trailing" constant="8" symbolic="YES" id="fi5-2a-AvS"/>
                             <constraint firstItem="oap-Fn-wNg" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="fpJ-T8-T5o"/>
-                            <constraint firstItem="IDR-Hi-ehm" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="pT3-cR-QYd"/>
+                            <constraint firstItem="msW-X0-dhQ" firstAttribute="top" secondItem="mFI-rM-DT6" secondAttribute="bottom" constant="8" symbolic="YES" id="kZE-M4-mVN"/>
+                            <constraint firstItem="19c-UZ-5DC" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="nzl-Xp-Uaz"/>
                             <constraint firstItem="x0L-tp-DvU" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="t28-Fj-PjS"/>
                             <constraint firstItem="mFI-rM-DT6" firstAttribute="baseline" secondItem="0Yd-FG-N7Y" secondAttribute="baseline" id="tv4-6O-gYy"/>
-                            <constraint firstItem="Cmp-ld-qcb" firstAttribute="top" secondItem="mFI-rM-DT6" secondAttribute="bottom" constant="8" symbolic="YES" id="uRg-GP-3wJ"/>
-                            <constraint firstItem="Cmp-ld-qcb" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="uSx-hm-tn1"/>
-                            <constraint firstItem="x0L-tp-DvU" firstAttribute="top" secondItem="Cmp-ld-qcb" secondAttribute="bottom" constant="8" symbolic="YES" id="yWg-1r-yAm"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="computeStrategyFromButton" destination="mFI-rM-DT6" id="haI-W5-qgu"/>
-                        <outlet property="dayProgressView" destination="IDR-Hi-ehm" id="mHW-be-94W"/>
                         <outlet property="fromNextWorkDayItem" destination="UN6-Eu-Zua" id="hCa-jo-Pt7"/>
                         <outlet property="fromTodayItem" destination="CSh-kF-rVJ" id="Kgl-Tl-XAL"/>
-                        <outlet property="goalProgressView" destination="Cmp-ld-qcb" id="Muq-7o-RCh"/>
                         <outlet property="goalStrategyView" destination="oap-Fn-wNg" id="ekt-fB-JFu"/>
                         <outlet property="periodDescriptionLabel" destination="v1h-N7-niu" id="yuX-Fn-sJh"/>
-                        <segue destination="7US-0q-kKJ" kind="custom" identifier="GoalProgressVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="kbd-qA-CZc"/>
                         <segue destination="izu-wK-mXn" kind="custom" identifier="GoalStrategyVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="Isy-wW-ZIj"/>
-                        <segue destination="hvJ-dC-Kbs" kind="custom" identifier="DayProgressVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="8Ie-pp-gUW"/>
                         <segue destination="dwg-Fo-eQ6" kind="custom" identifier="GoalReachedVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="AAp-vs-QCv"/>
                     </connections>
                 </viewController>
                 <customObject id="HEr-Yv-904" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2387" y="1137"/>
+            <point key="canvasLocation" x="1810.5" y="1293"/>
         </scene>
         <!--Projects List Activity View Controller-->
         <scene sceneID="TeI-Ga-lEs">
@@ -949,6 +960,18 @@
                 <customObject id="OBD-zQ-HWF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1028" y="907"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="jIl-Em-jgz">
+            <objects>
+                <viewController id="wXJ-9g-DI1" sceneMemberID="viewController">
+                    <view key="view" id="ygg-FM-cs0">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="INg-MB-Wh8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
         </scene>
     </scenes>
 </document>
