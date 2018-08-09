@@ -52,9 +52,9 @@ class SelectionDetailViewController: NSTabViewController, BindingTargetProvider 
 
     // MARK: - Contained view controllers
 
-    private enum ContainedControllerType {
-        case projectDetails
-        case emptySelection
+    private enum ContainedControllerType: Int {
+        case projectDetails = 1
+        case emptySelection = 0
 
         static func from(_ controller: NSViewController) -> ContainedControllerType? {
             if controller as? ProjectDetailsViewController != nil {
@@ -113,8 +113,9 @@ class SelectionDetailViewController: NSTabViewController, BindingTargetProvider 
         lifetime.observeEnded {
             _ = debounceScheduler
         }
-        reactive.makeBindingTarget { $0.selectedTabViewItemIndex = $1 } <~ selectedProjectID.map { ($0 != nil) ? 1 : 0 }.producer.debounce(0.1, on: debounceScheduler)
 
-        transitionOptions = NSViewController.TransitionOptions.allowUserInteraction
+        reactive.makeBindingTarget { $0.selectedTabViewItemIndex = $1 } <~ selectedProjectID
+            .map { ($0 != nil) ? ContainedControllerType.projectDetails.rawValue : ContainedControllerType.emptySelection.rawValue }
+            .producer.debounce(0.1, on: debounceScheduler)
     }
 }

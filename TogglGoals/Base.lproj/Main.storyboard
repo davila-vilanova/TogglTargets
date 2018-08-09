@@ -320,6 +320,7 @@
                         <tabViewItem id="1sm-ZA-f3G"/>
                         <tabViewItem id="qTy-Nw-Z7W"/>
                     </tabViewItems>
+                    <viewControllerTransitionOptions key="transitionOptions" allowUserInteraction="YES"/>
                     <tabView key="tabView" type="noTabsNoBorder" id="rsy-nD-VKV">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="297"/>
                         <autoresizingMask key="autoresizingMask"/>
