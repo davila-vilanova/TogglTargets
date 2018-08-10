@@ -67,18 +67,18 @@ class SelectionDetailViewController: NSTabViewController, BindingTargetProvider 
         }
     }
 
-    private var connectedControllersTypes = Set<ContainedControllerType>()
+    private var connectedControllerTypes = Set<ContainedControllerType>()
 
     override func tabView(_ tabView: NSTabView, willSelect tabViewItem: NSTabViewItem?) {
         super.tabView(tabView, willSelect: tabViewItem)
 
         guard let controller = tabViewItem?.viewController,
         let type = ContainedControllerType.from(controller),
-        !connectedControllersTypes.contains(type) else {
+        !connectedControllerTypes.contains(type) else {
             return
         }
 
-        connectedControllersTypes.insert(type)
+        connectedControllerTypes.insert(type)
 
         if let details = controller as? ProjectDetailsViewController {
             details <~ SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
