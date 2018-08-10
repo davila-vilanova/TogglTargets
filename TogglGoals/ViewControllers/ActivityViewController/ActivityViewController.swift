@@ -11,10 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-fileprivate let CondensedActivityVCContainment = "CondensedActivityVCContainment"
-fileprivate let DetailedActivityVCContainment = "DetailedActivityVCContainment"
-
-class ActivityViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
+class ActivityViewController: NSViewController, BindingTargetProvider {
 
     internal typealias Interface =
         (modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
@@ -30,49 +27,37 @@ class ActivityViewController: NSViewController, ViewControllerContaining, Bindin
 
     @IBOutlet weak var rootStackView: NSStackView!
 
-    private var condensedActivityViewController: CondensedActivityViewController!
-    private var detailedActivityViewController: DetailedActivityViewController!
+    private lazy var condensedActivityViewController: CondensedActivityViewController = {
+        let condensed = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("CondensedActivityViewController")) as! CondensedActivityViewController
+        addChildViewController(condensed)
+        rootStackView.addArrangedSubview(condensed.view)
+        condensed <~
+            SignalProducer<CondensedActivityViewController.Interface, NoError>(
+                value: (activitiesState.output.producer, wantsExtendedDisplay.bindingTarget))
+        return condensed
+    }()
 
-    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        if let condensedActivityVC = controller as? CondensedActivityViewController {
-            self.condensedActivityViewController = condensedActivityVC
-            rootStackView.addArrangedSubview(condensedActivityVC.view)
-        } else if let detailedActivityVC = controller as? DetailedActivityViewController {
-            self.detailedActivityViewController = detailedActivityVC
-            rootStackView.addArrangedSubview(detailedActivityVC.view)
-        }
-    }
+    private lazy var detailedActivityViewController: DetailedActivityViewController = {
+        let detailed = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("DetailedActivityViewController")) as! DetailedActivityViewController
+        addChildViewController(detailed)
+        rootStackView.addArrangedSubview(detailed.view)
+
+        let statuses =
+            SignalProducer.merge(activitiesState.output.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
+                                 wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
+        let wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
+        lifetime += wantsDisplay.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.requestDisplay })
+
+        detailed <~ SignalProducer(value: statuses)
+        detailed.view.reactive.makeBindingTarget(on: UIScheduler(), { $0.isHidden = $1 })
+            <~ wantsExtendedDisplay.negate()
+
+        return detailed
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        initializeControllerContainment(containmentIdentifiers: [CondensedActivityVCContainment, DetailedActivityVCContainment])
-
         activitiesState.input <~ lastBinding.latestOutput { $0.modelRetrievalStatus }
-
-        condensedActivityViewController <~
-            SignalProducer<CondensedActivityViewController.Interface, NoError>(
-                value: (activitiesState.output.producer, wantsExtendedDisplay.bindingTarget))
-
-        let statusesForDetailedActivityVC =
-            SignalProducer.merge(activitiesState.output.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
-                                 wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
-
-        detailedActivityViewController <~ SignalProducer(value: statusesForDetailedActivityVC)
-
-        let wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
-        lifetime += wantsDisplay.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.requestDisplay })
-
-        detailedActivityViewController.view.reactive.makeBindingTarget(on: UIScheduler(), { $0.isHidden = $1 })
-            <~ wantsExtendedDisplay.negate()
-    }
-}
-
-fileprivate extension Array where Element == ActivityStatus {
-    var hasExecutingActivities: Bool {
-        return self.filter { $0.isExecuting }.count > 0
-    }
-    var hasErrors: Bool {
-        return self.filter { $0.isError }.count > 0
     }
 }

@@ -133,8 +133,6 @@
                     </view>
                     <connections>
                         <outlet property="rootStackView" destination="3r7-aZ-VGW" id="jbO-Fq-4O9"/>
-                        <segue destination="d3P-5j-IhJ" kind="custom" identifier="CondensedActivityVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="Aq1-Fn-crL"/>
-                        <segue destination="AJO-lx-pZ5" kind="custom" identifier="DetailedActivityVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="FGd-fh-X8p"/>
                     </connections>
                 </viewController>
                 <customObject id="ytj-7m-2MR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -144,7 +142,7 @@
         <!--Condensed Activity View Controller-->
         <scene sceneID="NSH-HH-SX2">
             <objects>
-                <viewController id="d3P-5j-IhJ" customClass="CondensedActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CondensedActivityViewController" id="d3P-5j-IhJ" customClass="CondensedActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="Z67-5j-RY0">
                         <rect key="frame" x="0.0" y="0.0" width="175" height="36"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -213,7 +211,7 @@
         <!--Detailed Activity View Controller-->
         <scene sceneID="Qxj-pa-5eC">
             <objects>
-                <viewController id="AJO-lx-pZ5" customClass="DetailedActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DetailedActivityViewController" id="AJO-lx-pZ5" customClass="DetailedActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="PIw-M0-HkN">
                         <rect key="frame" x="0.0" y="0.0" width="180" height="86"/>
                         <autoresizingMask key="autoresizingMask"/>
