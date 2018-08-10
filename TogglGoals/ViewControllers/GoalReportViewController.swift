@@ -11,12 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-fileprivate let GoalProgressVCContainment = "GoalProgressVCContainment"
-fileprivate let GoalStrategyVCContainment = "GoalStrategyVCContainment"
-fileprivate let GoalReachedVCContainment = "GoalReachedVCContainment"
-fileprivate let DayProgressVCContainment = "DayProgressVCContainment"
-
-class GoalReportViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
+class GoalReportViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -77,22 +72,24 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
         }
     }
 
-    var goalStrategyViewController: GoalStrategyViewController! {
-        didSet {
-            goalStrategyViewController <~
-                SignalProducer(value: (timeGoal: goalProgress.timeGoal,
-                                       dayBaseline: goalProgress.dayBaseline,
-                                       dayBaselineAdjustedToProgress: goalProgress.dayBaselineAdjustedToProgress,
-                                       dayBaselineDifferential: goalProgress.dayBaselineDifferential,
-                                       feasibility: goalProgress.feasibility))
-        }
-    }
+    lazy private var goalStrategyViewController: GoalStrategyViewController = {
+        let goalStrategy = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalStrategyViewController")) as! GoalStrategyViewController
+        goalStrategy <~
+            SignalProducer(value: (timeGoal: goalProgress.timeGoal,
+                                   dayBaseline: goalProgress.dayBaseline,
+                                   dayBaselineAdjustedToProgress: goalProgress.dayBaselineAdjustedToProgress,
+                                   dayBaselineDifferential: goalProgress.dayBaselineDifferential,
+                                   feasibility: goalProgress.feasibility))
+        addChildViewController(goalStrategy)
+        return goalStrategy
+    }()
 
-    var goalReachedViewController: GoalReachedViewController! {
-        didSet {
-            goalReachedViewController <~ SignalProducer(value: goalProgress.timeGoal)
-        }
-    }
+    lazy private var goalReachedViewController: GoalReachedViewController = {
+        let goalReached = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalReachedViewController")) as! GoalReachedViewController
+        goalReached <~ SignalProducer(value: goalProgress.timeGoal)
+        addChildViewController(goalReached)
+        return goalReached
+    }()
 
     var dayProgressViewController: DayProgressViewController! {
         didSet {
@@ -100,16 +97,6 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
                 SignalProducer(value: (timeWorkedToday: goalProgress.timeWorkedToday.producer,
                                        remainingTimeToDayBaseline: goalProgress.remainingTimeToDayBaseline.producer,
                                        feasibility: goalProgress.feasibility))
-        }
-    }
-
-    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        switch controller {
-        case _ where (controller as? GoalStrategyViewController) != nil:
-            goalStrategyViewController = controller as! GoalStrategyViewController
-        case _ where (controller as? GoalReachedViewController) != nil:
-            goalReachedViewController = controller as! GoalReachedViewController
-        default: break
         }
     }
 
@@ -121,17 +108,30 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
         }
     }
 
-    private func setupContainedViewControllerVisibility() {
+    private func setupCondicionalVisibilityOfContainedViews() {
         let isGoalReached = goalProgress.remainingTimeToGoal
             .map { (remainingTime: TimeInterval) -> Bool in
-                remainingTime == 0.0
+                remainingTime == 0
         }
 
-        let selectedGoalStrategyController = isGoalReached.map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
-            return isGoalReached ? goalReachedViewController! : goalStrategyViewController!
-        }
+        let selectedGoalStrategyController = isGoalReached.producer.map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
+            return isGoalReached ? goalReachedViewController : goalStrategyViewController
+            }
 
-        setupContainment(of: selectedGoalStrategyController, in: self, view: goalStrategyView)
+        goalStrategyView.reactive.makeBindingTarget { (parent: NSView, children: (NSView?, NSView)) in
+            if let previous = children.0 {
+                previous.removeFromSuperview()
+            }
+            let child = children.1
+            child.translatesAutoresizingMaskIntoConstraints = false
+            parent.addSubview(child)
+
+            // Pin edges to superview's edges
+            child.topAnchor.constraint(equalTo: parent.topAnchor).isActive = true
+            child.bottomAnchor.constraint(equalTo: parent.bottomAnchor).isActive = true
+            child.leadingAnchor.constraint(equalTo: parent.leadingAnchor).isActive = true
+            child.trailingAnchor.constraint(equalTo: parent.trailingAnchor).isActive = true
+            } <~ selectedGoalStrategyController.map { $0.view }.skipRepeats().map { Optional($0) }.combinePrevious(nil).map { ($0.0, $0.1!) }
     }
 
     
@@ -173,14 +173,10 @@ class GoalReportViewController: NSViewController, ViewControllerContaining, Bind
         currentDate <~ lastBinding.latestOutput { $0.currentDate }
         periodPreference <~ lastBinding.latestOutput { $0.periodPreference }
 
-        for identifier in [GoalProgressVCContainment, GoalStrategyVCContainment, GoalReachedVCContainment, DayProgressVCContainment] {
-            performSegue(withIdentifier: NSStoryboardSegue.Identifier(rawValue: identifier), sender: self)
-        }
-        
         wirePeriodDescription()
         setupComputeStrategyFromButton()
         connectPropertiesToGoalProgress()
-        setupContainedViewControllerVisibility()
+        setupCondicionalVisibilityOfContainedViews()
     }
 
     

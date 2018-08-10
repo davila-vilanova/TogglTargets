@@ -554,7 +554,7 @@
         <!--Goal Strategy View Controller-->
         <scene sceneID="H6m-Ts-Ik0">
             <objects>
-                <viewController id="izu-wK-mXn" customClass="GoalStrategyViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GoalStrategyViewController" id="izu-wK-mXn" customClass="GoalStrategyViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="CWe-Ok-q92">
                         <rect key="frame" x="0.0" y="0.0" width="482" height="53"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -679,7 +679,7 @@
         <!--Goal Reached View Controller-->
         <scene sceneID="6vA-eI-u7E">
             <objects>
-                <viewController id="dwg-Fo-eQ6" customClass="GoalReachedViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GoalReachedViewController" id="dwg-Fo-eQ6" customClass="GoalReachedViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3In-vf-KdN">
                         <rect key="frame" x="0.0" y="0.0" width="482" height="38"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -873,8 +873,6 @@
                         <outlet property="fromTodayItem" destination="CSh-kF-rVJ" id="Kgl-Tl-XAL"/>
                         <outlet property="goalStrategyView" destination="oap-Fn-wNg" id="ekt-fB-JFu"/>
                         <outlet property="periodDescriptionLabel" destination="v1h-N7-niu" id="yuX-Fn-sJh"/>
-                        <segue destination="izu-wK-mXn" kind="custom" identifier="GoalStrategyVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="Isy-wW-ZIj"/>
-                        <segue destination="dwg-Fo-eQ6" kind="custom" identifier="GoalReachedVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="AAp-vs-QCv"/>
                     </connections>
                 </viewController>
                 <customObject id="HEr-Yv-904" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -960,18 +958,6 @@
                 <customObject id="OBD-zQ-HWF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1028" y="907"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="jIl-Em-jgz">
-            <objects>
-                <viewController id="wXJ-9g-DI1" sceneMemberID="viewController">
-                    <view key="view" id="ygg-FM-cs0">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                </viewController>
-                <customObject id="INg-MB-Wh8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
         </scene>
     </scenes>
 </document>
