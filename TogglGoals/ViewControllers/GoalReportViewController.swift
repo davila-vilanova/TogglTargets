@@ -72,7 +72,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider {
         }
     }
 
-    lazy private var goalStrategyViewController: GoalStrategyViewController = {
+    private lazy var goalStrategyViewController: GoalStrategyViewController = {
         let goalStrategy = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalStrategyViewController")) as! GoalStrategyViewController
         goalStrategy <~
             SignalProducer(value: (timeGoal: goalProgress.timeGoal,
@@ -84,7 +84,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider {
         return goalStrategy
     }()
 
-    lazy private var goalReachedViewController: GoalReachedViewController = {
+    private lazy var goalReachedViewController: GoalReachedViewController = {
         let goalReached = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalReachedViewController")) as! GoalReachedViewController
         goalReached <~ SignalProducer(value: goalProgress.timeGoal)
         addChildViewController(goalReached)
@@ -118,20 +118,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider {
             return isGoalReached ? goalReachedViewController : goalStrategyViewController
             }
 
-        goalStrategyView.reactive.makeBindingTarget { (parent: NSView, children: (NSView?, NSView)) in
-            if let previous = children.0 {
-                previous.removeFromSuperview()
-            }
-            let child = children.1
-            child.translatesAutoresizingMaskIntoConstraints = false
-            parent.addSubview(child)
-
-            // Pin edges to superview's edges
-            child.topAnchor.constraint(equalTo: parent.topAnchor).isActive = true
-            child.bottomAnchor.constraint(equalTo: parent.bottomAnchor).isActive = true
-            child.leadingAnchor.constraint(equalTo: parent.leadingAnchor).isActive = true
-            child.trailingAnchor.constraint(equalTo: parent.trailingAnchor).isActive = true
-            } <~ selectedGoalStrategyController.map { $0.view }.skipRepeats().map { Optional($0) }.combinePrevious(nil).map { ($0.0, $0.1!) }
+        goalStrategyView.uniqueSubview <~ selectedGoalStrategyController.map { $0.view }.skipRepeats()
     }
 
     

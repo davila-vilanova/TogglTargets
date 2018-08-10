@@ -308,8 +308,6 @@
                     <connections>
                         <outlet property="goalReportView" destination="OOB-9P-pYC" id="69Z-CY-Vgu"/>
                         <outlet property="projectName" destination="ifD-zz-iY5" id="pO9-jg-jgp"/>
-                        <segue destination="uCS-Tc-pwg" kind="custom" identifier="NoGoalVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="E9p-9R-sF8"/>
-                        <segue destination="xQT-IJ-aTE" kind="custom" identifier="GoalReportVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="OYc-wi-5Av"/>
                     </connections>
                 </viewController>
                 <customObject id="sX4-zk-LDV" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -711,7 +709,7 @@
         <!--No Goal View Controller-->
         <scene sceneID="PGj-gw-9GS">
             <objects>
-                <viewController id="uCS-Tc-pwg" customClass="NoGoalViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NoGoalViewController" id="uCS-Tc-pwg" customClass="NoGoalViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="1mY-6H-Sas">
                         <rect key="frame" x="0.0" y="0.0" width="477" height="350"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -756,12 +754,12 @@
                 </viewController>
                 <customObject id="fO8-4G-Gnl" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1902" y="1898"/>
+            <point key="canvasLocation" x="1811" y="1729"/>
         </scene>
         <!--Goal Report View Controller-->
         <scene sceneID="ymg-Za-fLN">
             <objects>
-                <viewController id="xQT-IJ-aTE" customClass="GoalReportViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GoalReportViewController" id="xQT-IJ-aTE" customClass="GoalReportViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="AwW-7C-Ykd">
                         <rect key="frame" x="0.0" y="0.0" width="477" height="366"/>
                         <autoresizingMask key="autoresizingMask"/>

@@ -11,11 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-fileprivate let GoalVCContainment = "GoalVCContainment"
-fileprivate let GoalReportVCContainment = "GoalReportVCContainment"
-fileprivate let NoGoalVCContainment = "NoGoalVCContainment"
-
-class ProjectDetailsViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
+class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -68,25 +64,38 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
 
     // MARK: - Contained view controllers
 
-    var goalReportViewController: GoalReportViewController!
+    private lazy var goalReportViewController: GoalReportViewController = {
+        let goalReport = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalReportViewController")) as! GoalReportViewController
+        goalReport <~ SignalProducer(
+            value: (projectId: projectId,
+                    goal: goalForCurrentProject.skipNil(),
+                    report: reportForCurrentProject,
+                    runningEntry: lastBinding.latestOutput { $0.runningEntry },
+                    calendar: lastBinding.latestOutput { $0.calendar },
+                    currentDate: lastBinding.latestOutput { $0.currentDate },
+                    periodPreference: lastBinding.latestOutput { $0.periodPreference }))
+        addChildViewController(goalReport)
+        return goalReport
+    }()
 
-    var noGoalViewController: NoGoalViewController!
-
-    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        switch controller { // TODO: rework cases
-        case _ where (controller as? GoalReportViewController) != nil:
-            goalReportViewController = controller as! GoalReportViewController
-        case _ where (controller as? NoGoalViewController) != nil:
-            noGoalViewController = controller as! NoGoalViewController
-        default: break
+    private lazy var noGoalViewController: NoGoalViewController = {
+        let noGoal = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("NoGoalViewController")) as! NoGoalViewController
+        noGoal <~ SignalProducer.combineLatest(
+            SignalProducer(value: projectId.producer),
+            lastBinding.producer.skipNil().map { $0.writeGoal })
+            .map {
+                (projectId: $0,
+                 goalCreated: $1)
         }
-    }
+        addChildViewController(noGoal)
+        return noGoal
+    }()
 
-    private func setupContainedViewControllerVisibility() {
+    private func setupCondicionalVisibilityOfContainedViews() {
         let selectedGoalController = goalForCurrentProject.map { [unowned self] in
             $0 == nil ? self.noGoalViewController : self.goalReportViewController
         }
-        setupContainment(of: selectedGoalController, in: self, view: goalReportView)
+        goalReportView.uniqueSubview <~ selectedGoalController.map { $0.view }.skipRepeats()
     }
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
@@ -114,38 +123,17 @@ class ProjectDetailsViewController: NSViewController, ViewControllerContaining, 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        initializeControllerContainment(containmentIdentifiers: [GoalVCContainment, GoalReportVCContainment, NoGoalVCContainment])
-
         project <~ lastBinding.latestOutput { $0.project }
 
         let lastValidBinding = lastBinding.producer.skipNil()
         readGoal <~ lastValidBinding.map { $0.readGoal }
         readReport <~ lastValidBinding.map { $0.readReport }
 
-        goalReportViewController <~ SignalProducer(
-            value: (projectId: projectId,
-                    goal: goalForCurrentProject.skipNil(),
-                    report: reportForCurrentProject,
-                    runningEntry: lastBinding.latestOutput { $0.runningEntry },
-                    calendar: lastBinding.latestOutput { $0.calendar },
-                    currentDate: lastBinding.latestOutput { $0.currentDate },
-                    periodPreference: lastBinding.latestOutput { $0.periodPreference }))
-
-        self.noGoalViewController <~
-            SignalProducer.combineLatest(
-                SignalProducer(value: projectId.producer),
-                lastValidBinding.map { $0.writeGoal })
-                .map {
-                    (projectId: $0,
-                     goalCreated: $1)
-        }
-
         lifetime += updateDeleteGoal.producer.skipNil().bindOnlyToLatest(lastValidBinding.map { $0.writeGoal })
         lifetime += projectId.producer.sample(on: updateDeleteGoal.signal.filter { $0 == nil}.map { _ in () }).bindOnlyToLatest(lastValidBinding.map { $0.deleteGoal })
 
         setupLocalProjectDisplay()
-        setupContainedViewControllerVisibility()
-
+        setupCondicionalVisibilityOfContainedViews()
     }
 
     private func setupLocalProjectDisplay() {

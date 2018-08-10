@@ -209,6 +209,8 @@
 		63DC619B1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
 		63DC619C1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
 		63DC619D1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
+		63E798B6211DE49B00386BF5 /* UniqueSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E798B5211DE49B00386BF5 /* UniqueSubview.swift */; };
+		63E798B7211DE49B00386BF5 /* UniqueSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E798B5211DE49B00386BF5 /* UniqueSubview.swift */; };
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
 		63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */; };
 		63F15015209868430044288F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F15014209868430044288F /* LoginViewController.swift */; };
@@ -385,6 +387,7 @@
 		63D4BBA41F7D80FC00B87298 /* TogglAPICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPICredential.swift; sourceTree = "<group>"; };
 		63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataRetrieverTest.swift; sourceTree = "<group>"; };
 		63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPINetworkRetriever.swift; sourceTree = "<group>"; };
+		63E798B5211DE49B00386BF5 /* UniqueSubview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqueSubview.swift; sourceTree = "<group>"; };
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
 		63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindClosestMatchingWeekdayTests.swift; sourceTree = "<group>"; };
 		63F15014209868430044288F /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -617,6 +620,7 @@
 			children = (
 				639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */,
 				639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */,
+				63E798B5211DE49B00386BF5 /* UniqueSubview.swift */,
 			);
 			name = Util;
 			path = ViewControllers/Util;
@@ -987,6 +991,7 @@
 				639F38F3208FA4D500AE96CF /* InterfaceBinding.swift in Sources */,
 				6355C5BC1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
 				635A257A205290CE00EFCE90 /* ProjectsMasterDetailWindowController.swift in Sources */,
+				63E798B6211DE49B00386BF5 /* UniqueSubview.swift in Sources */,
 				637A32401EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
 				637A324A1EE16FD600667FC3 /* ProjectDetailsViewController.swift in Sources */,
 				63F15015209868430044288F /* LoginViewController.swift in Sources */,
@@ -1084,6 +1089,7 @@
 				637DA2222034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */,
 				637A32411EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
+				63E798B7211DE49B00386BF5 /* UniqueSubview.swift in Sources */,
 				6355C5B91FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				637A32431EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
 				63D4BBC71F7D821900B87298 /* SignalProducerExtensions.swift in Sources */,
