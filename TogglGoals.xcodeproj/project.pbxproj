@@ -105,13 +105,11 @@
 		638561ED20FE15DC002E97E8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638561F120FE15DC002E97E8 /* MainMenu.xib */; };
 		638561EE20FE15DC002E97E8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638561F120FE15DC002E97E8 /* MainMenu.xib */; };
 		638561EF20FE15DC002E97E8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638561F120FE15DC002E97E8 /* MainMenu.xib */; };
-		6392AB4720CFFC10002CC903 /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */; };
 		6392AB4820CFFC2C002CC903 /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */; };
 		639C5BBF20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */; };
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
-		639F38F2208FA4D500AE96CF /* ContainmentSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */; };
 		639F38F3208FA4D500AE96CF /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */; };
 		639F8B6020DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */; };
 		639F8B6120DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */; };
@@ -360,7 +358,6 @@
 		638561F920FE16D6002E97E8 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteGoalPersistenceProviderTests.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
-		639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainmentSegue.swift; sourceTree = "<group>"; };
 		639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
 		639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalizedErrors.swift; path = ViewControllers/LocalizedErrors.swift; sourceTree = "<group>"; };
 		639F8B6420DE7CE800FDC8C1 /* GoalFeasibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GoalFeasibility.swift; path = Model/GoalFeasibility.swift; sourceTree = "<group>"; };
@@ -621,7 +618,6 @@
 		639F38EF208FA4D500AE96CF /* Util */ = {
 			isa = PBXGroup;
 			children = (
-				639F38F0208FA4D500AE96CF /* ContainmentSegue.swift */,
 				639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */,
 				63E798B5211DE49B00386BF5 /* UniqueSubview.swift */,
 			);
@@ -970,7 +966,6 @@
 				63D4BBA71F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				637A32421EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
 				63D4BBB01F7D821800B87298 /* TogglAPICredential.swift in Sources */,
-				639F38F2208FA4D500AE96CF /* ContainmentSegue.swift in Sources */,
 				637DA2202034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				637A32481EE16FD600667FC3 /* GoalViewController.swift in Sources */,
 				635A256620528F2C00EFCE90 /* ProjectsListActivityViewController.swift in Sources */,
@@ -1079,7 +1074,6 @@
 				6333B6D01F974690002CF189 /* Profile.swift in Sources */,
 				635DCE1C1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */,
 				639F8B6C20E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift in Sources */,
-				6392AB4720CFFC10002CC903 /* ContainmentSegue.swift in Sources */,
 				63DC619C1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */,
 				63B1BBE91FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,
 				6333B6E01F974741002CF189 /* TimeReport.swift in Sources */,
