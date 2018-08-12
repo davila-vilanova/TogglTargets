@@ -34,8 +34,8 @@
             <objects>
                 <tabViewController selectedTabViewItemIndex="0" id="cFd-GK-h7o" customClass="PreferencesViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <tabViewItems>
-                        <tabViewItem id="Rz0-Tw-clS"/>
-                        <tabViewItem id="18V-mR-Gfu"/>
+                        <tabViewItem id="gNn-9P-Nz3"/>
+                        <tabViewItem id="xs9-cl-0IL"/>
                     </tabViewItems>
                     <viewControllerTransitionOptions key="transitionOptions" allowUserInteraction="YES"/>
                     <tabView key="tabView" type="noTabsNoBorder" id="oDe-yB-vHc">
@@ -48,8 +48,8 @@
                     </tabView>
                     <connections>
                         <outlet property="tabView" destination="oDe-yB-vHc" id="45C-l7-n7D"/>
-                        <segue destination="dgN-la-n5v" kind="relationship" relationship="tabItems" id="hP8-39-ttj"/>
-                        <segue destination="DPU-zp-q1w" kind="relationship" relationship="tabItems" id="dw7-cN-Uid"/>
+                        <segue destination="S1b-Sg-bNf" kind="relationship" relationship="tabItems" id="CIV-za-Vsp"/>
+                        <segue destination="DPU-zp-q1w" kind="relationship" relationship="tabItems" id="49N-na-e8r"/>
                     </connections>
                 </tabViewController>
                 <customObject id="nAo-m1-JRR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -125,7 +125,7 @@
                 </viewController>
                 <customObject id="e6B-cn-KmC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1248" y="-522"/>
+            <point key="canvasLocation" x="1196" y="-285"/>
         </scene>
         <!--Email Password View Controller-->
         <scene sceneID="WoN-Sb-uiO">
@@ -225,12 +225,12 @@
                 </viewController>
                 <customObject id="yml-nP-qH9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2410" y="-450"/>
+            <point key="canvasLocation" x="2358" y="-213"/>
         </scene>
         <!--Login Method View Controller-->
         <scene sceneID="xoZ-vv-uND">
             <objects>
-                <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" id="jX8-Yi-zcf" customClass="LoginMethodViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" canPropagateSelectedChildViewControllerTitle="NO" id="jX8-Yi-zcf" customClass="LoginMethodViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <tabViewItems>
                         <tabViewItem id="ws4-Wx-ukz"/>
                         <tabViewItem id="4nN-CW-eog"/>
@@ -251,7 +251,7 @@
                 </tabViewController>
                 <customObject id="UU9-YL-6vd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1857" y="-540"/>
+            <point key="canvasLocation" x="1805" y="-304"/>
         </scene>
         <!--Logged In View Controller-->
         <scene sceneID="ysq-hC-rcl">
@@ -375,24 +375,7 @@
                 </viewController>
                 <customObject id="u81-RR-zKe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1269.5" y="-227"/>
-        </scene>
-        <!--Account-->
-        <scene sceneID="1J4-f2-Wpf">
-            <objects>
-                <viewController title="Account" id="dgN-la-n5v" customClass="AccountViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="7Fc-x9-GTu">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="162"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                    <connections>
-                        <segue destination="dvF-Cf-Qok" kind="custom" identifier="LogInVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="CMR-yN-1D5"/>
-                        <segue destination="kCP-3W-Peo" kind="custom" identifier="LoggedInVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="qo4-yW-8YG"/>
-                    </connections>
-                </viewController>
-                <customObject id="sNf-y7-tbR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="663" y="-338"/>
+            <point key="canvasLocation" x="1168" y="-16"/>
         </scene>
         <!--Token View Controller-->
         <scene sceneID="vTJ-KD-t4P">
@@ -460,7 +443,34 @@
                 </viewController>
                 <customObject id="R61-f0-YKI" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2435" y="-659"/>
+            <point key="canvasLocation" x="2383" y="-422"/>
+        </scene>
+        <!--Account-->
+        <scene sceneID="4J3-SG-Kw6">
+            <objects>
+                <tabViewController title="Account" selectedTabViewItemIndex="0" tabStyle="unspecified" id="S1b-Sg-bNf" customClass="AccountViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabViewItems>
+                        <tabViewItem id="pEs-xy-F65"/>
+                        <tabViewItem id="KYc-1L-5AM"/>
+                    </tabViewItems>
+                    <viewControllerTransitionOptions key="transitionOptions" allowUserInteraction="YES"/>
+                    <tabView key="tabView" type="noTabsNoBorder" id="haR-ps-dbX">
+                        <rect key="frame" x="0.0" y="0.0" width="355" height="174"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <font key="font" metaFont="message"/>
+                        <connections>
+                            <outlet property="delegate" destination="S1b-Sg-bNf" id="eQz-6g-zo5"/>
+                        </connections>
+                    </tabView>
+                    <connections>
+                        <outlet property="tabView" destination="haR-ps-dbX" id="aKk-sO-rMe"/>
+                        <segue destination="dvF-Cf-Qok" kind="relationship" relationship="tabItems" id="aTt-bX-pXO"/>
+                        <segue destination="kCP-3W-Peo" kind="relationship" relationship="tabItems" id="Mss-Mh-kDt"/>
+                    </connections>
+                </tabViewController>
+                <customObject id="o8M-5v-cHb" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="628.5" y="-112"/>
         </scene>
         <!--Goal Periods-->
         <scene sceneID="moW-Kh-FCL">

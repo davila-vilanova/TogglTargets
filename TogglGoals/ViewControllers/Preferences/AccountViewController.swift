@@ -11,10 +11,8 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-fileprivate let LogInVCContainment = "LogInVCContainment"
-fileprivate let LoggedInVCContainment = "LoggedInVCContainment"
 
-class AccountViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
+class AccountViewController: NSTabViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -26,16 +24,49 @@ class AccountViewController: NSViewController, ViewControllerContaining, Binding
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
+
     // MARK: - Contained view controllers
 
-    private var loginViewController: LoginViewController!
-    private var loggedInViewController: LoggedInViewController!
+    private enum ContainedControllerType: Int {
+        case login = 0
+        case loggedIn = 1
 
-    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        if let vc = controller as? LoginViewController {
-            loginViewController = vc
-        } else if let vc = controller as? LoggedInViewController {
-            loggedInViewController = vc
+        static func from(_ controller: NSViewController) -> ContainedControllerType? {
+            if controller as? LoginViewController != nil {
+                return .login
+            } else if controller as? LoggedInViewController != nil {
+                return .loggedIn
+            } else {
+                return nil
+            }
+        }
+    }
+
+
+    private var connectedControllerTypes = Set<ContainedControllerType>()
+
+    override func tabView(_ tabView: NSTabView, willSelect tabViewItem: NSTabViewItem?) {
+        super.tabView(tabView, willSelect: tabViewItem)
+
+        guard let controller = tabViewItem?.viewController,
+            let type = ContainedControllerType.from(controller),
+            !connectedControllerTypes.contains(type) else {
+                return
+        }
+
+        connectedControllerTypes.insert(type)
+
+        let validBindings = lastBinding.producer.skipNil()
+
+        if let loginController = controller as? LoginViewController {
+            loginController <~ validBindings.map { (credentialUpstream: $0.resolvedCredential,
+                                                        testURLSessionAction: $0.testURLSessionAction) }
+        } else if let loggedInController = controller as? LoggedInViewController {
+            let logOutRequested = MutableProperty<Void>(())
+            logOutRequested.signal.map { nil as TogglAPITokenCredential? }.bindOnlyToLatest(validBindings.map { $0.resolvedCredential })
+            loggedInController <~ validBindings.map { (existingCredential: $0.existingCredential,
+                                                       testURLSessionAction: $0.testURLSessionAction,
+                                                       logOut: logOutRequested.bindingTarget) }
         }
     }
 
@@ -45,23 +76,11 @@ class AccountViewController: NSViewController, ViewControllerContaining, Binding
     private let (lifetime, token) = Lifetime.make()
 
     override func viewDidLoad() {
-        initializeControllerContainment(containmentIdentifiers: [LogInVCContainment, LoggedInVCContainment])
+        super.viewDidLoad()
 
-        let validBindings = lastBinding.producer.skipNil()
-        loginViewController <~ validBindings.map { (credentialUpstream: $0.resolvedCredential,
-                                                    testURLSessionAction: $0.testURLSessionAction) }
-
-        let logOutRequested = MutableProperty<Void>(())
-        logOutRequested.signal.map { nil as TogglAPITokenCredential? }.bindOnlyToLatest(validBindings.map { $0.resolvedCredential })
-        loggedInViewController <~ validBindings.map { (existingCredential: $0.existingCredential,
-                                                       testURLSessionAction: $0.testURLSessionAction,
-                                                       logOut: logOutRequested.bindingTarget) }
-
-        let selectedController = lastBinding.latestOutput { $0.existingCredential }
-            .map { [unowned self] (cred: TogglAPITokenCredential?) -> NSViewController in
-                return (cred == nil) ? self.loginViewController : self.loggedInViewController
-        }
-
-        setupContainment(of: selectedController, in: self, view: self.view)
+        reactive.makeBindingTarget {
+            $0.selectedTabViewItemIndex = $1 } <~ lastBinding.latestOutput { $0.existingCredential }
+                .map {
+                    ($0 == nil) ? ContainedControllerType.login.rawValue : ContainedControllerType.loggedIn.rawValue }
     }
 }
