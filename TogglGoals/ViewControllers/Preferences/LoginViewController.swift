@@ -11,8 +11,6 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-fileprivate let APITokenVCContainment = "APITokenVCContainment"
-fileprivate let UsernamePasswordVCContainment = "UsernamePasswordVCContainment"
 
 fileprivate enum CredentialValidationResult {
     case valid(TogglAPITokenCredential, Profile)
@@ -31,7 +29,7 @@ fileprivate enum CredentialValidationResult {
     }
 }
 
-class LoginViewController: NSViewController, ViewControllerContaining, BindingTargetProvider {
+class LoginViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -45,14 +43,9 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
 
     // MARK: - Contained view controllers
 
-    private var emailPasswordViewController: EmailPasswordViewController!
-    private var apiTokenViewController: APITokenViewController!
-
-    func setContainedViewController(_ controller: NSViewController, containmentIdentifier: String?) {
-        if let vc = controller as? EmailPasswordViewController {
-            emailPasswordViewController = vc
-        } else if let vc = controller as? APITokenViewController {
-            apiTokenViewController = vc
+    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
+        if let loginMethodController = segue.destinationController as? LoginMethodViewController {
+            loginMethodController <~ SignalProducer(value: credentialFromUserEnteredData.bindingTarget)
         }
     }
 
@@ -64,59 +57,15 @@ class LoginViewController: NSViewController, ViewControllerContaining, BindingTa
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var errorField: NSTextField!
 
-    private let credentialFromToken = MutableProperty<TogglAPICredential?>(nil)
-    private let credentialFromEmail = MutableProperty<TogglAPICredential?>(nil)
-    private let selectedCredentialSource = MutableProperty<SignalProducer<TogglAPICredential?, NoError>?>(nil)
-    private lazy var credentialFromUserEnteredData = selectedCredentialSource.producer.skipNil().flatten(.latest)
-    private let displayTokenViewController = MutableProperty<Void>(())
-    private let displayEmailPasswordViewController = MutableProperty<Void>(())
-
 
     // MARK: - Wiring
+
+    private lazy var credentialFromUserEnteredData = MutableProperty<TogglAPICredential?>(nil)
 
     private let (lifetime, token) = Lifetime.make()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        initializeControllerContainment(containmentIdentifiers: [APITokenVCContainment, UsernamePasswordVCContainment])
-
-
-        // Connect interfaces of children controllers
-
-        apiTokenViewController <~ SignalProducer(
-            value: (credentialUpstream: credentialFromToken.bindingTarget,
-                    switchToEmailPasswordController: displayEmailPasswordViewController.bindingTarget))
-
-        emailPasswordViewController <~ SignalProducer(
-            value: (credentialUpstream: credentialFromEmail.bindingTarget,
-                    switchToTokenController: displayTokenViewController.bindingTarget))
-
-
-        // Set up the displaying of the right view controller
-
-        typealias SelectViewControllerInput = (NSViewController, SignalProducer<TogglAPICredential?, NoError>)
-
-        let selectedViewControllerInput = MutableProperty<SelectViewControllerInput?>(nil)
-        lifetime.observeEnded {
-            _ = selectedViewControllerInput
-        }
-        setupContainment(of: selectedViewControllerInput.producer.skipNil().map { $0.0 }, in: self, view: self.credentialsView)
-
-        self.loginButton.reactive.makeBindingTarget { button, controller in
-            if let keyViewsProvider = controller as? KeyViewsProviding {
-                keyViewsProvider.lastKeyView.nextKeyView = button
-            }
-        } <~ selectedViewControllerInput.producer.skipNil().map { $0.0 }
-
-        selectedCredentialSource <~ selectedViewControllerInput.producer.skipNil().map { $0.1 }
-
-
-        // Token controller is displayed by default, email+password upon request
-        // Take producer from displayTokenViewController and signal from displayEmailPasswordViewController
-        selectedViewControllerInput <~ displayTokenViewController.producer.map { [unowned self] _ -> SelectViewControllerInput in (self.apiTokenViewController, self.credentialFromToken.producer) }
-        selectedViewControllerInput <~ displayEmailPasswordViewController.signal.map { [unowned self] _ -> SelectViewControllerInput in (self.emailPasswordViewController, self.credentialFromEmail.producer) }
-
 
         // Set up validation of credentials entered by the user
         // (token or email+password, converted to token upon succesful validation)

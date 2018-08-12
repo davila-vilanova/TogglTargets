@@ -17,7 +17,7 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
 
     internal typealias Interface = (
         credentialUpstream: BindingTarget<TogglAPICredential?>,
-        switchToTokenController: BindingTarget<Void>)
+        switchToDirectTokenEntry: BindingTarget<Void>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -60,6 +60,6 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
 
         let validBindings = lastBinding.producer.skipNil()
         credentialUpstream.bindOnlyToLatest(validBindings.map { $0.credentialUpstream })
-        requestSwitchToTokenController.signal.bindOnlyToLatest(validBindings.map { $0.switchToTokenController })
+        requestSwitchToTokenController.signal.bindOnlyToLatest(validBindings.map { $0.switchToDirectTokenEntry })
     }
 }

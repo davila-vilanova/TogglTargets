@@ -7,9 +7,9 @@
 //
 
 import Cocoa
+import Result
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 class APITokenViewController: NSViewController, KeyViewsProviding, BindingTargetProvider {
 
@@ -17,7 +17,7 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
 
     internal typealias Interface = (
         credentialUpstream: BindingTarget<TogglAPICredential?>,
-        switchToEmailPasswordController: BindingTarget<Void>)
+        switchToEmailPasswordEntry: BindingTarget<Void>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -28,7 +28,7 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
     @IBOutlet weak var apiTokenField: NSTextField!
 
     @IBAction func switchToEmailPasswordEntry(_ sender: AnyObject) {
-        requestSwitchToEmailPasswordController <~ SignalProducer(value: ())
+        requestSwitchToEmailPasswordEntry <~ SignalProducer(value: ())
     }
 
 
@@ -41,7 +41,7 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
     // MARK: - Wiring
 
     private let (lifetime, token) = Lifetime.make()
-    private let requestSwitchToEmailPasswordController = MutableProperty<Void>(())
+    private let requestSwitchToEmailPasswordEntry = MutableProperty<Void>(())
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,7 +50,7 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
         let credentialUpstream = MutableProperty<TogglAPICredential?>(nil)
         let validBindings = lastBinding.producer.skipNil()
         credentialUpstream.bindOnlyToLatest(validBindings.map { $0.credentialUpstream })
-        requestSwitchToEmailPasswordController.signal.bindOnlyToLatest(validBindings.map { $0.switchToEmailPasswordController })
+        requestSwitchToEmailPasswordEntry.signal.bindOnlyToLatest(validBindings.map { $0.switchToEmailPasswordEntry })
 
 
         // Send upstream a credential based on the value displayed in the token field

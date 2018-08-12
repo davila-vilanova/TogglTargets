@@ -61,59 +61,66 @@
             <objects>
                 <viewController id="dvF-Cf-Qok" customClass="LoginViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kBz-yA-1xn">
-                        <rect key="frame" x="0.0" y="0.0" width="432" height="252"/>
+                        <rect key="frame" x="0.0" y="0.0" width="442" height="252"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Nal-sn-bL2">
-                                <rect key="frame" x="308" y="23" width="16" height="16"/>
-                            </progressIndicator>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eiy-Oe-NmO">
-                                <rect key="frame" x="326" y="13" width="92" height="32"/>
+                            <visualEffectView appearanceType="vibrantLight" blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="9Zg-G4-Fdd">
+                                <rect key="frame" x="0.0" y="0.0" width="442" height="252"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mMv-nO-59z">
+                                        <rect key="frame" x="18" y="23" width="4" height="14"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="V9H-BX-K2e">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" red="0.37055522200000002" green="0.37056469920000001" blue="0.37055957319999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eiy-Oe-NmO">
+                                        <rect key="frame" x="336" y="13" width="92" height="32"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="3gS-wa-TY4"/>
+                                        </constraints>
+                                        <buttonCell key="cell" type="push" title="log in" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2NB-LB-rhK">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="Wyf-6q-OM2">
+                                        <rect key="frame" x="20" y="61" width="402" height="171"/>
+                                        <connections>
+                                            <segue destination="jX8-Yi-zcf" kind="embed" id="DJi-w5-dma"/>
+                                        </connections>
+                                    </containerView>
+                                    <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Nal-sn-bL2">
+                                        <rect key="frame" x="318" y="23" width="16" height="16"/>
+                                    </progressIndicator>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="80" id="3gS-wa-TY4"/>
+                                    <constraint firstItem="Wyf-6q-OM2" firstAttribute="leading" secondItem="9Zg-G4-Fdd" secondAttribute="leading" constant="20" symbolic="YES" id="3kK-U6-rWN"/>
+                                    <constraint firstAttribute="bottom" secondItem="eiy-Oe-NmO" secondAttribute="bottom" constant="20" symbolic="YES" id="4SK-9L-H52"/>
+                                    <constraint firstItem="eiy-Oe-NmO" firstAttribute="centerY" secondItem="Nal-sn-bL2" secondAttribute="centerY" id="7s1-2B-nrz"/>
+                                    <constraint firstItem="eiy-Oe-NmO" firstAttribute="baseline" secondItem="mMv-nO-59z" secondAttribute="baseline" id="8XJ-ye-yPX"/>
+                                    <constraint firstAttribute="trailing" secondItem="Wyf-6q-OM2" secondAttribute="trailing" constant="20" symbolic="YES" id="K8m-aO-uYl"/>
+                                    <constraint firstItem="eiy-Oe-NmO" firstAttribute="leading" secondItem="Nal-sn-bL2" secondAttribute="trailing" constant="8" symbolic="YES" id="URD-mS-OVl"/>
+                                    <constraint firstItem="mMv-nO-59z" firstAttribute="leading" secondItem="9Zg-G4-Fdd" secondAttribute="leading" constant="20" symbolic="YES" id="dC2-iT-dvd"/>
+                                    <constraint firstItem="eiy-Oe-NmO" firstAttribute="top" secondItem="Wyf-6q-OM2" secondAttribute="bottom" constant="20" symbolic="YES" id="nAG-cT-KFw"/>
+                                    <constraint firstItem="Nal-sn-bL2" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="mMv-nO-59z" secondAttribute="trailing" constant="8" symbolic="YES" id="qu4-pa-wtC"/>
+                                    <constraint firstAttribute="trailing" secondItem="eiy-Oe-NmO" secondAttribute="trailing" constant="20" symbolic="YES" id="sX1-pZ-gUH"/>
+                                    <constraint firstItem="Wyf-6q-OM2" firstAttribute="top" secondItem="9Zg-G4-Fdd" secondAttribute="top" constant="20" symbolic="YES" id="wIf-vQ-WmV"/>
                                 </constraints>
-                                <buttonCell key="cell" type="push" title="log in" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2NB-LB-rhK">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </button>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="sK3-Rd-Chx">
-                                <rect key="frame" x="20" y="61" width="392" height="171"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="500" id="Uxr-w4-pdD"/>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="hJh-vE-gdJ"/>
-                                </constraints>
-                            </customView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mMv-nO-59z">
-                                <rect key="frame" x="18" y="23" width="4" height="14"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="V9H-BX-K2e">
-                                    <font key="font" metaFont="smallSystem"/>
-                                    <color key="textColor" red="0.37055522200000002" green="0.37056469920000001" blue="0.37055957319999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                            </visualEffectView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="sK3-Rd-Chx" firstAttribute="top" secondItem="kBz-yA-1xn" secondAttribute="top" constant="20" symbolic="YES" id="8RX-KL-Jj1"/>
-                            <constraint firstItem="eiy-Oe-NmO" firstAttribute="top" secondItem="sK3-Rd-Chx" secondAttribute="bottom" constant="20" symbolic="YES" id="9Kq-3G-IA2"/>
-                            <constraint firstItem="Nal-sn-bL2" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="mMv-nO-59z" secondAttribute="trailing" constant="8" symbolic="YES" id="9fb-8R-oaX"/>
-                            <constraint firstItem="eiy-Oe-NmO" firstAttribute="baseline" secondItem="mMv-nO-59z" secondAttribute="baseline" id="FuV-Gc-D95"/>
-                            <constraint firstAttribute="trailing" secondItem="sK3-Rd-Chx" secondAttribute="trailing" constant="20" symbolic="YES" id="RJo-wd-tyx"/>
-                            <constraint firstAttribute="trailing" secondItem="eiy-Oe-NmO" secondAttribute="trailing" constant="20" symbolic="YES" id="RrT-bP-K0c"/>
-                            <constraint firstItem="eiy-Oe-NmO" firstAttribute="centerY" secondItem="Nal-sn-bL2" secondAttribute="centerY" id="dBm-HA-n6p"/>
-                            <constraint firstItem="eiy-Oe-NmO" firstAttribute="leading" secondItem="Nal-sn-bL2" secondAttribute="trailing" constant="8" symbolic="YES" id="oXB-Oz-vMi"/>
-                            <constraint firstAttribute="bottom" secondItem="eiy-Oe-NmO" secondAttribute="bottom" constant="20" symbolic="YES" id="uRu-Fg-t6W"/>
-                            <constraint firstItem="mMv-nO-59z" firstAttribute="leading" secondItem="kBz-yA-1xn" secondAttribute="leading" constant="20" symbolic="YES" id="vBd-tp-tGJ"/>
-                            <constraint firstItem="sK3-Rd-Chx" firstAttribute="leading" secondItem="kBz-yA-1xn" secondAttribute="leading" constant="20" symbolic="YES" id="vI0-Xw-JLj"/>
+                            <constraint firstAttribute="bottom" secondItem="9Zg-G4-Fdd" secondAttribute="bottom" id="8NG-i3-Ifl"/>
+                            <constraint firstItem="9Zg-G4-Fdd" firstAttribute="leading" secondItem="kBz-yA-1xn" secondAttribute="leading" id="VKV-dc-MTm"/>
+                            <constraint firstAttribute="trailing" secondItem="9Zg-G4-Fdd" secondAttribute="trailing" id="chk-2S-Asc"/>
+                            <constraint firstItem="9Zg-G4-Fdd" firstAttribute="top" secondItem="kBz-yA-1xn" secondAttribute="top" id="xEJ-Za-sBa"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="credentialsView" destination="sK3-Rd-Chx" id="5uz-Z1-5c9"/>
                         <outlet property="errorField" destination="mMv-nO-59z" id="Lcn-Sx-S7r"/>
                         <outlet property="loginButton" destination="eiy-Oe-NmO" id="95g-ha-Nov"/>
                         <outlet property="progressIndicator" destination="Nal-sn-bL2" id="S2C-6U-edt"/>
-                        <segue destination="ySu-bD-nwW" kind="custom" identifier="APITokenVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="vRv-iS-xUS"/>
-                        <segue destination="Luk-hD-CZ9" kind="custom" identifier="UsernamePasswordVCContainment" customClass="ContainmentSegue" customModule="TogglGoals" customModuleProvider="target" id="tFo-Nr-Nwg"/>
                     </connections>
                 </viewController>
                 <customObject id="e6B-cn-KmC" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -218,7 +225,33 @@
                 </viewController>
                 <customObject id="yml-nP-qH9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1846" y="-430"/>
+            <point key="canvasLocation" x="2410" y="-450"/>
+        </scene>
+        <!--Login Method View Controller-->
+        <scene sceneID="xoZ-vv-uND">
+            <objects>
+                <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" id="jX8-Yi-zcf" customClass="LoginMethodViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabViewItems>
+                        <tabViewItem id="ws4-Wx-ukz"/>
+                        <tabViewItem id="4nN-CW-eog"/>
+                    </tabViewItems>
+                    <tabView key="tabView" type="noTabsNoBorder" id="HoX-PH-CfT">
+                        <rect key="frame" x="0.0" y="0.0" width="399" height="207"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <font key="font" metaFont="message"/>
+                        <connections>
+                            <outlet property="delegate" destination="jX8-Yi-zcf" id="zP0-KJ-iYD"/>
+                        </connections>
+                    </tabView>
+                    <connections>
+                        <outlet property="tabView" destination="HoX-PH-CfT" id="px3-WX-5bi"/>
+                        <segue destination="ySu-bD-nwW" kind="relationship" relationship="tabItems" id="fRQ-bU-yQt"/>
+                        <segue destination="Luk-hD-CZ9" kind="relationship" relationship="tabItems" id="aBj-c8-W43"/>
+                    </connections>
+                </tabViewController>
+                <customObject id="UU9-YL-6vd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1857" y="-540"/>
         </scene>
         <!--Logged In View Controller-->
         <scene sceneID="ysq-hC-rcl">
@@ -427,7 +460,7 @@
                 </viewController>
                 <customObject id="R61-f0-YKI" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1845" y="-638"/>
+            <point key="canvasLocation" x="2435" y="-659"/>
         </scene>
         <!--Goal Periods-->
         <scene sceneID="moW-Kh-FCL">
