@@ -38,8 +38,8 @@
 /* Class = "NSTextFieldCell"; title = "current period: "; ObjectID = "c7d-Vh-6bS"; */
 "c7d-Vh-6bS.title" = "current period: ";
 
-/* Class = "NSTabViewController"; title = "Account"; ObjectID = "S1b-Sg-bNf"; */
-"S1b-Sg-bNf.title" = "Account";
+/* Class = "NSViewController"; title = "Account"; ObjectID = "6yZ-h5-296"; */
+"6yZ-h5-296.title" = "Account";
 
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "g3l-v0-DaP"; */
 "g3l-v0-DaP.title" = "TogglGoals Preferences";

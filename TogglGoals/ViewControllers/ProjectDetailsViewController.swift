@@ -91,7 +91,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         return noGoal
     }()
 
-    private func setupCondicionalVisibilityOfContainedViews() {
+    private func setupConditionalVisibilityOfContainedViews() {
         let selectedGoalController = goalForCurrentProject.map { [unowned self] in
             $0 == nil ? self.noGoalViewController : self.goalReportViewController
         }
@@ -133,7 +133,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         lifetime += projectId.producer.sample(on: updateDeleteGoal.signal.filter { $0 == nil}.map { _ in () }).bindOnlyToLatest(lastValidBinding.map { $0.deleteGoal })
 
         setupLocalProjectDisplay()
-        setupCondicionalVisibilityOfContainedViews()
+        setupConditionalVisibilityOfContainedViews()
     }
 
     private func setupLocalProjectDisplay() {

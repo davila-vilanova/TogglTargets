@@ -12,7 +12,7 @@ import ReactiveCocoa
 import Result
 
 
-class AccountViewController: NSTabViewController, BindingTargetProvider {
+class AccountViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -27,48 +27,26 @@ class AccountViewController: NSTabViewController, BindingTargetProvider {
 
     // MARK: - Contained view controllers
 
-    private enum ContainedControllerType: Int {
-        case login = 0
-        case loggedIn = 1
+    private lazy var loginViewController: LoginViewController = {
+        let loginController = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("LoginViewController")) as! LoginViewController
+        loginController <~ lastBinding.producer.skipNil().map { (credentialUpstream: $0.resolvedCredential,
+                                                                 testURLSessionAction: $0.testURLSessionAction) }
+        addChildViewController(loginController)
+        return loginController
+    }()
 
-        static func from(_ controller: NSViewController) -> ContainedControllerType? {
-            if controller as? LoginViewController != nil {
-                return .login
-            } else if controller as? LoggedInViewController != nil {
-                return .loggedIn
-            } else {
-                return nil
-            }
-        }
-    }
-
-
-    private var connectedControllerTypes = Set<ContainedControllerType>()
-
-    override func tabView(_ tabView: NSTabView, willSelect tabViewItem: NSTabViewItem?) {
-        super.tabView(tabView, willSelect: tabViewItem)
-
-        guard let controller = tabViewItem?.viewController,
-            let type = ContainedControllerType.from(controller),
-            !connectedControllerTypes.contains(type) else {
-                return
-        }
-
-        connectedControllerTypes.insert(type)
-
+    private lazy var loggedInViewController: LoggedInViewController = {
+        let loggedInController = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("LoggedInViewController")) as! LoggedInViewController
         let validBindings = lastBinding.producer.skipNil()
+        let logOutRequested = MutableProperty<Void>(())
+        logOutRequested.signal.map { nil as TogglAPITokenCredential? }.bindOnlyToLatest(validBindings.map { $0.resolvedCredential })
+        loggedInController <~ validBindings.map { (existingCredential: $0.existingCredential,
+                                                   testURLSessionAction: $0.testURLSessionAction,
+                                                   logOut: logOutRequested.bindingTarget) }
+        return loggedInController
+    }()
 
-        if let loginController = controller as? LoginViewController {
-            loginController <~ validBindings.map { (credentialUpstream: $0.resolvedCredential,
-                                                        testURLSessionAction: $0.testURLSessionAction) }
-        } else if let loggedInController = controller as? LoggedInViewController {
-            let logOutRequested = MutableProperty<Void>(())
-            logOutRequested.signal.map { nil as TogglAPITokenCredential? }.bindOnlyToLatest(validBindings.map { $0.resolvedCredential })
-            loggedInController <~ validBindings.map { (existingCredential: $0.existingCredential,
-                                                       testURLSessionAction: $0.testURLSessionAction,
-                                                       logOut: logOutRequested.bindingTarget) }
-        }
-    }
+    @IBOutlet weak var containerView: NSView!
 
 
     // MARK: - Wiring
@@ -78,9 +56,11 @@ class AccountViewController: NSTabViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        reactive.makeBindingTarget {
-            $0.selectedTabViewItemIndex = $1 } <~ lastBinding.latestOutput { $0.existingCredential }
-                .map {
-                    ($0 == nil) ? ContainedControllerType.login.rawValue : ContainedControllerType.loggedIn.rawValue }
+        let selectedChildController = lastBinding.latestOutput { $0.existingCredential }
+            .map { $0 != nil }
+            .skipRepeats()
+            .map {[unowned self] hasCred in hasCred ? self.loggedInViewController : self.loginViewController }
+
+        containerView.uniqueSubview <~ selectedChildController.map { $0.view }
     }
 }

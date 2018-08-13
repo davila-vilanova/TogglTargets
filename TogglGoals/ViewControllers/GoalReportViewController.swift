@@ -108,7 +108,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider {
         }
     }
 
-    private func setupCondicionalVisibilityOfContainedViews() {
+    private func setupConditionalVisibilityOfContainedViews() {
         let isGoalReached = goalProgress.remainingTimeToGoal
             .map { (remainingTime: TimeInterval) -> Bool in
                 remainingTime == 0
@@ -163,7 +163,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider {
         wirePeriodDescription()
         setupComputeStrategyFromButton()
         connectPropertiesToGoalProgress()
-        setupCondicionalVisibilityOfContainedViews()
+        setupConditionalVisibilityOfContainedViews()
     }
 
     

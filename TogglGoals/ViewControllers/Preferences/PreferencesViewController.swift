@@ -33,18 +33,41 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
 
     // MARK: - Contained view controllers
 
-    private var accountViewController: AccountViewController {
-        return tabViewItem(.account).viewController as! AccountViewController
+    private enum ContainedControllerType: Int {
+        case account = 0
+        case goalPeriods = 1
+
+        static func from(_ controller: NSViewController) -> ContainedControllerType? {
+            if controller as? AccountViewController != nil {
+                return .account
+            } else if controller as? GoalPeriodsPreferencesViewController != nil {
+                return .goalPeriods
+            } else {
+                return nil
+            }
+        }
     }
 
-    private var goalPeriodsController: GoalPeriodsPreferencesViewController {
-        return tabViewItem(.goalPeriods).viewController as! GoalPeriodsPreferencesViewController
-    }
-    
-    private func tabViewItem(_ index: SplitItemIndex) -> NSTabViewItem {
-        return tabViewItems[index.rawValue]
-    }
+    private var connectedControllerTypes = Set<ContainedControllerType>()
 
+    override func tabView(_ tabView: NSTabView, willSelect tabViewItem: NSTabViewItem?) {
+        super.tabView(tabView, willSelect: tabViewItem)
+
+        guard let controller = tabViewItem?.viewController,
+            let type = ContainedControllerType.from(controller),
+            !connectedControllerTypes.contains(type) else {
+                return
+        }
+
+        connectedControllerTypes.insert(type)
+
+        let validBindings = lastBinding.producer.skipNil()
+        if let account = controller as? AccountViewController {
+            account <~ validBindings.map { ($0.existingCredential, $0.resolvedCredential, $0.testURLSessionAction) }
+        } else if let goalPeriods = controller as? GoalPeriodsPreferencesViewController {
+            goalPeriods <~ validBindings.map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference) }
+        }
+    }
 
     // MARK: -
 
@@ -54,33 +77,12 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        accountViewController <~ lastBinding.producer.skipNil()
-            .map { ($0.existingCredential, $0.resolvedCredential, $0.testURLSessionAction) }
-
-        goalPeriodsController <~ lastBinding.producer.skipNil()
-            .map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference) }
-
-        self.reactive.makeBindingTarget(on: UIScheduler()) { (tabController, itemIndex) in
-            tabController.selectedTabViewItemIndex = itemIndex
-            } <~ lastBinding.latestOutput { $0.displaySection }.skipNil().map { $0.correspondingTabViewItemIndex.rawValue }
-    }
-}
-
-/// Represents indexes of the tab view items managed by PreferencesViewController
-fileprivate enum SplitItemIndex: Int {
-    // It has the same cases as Section but these two enums could diverge in the future.
-    // SplitItemIndex is only about tabs. Section could eventually be more granular.
-    // Even if they don't diverge they mean different things.
-    case account = 0
-    case goalPeriods
-}
-
-
-fileprivate extension PreferencesViewController.Section {
-    var correspondingTabViewItemIndex: SplitItemIndex {
-        switch self {
-        case .account: return .account
-        case .goalPeriods: return .goalPeriods
-        }
+        self.reactive.makeBindingTarget(on: UIScheduler()) { $0.selectedTabViewItemIndex = $1 } <~ lastBinding.latestOutput { $0.displaySection }
+            .skipNil().map { section -> ContainedControllerType in
+                switch section {
+                case .account: return .account
+                case .goalPeriods: return .goalPeriods
+                }
+            }.map { $0.rawValue }
     }
 }

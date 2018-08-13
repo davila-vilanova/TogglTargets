@@ -52,7 +52,6 @@ class LoginViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Outlets
 
-    @IBOutlet weak var credentialsView: NSView!
     @IBOutlet weak var loginButton: NSButton!
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var errorField: NSTextField!
@@ -66,6 +65,7 @@ class LoginViewController: NSViewController, BindingTargetProvider {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+    
 
         // Set up validation of credentials entered by the user
         // (token or email+password, converted to token upon succesful validation)

@@ -133,7 +133,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let preferencesStoryboard = NSStoryboard(name: .init("Preferences"), bundle: nil)
         let windowController = preferencesStoryboard.instantiateInitialController() as! NSWindowController
         let window = windowController.window!
-        let preferencesController = (window.contentViewController as! PreferencesViewController)
+        let preferencesController = (window.contentViewController as! PreferencesViewControllerWrapper)
         let lifetime = preferencesController.lifetime
 
         let resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
@@ -144,7 +144,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             _ = updatedPeriodPreference
         }
 
-        preferencesController <~ SignalProducer<PreferencesViewController.Interface, NoError>(
+        preferencesController <~ SignalProducer<PreferencesViewControllerWrapper.Interface, NoError>(
             value: (displaySection: SignalProducer(value: prefsSection),
                     existingCredential: credentialStore.output.producer,
                     resolvedCredential: resolvedCredential.bindingTarget,

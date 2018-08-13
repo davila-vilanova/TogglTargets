@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class LoginMethodViewController: NSTabViewController, BindingTargetProvider {
+class LoginMethodViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -23,44 +23,54 @@ class LoginMethodViewController: NSTabViewController, BindingTargetProvider {
 
     // MARK: - Contained view controllers
 
-    private enum ContainedControllerType: Int {
-        case token = 0
-        case emailPassword = 1
+    private lazy var tokenViewController: APITokenViewController = {
+        let tokenController = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("APITokenViewController")) as! APITokenViewController
 
-        static func from(_ controller: NSViewController) -> ContainedControllerType? {
-            if controller as? APITokenViewController != nil {
-                return .token
-            } else if controller as? EmailPasswordViewController != nil {
-                return .emailPassword
-            } else {
-                return nil
-            }
-        }
+        tokenController <~ SignalProducer
+            .combineLatest(lastBinding.producer.skipNil(),
+                           SignalProducer(value: switchToEmailPasswordController.bindingTarget))
+            .map { (credentialUpstream: $0, switchToEmailPasswordEntry: $1) }
+
+        addChildViewController(tokenController)
+
+        return tokenController
+    }()
+
+    private lazy var emailPasswordViewController: EmailPasswordViewController = {
+        let emailPasswordController = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("EmailPasswordViewController")) as! EmailPasswordViewController
+
+        emailPasswordController <~ SignalProducer
+            .combineLatest(lastBinding.producer.skipNil(),
+                           SignalProducer(value: switchToTokenController.bindingTarget))
+            .map { (credentialUpstream: $0, switchToDirectTokenEntry: $1) }
+
+        addChildViewController(emailPasswordController)
+
+        return emailPasswordController
+    }()
+
+    private let switchToEmailPasswordController = MutableProperty(())
+    private let switchToTokenController = MutableProperty(())
+
+    private enum SelectedEntryMethod {
+        case token
+        case emailPassword
     }
+    private let selectedEntryMethod = MutableProperty(SelectedEntryMethod.token)
 
+    @IBOutlet weak var containerView: NSView!
 
-    private var connectedControllerTypes = Set<ContainedControllerType>()
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-    override func tabView(_ tabView: NSTabView, willSelect tabViewItem: NSTabViewItem?) {
-        super.tabView(tabView, willSelect: tabViewItem)
+        selectedEntryMethod <~ Signal.merge(switchToEmailPasswordController.signal.map { .emailPassword },
+                                            switchToTokenController.signal.map { .token })
 
-        guard let controller = tabViewItem?.viewController,
-            let type = ContainedControllerType.from(controller),
-            !connectedControllerTypes.contains(type) else {
-                return
-        }
-
-        connectedControllerTypes.insert(type)
-
-        let credentialsUpstream = lastBinding.producer.skipNil()
-        if let tokenController = controller as? APITokenViewController {
-            let switchToEmailPasswordController =
-                reactive.makeBindingTarget { (me, _: ()) in me.selectedTabViewItemIndex = ContainedControllerType.emailPassword.rawValue }
-            tokenController <~ credentialsUpstream.map { ($0, switchToEmailPasswordController) }
-        } else if let emailPasswordController = controller as? EmailPasswordViewController {
-            let switchToTokenController =
-                reactive.makeBindingTarget { (me, _: ()) in me.selectedTabViewItemIndex = ContainedControllerType.token.rawValue }
-            emailPasswordController <~ credentialsUpstream.map { ($0, switchToTokenController) }
+        containerView.uniqueSubview <~ selectedEntryMethod.producer.map { [unowned self] entryMethod in
+            switch entryMethod {
+            case .emailPassword: return self.emailPasswordViewController.view
+            case .token: return self.tokenViewController.view
+            }
         }
     }
 }
