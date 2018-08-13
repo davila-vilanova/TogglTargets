@@ -58,6 +58,8 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        _ = condensedActivityViewController
+        _ = detailedActivityViewController
         activitiesState.input <~ lastBinding.latestOutput { $0.modelRetrievalStatus }
     }
 }

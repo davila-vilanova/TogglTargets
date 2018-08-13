@@ -73,8 +73,8 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
         super.viewDidLoad()
 
         activityViewController <~ SignalProducer<ActivityViewController.Interface, NoError>(
-            value: (lastBinding.latestOutput { $0.modelRetrievalStatus },
-                    displayActivity.bindingTarget)
+            value: (modelRetrievalStatus: lastBinding.latestOutput { $0.modelRetrievalStatus },
+                    requestDisplay: displayActivity.bindingTarget)
         )
 
         // Duplicated to allow independent animations
@@ -94,7 +94,7 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
             }, completionHandler: nil)
         }
 
-        showActivity <~ displayActivity.producer.skipRepeats().filter{ $0 }.map { _ in () }
-        hideActivity <~ displayActivity.producer.skipRepeats().filter{ !$0 }.map { _ in () }
+        showActivity <~ displayActivity.signal.skipRepeats().filter{ $0 }.map { _ in () }
+        hideActivity <~ displayActivity.signal.skipRepeats().filter{ !$0 }.map { _ in () }
     }
 }
