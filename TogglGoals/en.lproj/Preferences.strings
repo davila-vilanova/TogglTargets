@@ -42,7 +42,7 @@
 "S1b-Sg-bNf.title" = "Account";
 
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "g3l-v0-DaP"; */
-"g3l-v0-DaP.title" = "Preferences";
+"g3l-v0-DaP.title" = "TogglGoals Preferences";
 
 /* Class = "NSTextFieldCell"; title = "email address"; ObjectID = "ie6-ix-81j"; */
 "ie6-ix-81j.title" = "email address";
