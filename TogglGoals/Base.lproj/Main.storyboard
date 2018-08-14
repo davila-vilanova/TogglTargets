@@ -37,7 +37,7 @@
                 <splitViewController id="ak2-zI-3MP" customClass="ProjectsMasterDetailController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <splitViewItems>
                         <splitViewItem id="ehc-kE-Cok"/>
-                        <splitViewItem id="8eM-12-qjx"/>
+                        <splitViewItem id="PCV-aA-EUl"/>
                     </splitViewItems>
                     <splitView key="splitView" dividerStyle="thin" vertical="YES" id="Tyn-3W-UrQ">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
@@ -49,7 +49,7 @@
                     <connections>
                         <outlet property="splitView" destination="Tyn-3W-UrQ" id="uTn-6r-1OP"/>
                         <segue destination="nBn-WS-EwZ" kind="relationship" relationship="splitItems" id="EQ3-xV-1h9"/>
-                        <segue destination="aD9-8A-cJc" kind="relationship" relationship="splitItems" id="rHU-I5-cOt"/>
+                        <segue destination="b9w-hi-JZl" kind="relationship" relationship="splitItems" id="MqV-9N-9QX"/>
                     </connections>
                 </splitViewController>
                 <customObject id="qEG-eu-hIH" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -138,6 +138,33 @@
                 <customObject id="ytj-7m-2MR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="154" y="1740"/>
+        </scene>
+        <!--Selection Detail View Controller-->
+        <scene sceneID="tDJ-Pw-hGS">
+            <objects>
+                <viewController id="b9w-hi-JZl" customClass="SelectionDetailViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="gqT-EK-tTo">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Xdu-d1-ATF">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="Xdu-d1-ATF" secondAttribute="bottom" id="R63-xc-NI7"/>
+                            <constraint firstItem="Xdu-d1-ATF" firstAttribute="leading" secondItem="gqT-EK-tTo" secondAttribute="leading" id="Zvc-Lc-e7g"/>
+                            <constraint firstItem="Xdu-d1-ATF" firstAttribute="top" secondItem="gqT-EK-tTo" secondAttribute="top" id="dlM-K0-Nal"/>
+                            <constraint firstAttribute="trailing" secondItem="Xdu-d1-ATF" secondAttribute="trailing" id="yaS-a2-Bbd"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="containerView" destination="Xdu-d1-ATF" id="gbg-4G-nQd"/>
+                    </connections>
+                </viewController>
+                <customObject id="AfS-dh-T6s" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="305" y="1139"/>
         </scene>
         <!--Condensed Activity View Controller-->
         <scene sceneID="NSH-HH-SX2">
@@ -311,33 +338,6 @@
                 <customObject id="sX4-zk-LDV" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1064" y="1337"/>
-        </scene>
-        <!--Selection Detail View Controller-->
-        <scene sceneID="JJP-y5-SB8">
-            <objects>
-                <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" id="aD9-8A-cJc" customClass="SelectionDetailViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabViewItems>
-                        <tabViewItem id="1sm-ZA-f3G"/>
-                        <tabViewItem id="qTy-Nw-Z7W"/>
-                    </tabViewItems>
-                    <viewControllerTransitionOptions key="transitionOptions" allowUserInteraction="YES"/>
-                    <tabView key="tabView" type="noTabsNoBorder" id="rsy-nD-VKV">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="297"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <font key="font" metaFont="message"/>
-                        <connections>
-                            <outlet property="delegate" destination="aD9-8A-cJc" id="cFj-jr-haf"/>
-                        </connections>
-                    </tabView>
-                    <connections>
-                        <outlet property="tabView" destination="rsy-nD-VKV" id="mKB-np-Eyd"/>
-                        <segue destination="iZ6-o4-gFV" kind="relationship" relationship="tabItems" id="c2W-Is-nCb"/>
-                        <segue destination="zvs-ll-aji" kind="relationship" relationship="tabItems" id="L8e-ES-4EZ"/>
-                    </connections>
-                </tabViewController>
-                <customObject id="vNZ-m4-wSZ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="357" y="1139"/>
         </scene>
         <!--Goal View Controller-->
         <scene sceneID="VH6-GV-Mqt">
@@ -919,7 +919,7 @@
         <!--Empty Selection View Controller-->
         <scene sceneID="hIu-gf-ZQy">
             <objects>
-                <viewController id="iZ6-o4-gFV" customClass="EmptySelectionViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EmptySelectionViewController" id="iZ6-o4-gFV" customClass="EmptySelectionViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="MjY-gb-2eL">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>

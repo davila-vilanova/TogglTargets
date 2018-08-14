@@ -13,7 +13,7 @@ import Result
 fileprivate let ProjectDetailsVCContainment = "ProjectDetailsVCContainment"
 fileprivate let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
 
-class SelectionDetailViewController: NSTabViewController, BindingTargetProvider {
+class SelectionDetailViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -52,52 +52,36 @@ class SelectionDetailViewController: NSTabViewController, BindingTargetProvider 
 
     // MARK: - Contained view controllers
 
-    private enum ContainedControllerType: Int {
-        case projectDetails = 1
-        case emptySelection = 0
+    private lazy var projectDetailsViewController: ProjectDetailsViewController = {
+        let details = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("ProjectDetailsViewController")) as! ProjectDetailsViewController
 
-        static func from(_ controller: NSViewController) -> ContainedControllerType? {
-            if controller as? ProjectDetailsViewController != nil {
-                return .projectDetails
-            } else if controller as? EmptySelectionViewController != nil {
-                return .emptySelection
-            } else {
-                return nil
-            }
-        }
-    }
-
-    private var connectedControllerTypes = Set<ContainedControllerType>()
-
-    override func tabView(_ tabView: NSTabView, willSelect tabViewItem: NSTabViewItem?) {
-        super.tabView(tabView, willSelect: tabViewItem)
-
-        guard let controller = tabViewItem?.viewController,
-        let type = ContainedControllerType.from(controller),
-        !connectedControllerTypes.contains(type) else {
-            return
+        details <~ SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
+                                                lastBinding.producer.skipNil())
+            .map {
+                selectedProjectProducer, binding in
+                (selectedProjectProducer,
+                 binding.currentDate,
+                 binding.calendar,
+                 binding.periodPreference,
+                 binding.runningEntry,
+                 binding.readGoal,
+                 binding.writeGoal,
+                 binding.deleteGoal,
+                 binding.readReport)
         }
 
-        connectedControllerTypes.insert(type)
+        addChildViewController(details)
 
-        if let details = controller as? ProjectDetailsViewController {
-            details <~ SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
-                                                    lastBinding.producer.skipNil())
-                .map {
-                    selectedProjectProducer, binding in
-                    (selectedProjectProducer,
-                     binding.currentDate,
-                     binding.calendar,
-                     binding.periodPreference,
-                     binding.runningEntry,
-                     binding.readGoal,
-                     binding.writeGoal,
-                     binding.deleteGoal,
-                     binding.readReport)
-            }
-        }
-    }
+        return details
+    }()
 
+    private lazy var emptySelectionViewController: EmptySelectionViewController = {
+        let empty = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("EmptySelectionViewController")) as! EmptySelectionViewController
+        addChildViewController(empty)
+        return empty
+    }()
+
+    @IBOutlet weak var containerView: NSView!
 
     // MARK: -
 
@@ -114,8 +98,13 @@ class SelectionDetailViewController: NSTabViewController, BindingTargetProvider 
             _ = debounceScheduler
         }
 
-        reactive.makeBindingTarget { $0.selectedTabViewItemIndex = $1 } <~ selectedProjectID
-            .map { ($0 != nil) ? ContainedControllerType.projectDetails.rawValue : ContainedControllerType.emptySelection.rawValue }
-            .producer.debounce(0.1, on: debounceScheduler)
+        let selectedViewController = selectedProjectID
+            .producer
+            .map { $0 != nil }
+            .skipRepeats()
+            .debounce(0.1, on: debounceScheduler)
+            .map { [unowned self] projectSelected in projectSelected ? self.projectDetailsViewController : self.emptySelectionViewController }
+
+        containerView.uniqueSubview <~ selectedViewController.map { $0.view }
     }
 }
