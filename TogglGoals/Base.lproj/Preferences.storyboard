@@ -172,7 +172,7 @@
                                 <rect key="frame" x="-2" y="88" width="369" height="42"/>
                                 <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" id="wPd-OZ-akN">
                                     <font key="font" metaFont="smallSystem"/>
-                                    <string key="title">Your email address and password will be used to retrieve an API token for accessing your default workspace, projects and reports from toggl</string>
+                                    <string key="title">Your email address and password will be used to retrieve an API token for accessing your default workspace, projects and reports from Toggl</string>
                                     <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -358,7 +358,7 @@
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Zmy-Gi-epx">
                                 <rect key="frame" x="-2" y="56" width="420" height="14"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="You can find your API token in your profile settings page in the toggl web app" id="KI3-o6-5P0">
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="You can find your API token in your profile settings page in the Toggl web app" id="KI3-o6-5P0">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

@@ -23,8 +23,8 @@
 /* Class = "NSButtonCell"; title = "Log Out"; ObjectID = "I6L-rN-tXA"; */
 "I6L-rN-tXA.title" = "Desconectar";
 
-/* Class = "NSTextFieldCell"; title = "You can find your API token in your profile settings page in the toggl web app"; ObjectID = "KI3-o6-5P0"; */
-"KI3-o6-5P0.title" = "Puedes encontrar tu API token en la página de tu perfil en el sitio web de toggl";
+/* Class = "NSTextFieldCell"; title = "You can find your API token in your profile settings page in the Toggl web app"; ObjectID = "KI3-o6-5P0"; */
+"KI3-o6-5P0.title" = "Puedes encontrar tu API token en la página de tu perfil en el sitio web de Toggl";
 
 /* Class = "NSButtonCell"; title = "fetch my API token for me"; ObjectID = "SsQ-mn-B1j"; */
 "SsQ-mn-B1j.title" = "averiguar my API token automaticamente";
@@ -53,8 +53,8 @@
 /* Class = "NSButtonCell"; title = "Retry"; ObjectID = "vEN-Rc-s8M"; */
 "vEN-Rc-s8M.title" = "Intentar de nuevo";
 
-/* Class = "NSTextFieldCell"; title = "Your email address and password will be used to retrieve an API token for accessing your workspace, projects and reports from toggl"; ObjectID = "wPd-OZ-akN"; */
-"wPd-OZ-akN.title" = "Tu dirección de email y tu contraseña se emplearán para obtener un API token para acceder a tus datos en toggl";
+/* Class = "NSTextFieldCell"; title = "Your email address and password will be used to retrieve an API token for accessing your workspace, projects and reports from Toggl"; ObjectID = "wPd-OZ-akN"; */
+"wPd-OZ-akN.title" = "Tu dirección de email y tu contraseña se emplearán para obtener un API token para acceder a tus datos en Toggl";
 
 /* Class = "NSTextFieldCell"; title = "starting on"; ObjectID = "yo1-u9-dge"; */
 "yo1-u9-dge.title" = "empezando en";
