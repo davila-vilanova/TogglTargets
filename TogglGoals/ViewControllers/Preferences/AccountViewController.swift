@@ -59,6 +59,7 @@ class AccountViewController: NSViewController, BindingTargetProvider {
         let selectedChildController = lastBinding.latestOutput { $0.existingCredential }
             .map { $0 != nil }
             .skipRepeats()
+            .observe(on: UIScheduler())
             .map {[unowned self] hasCred in hasCred ? self.loggedInViewController : self.loginViewController }
 
         containerView.uniqueSubview <~ selectedChildController.map { $0.view }

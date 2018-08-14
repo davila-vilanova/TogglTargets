@@ -114,9 +114,12 @@ class GoalReportViewController: NSViewController, BindingTargetProvider {
                 remainingTime == 0
         }
 
-        let selectedGoalStrategyController = isGoalReached.producer.map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
-            return isGoalReached ? goalReachedViewController : goalStrategyViewController
-            }
+        let selectedGoalStrategyController = isGoalReached
+            .producer
+            .observe(on: UIScheduler())
+            .map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
+                return isGoalReached ? goalReachedViewController : goalStrategyViewController
+        }
 
         goalStrategyView.uniqueSubview <~ selectedGoalStrategyController.map { $0.view }.skipRepeats()
     }

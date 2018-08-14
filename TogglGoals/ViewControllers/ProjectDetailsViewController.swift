@@ -92,7 +92,9 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     }()
 
     private func setupConditionalVisibilityOfContainedViews() {
-        let selectedGoalController = goalForCurrentProject.map { [unowned self] in
+        let selectedGoalController = goalForCurrentProject
+            .observe(on: UIScheduler())
+            .map { [unowned self] in
             $0 == nil ? self.noGoalViewController : self.goalReportViewController
         }
         goalReportView.uniqueSubview <~ selectedGoalController.map { $0.view }.skipRepeats()

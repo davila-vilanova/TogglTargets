@@ -66,11 +66,14 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
         selectedEntryMethod <~ Signal.merge(switchToEmailPasswordController.signal.map { .emailPassword },
                                             switchToTokenController.signal.map { .token })
 
-        containerView.uniqueSubview <~ selectedEntryMethod.producer.map { [unowned self] entryMethod in
-            switch entryMethod {
-            case .emailPassword: return self.emailPasswordViewController.view
-            case .token: return self.tokenViewController.view
-            }
+        containerView.uniqueSubview <~ selectedEntryMethod
+            .producer
+            .observe(on: UIScheduler())
+            .map { [unowned self] entryMethod in
+                switch entryMethod {
+                case .emailPassword: return self.emailPasswordViewController.view
+                case .token: return self.tokenViewController.view
+                }
         }
     }
 }

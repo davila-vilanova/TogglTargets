@@ -103,6 +103,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
             .map { $0 != nil }
             .skipRepeats()
             .debounce(0.1, on: debounceScheduler)
+            .observe(on: UIScheduler())
             .map { [unowned self] projectSelected in projectSelected ? self.projectDetailsViewController : self.emptySelectionViewController }
 
         containerView.uniqueSubview <~ selectedViewController.map { $0.view }
