@@ -31,9 +31,11 @@ class GoalViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Outlets
 
-    @IBOutlet weak var hoursGoalField: NSTextField!
-    @IBOutlet weak var hoursGoalFormatter: NumberFormatter!
-    @IBOutlet weak var weekWorkdaysControl: NSSegmentedControl!
+    @IBOutlet weak var hoursTargetLabel: NSTextField!
+    @IBOutlet weak var hoursTargetField: NSTextField!
+    @IBOutlet weak var hoursTargetFormatter: NumberFormatter!
+    @IBOutlet weak var activeWeekdaysLabel: NSTextField!
+    @IBOutlet weak var activeWeekdaysControl: NSSegmentedControl!
     @IBOutlet weak var deleteGoalButton: NSButton!
 
 
@@ -43,7 +45,7 @@ class GoalViewController: NSViewController, BindingTargetProvider {
 
     /// Populates the active weekdays control with short weekday symbols
     /// taken from the received Calendar values.
-    private lazy var weekdaySegments = weekWorkdaysControl.reactive
+    private lazy var weekdaySegments = activeWeekdaysControl.reactive
         .makeBindingTarget(on: UIScheduler()) { (control: NSSegmentedControl, calendar: Calendar) in
             let daySymbols = calendar.veryShortWeekdaySymbols
             let dayCount = daySymbols.count
@@ -69,19 +71,13 @@ class GoalViewController: NSViewController, BindingTargetProvider {
         // Emits non nil goal values coming through the interface
         let nonNilGoal = goal.producer.skipNil()
 
-        // Enable controls only if goal exists
-        let goalExists = goal.producer.map { $0 != nil }.skipRepeats()
-        for control in [hoursGoalField, weekWorkdaysControl, deleteGoalButton] as [NSControl] {
-            control.reactive.isEnabled <~ goalExists
-        }
-
         // Bind goal values to the values displayed in the controls
-        hoursGoalField.reactive.text <~ nonNilGoal.map { $0.hoursTarget }
+        hoursTargetField.reactive.text <~ nonNilGoal.map { $0.hoursTarget }
             .map(NSNumber.init)
-            .map(hoursGoalFormatter.string(from:))
+            .map(hoursTargetFormatter.string(from:))
             .map { $0 ?? "" }
 
-        weekWorkdaysControl.reactive
+        activeWeekdaysControl.reactive
             .makeBindingTarget(on: UIScheduler()) { $0.setSelected($1.0, forSegment: $1.1) }
             <~ Property(value: Weekday.allDaysOrdered).producer
                 .sample(on: nonNilGoal.map { _ in () })
@@ -91,8 +87,8 @@ class GoalViewController: NSViewController, BindingTargetProvider {
                 .map { ($1.isSelected($0), $0.indexInGregorianCalendarSymbolsArray) }
 
         // Bind UI to output
-        let goalFromEditedHours = hoursGoalField.reactive.stringValues
-            .map { [weak formatter = hoursGoalFormatter] (text) -> HoursTargetType? in
+        let goalFromEditedHours = hoursTargetField.reactive.stringValues
+            .map { [weak formatter = hoursTargetFormatter] (text) -> HoursTargetType? in
                 formatter?.number(from: text)?.intValue
             }
             .skipNil()
@@ -100,9 +96,9 @@ class GoalViewController: NSViewController, BindingTargetProvider {
             .withLatest(from: nonNilGoal)
             .map { Goal(for: $1.projectId, hoursTarget: $0, workWeekdays: $1.workWeekdays) }
 
-        let goalFromEditedActiveWeekdays = weekWorkdaysControl.reactive.selectedSegmentIndexes
-            .map { [weak weekWorkdaysControl] (_) -> WeekdaySelection? in
-                guard let control = weekWorkdaysControl else {
+        let goalFromEditedActiveWeekdays = activeWeekdaysControl.reactive.selectedSegmentIndexes
+            .map { [weak activeWeekdaysControl] (_) -> WeekdaySelection? in
+                guard let control = activeWeekdaysControl else {
                     return nil
                 }
                 var newSelection = WeekdaySelection.empty
@@ -128,6 +124,12 @@ class GoalViewController: NSViewController, BindingTargetProvider {
         let deletedGoal = deleteGoal.values.map { nil as Goal? }.producer
 
         userUpdates <~ SignalProducer.merge(editedGoal.map { Optional($0) }, deletedGoal)
+
+        // Enable controls only if goal exists
+        let goalExists = goal.producer.map { $0 != nil }.skipRepeats()
+        for control in [hoursTargetLabel, hoursTargetField, activeWeekdaysLabel, activeWeekdaysControl, deleteGoalButton] as [NSControl] {
+            control.reactive.isEnabled <~ goalExists
+        }
     }
 }
 

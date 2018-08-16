@@ -428,10 +428,12 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activeWeekdaysControl" destination="xET-i9-eZV" id="PTn-vG-Jd5"/>
+                        <outlet property="activeWeekdaysLabel" destination="0IY-al-1Yv" id="gcl-Bh-ojb"/>
                         <outlet property="deleteGoalButton" destination="Hu7-xe-b5d" id="xnR-O7-WEf"/>
-                        <outlet property="hoursGoalField" destination="CBy-PQ-RVY" id="aH3-g3-aNr"/>
-                        <outlet property="hoursGoalFormatter" destination="Mc7-ow-3HZ" id="LlJ-68-FpM"/>
-                        <outlet property="weekWorkdaysControl" destination="xET-i9-eZV" id="PTn-vG-Jd5"/>
+                        <outlet property="hoursTargetField" destination="CBy-PQ-RVY" id="aH3-g3-aNr"/>
+                        <outlet property="hoursTargetFormatter" destination="Mc7-ow-3HZ" id="LlJ-68-FpM"/>
+                        <outlet property="hoursTargetLabel" destination="vdS-WN-Sq2" id="87N-qS-eox"/>
                     </connections>
                 </viewController>
                 <customObject id="2PQ-kn-80x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
