@@ -283,7 +283,7 @@
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="k1G-X5-OO2">
                                         <rect key="frame" x="20" y="374" width="482" height="5"/>
                                     </box>
-                                    <box title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Hn0-YD-qa8">
+                                    <box titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Hn0-YD-qa8">
                                         <rect key="frame" x="17" y="316" width="488" height="54"/>
                                         <view key="contentView" id="n5a-VU-s3O">
                                             <rect key="frame" x="2" y="2" width="484" height="50"/>

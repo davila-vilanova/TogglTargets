@@ -144,7 +144,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider {
     private lazy var periodDescriptionFormatter = calendar.producer.map { cal -> DateFormatter in
         let f = DateFormatter()
         f.calendar = cal
-        f.dateStyle = .short
+        f.dateStyle = .medium
         f.timeStyle = .none
         return f
     }
