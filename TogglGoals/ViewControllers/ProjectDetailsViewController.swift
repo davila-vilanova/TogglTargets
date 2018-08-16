@@ -120,6 +120,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var projectName: NSTextField!
     @IBOutlet weak var goalReportView: NSView!
 
+
     //  MARK: -
     
     override func viewDidLoad() {

@@ -140,6 +140,25 @@
                         </items>
                     </menu>
                 </menuItem>
+                <menuItem title="Goal" id="5SZ-Ad-K37">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Goal" id="g5x-3p-Tzt">
+                        <items>
+                            <menuItem title="Create Goal" keyEquivalent="+" id="Mi4-ht-vZX">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="createGoal:" target="-1" id="1ai-Yl-ZBN"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Delete Goal" keyEquivalent="-" id="Ah4-MX-Odc">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="deleteGoal:" target="-1" id="vFM-6S-yEZ"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
                 <menuItem title="View" id="qGa-Wr-X9q">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="View" id="TbP-c1-eOl">

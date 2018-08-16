@@ -7,11 +7,16 @@
 //
 
 import Cocoa
+import ReactiveSwift
 
 class ProjectsMasterDetailWindowController: NSWindowController {
 
     override func windowDidLoad() {
         super.windowDidLoad()
+
+        reactive.lifetime += window!.reactive.producer(forKeyPath: "firstResponder").startWithValues({
+            print ("first responder: \(($0 != nil) ? String(describing: $0!) : "null")")
+        })
     }
 
 }
