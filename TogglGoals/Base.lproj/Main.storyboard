@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
@@ -281,12 +280,6 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="KmV-P0-dzM" customClass="ColoredView" customModule="TogglGoals" customModuleProvider="target">
-                                        <rect key="frame" x="473" y="385" width="29" height="19"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="KmV-P0-dzM" secondAttribute="height" multiplier="17:11" id="DYr-h3-3UJ"/>
-                                        </constraints>
-                                    </customView>
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="k1G-X5-OO2">
                                         <rect key="frame" x="20" y="374" width="482" height="5"/>
                                     </box>
@@ -308,16 +301,12 @@
                                     <constraint firstAttribute="trailing" secondItem="HTW-ic-thd" secondAttribute="trailing" constant="20" symbolic="YES" id="1PZ-ml-z9v"/>
                                     <constraint firstItem="HTW-ic-thd" firstAttribute="leading" secondItem="5LN-R4-Z6o" secondAttribute="leading" constant="20" symbolic="YES" id="81W-qy-RwW"/>
                                     <constraint firstAttribute="trailing" secondItem="OOB-9P-pYC" secondAttribute="trailing" constant="20" symbolic="YES" id="8uh-Xy-B86"/>
-                                    <constraint firstItem="k1G-X5-OO2" firstAttribute="top" secondItem="KmV-P0-dzM" secondAttribute="bottom" constant="8" symbolic="YES" id="9vW-iH-R7H"/>
-                                    <constraint firstItem="KmV-P0-dzM" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ifD-zz-iY5" secondAttribute="trailing" constant="8" symbolic="YES" id="EMo-Ju-c2z"/>
-                                    <constraint firstItem="KmV-P0-dzM" firstAttribute="height" secondItem="ifD-zz-iY5" secondAttribute="height" id="FxG-R3-rrl"/>
                                     <constraint firstItem="k1G-X5-OO2" firstAttribute="leading" secondItem="5LN-R4-Z6o" secondAttribute="leading" constant="20" symbolic="YES" id="JLQ-UE-Kt8"/>
                                     <constraint firstItem="ifD-zz-iY5" firstAttribute="top" secondItem="5LN-R4-Z6o" secondAttribute="top" constant="20" symbolic="YES" id="JUM-fu-Alg"/>
                                     <constraint firstAttribute="bottom" secondItem="OOB-9P-pYC" secondAttribute="bottom" constant="20" symbolic="YES" id="X6t-Lm-YqV"/>
+                                    <constraint firstItem="k1G-X5-OO2" firstAttribute="top" secondItem="ifD-zz-iY5" secondAttribute="bottom" constant="8" id="Xxu-ZL-bXZ"/>
                                     <constraint firstItem="ifD-zz-iY5" firstAttribute="leading" secondItem="5LN-R4-Z6o" secondAttribute="leading" constant="20" symbolic="YES" id="Y4X-rM-bRE"/>
                                     <constraint firstAttribute="trailing" secondItem="k1G-X5-OO2" secondAttribute="trailing" constant="20" symbolic="YES" id="cH2-At-1p4"/>
-                                    <constraint firstAttribute="trailing" secondItem="KmV-P0-dzM" secondAttribute="trailing" constant="20" symbolic="YES" id="clH-oA-RTh"/>
-                                    <constraint firstItem="KmV-P0-dzM" firstAttribute="top" secondItem="5LN-R4-Z6o" secondAttribute="top" constant="20" symbolic="YES" id="hE5-Fa-qrW"/>
                                     <constraint firstItem="OOB-9P-pYC" firstAttribute="top" secondItem="HTW-ic-thd" secondAttribute="bottom" constant="8" symbolic="YES" id="lfF-sT-rEC"/>
                                     <constraint firstItem="HTW-ic-thd" firstAttribute="top" secondItem="k1G-X5-OO2" secondAttribute="bottom" constant="8" symbolic="YES" id="nqp-fM-wMB"/>
                                 </constraints>
