@@ -41,7 +41,7 @@ class VerticalListLayout: NSCollectionViewFlowLayout {
     }
 
     override func finalLayoutAttributesForDisappearingSupplementaryElement(ofKind elementKind: NSCollectionView.SupplementaryElementKind, at elementIndexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
-        return tweak(finalLayoutAttributesForDisappearingSupplementaryElement(ofKind: elementKind, at: elementIndexPath))
+        return tweak(super.finalLayoutAttributesForDisappearingSupplementaryElement(ofKind: elementKind, at: elementIndexPath))
     }
 
     private func tweak(_ layoutAttributes: NSCollectionViewLayoutAttributes?) -> NSCollectionViewLayoutAttributes? {
