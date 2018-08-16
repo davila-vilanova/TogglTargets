@@ -11,6 +11,12 @@ import Cocoa
 class ProjectCollectionViewHeader: NSView, NSCollectionViewElement {
     static let TitleLabelIdentifier = NSUserInterfaceItemIdentifier("titleLabel")
 
+    required init?(coder decoder: NSCoder) {
+        super.init(coder: decoder)
+        wantsLayer = true
+        layer?.backgroundColor = NSColor.textBackgroundColor.cgColor
+    }
+
     var title: String = "" {
         didSet {
             displayTitle()

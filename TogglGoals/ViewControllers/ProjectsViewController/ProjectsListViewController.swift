@@ -128,6 +128,10 @@ override func viewDidLoad() {
         projectsCollectionView.register(headerNib,
                                         forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
                                         withIdentifier: SectionHeaderIdentifier)
+
+        let layout = projectsCollectionView.collectionViewLayout as! VerticalListLayout
+        layout.headerReferenceSize = CGSize(width: projectsCollectionView.bounds.width, height: 42)
+        layout.sectionHeadersPinToVisibleBounds = true
     }
 
     /// The lifetime (and lifetime token) associated to this instance's binding targets.
