@@ -67,8 +67,6 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
 
     // MARK: -
 
-    private let (lifetime, token) = Lifetime.make()
-
     override func viewDidLoad() {
         super.viewDidLoad()
 

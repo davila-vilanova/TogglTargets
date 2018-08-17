@@ -22,7 +22,6 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
 
     private let wantsExtendedDisplay = MutableProperty(false)
 
-    private let (lifetime, token) = Lifetime.make()
     private let activitiesState = ActivitiesState()
 
     @IBOutlet weak var rootStackView: NSStackView!
@@ -46,7 +45,7 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
             SignalProducer.merge(activitiesState.output.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
                                  wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
         let wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
-        lifetime += wantsDisplay.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.requestDisplay })
+        reactive.lifetime += wantsDisplay.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.requestDisplay })
 
         detailed <~ SignalProducer(value: statuses)
         detailed.view.reactive.makeBindingTarget(on: UIScheduler(), { $0.isHidden = $1 })

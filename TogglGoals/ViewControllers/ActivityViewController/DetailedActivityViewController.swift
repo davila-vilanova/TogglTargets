@@ -59,9 +59,8 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
         setActivityController(nil, for: activity)
     }
 
-    private let (lifetime, token) = Lifetime.make()
     private lazy var updateActivities =
-        BindingTarget(on: UIScheduler(), lifetime: lifetime) { [weak self] in
+        BindingTarget(on: UIScheduler(), lifetime: reactive.lifetime) { [weak self] in
             self?.updateActivitiesState(from: $0, to: $1)
     }
 

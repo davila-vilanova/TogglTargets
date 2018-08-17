@@ -134,7 +134,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let windowController = preferencesStoryboard.instantiateInitialController() as! NSWindowController
         let window = windowController.window!
         let preferencesController = (window.contentViewController as! PreferencesViewControllerWrapper)
-        let lifetime = preferencesController.lifetime
+        let lifetime = preferencesController.reactive.lifetime
 
         let resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
         let updatedPeriodPreference = MutableProperty<PeriodPreference?>(nil)

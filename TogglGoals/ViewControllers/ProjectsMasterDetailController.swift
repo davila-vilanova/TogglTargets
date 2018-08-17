@@ -28,7 +28,6 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         readReport: ReadReport)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
-    private let (lifetime, token) = Lifetime.make()
 
     internal var bindingTarget: BindingTarget<ProjectsMasterDetailController.Interface?> { return lastBinding.bindingTarget }
 
@@ -60,7 +59,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
         let selectedProjectId = MutableProperty<ProjectID?>(nil)
 
-        lifetime.observeEnded {
+        reactive.lifetime.observeEnded {
             _ = selectedProjectId
         }
 

@@ -11,7 +11,6 @@ import Result
 import ReactiveSwift
 
 class CondensedActivityViewController: NSViewController, BindingTargetProvider {
-    private let (lifetime, token) = Lifetime.make()
 
     private let requestExpandDetails = MutableProperty(false)
 

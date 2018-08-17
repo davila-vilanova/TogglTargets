@@ -71,9 +71,6 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
 
     // MARK: -
 
-    private let (_lifetime, token) = Lifetime.make()
-    internal var lifetime: Lifetime { return _lifetime }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 

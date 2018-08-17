@@ -41,8 +41,6 @@ class GoalViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Wiring
 
-    private let (lifetime, token) = Lifetime.make()
-
     /// Populates the active weekdays control with short weekday symbols
     /// taken from the received Calendar values.
     private lazy var weekdaySegments = activeWeekdaysControl.reactive

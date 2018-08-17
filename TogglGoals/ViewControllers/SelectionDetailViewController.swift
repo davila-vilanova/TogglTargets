@@ -85,8 +85,6 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
 
     // MARK: -
 
-    private let (lifetime, token) = Lifetime.make()
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -94,7 +92,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
         readProject <~ lastBinding.producer.skipNil().map { $0.readProject }
 
         let debounceScheduler = QueueScheduler()
-        lifetime.observeEnded {
+        reactive.lifetime.observeEnded {
             _ = debounceScheduler
         }
 

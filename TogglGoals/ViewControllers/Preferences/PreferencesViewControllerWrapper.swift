@@ -21,7 +21,4 @@ class PreferencesViewControllerWrapper: NSViewController, BindingTargetProvider 
             prefsController <~ lastBinding
         }
     }
-
-    private let (_lifetime, token) = Lifetime.make()
-    internal var lifetime: Lifetime { return _lifetime }
 }

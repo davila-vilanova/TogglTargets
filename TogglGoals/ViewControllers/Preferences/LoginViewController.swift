@@ -61,8 +61,6 @@ class LoginViewController: NSViewController, BindingTargetProvider {
 
     private lazy var credentialFromUserEnteredData = MutableProperty<TogglAPICredential?>(nil)
 
-    private let (lifetime, token) = Lifetime.make()
-
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -129,7 +127,7 @@ class LoginViewController: NSViewController, BindingTargetProvider {
         // Show activity while validating credential
 
         let displaySpinner =
-            BindingTarget<Bool>(on: UIScheduler(), lifetime: lifetime) { [unowned self] (spin: Bool) -> Void in
+            BindingTarget<Bool>(on: UIScheduler(), lifetime: reactive.lifetime) { [unowned self] (spin: Bool) -> Void in
                 if spin {
                     self.progressIndicator.startAnimation(nil)
                 } else {

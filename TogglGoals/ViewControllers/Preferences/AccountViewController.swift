@@ -51,8 +51,6 @@ class AccountViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Wiring
 
-    private let (lifetime, token) = Lifetime.make()
-
     override func viewDidLoad() {
         super.viewDidLoad()
 

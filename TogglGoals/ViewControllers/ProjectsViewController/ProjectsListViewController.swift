@@ -117,7 +117,7 @@ override func viewDidLoad() {
         readProject <~ lastValidBinding.map { $0.readProject }
         readGoal <~ lastValidBinding.map { $0.readGoal }
         readReport <~ lastValidBinding.map { $0.readReport }
-        lifetime += selectedProjectID.bindOnlyToLatest(lastValidBinding.map { $0.selectedProjectId })
+        reactive.lifetime += selectedProjectID.bindOnlyToLatest(lastValidBinding.map { $0.selectedProjectId })
     }
 
     private func initializeProjectsCollectionView() {
@@ -134,16 +134,13 @@ override func viewDidLoad() {
         layout.sectionHeadersPinToVisibleBounds = true
     }
 
-    /// The lifetime (and lifetime token) associated to this instance's binding targets.
-    private let (lifetime, token) = Lifetime.make()
-
     /// Accepts full values and incremental udpates of the `ProjectIDsByGoals` value that is used to
     /// determine the order and organization of the displayed projects.
     /// Full values cause a full refresh. Incremental updates cause a reorder of projects in the
     /// displayed collection.
     /// Expects a full value first.
     internal lazy var projectIDsByGoals =
-        BindingTarget<ProjectIDsByGoals.Update>(on: UIScheduler(), lifetime: lifetime) { [unowned self] update in
+        BindingTarget<ProjectIDsByGoals.Update>(on: UIScheduler(), lifetime: reactive.lifetime) { [unowned self] update in
             switch update {
             case .full(let projectIDs):
                 self.refresh(with: projectIDs)

@@ -40,7 +40,6 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
 
     // MARK: - Wiring
 
-    private let (lifetime, token) = Lifetime.make()
     private let requestSwitchToEmailPasswordEntry = MutableProperty<Void>(())
 
     override func viewDidLoad() {

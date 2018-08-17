@@ -27,7 +27,6 @@ class ErrorViewController: NSViewController {
     }
 
     private let representedError = MutableProperty<(APIAccessError, String, RetryAction)?>(nil)
-    private let (lifetime, token) = Lifetime.make()
 
     override func viewDidLoad() {
         super.viewDidLoad()
