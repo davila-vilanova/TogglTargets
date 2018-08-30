@@ -821,7 +821,7 @@
                             <customView placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="59" translatesAutoresizingMaskIntoConstraints="NO" id="oap-Fn-wNg">
                                 <rect key="frame" x="0.0" y="190" width="477" height="60"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="djf-F0-Pvj"/>
+                                    <constraint firstAttribute="height" constant="60" placeholder="YES" id="djf-F0-Pvj"/>
                                 </constraints>
                             </customView>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="19c-UZ-5DC">
