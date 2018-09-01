@@ -31,3 +31,6 @@
 /* Class = "NSButtonCell"; title = "delete goal"; ObjectID = "zWP-RY-LYD"; */
 "zWP-RY-LYD.title" = "borrar meta";
 
+
+/* Class = "NSButton";  ObjectID = ""z4E-Sz-bgD"; */
+"z4E-Sz-bgD.ibExternalAccessibilityDescription" = "Borrar meta";

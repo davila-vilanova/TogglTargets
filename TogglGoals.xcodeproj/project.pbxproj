@@ -52,6 +52,7 @@
 		63415BC420852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
 		63415BC520852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
 		6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634396891F80456200FDADE3 /* GoalProgressTests.swift */; };
+		6344EF78213C38F800D0B00D /* AccessibilityImageDescriptions.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6344EF76213C38F800D0B00D /* AccessibilityImageDescriptions.strings */; };
 		6355C5B71FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */; };
 		6355C5B81FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */; };
 		6355C5B91FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */; };
@@ -329,6 +330,8 @@
 		6334B4A82071A81600A5B796 /* ErrorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ErrorViewController.xib; sourceTree = "<group>"; };
 		63415BC120852A650083E40B /* ReadByProjectID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadByProjectID.swift; sourceTree = "<group>"; };
 		634396891F80456200FDADE3 /* GoalProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressTests.swift; sourceTree = "<group>"; };
+		6344EF77213C38F800D0B00D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AccessibilityImageDescriptions.strings; sourceTree = "<group>"; };
+		6344EF79213C390800D0B00D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AccessibilityImageDescriptions.strings; sourceTree = "<group>"; };
 		6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDateGenerator.swift; sourceTree = "<group>"; };
 		6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataRetriever.swift; sourceTree = "<group>"; };
 		635A256520528F2C00EFCE90 /* ProjectsListActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectsListActivityViewController.swift; path = ViewControllers/ProjectsListActivityViewController.swift; sourceTree = "<group>"; };
@@ -487,6 +490,7 @@
 				63F76BA220F6212D0024939B /* InfoPlist.strings */,
 				63F76B9F20F6212D0024939B /* Localizable.strings */,
 				630274D920FAB31000DE2698 /* Localizable.stringsdict */,
+				6344EF76213C38F800D0B00D /* AccessibilityImageDescriptions.strings */,
 				638561F120FE15DC002E97E8 /* MainMenu.xib */,
 				632957451DBA99F000E11A10 /* AppDelegate.swift */,
 				639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */,
@@ -892,6 +896,7 @@
 				63F76BA120F6212D0024939B /* Localizable.strings in Resources */,
 				6334B4A220703EC000A5B796 /* SyncingActivityViewController.xib in Resources */,
 				63F76BD720F672940024939B /* Preferences.storyboard in Resources */,
+				6344EF78213C38F800D0B00D /* AccessibilityImageDescriptions.strings in Resources */,
 				6334B4AA2071A81600A5B796 /* ErrorViewController.xib in Resources */,
 				6334B4A520703EC000A5B796 /* ActivitySuccessViewController.xib in Resources */,
 				630274DB20FAB31000DE2698 /* Localizable.stringsdict in Resources */,
@@ -1207,6 +1212,15 @@
 				63F76BE220F675690024939B /* en */,
 			);
 			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		6344EF76213C38F800D0B00D /* AccessibilityImageDescriptions.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6344EF77213C38F800D0B00D /* en */,
+				6344EF79213C390800D0B00D /* es */,
+			);
+			name = AccessibilityImageDescriptions.strings;
 			sourceTree = "<group>";
 		};
 		638561F120FE15DC002E97E8 /* MainMenu.xib */ = {

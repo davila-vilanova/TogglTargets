@@ -58,6 +58,8 @@ class GoalViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        deleteGoalButton.image!.isTemplate = true
+
         // Connect interface
         let calendar = lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
         let goal = lastBinding.producer.skipNil().map { $0.goal }.flatten(.latest)
