@@ -112,3 +112,15 @@
 
 /* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "z4P-cz-l1S"; */
 "z4P-cz-l1S.title" = "Empezar a hablar";
+
+/* Class = "NSMenuItem"; title = "Delete Goal"; ObjectID = "Ah4-MX-Odc"; */
+"Ah4-MX-Odc.title" = "Borrar meta";
+
+/* Class = "NSMenu"; title = "Goal"; ObjectID = "g5x-3p-Tzt"; */
+"g5x-3p-Tzt.title" = "Meta";
+
+/* Class = "NSMenuItem"; title = "Create Goal"; ObjectID = "Mi4-ht-vZX"; */
+"Mi4-ht-vZX.title" = "Crear meta";
+
+/* Class = "NSMenuItem"; title = "Goal"; ObjectID = "5SZ-Ad-K37"; */
+"5SZ-Ad-K37.title" = "Meta";
