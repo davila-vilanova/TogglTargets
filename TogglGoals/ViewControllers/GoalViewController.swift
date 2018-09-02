@@ -29,6 +29,12 @@ class GoalViewController: NSViewController, BindingTargetProvider {
     private var userUpdates = MutableProperty<Goal?>(nil)
 
 
+
+    // MARK: - Internal
+
+    private var deleteConfirmed = MutableProperty(())
+
+
     // MARK: - Outlets
 
     @IBOutlet weak var hoursTargetLabel: NSTextField!
@@ -118,12 +124,7 @@ class GoalViewController: NSViewController, BindingTargetProvider {
         let editedGoal = SignalProducer.merge(goalFromEditedHours,
                                               goalFromEditedActiveWeekdays)
 
-        let deleteGoal = Action<Void, Void, NoError> { SignalProducer(value: ()) }
-        deleteGoalButton.reactive.pressed = CocoaAction(deleteGoal)
-
-        let deletedGoal = deleteGoal.values.map { nil as Goal? }.producer
-
-        userUpdates <~ SignalProducer.merge(editedGoal.map { Optional($0) }, deletedGoal)
+        userUpdates <~ SignalProducer.merge(editedGoal.map { Optional($0) }, deleteConfirmed.signal.map { nil as Goal? }.producer.logEvents())
 
         // Enable controls only if goal exists
         let goalExists = goal.producer.map { $0 != nil }.skipRepeats()
@@ -131,8 +132,42 @@ class GoalViewController: NSViewController, BindingTargetProvider {
             control.reactive.isEnabled <~ goalExists
         }
     }
+
+    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
+        if let deleteGoalController = segue.destinationController as? DeleteGoalPopup {
+            deleteGoalController <~ SignalProducer(value: deleteConfirmed.bindingTarget)
+        }
+    }
 }
 
+class DeleteGoalPopup: NSViewController, BindingTargetProvider {
+    @IBOutlet weak var deleteButton: NSButton!
+    @IBOutlet weak var dismissButton: NSButton!
+
+    internal typealias Interface = BindingTarget<Void>
+
+    private var lastBinding = MutableProperty<Interface?>(nil)
+    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let sendDeleteAction = Action<Void, Void, NoError> { SignalProducer(value: ()) }
+
+        deleteButton.reactive.makeBindingTarget {
+            $0.reactive.pressed = CocoaAction(sendDeleteAction)
+            $1 <~ sendDeleteAction.values
+        } <~ lastBinding.producer.skipNil()
+
+        reactive.makeBindingTarget { (controller, _) in
+            controller.dismiss(controller.deleteButton)
+        } <~ sendDeleteAction.values
+
+        dismissButton.reactive.pressed = CocoaAction(Action<Void, Void, NoError> { [unowned self] in
+            self.dismiss(self.dismissButton)
+            return SignalProducer.empty
+        })
+    }
+}
 
 // MARK: -
 

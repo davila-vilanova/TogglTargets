@@ -28,8 +28,11 @@
 /* Class = "NSButtonCell"; title = "create a goal"; ObjectID = "sHt-AE-o6F"; */
 "sHt-AE-o6F.title" = "create a goal";
 
-/* Class = "NSButtonCell"; title = "delete goal"; ObjectID = "zWP-RY-LYD"; */
-"zWP-RY-LYD.title" = "delete goal";
+/* Class = "NSButtonCell"; title = "delete goal"; ObjectID = "v26-FD-5np"; */
+"v26-FD-5np.title" = "delete goal";
+
+/* Class = "NSButtonCell"; title = "don't delete"; ObjectID = "P9m-mq-vQD"; */
+"P9m-mq-vQD.title" = "keep goal";
 
 /* Class = "NSButton";  ObjectID = ""z4E-Sz-bgD"; */
 "z4E-Sz-bgD.ibExternalAccessibilityDescription" = "Delete goal";

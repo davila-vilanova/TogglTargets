@@ -28,9 +28,11 @@
 /* Class = "NSMenuItem"; title = "from next work day"; ObjectID = "UN6-Eu-Zua"; */
 "UN6-Eu-Zua.title" = "desde el próximo día de trabajo";
 
-/* Class = "NSButtonCell"; title = "delete goal"; ObjectID = "zWP-RY-LYD"; */
-"zWP-RY-LYD.title" = "borrar meta";
+/* Class = "NSButtonCell"; title = "delete goal"; ObjectID = "v26-FD-5np"; */
+"v26-FD-5np.title" = "borrar meta";
 
+/* Class = "NSButtonCell"; title = "don't delete"; ObjectID = "P9m-mq-vQD"; */
+"P9m-mq-vQD.title" = "no borrar";
 
 /* Class = "NSButton";  ObjectID = ""z4E-Sz-bgD"; */
 "z4E-Sz-bgD.ibExternalAccessibilityDescription" = "Borrar meta";
