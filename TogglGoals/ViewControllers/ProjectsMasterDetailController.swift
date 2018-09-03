@@ -32,6 +32,25 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     internal var bindingTarget: BindingTarget<ProjectsMasterDetailController.Interface?> { return lastBinding.bindingTarget }
 
 
+    // MARK: - Internal
+
+    private let selectedProjectId = MutableProperty<ProjectID?>(nil)
+    private lazy var readGoal = Property(initial: nil, then: lastBinding.producer.skipNil().map { $0.readGoal })
+    private lazy var isProjectWithGoalCurrentlySelected =
+        Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readGoal.producer)
+            .map {
+                guard let projectId = $0,
+                    let readGoal = $1,
+                    let readGoalResult = readGoal(projectId).first(),
+                    let goalOrNil = readGoalResult.value
+                    else {
+                        return false
+                }
+
+                return goalOrNil != nil
+        })
+
+
     // MARK: - Contained view controllers
 
     /// Represents the two split items this controller contains
@@ -56,12 +75,6 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let selectedProjectId = MutableProperty<ProjectID?>(nil)
-
-        reactive.lifetime.observeEnded {
-            _ = selectedProjectId
-        }
 
         projectsListActivityViewController <~
             SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.bindingTarget),
@@ -92,6 +105,38 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.writeGoal,
                      binding.deleteGoal,
                      binding.readReport)
+        }
+    }
+
+    @IBAction public func createGoal(_ sender: Any?) {
+        print("createGoal")
+        guard canCreateGoal else {
+            return
+        }
+    }
+
+    @IBAction public func deleteGoal(_ sender: Any?) {
+        print("deleteGoal")
+        guard canDeleteGoal else {
+            return
+        }
+    }
+
+    private var canCreateGoal: Bool {
+        return !isProjectWithGoalCurrentlySelected.value
+    }
+
+    private var canDeleteGoal: Bool {
+        return isProjectWithGoalCurrentlySelected.value
+    }
+
+    public override func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        if item.action == #selector(createGoal(_:)) {
+            return canCreateGoal
+        } else if item.action == #selector(deleteGoal(_:)) {
+            return canDeleteGoal
+        } else {
+            return true
         }
     }
 }
