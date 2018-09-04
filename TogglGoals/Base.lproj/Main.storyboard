@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
@@ -349,11 +348,11 @@
             <objects>
                 <viewController id="a81-xu-Ddi" customClass="GoalViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="rb9-j4-yIz">
-                        <rect key="frame" x="0.0" y="0.0" width="522" height="22"/>
+                        <rect key="frame" x="0.0" y="0.0" width="522" height="52"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vdS-WN-Sq2">
-                                <rect key="frame" x="-2" y="3" width="82" height="17"/>
+                                <rect key="frame" x="24" y="33" width="82" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="hours target:" id="RWg-38-I3M">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -361,15 +360,42 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0IY-al-1Yv">
-                                <rect key="frame" x="132" y="3" width="108" height="17"/>
+                                <rect key="frame" x="-2" y="4" width="108" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="active weekdays:" id="A2l-u7-QTD">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CBy-PQ-RVY" userLabel="Hours Target Field">
+                                <rect key="frame" x="112" y="30" width="40" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="fWK-kD-dR5"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="0" drawsBackground="YES" id="fF3-3F-u0v">
+                                    <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="Mc7-ow-3HZ"/>
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button translatesAutoresizingMaskIntoConstraints="NO" id="z4E-Sz-bgD">
+                                <rect key="frame" x="500" y="0.0" width="22" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="juX-kn-YQu"/>
+                                    <constraint firstAttribute="width" constant="22" id="rkN-Hf-bLO"/>
+                                </constraints>
+                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="delete_button" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="5FM-Ds-KS4">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <accessibility description="Delete goal"/>
+                                <connections>
+                                    <segue destination="UAE-bD-MnG" kind="popover" popoverAnchorView="z4E-Sz-bgD" popoverBehavior="t" preferredEdge="maxY" id="FKU-3e-21a"/>
+                                </connections>
+                            </button>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xET-i9-eZV">
-                                <rect key="frame" x="246" y="-1" width="172" height="23"/>
+                                <rect key="frame" x="112" y="-1" width="172" height="23"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="texturedRounded" trackingMode="selectAny" id="nzj-nl-MDn">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -393,47 +419,21 @@
                                     </segments>
                                 </segmentedCell>
                             </segmentedControl>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CBy-PQ-RVY" userLabel="Hours Target Field">
-                                <rect key="frame" x="86" y="0.0" width="40" height="22"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="40" id="ihI-16-wZj"/>
-                                </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" title="0" drawsBackground="YES" id="fF3-3F-u0v">
-                                    <numberFormatter key="formatter" formatterBehavior="default10_4" usesGroupingSeparator="NO" groupingSize="0" minimumIntegerDigits="0" maximumIntegerDigits="42" id="Mc7-ow-3HZ"/>
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <button translatesAutoresizingMaskIntoConstraints="NO" id="z4E-Sz-bgD">
-                                <rect key="frame" x="500" y="0.0" width="22" height="22"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="z4E-Sz-bgD" secondAttribute="height" id="EiM-lC-4bO"/>
-                                </constraints>
-                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="delete_button" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="5FM-Ds-KS4">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <accessibility description="Delete goal"/>
-                                <connections>
-                                    <segue destination="UAE-bD-MnG" kind="popover" popoverAnchorView="z4E-Sz-bgD" popoverBehavior="t" preferredEdge="maxY" id="FKU-3e-21a"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="z4E-Sz-bgD" firstAttribute="height" secondItem="xET-i9-eZV" secondAttribute="height" id="7aO-D0-2T0"/>
-                            <constraint firstItem="xET-i9-eZV" firstAttribute="centerY" secondItem="vdS-WN-Sq2" secondAttribute="centerY" id="8pv-Es-Od2"/>
-                            <constraint firstItem="z4E-Sz-bgD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="xET-i9-eZV" secondAttribute="trailing" constant="8" symbolic="YES" id="A8z-gW-7to"/>
-                            <constraint firstItem="0IY-al-1Yv" firstAttribute="leading" secondItem="CBy-PQ-RVY" secondAttribute="trailing" constant="8" symbolic="YES" id="KUy-sw-NQC"/>
-                            <constraint firstItem="vdS-WN-Sq2" firstAttribute="leading" secondItem="rb9-j4-yIz" secondAttribute="leading" id="Kfx-U0-JCf"/>
-                            <constraint firstItem="CBy-PQ-RVY" firstAttribute="leading" secondItem="vdS-WN-Sq2" secondAttribute="trailing" constant="8" symbolic="YES" id="PIp-bQ-4vb"/>
-                            <constraint firstItem="CBy-PQ-RVY" firstAttribute="centerY" secondItem="vdS-WN-Sq2" secondAttribute="centerY" id="PqW-vJ-CeI"/>
-                            <constraint firstAttribute="trailing" secondItem="z4E-Sz-bgD" secondAttribute="trailing" id="Xzw-oz-yth"/>
-                            <constraint firstItem="z4E-Sz-bgD" firstAttribute="centerY" secondItem="xET-i9-eZV" secondAttribute="centerY" id="djT-eF-mAL"/>
-                            <constraint firstItem="xET-i9-eZV" firstAttribute="leading" secondItem="0IY-al-1Yv" secondAttribute="trailing" constant="8" symbolic="YES" id="hhY-yy-sTL"/>
-                            <constraint firstAttribute="bottom" secondItem="xET-i9-eZV" secondAttribute="bottom" id="l8n-xP-z4S"/>
-                            <constraint firstItem="0IY-al-1Yv" firstAttribute="centerY" secondItem="vdS-WN-Sq2" secondAttribute="centerY" id="pAo-LP-zm7"/>
-                            <constraint firstItem="xET-i9-eZV" firstAttribute="top" secondItem="rb9-j4-yIz" secondAttribute="top" id="zMs-0s-wmQ"/>
+                            <constraint firstAttribute="trailing" secondItem="z4E-Sz-bgD" secondAttribute="trailing" id="1fJ-Do-gcY"/>
+                            <constraint firstItem="xET-i9-eZV" firstAttribute="leading" secondItem="0IY-al-1Yv" secondAttribute="trailing" constant="8" symbolic="YES" id="5F4-BK-4L1"/>
+                            <constraint firstItem="CBy-PQ-RVY" firstAttribute="leading" secondItem="vdS-WN-Sq2" secondAttribute="trailing" constant="8" symbolic="YES" id="5XV-V5-d7x"/>
+                            <constraint firstItem="xET-i9-eZV" firstAttribute="leading" secondItem="CBy-PQ-RVY" secondAttribute="leading" id="91y-7p-Dbe"/>
+                            <constraint firstAttribute="bottom" secondItem="z4E-Sz-bgD" secondAttribute="bottom" id="IPe-gF-J0x"/>
+                            <constraint firstItem="xET-i9-eZV" firstAttribute="baseline" secondItem="0IY-al-1Yv" secondAttribute="baseline" id="Iwq-DE-rHm"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="CBy-PQ-RVY" secondAttribute="trailing" constant="20" symbolic="YES" id="Mu6-98-mL1"/>
+                            <constraint firstItem="CBy-PQ-RVY" firstAttribute="top" secondItem="rb9-j4-yIz" secondAttribute="top" id="R2N-Jf-O2S"/>
+                            <constraint firstItem="0IY-al-1Yv" firstAttribute="leading" secondItem="rb9-j4-yIz" secondAttribute="leading" id="YS9-st-agx"/>
+                            <constraint firstAttribute="bottom" secondItem="xET-i9-eZV" secondAttribute="bottom" id="dZm-37-ewh"/>
+                            <constraint firstItem="z4E-Sz-bgD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="xET-i9-eZV" secondAttribute="trailing" constant="8" symbolic="YES" id="fy2-jj-ktX"/>
+                            <constraint firstItem="CBy-PQ-RVY" firstAttribute="baseline" secondItem="vdS-WN-Sq2" secondAttribute="baseline" id="wkQ-4f-4q5"/>
+                            <constraint firstItem="xET-i9-eZV" firstAttribute="top" secondItem="CBy-PQ-RVY" secondAttribute="bottom" constant="8" symbolic="YES" id="yLO-62-W7o"/>
                         </constraints>
                     </view>
                     <connections>
@@ -447,7 +447,7 @@
                 </viewController>
                 <customObject id="2PQ-kn-80x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1757" y="920"/>
+            <point key="canvasLocation" x="1757" y="938"/>
         </scene>
         <!--Delete Goal Popup-->
         <scene sceneID="nwh-bh-Z7X">
@@ -499,7 +499,7 @@
                 </viewController>
                 <customObject id="xe1-9V-FZs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2216" y="920"/>
+            <point key="canvasLocation" x="2218" y="938"/>
         </scene>
         <!--Time Progress View Controller-->
         <scene sceneID="j3N-S5-RVt">
