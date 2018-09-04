@@ -427,6 +427,7 @@
                             <constraint firstItem="xET-i9-eZV" firstAttribute="leading" secondItem="CBy-PQ-RVY" secondAttribute="leading" id="91y-7p-Dbe"/>
                             <constraint firstAttribute="bottom" secondItem="z4E-Sz-bgD" secondAttribute="bottom" id="IPe-gF-J0x"/>
                             <constraint firstItem="xET-i9-eZV" firstAttribute="baseline" secondItem="0IY-al-1Yv" secondAttribute="baseline" id="Iwq-DE-rHm"/>
+                            <constraint firstItem="vdS-WN-Sq2" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="rb9-j4-yIz" secondAttribute="leading" id="JN7-JO-tta"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="CBy-PQ-RVY" secondAttribute="trailing" constant="20" symbolic="YES" id="Mu6-98-mL1"/>
                             <constraint firstItem="CBy-PQ-RVY" firstAttribute="top" secondItem="rb9-j4-yIz" secondAttribute="top" id="R2N-Jf-O2S"/>
                             <constraint firstItem="0IY-al-1Yv" firstAttribute="leading" secondItem="rb9-j4-yIz" secondAttribute="leading" id="YS9-st-agx"/>
@@ -817,35 +818,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="477" height="366"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Yd-FG-N7Y">
-                                <rect key="frame" x="0.0" y="348" width="127" height="17"/>
-                                <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NVR-3G-O8n">
-                                        <rect key="frame" x="-2" y="0.0" width="73" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="this period:" id="DLh-SV-l1J">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v1h-N7-niu">
-                                        <rect key="frame" x="75" y="0.0" width="54" height="17"/>
-                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="ZWJ-aR-s78">
-                                            <font key="font" metaFont="system"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                </subviews>
-                                <visibilityPriorities>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                </visibilityPriorities>
-                                <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                </customSpacing>
-                            </stackView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v1h-N7-niu">
+                                <rect key="frame" x="-2" y="348" width="4" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="ZWJ-aR-s78">
+                                    <font key="font" metaFont="systemMedium" size="13"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mFI-rM-DT6">
+                                <rect key="frame" x="270" y="342" width="210" height="26"/>
+                                <popUpButtonCell key="cell" type="push" title="compute from today" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="CSh-kF-rVJ" id="sdJ-bf-5uw" userLabel="Compute Strategy From Button Cell">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="YRW-dN-Bbs">
+                                        <items>
+                                            <menuItem title="compute from today" state="on" id="CSh-kF-rVJ"/>
+                                            <menuItem title="compute from next work day" id="UN6-Eu-Zua"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="msW-X0-dhQ">
                                 <rect key="frame" x="0.0" y="267" width="477" height="70"/>
                                 <constraints>
@@ -855,27 +848,6 @@
                                     <segue destination="7US-0q-kKJ" kind="embed" id="dge-aU-6zx"/>
                                 </connections>
                             </containerView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hE0-PS-Rau">
-                                <rect key="frame" x="212" y="348" width="111" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="compute strategy" id="7bC-a5-7cw">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mFI-rM-DT6">
-                                <rect key="frame" x="327" y="342" width="153" height="26"/>
-                                <popUpButtonCell key="cell" type="push" title="from today" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="CSh-kF-rVJ" id="sdJ-bf-5uw">
-                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="menu"/>
-                                    <menu key="menu" id="YRW-dN-Bbs">
-                                        <items>
-                                            <menuItem title="from today" state="on" id="CSh-kF-rVJ"/>
-                                            <menuItem title="from next work day" id="UN6-Eu-Zua"/>
-                                        </items>
-                                    </menu>
-                                </popUpButtonCell>
-                            </popUpButton>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="x0L-tp-DvU">
                                 <rect key="frame" x="0.0" y="256" width="477" height="5"/>
                             </box>
@@ -896,26 +868,24 @@
                             </containerView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="v1h-N7-niu" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="3LW-W6-Gjt"/>
                             <constraint firstAttribute="trailing" secondItem="msW-X0-dhQ" secondAttribute="trailing" id="4Zq-ia-D2J"/>
                             <constraint firstItem="19c-UZ-5DC" firstAttribute="top" relation="greaterThanOrEqual" secondItem="oap-Fn-wNg" secondAttribute="bottom" constant="8" symbolic="YES" id="ACC-Ca-29p"/>
                             <constraint firstAttribute="trailing" secondItem="mFI-rM-DT6" secondAttribute="trailing" id="Bjh-Y7-kou"/>
                             <constraint firstAttribute="trailing" secondItem="x0L-tp-DvU" secondAttribute="trailing" id="L7s-cq-3dz"/>
                             <constraint firstAttribute="bottom" secondItem="19c-UZ-5DC" secondAttribute="bottom" constant="8" id="LFN-st-Ehs"/>
-                            <constraint firstItem="0Yd-FG-N7Y" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="LL0-5w-Vgy"/>
                             <constraint firstItem="oap-Fn-wNg" firstAttribute="top" secondItem="x0L-tp-DvU" secondAttribute="bottom" constant="8" symbolic="YES" id="Mh4-BV-apX"/>
+                            <constraint firstItem="mFI-rM-DT6" firstAttribute="baseline" secondItem="v1h-N7-niu" secondAttribute="baseline" id="Nps-lS-fpM"/>
+                            <constraint firstItem="mFI-rM-DT6" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="v1h-N7-niu" secondAttribute="trailing" constant="8" symbolic="YES" id="PEr-ur-T8z"/>
                             <constraint firstItem="mFI-rM-DT6" firstAttribute="top" secondItem="AwW-7C-Ykd" secondAttribute="top" id="RyJ-rD-FR5"/>
                             <constraint firstItem="x0L-tp-DvU" firstAttribute="top" secondItem="msW-X0-dhQ" secondAttribute="bottom" constant="8" symbolic="YES" id="TZl-34-9rx"/>
-                            <constraint firstItem="hE0-PS-Rau" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="0Yd-FG-N7Y" secondAttribute="trailing" constant="8" symbolic="YES" id="Wjx-fc-IPH"/>
                             <constraint firstAttribute="trailing" secondItem="19c-UZ-5DC" secondAttribute="trailing" id="bX9-w7-3sC"/>
-                            <constraint firstItem="hE0-PS-Rau" firstAttribute="baseline" secondItem="0Yd-FG-N7Y" secondAttribute="baseline" id="eG5-kZ-0Tn"/>
                             <constraint firstItem="msW-X0-dhQ" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="f6E-fk-lkz"/>
                             <constraint firstAttribute="trailing" secondItem="oap-Fn-wNg" secondAttribute="trailing" id="fTd-Xb-sex"/>
-                            <constraint firstItem="mFI-rM-DT6" firstAttribute="leading" secondItem="hE0-PS-Rau" secondAttribute="trailing" constant="8" symbolic="YES" id="fi5-2a-AvS"/>
                             <constraint firstItem="oap-Fn-wNg" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="fpJ-T8-T5o"/>
                             <constraint firstItem="msW-X0-dhQ" firstAttribute="top" secondItem="mFI-rM-DT6" secondAttribute="bottom" constant="8" symbolic="YES" id="kZE-M4-mVN"/>
                             <constraint firstItem="19c-UZ-5DC" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="nzl-Xp-Uaz"/>
                             <constraint firstItem="x0L-tp-DvU" firstAttribute="leading" secondItem="AwW-7C-Ykd" secondAttribute="leading" id="t28-Fj-PjS"/>
-                            <constraint firstItem="mFI-rM-DT6" firstAttribute="baseline" secondItem="0Yd-FG-N7Y" secondAttribute="baseline" id="tv4-6O-gYy"/>
                         </constraints>
                     </view>
                     <connections>

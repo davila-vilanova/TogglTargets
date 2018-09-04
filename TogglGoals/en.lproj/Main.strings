@@ -1,14 +1,11 @@
-/* Class = "NSTextFieldCell"; title = "compute strategy"; ObjectID = "7bC-a5-7cw"; */
-"7bC-a5-7cw.title" = "compute strategy";
+/* Class = "NSMenuItem"; title = "from today"; ObjectID = "CSh-kF-rVJ"; */
+"CSh-kF-rVJ.title" = "compute strategy from today";
+
+/* Class = "NSMenuItem"; title = "from next work day"; ObjectID = "UN6-Eu-Zua"; */
+"UN6-Eu-Zua.title" = "compute strategy from next work day";
 
 /* Class = "NSTextFieldCell"; title = "active weekdays:"; ObjectID = "A2l-u7-QTD"; */
 "A2l-u7-QTD.title" = "active weekdays:";
-
-/* Class = "NSMenuItem"; title = "from today"; ObjectID = "CSh-kF-rVJ"; */
-"CSh-kF-rVJ.title" = "from today";
-
-/* Class = "NSTextFieldCell"; title = "this period:"; ObjectID = "DLh-SV-l1J"; */
-"DLh-SV-l1J.title" = "this period:";
 
 /* Class = "NSTextFieldCell"; title = "please select a project"; ObjectID = "EHa-P4-qQ6"; */
 "EHa-P4-qQ6.title" = "please select a project";
@@ -21,9 +18,6 @@
 
 /* Class = "NSTextFieldCell"; title = "hours goal:"; ObjectID = "RWg-38-I3M"; */
 "RWg-38-I3M.title" = "hours goal:";
-
-/* Class = "NSMenuItem"; title = "from next work day"; ObjectID = "UN6-Eu-Zua"; */
-"UN6-Eu-Zua.title" = "from next work day";
 
 /* Class = "NSButtonCell"; title = "create a goal"; ObjectID = "sHt-AE-o6F"; */
 "sHt-AE-o6F.title" = "create a goal";
