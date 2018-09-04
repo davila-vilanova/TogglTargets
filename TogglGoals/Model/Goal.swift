@@ -40,6 +40,10 @@ extension Goal {
     static var empty: Goal {
         return Goal(for: 0, hoursTarget: 0, workWeekdays: WeekdaySelection.empty)
     }
+
+    static func createDefault(for projectId: ProjectID) -> Goal {
+        return Goal(for: projectId, hoursTarget: 10, workWeekdays: WeekdaySelection.exceptWeekend)
+    }
 }
 
 extension Goal: CustomDebugStringConvertible {

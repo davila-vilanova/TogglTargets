@@ -23,7 +23,6 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         readGoal: ReadGoal,
         writeGoal: BindingTarget<Goal>,
-        deleteGoal: BindingTarget<ProjectID>,
         readReport: ReadReport)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -36,8 +35,6 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
 
     private let readGoal = MutableProperty<ReadGoal?>(nil)
     private let readReport = MutableProperty<ReadReport?>(nil)
-
-    private let updateDeleteGoal = MutableProperty<Goal?>(nil)
 
 
     // MARK: - Derived input
@@ -77,13 +74,6 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
 
     private lazy var noGoalViewController: NoGoalViewController = {
         let noGoal = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("NoGoalViewController")) as! NoGoalViewController
-        noGoal <~ SignalProducer.combineLatest(
-            SignalProducer(value: projectId.producer),
-            lastBinding.producer.skipNil().map { $0.writeGoal })
-            .map {
-                (projectId: $0,
-                 goalCreated: $1)
-        }
         addChildViewController(noGoal)
         return noGoal
     }()
@@ -99,11 +89,12 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
         if let goalController = segue.destinationController as? GoalViewController {
+            let validBindings = lastBinding.producer.skipNil()
             goalController <~
                 SignalProducer.combineLatest(
-                    lastBinding.producer.skipNil().map { $0.calendar },
+                    validBindings.map { $0.calendar },
                     SignalProducer(value: goalForCurrentProject.producer),
-                    SignalProducer(value: updateDeleteGoal.bindingTarget))
+                    validBindings.map { $0.writeGoal })
                     .map {
                         (calendar: $0,
                          goal: $1,
@@ -128,9 +119,6 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         let lastValidBinding = lastBinding.producer.skipNil()
         readGoal <~ lastValidBinding.map { $0.readGoal }
         readReport <~ lastValidBinding.map { $0.readReport }
-
-        reactive.lifetime += updateDeleteGoal.producer.skipNil().bindOnlyToLatest(lastValidBinding.map { $0.writeGoal })
-        reactive.lifetime += projectId.producer.sample(on: updateDeleteGoal.signal.filter { $0 == nil}.map { _ in () }).bindOnlyToLatest(lastValidBinding.map { $0.deleteGoal })
 
         setupLocalProjectDisplay()
         setupConditionalVisibilityOfContainedViews()

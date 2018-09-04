@@ -10,7 +10,7 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvider {
+class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvider, GoalCreatingDeleting {
 
     // MARK: - Interface
 
@@ -35,7 +35,9 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     // MARK: - Internal
 
     private let selectedProjectId = MutableProperty<ProjectID?>(nil)
+
     private lazy var readGoal = Property(initial: nil, then: lastBinding.producer.skipNil().map { $0.readGoal })
+
     private lazy var isProjectWithGoalCurrentlySelected =
         Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readGoal.producer)
             .map {
@@ -103,23 +105,26 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.readProject,
                      binding.readGoal,
                      binding.writeGoal,
-                     binding.deleteGoal,
                      binding.readReport)
         }
     }
 
     @IBAction public func createGoal(_ sender: Any?) {
-        print("createGoal")
-        guard canCreateGoal else {
-            return
+        guard canCreateGoal,
+            let projectId = selectedProjectId.value,
+            let writeGoal = lastBinding.value?.writeGoal else {
+                return
         }
+        writeGoal <~ SignalProducer(value: Goal.createDefault(for: projectId))
     }
 
     @IBAction public func deleteGoal(_ sender: Any?) {
-        print("deleteGoal")
-        guard canDeleteGoal else {
-            return
+        guard canDeleteGoal,
+            let projectId = selectedProjectId.value,
+            let deleteGoal = lastBinding.value?.deleteGoal else {
+                return
         }
+        deleteGoal <~ SignalProducer(value: projectId)
     }
 
     private var canCreateGoal: Bool {

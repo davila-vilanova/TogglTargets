@@ -18,7 +18,7 @@ class GoalViewController: NSViewController, BindingTargetProvider {
     internal typealias Interface = (
         calendar: SignalProducer<Calendar, NoError>,
         goal: SignalProducer<Goal?, NoError>,
-        userUpdates: BindingTarget<Goal?>)
+        userUpdates: BindingTarget<Goal>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -69,7 +69,7 @@ class GoalViewController: NSViewController, BindingTargetProvider {
         // Connect interface
         let calendar = lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
         let goal = lastBinding.producer.skipNil().map { $0.goal }.flatten(.latest)
-        userUpdates.signal.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.userUpdates })
+        userUpdates.signal.skipNil().bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.userUpdates })
 
         // Populate controls that depend on calendar values
         weekdaySegments <~ calendar
@@ -124,13 +124,17 @@ class GoalViewController: NSViewController, BindingTargetProvider {
         let editedGoal = SignalProducer.merge(goalFromEditedHours,
                                               goalFromEditedActiveWeekdays)
 
-        userUpdates <~ SignalProducer.merge(editedGoal.map { Optional($0) }, deleteConfirmed.signal.map { nil as Goal? }.producer.logEvents())
+        userUpdates <~ editedGoal.map { Optional($0) }
 
         // Enable controls only if goal exists
         let goalExists = goal.producer.map { $0 != nil }.skipRepeats()
         for control in [hoursTargetLabel, hoursTargetField, activeWeekdaysLabel, activeWeekdaysControl, deleteGoalButton] as [NSControl] {
             control.reactive.isEnabled <~ goalExists
         }
+
+        reactive.makeBindingTarget { (goalVC, _: Void) in
+            goalVC.try(toPerform: #selector(GoalCreatingDeleting.deleteGoal(_:)), with: goalVC)
+        } <~ deleteConfirmed.signal
     }
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
@@ -140,76 +144,45 @@ class GoalViewController: NSViewController, BindingTargetProvider {
     }
 }
 
-class DeleteGoalPopup: NSViewController, BindingTargetProvider {
-    @IBOutlet weak var deleteButton: NSButton!
-    @IBOutlet weak var dismissButton: NSButton!
+// MARK: -
 
+class DeleteGoalPopup: NSViewController, BindingTargetProvider {
     internal typealias Interface = BindingTarget<Void>
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
+    @IBOutlet weak var confirmDeletionButton: NSButton!
+    @IBOutlet weak var dismissControllerButton: NSButton!
+
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        let sendDeleteAction = Action<Void, Void, NoError> { SignalProducer(value: ()) }
 
-        deleteButton.reactive.makeBindingTarget {
-            $0.reactive.pressed = CocoaAction(sendDeleteAction)
-            $1 <~ sendDeleteAction.values
-        } <~ lastBinding.producer.skipNil()
+        let confirmDeletionAction = Action<Void, Void, NoError> {
+            SignalProducer(value: ())
+        }
 
-        reactive.makeBindingTarget { (controller, _) in
-            controller.dismiss(controller.deleteButton)
-        } <~ sendDeleteAction.values
+        let dismissAction = Action<Void, Void, NoError> {
+            SignalProducer(value: ())
+        }
 
-        dismissButton.reactive.pressed = CocoaAction(Action<Void, Void, NoError> { [unowned self] in
-            self.dismiss(self.dismissButton)
-            return SignalProducer.empty
-        })
+        let dismiss = reactive.makeBindingTarget { (popUpController, _: Void) in
+            popUpController.dismiss(popUpController)
+        }
+        dismiss <~ confirmDeletionAction.values
+        dismiss <~ dismissAction.values
+
+        confirmDeletionAction.values.bindOnlyToLatest(lastBinding.producer.skipNil())
+
+        confirmDeletionButton.reactive.pressed = CocoaAction(confirmDeletionAction)
+        dismissControllerButton.reactive.pressed = CocoaAction(dismissAction)
     }
 }
 
 // MARK: -
 
-class NoGoalViewController: NSViewController, BindingTargetProvider {
+class NoGoalViewController: NSViewController {
 
-    // MARK: Interface
-
-    internal typealias Interface = (
-        projectId: SignalProducer<ProjectID, NoError>,
-        goalCreated: BindingTarget<Goal>
-    )
-
-    private var lastBinding = MutableProperty<Interface?>(nil)
-    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
-
-
-    // MARK: - Private
-
-    private let projectId = MutableProperty<ProjectID?>(nil)
-    private let goalCreatedPipe = Signal<Goal, NoError>.pipe()
-
-    private var createGoalAction: Action<Void, Goal, NoError>!
-
-
-    // MARK: - Outlet
-
-    @IBOutlet weak var createGoalButton: NSButton!
-
-
-    // MARK: -
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        projectId <~ lastBinding.latestOutput { $0.projectId }
-        goalCreatedPipe.output.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.goalCreated })
-
-        createGoalAction = Action<Void, Goal, NoError>(unwrapping: projectId) {
-            SignalProducer(value: Goal(for: $0, hoursTarget: 10, workWeekdays: WeekdaySelection.exceptWeekend))
-        }
-
-        createGoalButton.reactive.pressed = CocoaAction<NSButton>(createGoalAction)
-        createGoalAction.values.observe(goalCreatedPipe.input)
-    }
 }

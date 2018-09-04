@@ -26,7 +26,6 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
         readProject: ReadProject,
         readGoal: ReadGoal,
         writeGoal: BindingTarget<Goal>,
-        deleteGoal: BindingTarget<ProjectID>,
         readReport: ReadReport)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -66,7 +65,6 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
                  binding.runningEntry,
                  binding.readGoal,
                  binding.writeGoal,
-                 binding.deleteGoal,
                  binding.readReport)
         }
 

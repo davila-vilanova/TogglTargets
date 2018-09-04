@@ -493,8 +493,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="deleteButton" destination="WTT-ou-k01" id="fZF-8A-lJd"/>
-                        <outlet property="dismissButton" destination="jg5-zA-F6y" id="PZQ-sE-Fvr"/>
+                        <outlet property="confirmDeletionButton" destination="WTT-ou-k01" id="xN8-Xb-zXi"/>
+                        <outlet property="dismissControllerButton" destination="jg5-zA-F6y" id="KAR-QM-7Ku"/>
                     </connections>
                 </viewController>
                 <customObject id="xe1-9V-FZs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -776,6 +776,9 @@
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
+                                        <connections>
+                                            <action selector="createGoal:" target="fO8-4G-Gnl" id="9Cp-kQ-sZ8"/>
+                                        </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="asI-eB-ORh">
                                         <rect key="frame" x="113" y="3" width="153" height="17"/>
@@ -801,9 +804,6 @@
                             <constraint firstItem="spt-9H-RBY" firstAttribute="centerY" secondItem="1mY-6H-Sas" secondAttribute="centerY" id="YwG-K9-6jw"/>
                         </constraints>
                     </view>
-                    <connections>
-                        <outlet property="createGoalButton" destination="KJB-2f-ZKw" id="9JP-F7-TUU"/>
-                    </connections>
                 </viewController>
                 <customObject id="fO8-4G-Gnl" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
