@@ -1,8 +1,8 @@
 /* Class = "NSMenuItem"; title = "from today"; ObjectID = "CSh-kF-rVJ"; */
-"CSh-kF-rVJ.title" = "compute strategy from today";
+"CSh-kF-rVJ.title" = "compute from today";
 
 /* Class = "NSMenuItem"; title = "from next work day"; ObjectID = "UN6-Eu-Zua"; */
-"UN6-Eu-Zua.title" = "compute strategy from next work day";
+"UN6-Eu-Zua.title" = "compute from next work day";
 
 /* Class = "NSTextFieldCell"; title = "active weekdays:"; ObjectID = "A2l-u7-QTD"; */
 "A2l-u7-QTD.title" = "active weekdays:";
