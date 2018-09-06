@@ -155,8 +155,6 @@ class DeleteGoalPopup: NSViewController, BindingTargetProvider {
     @IBOutlet weak var confirmDeletionButton: NSButton!
     @IBOutlet weak var dismissControllerButton: NSButton!
 
-
-
     override func viewDidLoad() {
         super.viewDidLoad()
 

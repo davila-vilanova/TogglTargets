@@ -310,7 +310,6 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="48" placeholder="YES" id="ylm-xb-GA3"/>
                                         </constraints>
-                                        <font key="titleFont" metaFont="message" size="11"/>
                                     </box>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="OOB-9P-pYC">
                                         <rect key="frame" x="20" y="20" width="482" height="292"/>
@@ -424,6 +423,10 @@
                                     </segments>
                                 </segmentedCell>
                             </segmentedControl>
+                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a1F-2R-ZcW">
+                                <rect key="frame" x="151" y="28" width="19" height="27"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" increment="5" minValue="1" maxValue="1000" doubleValue="1" id="78C-Ks-KLb"/>
+                            </stepper>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="z4E-Sz-bgD" secondAttribute="trailing" id="1fJ-Do-gcY"/>
@@ -437,7 +440,9 @@
                             <constraint firstItem="CBy-PQ-RVY" firstAttribute="top" secondItem="rb9-j4-yIz" secondAttribute="top" id="R2N-Jf-O2S"/>
                             <constraint firstItem="0IY-al-1Yv" firstAttribute="leading" secondItem="rb9-j4-yIz" secondAttribute="leading" id="YS9-st-agx"/>
                             <constraint firstAttribute="bottom" secondItem="xET-i9-eZV" secondAttribute="bottom" id="dZm-37-ewh"/>
+                            <constraint firstItem="a1F-2R-ZcW" firstAttribute="leading" secondItem="CBy-PQ-RVY" secondAttribute="trailing" constant="2" id="eb3-Wg-u09"/>
                             <constraint firstItem="z4E-Sz-bgD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="xET-i9-eZV" secondAttribute="trailing" constant="8" symbolic="YES" id="fy2-jj-ktX"/>
+                            <constraint firstItem="a1F-2R-ZcW" firstAttribute="centerY" secondItem="CBy-PQ-RVY" secondAttribute="centerY" id="gsR-yB-QfJ"/>
                             <constraint firstItem="CBy-PQ-RVY" firstAttribute="baseline" secondItem="vdS-WN-Sq2" secondAttribute="baseline" id="wkQ-4f-4q5"/>
                             <constraint firstItem="xET-i9-eZV" firstAttribute="top" secondItem="CBy-PQ-RVY" secondAttribute="bottom" constant="8" symbolic="YES" id="yLO-62-W7o"/>
                         </constraints>
@@ -586,7 +591,6 @@
                                         <constraint firstItem="dEQ-iu-srg" firstAttribute="leading" secondItem="F3h-la-ipt" secondAttribute="leading" id="zpZ-4P-g6u"/>
                                     </constraints>
                                 </view>
-                                <font key="titleFont" metaFont="message" size="11"/>
                             </box>
                         </subviews>
                         <constraints>
@@ -714,7 +718,6 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="ZE1-Ws-NmB"/>
                                 </constraints>
-                                <font key="titleFont" metaFont="message" size="11"/>
                             </box>
                         </subviews>
                         <constraints>
