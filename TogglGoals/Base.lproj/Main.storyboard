@@ -454,6 +454,7 @@
                         <outlet property="hoursTargetField" destination="CBy-PQ-RVY" id="aH3-g3-aNr"/>
                         <outlet property="hoursTargetFormatter" destination="Mc7-ow-3HZ" id="LlJ-68-FpM"/>
                         <outlet property="hoursTargetLabel" destination="vdS-WN-Sq2" id="87N-qS-eox"/>
+                        <outlet property="hoursTargetStepper" destination="a1F-2R-ZcW" id="7CM-iA-VfZ"/>
                     </connections>
                 </viewController>
                 <customObject id="2PQ-kn-80x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

@@ -29,7 +29,6 @@ class GoalViewController: NSViewController, BindingTargetProvider {
     private var userUpdates = MutableProperty<Goal?>(nil)
 
 
-
     // MARK: - Internal
 
     private var deleteConfirmed = MutableProperty(())
@@ -39,6 +38,7 @@ class GoalViewController: NSViewController, BindingTargetProvider {
 
     @IBOutlet weak var hoursTargetLabel: NSTextField!
     @IBOutlet weak var hoursTargetField: NSTextField!
+    @IBOutlet weak var hoursTargetStepper: NSStepper!
     @IBOutlet weak var hoursTargetFormatter: NumberFormatter!
     @IBOutlet weak var activeWeekdaysLabel: NSTextField!
     @IBOutlet weak var activeWeekdaysControl: NSSegmentedControl!
@@ -83,6 +83,8 @@ class GoalViewController: NSViewController, BindingTargetProvider {
             .map(hoursTargetFormatter.string(from:))
             .map { $0 ?? "" }
 
+        hoursTargetStepper.reactive.integerValue <~ nonNilGoal.map { $0.hoursTarget }
+
         activeWeekdaysControl.reactive
             .makeBindingTarget(on: UIScheduler()) { $0.setSelected($1.0, forSegment: $1.1) }
             <~ Property(value: Weekday.allDaysOrdered).producer
@@ -92,16 +94,24 @@ class GoalViewController: NSViewController, BindingTargetProvider {
                 .withLatest(from: nonNilGoal.map { $0.workWeekdays })
                 .map { ($1.isSelected($0), $0.indexInGregorianCalendarSymbolsArray) }
 
+        // Bind hours stepper buttons and hours target field
+        hoursTargetField.reactive.integerValue <~ hoursTargetStepper.reactive.integerValues
+        hoursTargetStepper.reactive.integerValue <~ hoursTargetField.reactive.integerValues
+
         // Bind UI to output
-        let goalFromEditedHours = hoursTargetField.reactive.stringValues
-            .map { [weak formatter = hoursTargetFormatter] (text) -> HoursTargetType? in
+
+        let textFieldValues = hoursTargetField.reactive.stringValues
+            .filterMap { [weak formatter = hoursTargetFormatter] (text) -> HoursTargetType? in
                 formatter?.number(from: text)?.intValue
-            }
-            .skipNil()
+        }
+        let stepperValues = hoursTargetStepper.reactive.integerValues
+
+        let goalFromEditedHours = Signal.merge(textFieldValues, stepperValues)
             .producer
             .withLatest(from: nonNilGoal)
             .map { Goal(for: $1.projectId, hoursTarget: $0, workWeekdays: $1.workWeekdays) }
 
+        
         let goalFromEditedActiveWeekdays = activeWeekdaysControl.reactive.selectedSegmentIndexes
             .map { [weak activeWeekdaysControl] (_) -> WeekdaySelection? in
                 guard let control = activeWeekdaysControl else {
