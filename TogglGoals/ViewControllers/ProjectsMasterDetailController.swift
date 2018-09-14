@@ -40,17 +40,17 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private lazy var isProjectWithGoalCurrentlySelected =
         Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readGoal.producer)
-            .map {
-                guard let projectId = $0,
-                    let readGoal = $1,
-                    let readGoalResult = readGoal(projectId).first(),
-                    let goalOrNil = readGoalResult.value
+            .map { p, r -> SignalProducer<Goal?, NoError> in
+                guard let projectId = p,
+                    let readGoal = r
                     else {
-                        return false
+                        return SignalProducer<Goal?, NoError>(value: nil)
                 }
-
-                return goalOrNil != nil
-        })
+                return readGoal(projectId)
+            }
+            .flatten(.latest)
+            .map { $0 != nil }
+    )
 
 
     // MARK: - Contained view controllers
