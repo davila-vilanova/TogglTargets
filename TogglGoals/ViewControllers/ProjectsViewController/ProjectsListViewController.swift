@@ -13,6 +13,10 @@ import Result
 fileprivate let ProjectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
 fileprivate let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
 
+fileprivate let SelectedProjectIdRestorationKey = "SelectedProjectId"
+fileprivate let NoSelectedProjectIdRestorationValue: Int64 = 0
+
+
 /// Manages a collection view that displays `Project` items organized by whether they have an associated goal.
 /// Produces a stream of selected `Project` values via the `selectedProject` property.
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, BindingTargetProvider {
@@ -80,12 +84,53 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
 
 
+    // MARK: - State restoration
+
+    private let restoredSelectedProjectId = MutableProperty<ProjectID?>(nil)
+
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+        coder.encode((selectedProjectID.value ?? NoSelectedProjectIdRestorationValue) as Int64, forKey: SelectedProjectIdRestorationKey)
+    }
+
+    override func restoreState(with coder: NSCoder) {
+        super.restoreState(with: coder)
+        let restoredSelectedProjectId = coder.decodeInt64(forKey: SelectedProjectIdRestorationKey)
+        self.restoredSelectedProjectId.value = restoredSelectedProjectId == NoSelectedProjectIdRestorationValue ? nil : restoredSelectedProjectId
+    }
+
+    private func invalidateRestorableStateWhenProjectManuallySelected() {
+        reactive.makeBindingTarget { controller, _ in
+            controller.invalidateRestorableState()
+            } <~  selectedProjectID
+    }
+
+    private func restoreSelectionInCollectionView() {
+        let projectManuallySelected = selectedProjectID.signal.map { _ in () }
+
+        let selectIndexPath = reactive.makeBindingTarget { controller, indexPath in
+            controller.projectsCollectionView.selectItems(at: [indexPath], scrollPosition: .centeredVertically)
+        }
+
+        let indexPathFromPersistedProjectId = SignalProducer.combineLatest(currentProjectIDs, restoredSelectedProjectId)
+            .take(until: projectManuallySelected)
+            .filterMap { (currentProjectIds, restoredProjectId) -> IndexPath? in
+                guard let projectId = restoredProjectId else {
+                    return nil
+                }
+                return currentProjectIds.indexPath(for: projectId)
+            }
+            .take(first: 1)
+
+        reactive.lifetime += selectIndexPath <~ indexPathFromPersistedProjectId
+    }
+
     // MARK: -
 
     private func numberOfItems(in section: Int) -> Int {
         switch ProjectIDsByGoals.Section(rawValue: section)! {
-        case .withGoal: return currentProjectIDs.countOfProjectsWithGoals
-        case .withoutGoal: return currentProjectIDs.countOfProjectsWithoutGoals
+        case .withGoal: return currentProjectIDs.value.countOfProjectsWithGoals
+        case .withoutGoal: return currentProjectIDs.value.countOfProjectsWithoutGoals
         }
     }
 
@@ -117,7 +162,12 @@ override func viewDidLoad() {
         readProject <~ lastValidBinding.map { $0.readProject }
         readGoal <~ lastValidBinding.map { $0.readGoal }
         readReport <~ lastValidBinding.map { $0.readReport }
-        reactive.lifetime += selectedProjectID.bindOnlyToLatest(lastValidBinding.map { $0.selectedProjectId })
+
+        let selectedProjectId = restoredSelectedProjectId.producer.take(untilReplacement: self.selectedProjectID.signal)
+        reactive.lifetime += selectedProjectId.bindOnlyToLatest(lastValidBinding.map { $0.selectedProjectId })
+
+        invalidateRestorableStateWhenProjectManuallySelected()
+        restoreSelectionInCollectionView()
     }
 
     private func initializeProjectsCollectionView() {
@@ -150,26 +200,25 @@ override func viewDidLoad() {
     }
 
     /// The current value of `ProjectsIDsByGoals`.
-    private var currentProjectIDs = ProjectIDsByGoals.empty
+    private var currentProjectIDs = MutableProperty(ProjectIDsByGoals.empty)
 
     /// Sets the current value of `currentProjectIDs` and triggers a full refresh of the collection
     /// view that will reflect the provided value.
     private func refresh(with projectIDs: ProjectIDsByGoals) {
-        self.currentProjectIDs = projectIDs
+        self.currentProjectIDs.value = projectIDs
         self.projectsCollectionView.reloadData()
-        self.sendSelectedProjectValue()
         self.scrollToSelection()
     }
 
     /// Reflects the provided update in the value of `currentProjectIDs` and reorders the affected item
     /// in the collection view.
     private func update(with update: ProjectIDsByGoals.Update.GoalUpdate) {
-        let beforeMove = self.currentProjectIDs
+        let beforeMove = self.currentProjectIDs.value
         let afterMove = update.apply(to: beforeMove)
         let oldIndexPath = beforeMove.indexPath(forElementAt: update.indexChange.old)!
         let newIndexPath = afterMove.indexPath(forElementAt: update.indexChange.new)!
 
-        currentProjectIDs = afterMove
+        currentProjectIDs.value = afterMove
         projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
         scrollToSelection()
 
@@ -192,7 +241,7 @@ override func viewDidLoad() {
     /// Sends the value of the selected project through the `selectedProject` output.
     private func sendSelectedProjectValue() {
         if let indexPath = projectsCollectionView.selectionIndexPaths.first,
-            let projectID = currentProjectIDs.projectId(for: indexPath) {
+            let projectID = currentProjectIDs.value.projectId(for: indexPath) {
             selectedProjectID.value = projectID
         } else {
             selectedProjectID.value = nil
@@ -224,7 +273,7 @@ override func viewDidLoad() {
         let item = collectionView.makeItem(withIdentifier: ProjectItemIdentifier, for: indexPath)
         let projectItem = item as! ProjectCollectionViewItem
 
-        let projectId: ProjectID = currentProjectIDs.projectId(for: indexPath)!
+        let projectId: ProjectID = currentProjectIDs.value.projectId(for: indexPath)!
 
         projectItem <~ SignalProducer<ProjectCollectionViewItem.Interface, NoError>(
             value: (runningEntry.producer,

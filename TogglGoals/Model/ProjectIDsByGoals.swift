@@ -240,6 +240,13 @@ extension ProjectIDsByGoals {
         }
         return IndexPath(item: item, section: section.rawValue)
     }
+
+    func indexPath(for projectId: ProjectID) -> IndexPath? {
+        guard let foundIndex = sortedProjectIDs.index(of: projectId) else {
+            return nil
+        }
+        return indexPath(forElementAt: foundIndex)
+    }
 }
 
 /// Makes a function that can be used as input to `Array<ProjectID>.sort(by:)` and will determine the
@@ -264,7 +271,7 @@ fileprivate func makeAreProjectIDsInIncreasingOrderFunction(for goals: ProjectIn
                 // a goal is more goaler than a no goal
                 return true
             } else if left == nil, right == nil {
-                // order needs to be stable, so use project ID
+                // order needs to be stable, so use project ID which is assumed to be unique
                 return idL > idR
             } else {
                 return false
