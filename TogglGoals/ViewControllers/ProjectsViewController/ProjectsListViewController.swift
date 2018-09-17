@@ -26,6 +26,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///   - projectIDsByGoals: a producer of `ProjectIDsByGoals.Update` values
     ///     that when started emits a `full(ProjectIDsByGoals)` value which can
     ///     be followed by full or incremental updates.
+    ///     Full values cause a full refresh. Incremental updates cause a reorder of projects in the
+    ///     displayed collection.
     ///   - selectedProjectId:  Emits `Project` values whenever a project is selected
     ///     or `nil` when no project is selected. Only one project can be selected at a time.
     ///   - runningEntry: A signal producer that emits `RunningEntry` or `nil` values depending on whether
@@ -66,7 +68,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// Holds the ID of the currently selected project, if any.
     private let selectedProjectID = MutableProperty<ProjectID?>(nil)
 
-
     /// The function used to read projects by project ID.
     private let readProject = MutableProperty<ReadProject?>(nil)
 
@@ -75,6 +76,13 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     /// The action used to read reports by project ID.
     private let readReport = MutableProperty<ReadReport?>(nil)
+
+    // MARK: - Private properties
+
+    /// The current value of `ProjectsIDsByGoals`.
+    private var currentProjectIDs = MutableProperty(ProjectIDsByGoals.empty)
+
+    private var lastProjectIDsByGoalsUpdate = MutableProperty<ProjectIDsByGoals.Update?>(nil)
 
 
     // MARK: - Outlets
@@ -125,35 +133,16 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         reactive.lifetime += selectIndexPath <~ indexPathFromPersistedProjectId
     }
 
-    // MARK: -
-
-    private func numberOfItems(in section: Int) -> Int {
-        switch ProjectIDsByGoals.Section(rawValue: section)! {
-        case .withGoal: return currentProjectIDs.value.countOfProjectsWithGoals
-        case .withoutGoal: return currentProjectIDs.value.countOfProjectsWithoutGoals
-        }
-    }
-
-    private func indexPathOfLastItem(in section: Int) -> IndexPath {
-        return IndexPath(item: numberOfItems(in: section) - 1, section: section)
-    }
-
-    private func isIndexPathOfLastItemInSection(_ indexPath: IndexPath) -> Bool {
-        return (indexPath == indexPathOfLastItem(in: indexPath.section))
-    }
-
-    private func setLastItemInSectionStatus(for projectItem: ProjectCollectionViewItem, at indexPath: IndexPath) {
-        projectItem.isLastItemInSection = isIndexPathOfLastItemInSection(indexPath)
-    }
 
     // MARK: -
 
-override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         initializeProjectsCollectionView()
+        wireUpdatesToCollectionView()
 
-        projectIDsByGoals <~ lastBinding.latestOutput { $0.projectIDsByGoals }
+        lastProjectIDsByGoalsUpdate <~ lastBinding.latestOutput { $0.projectIDsByGoals }
         runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
         currentDate <~ lastBinding.latestOutput { $0.currentDate }
         periodPreference <~ lastBinding.latestOutput { $0.periodPreference }
@@ -184,68 +173,71 @@ override func viewDidLoad() {
         layout.sectionHeadersPinToVisibleBounds = true
     }
 
-    /// Accepts full values and incremental udpates of the `ProjectIDsByGoals` value that is used to
-    /// determine the order and organization of the displayed projects.
-    /// Full values cause a full refresh. Incremental updates cause a reorder of projects in the
-    /// displayed collection.
-    /// Expects a full value first.
-    internal lazy var projectIDsByGoals =
-        BindingTarget<ProjectIDsByGoals.Update>(on: UIScheduler(), lifetime: reactive.lifetime) { [unowned self] update in
-            switch update {
-            case .full(let projectIDs):
-                self.refresh(with: projectIDs)
-            case .singleGoal(let goalUpdate):
-                self.update(with: goalUpdate)
+    private func wireUpdatesToCollectionView() {
+        // wire full updates: set the current value of `currentProjectIDs`
+        // and trigger a full refresh of the collection view
+        let fullUpdates = lastProjectIDsByGoalsUpdate.producer.skipNil().filterMap { $0.fullyUpdated }
+
+        currentProjectIDs <~ fullUpdates
+
+        reactive.makeBindingTarget { controller, _ in
+            controller.projectsCollectionView.reloadData()
+            controller.scrollToSelection()
+        } <~ fullUpdates.map { _ in () }
+
+
+        // wire single goal updates: reflect the provided update in the value of `currentProjectIDs`,
+        // reorder the affected item in the collection view and update the "last item in section" visual state
+        let singlePidsUpdates: Signal<(ProjectIDsByGoals.Update.GoalUpdate, ProjectIDsByGoals, ProjectIDsByGoals), NoError> =
+            lastProjectIDsByGoalsUpdate.signal.skipNil().filterMap { $0.goalUpdate }
+                .withLatest(from: currentProjectIDs.producer)
+                .map { ($0.0, $0.1, $0.0.apply(to: $0.1)) }
+        let indexPathUpdates = singlePidsUpdates.map { update, pidsBefore, pidsAfter -> (IndexPath, IndexPath) in
+            guard let old = pidsBefore.indexPath(forElementAt: update.indexChange.old),
+                let new = pidsAfter.indexPath(forElementAt: update.indexChange.new) else {
+                    fatalError("Old and new index paths are expected to be calculable")
             }
-    }
-
-    /// The current value of `ProjectsIDsByGoals`.
-    private var currentProjectIDs = MutableProperty(ProjectIDsByGoals.empty)
-
-    /// Sets the current value of `currentProjectIDs` and triggers a full refresh of the collection
-    /// view that will reflect the provided value.
-    private func refresh(with projectIDs: ProjectIDsByGoals) {
-        self.currentProjectIDs.value = projectIDs
-        self.projectsCollectionView.reloadData()
-        self.scrollToSelection()
-    }
-
-    /// Reflects the provided update in the value of `currentProjectIDs` and reorders the affected item
-    /// in the collection view.
-    private func update(with update: ProjectIDsByGoals.Update.GoalUpdate) {
-        let beforeMove = self.currentProjectIDs.value
-        let afterMove = update.apply(to: beforeMove)
-        let oldIndexPath = beforeMove.indexPath(forElementAt: update.indexChange.old)!
-        let newIndexPath = afterMove.indexPath(forElementAt: update.indexChange.new)!
-
-        currentProjectIDs.value = afterMove
-        projectsCollectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
-        scrollToSelection()
-
-        //
-        var possiblyAffectedItems: Set<IndexPath> = [newIndexPath,
-                                                indexPathOfLastItem(in: ProjectIDsByGoals.Section.withGoal.rawValue),
-                                                indexPathOfLastItem(in: ProjectIDsByGoals.Section.withoutGoal.rawValue)]
-
-        if newIndexPath == indexPathOfLastItem(in: newIndexPath.section), newIndexPath.item > 0 {
-            possiblyAffectedItems.insert(IndexPath(item: newIndexPath.item - 1, section: newIndexPath.section))
+            return (old, new)
         }
 
-        for ip in possiblyAffectedItems {
-            if let item = projectsCollectionView.item(at: ip) as? ProjectCollectionViewItem { // will only determine the status of already cached items
-                setLastItemInSectionStatus(for: item, at: ip)
+        let newIndexPaths = indexPathUpdates.map { $0.1 }
+        let updatedPids = singlePidsUpdates.map { $0.2 }
+        let itemsWhoseLastInSectionStatusMustUpdate = newIndexPaths.zip(with: updatedPids)
+            .map { (newIndexPath, updatedPids) -> Dictionary<IndexPath, Bool> in
+                var possiblyAffectedItems: Set<IndexPath> = [newIndexPath,
+                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByGoals.Section.withGoal),
+                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByGoals.Section.withoutGoal)]
+
+                if let section = ProjectIDsByGoals.Section.init(rawValue: newIndexPath.section),
+                    newIndexPath == updatedPids.indexPathOfLastItem(in: section),
+                    newIndexPath.item > 0 {
+                    possiblyAffectedItems.insert(IndexPath(item: newIndexPath.item - 1, section: newIndexPath.section))
+                }
+
+                var withValues = Dictionary<IndexPath, Bool>()
+                for indexPath in possiblyAffectedItems {
+                    withValues[indexPath] = updatedPids.isIndexPathOfLastItemInSection(indexPath)
+                }
+                return withValues
+        }
+
+        // update values
+        currentProjectIDs <~ updatedPids
+
+        // move items as needed, but ensure the collection view is asked to move the items only after
+        // currentProjectIDs is updated as a result of receiving a single goal update
+        projectsCollectionView.reactive.makeBindingTarget { collectionView, indexPaths in
+            let (oldIndexPath, newIndexPath) = indexPaths
+            collectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
+            } <~ indexPathUpdates
+
+        projectsCollectionView.reactive.makeBindingTarget { collectionView, itemsToUpdate in
+            for (indexPath, isLastInSection) in itemsToUpdate {
+                if let item = collectionView.item(at: indexPath) as? ProjectCollectionViewItem { // will only determine the status of already cached items
+                    item.isLastItemInSection = isLastInSection
+                }
             }
-        }
-    }
-
-    /// Sends the value of the selected project through the `selectedProject` output.
-    private func sendSelectedProjectValue() {
-        if let indexPath = projectsCollectionView.selectionIndexPaths.first,
-            let projectID = currentProjectIDs.value.projectId(for: indexPath) {
-            selectedProjectID.value = projectID
-        } else {
-            selectedProjectID.value = nil
-        }
+            } <~ itemsWhoseLastInSectionStatusMustUpdate // update "last in section" visual state
     }
 
     /// Scrolls the collection view to display the currently selected item.
@@ -264,8 +256,11 @@ override func viewDidLoad() {
     }
 
     func collectionView(_ collectionView: NSCollectionView,
-                        numberOfItemsInSection section: Int) -> Int {
-        return numberOfItems(in: section)
+                        numberOfItemsInSection rawSection: Int) -> Int {
+        guard let section = ProjectIDsByGoals.Section(rawValue: rawSection) else {
+            return 0
+        }
+        return currentProjectIDs.value.numberOfItems(in: section)
     }
 
     func collectionView(_ collectionView: NSCollectionView,
@@ -283,7 +278,7 @@ override func viewDidLoad() {
                     periodPreference.producer.skipNil(),
                     readReport.value!(projectId)))
 
-        setLastItemInSectionStatus(for: projectItem, at: indexPath)
+        projectItem.isLastItemInSection = currentProjectIDs.value.isIndexPathOfLastItemInSection(indexPath)
 
         return projectItem
     }
@@ -308,10 +303,14 @@ override func viewDidLoad() {
     // MARK: - NSCollectionViewDelegate
 
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
-        sendSelectedProjectValue()
+        guard let indexPath = indexPaths.first else {
+            selectedProjectID.value = nil
+            return
+        }
+        selectedProjectID.value = currentProjectIDs.value.projectId(for: indexPath)
     }
 
     func collectionView(_ collectionView: NSCollectionView, didDeselectItemsAt indexPaths: Set<IndexPath>) {
-        sendSelectedProjectValue()
+        selectedProjectID.value = nil
     }
 }

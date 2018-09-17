@@ -175,6 +175,29 @@ extension ProjectIDsByGoals {
     }
 }
 
+extension ProjectIDsByGoals.Update {
+    var goalUpdate: GoalUpdate? {
+        switch self {
+        case .singleGoal(let goalUpdate): return goalUpdate
+        default: return nil
+        }
+    }
+
+    var fullyUpdated: ProjectIDsByGoals? {
+        switch self {
+        case .full(let projectIDsByGoals): return projectIDsByGoals
+        default: return nil
+        }
+    }
+
+    var isSingleGoalUpdate: Bool {
+        switch self {
+        case .singleGoal: return true
+        default: return false
+        }
+    }
+}
+
 extension ProjectIDsByGoals {
     /// Denotes a plausible set of sections in which a list of projects ordered by goals could be organized
     enum Section: Int {
@@ -246,6 +269,24 @@ extension ProjectIDsByGoals {
             return nil
         }
         return indexPath(forElementAt: foundIndex)
+    }
+
+    func numberOfItems(in section: Section) -> Int {
+        switch section {
+        case .withGoal: return countOfProjectsWithGoals
+        case .withoutGoal: return countOfProjectsWithoutGoals
+        }
+    }
+
+    func indexPathOfLastItem(in section: Section) -> IndexPath {
+        return IndexPath(item: numberOfItems(in: section) - 1, section: section.rawValue)
+    }
+
+    func isIndexPathOfLastItemInSection(_ indexPath: IndexPath) -> Bool {
+        guard let section = Section(rawValue: indexPath.section) else {
+            return false
+        }
+        return indexPath == indexPathOfLastItem(in: section)
     }
 }
 
