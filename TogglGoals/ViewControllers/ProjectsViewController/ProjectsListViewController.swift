@@ -224,8 +224,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         // update values
         currentProjectIDs <~ updatedPids
 
-        // move items as needed, but ensure the collection view is asked to move the items only after
-        // currentProjectIDs is updated as a result of receiving a single goal update
+        // move items in the collection view according to the latest single-goal update
         let moveItemsInCollectionView: BindingTarget<(IndexPath, IndexPath)> =
             projectsCollectionView.reactive.makeBindingTarget { collectionView, indexPaths in
                 let (oldIndexPath, newIndexPath) = indexPaths
