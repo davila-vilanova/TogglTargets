@@ -11,6 +11,13 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
+fileprivate let NonSelectedBackgroundColor = NSColor.white
+fileprivate let NonSelectedTextColor = NSColor.black
+fileprivate let FocusedSelectedBackgroundColor = NSColor.init(red: 60.0/255.0, green: 126.0/255.0, blue: 242.0/255.0, alpha: 1)
+fileprivate let FocusedSelectedTextColor = NSColor.white
+fileprivate let NonFocusedSelectedBackgroundColor = NSColor.darkGray
+fileprivate let NonFocusedSelectedTextColor = NSColor.white
+
 class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
     typealias Interface = (
@@ -33,35 +40,19 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     @IBOutlet weak var bottomLining: NSBox!
 
 
-    // MARK: - NSCollectionViewItem
-
-    override var isSelected: Bool {
-        set {
-            let selected = newValue
-            super.isSelected = selected
-
-            let color = selected ? NSColor.controlHighlightColor : NSColor.clear
-            self.view.layer?.backgroundColor = color.cgColor
-            refreshBottomLiningVisibility()
-        }
-
-        get {
-            return super.isSelected
-        }
-    }
-
-
     // MARK: -
 
-    var isLastItemInSection: Bool = false {
-        didSet {
-            refreshBottomLiningVisibility()
-        }
+    override var isSelected: Bool {
+        set { _isSelected.value = newValue }
+        get { return _isSelected.value }
     }
+    private let _isSelected = MutableProperty(false)
 
-    private func refreshBottomLiningVisibility() {
-        bottomLining.isHidden = isSelected || isLastItemInSection
+    @objc var isLastItemInSection: Bool{
+        set { _isLastItemInSection.value = newValue }
+        get { return _isLastItemInSection.value }
     }
+    private let _isLastItemInSection = MutableProperty(false)
 
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
@@ -102,8 +93,6 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             .map { _ in () }
             .map { NSLocalizedString("project-list.item.goal.no-goal", comment: "message to show in each of the project list items when there is no associated goal") }
 
-        goalField.reactive.textColor <~ goal.map { $0 != nil ? NSColor.secondaryLabelColor : NSColor.tertiaryLabelColor }
-
         let noReport = report.filter { $0 == nil }.map { _ in () }
         let workedTimeFromReport = report.skipNil().map { $0.workedTime }
         let workedTimeFromRunningEntry = SignalProducer.combineLatest(project, runningEntry, currentDate)
@@ -122,5 +111,59 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
         let formattedTime = totalWorkedTime.mapToString(timeFormatter: timeFormatter)
         reportField.reactive.text <~ SignalProducer.merge(noReport.map { NSLocalizedString("project-list.item.report.no-data", comment: "message to show in each of the project list items when there is no report data") },
                                                           formattedTime.map { String.localizedStringWithFormat(NSLocalizedString("project-list.item.report.worked-time", comment: "formatted worked time for the project represented by a project list item"), $0) })
+
+        bottomLining.reactive.makeBindingTarget { (lining, state) in
+            let (isSelected, isLastItemInSection) = state
+            lining.isHidden = isSelected || isLastItemInSection
+        } <~ SignalProducer.combineLatest(_isSelected, _isLastItemInSection)
+
+        let isInKeyWindow = MutableProperty(false)
+        let observeWindowKeyChanges: BindingTarget<NSWindow> = NotificationCenter.default
+            .reactive.makeBindingTarget { notificationCenter, window in
+                func observe(_ name: Notification.Name, _ action: @escaping () -> ()) {
+                    notificationCenter.addObserver(forName: name,
+                                                   object: window,
+                                                   queue: OperationQueue.main,
+                                                   using: { _ in action() })
+                }
+                observe(NSWindow.didBecomeKeyNotification) { isInKeyWindow.value = true }
+                observe(NSWindow.didResignKeyNotification) { isInKeyWindow.value = false }
+                isInKeyWindow.value = window.isKeyWindow
+        }
+        reactive.lifetime.observeEnded {
+            NotificationCenter.default.removeObserver(self)
+        }
+
+        observeWindowKeyChanges <~ view.reactive.producer(forKeyPath: "window")
+            .filterMap { $0 as? NSWindow }
+            .take(first: 1)
+
+        let superviewProducer = reactive.producer(forKeyPath: "view.superview").filterMap { $0 as? NSView }.throttle(while: _isSelected.negate(), on: UIScheduler())
+        let firstResponderProducer = reactive.producer(forKeyPath: "view.window.firstResponder").filterMap { $0 as? NSResponder }.throttle(while: _isSelected.negate(), on: UIScheduler()).skipRepeats()
+        let parentCollectionViewIsFirstResponder = superviewProducer.combineLatest(with: firstResponderProducer).map { $0 == $1 }.skipRepeats()
+
+        let backgroundColor = reactive.makeBindingTarget { (item: ProjectCollectionViewItem, color: NSColor) in
+            item.view.layer!.backgroundColor = color.cgColor
+        }
+
+        let isInFocus = isInKeyWindow.producer.and(parentCollectionViewIsFirstResponder)
+        let selectedInFocus = SignalProducer.combineLatest(_isSelected.producer, isInFocus)
+        backgroundColor <~ selectedInFocus.map { selected, inFocus in
+            selected ? (inFocus ? FocusedSelectedBackgroundColor : NonFocusedSelectedBackgroundColor) : NonSelectedBackgroundColor
+        }
+
+        let textColor = selectedInFocus.map { selected, inFocus in
+            selected ? (inFocus ? FocusedSelectedTextColor : NonFocusedSelectedTextColor) : NonSelectedTextColor
+        }
+        for field in [projectNameField, goalField, reportField] as [NSTextField] {
+            field.reactive.textColor <~ textColor
+        }
+
+//        let dPrint: BindingTarget<String> = BindingTarget(lifetime: reactive.lifetime) {
+//            print($0)
+//        }
+//
+//        dPrint <~ isInKeyWindow.producer.throttle(while: _isSelected.negate(), on: UIScheduler()).skipRepeats()
+//            .map { "isInKeyWindow: \($0) " }
     }
 }
