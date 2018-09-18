@@ -158,12 +158,5 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
         for field in [projectNameField, goalField, reportField] as [NSTextField] {
             field.reactive.textColor <~ textColor
         }
-
-//        let dPrint: BindingTarget<String> = BindingTarget(lifetime: reactive.lifetime) {
-//            print($0)
-//        }
-//
-//        dPrint <~ isInKeyWindow.producer.throttle(while: _isSelected.negate(), on: UIScheduler()).skipRepeats()
-//            .map { "isInKeyWindow: \($0) " }
     }
 }
