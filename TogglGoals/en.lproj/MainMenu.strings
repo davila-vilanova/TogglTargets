@@ -53,6 +53,9 @@
 /* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "Vq3-ZU-IuE"; */
 "Vq3-ZU-IuE.title" = "Minimize";
 
+/* Class = "NSMenuItem"; title = "Close"; ObjectID = "3jp-1l-LYy"; */
+"3jp-1l-LYy.title" = "Close";
+
 /* Class = "NSMenu"; title = "File"; ObjectID = "Ww3-eD-T8i"; */
 "Ww3-eD-T8i.title" = "File";
 
