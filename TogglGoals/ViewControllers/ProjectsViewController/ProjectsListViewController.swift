@@ -226,18 +226,24 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         // move items as needed, but ensure the collection view is asked to move the items only after
         // currentProjectIDs is updated as a result of receiving a single goal update
-        projectsCollectionView.reactive.makeBindingTarget { collectionView, indexPaths in
-            let (oldIndexPath, newIndexPath) = indexPaths
-            collectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
-            } <~ indexPathUpdates
+        let moveItemsInCollectionView: BindingTarget<(IndexPath, IndexPath)> =
+            projectsCollectionView.reactive.makeBindingTarget { collectionView, indexPaths in
+                let (oldIndexPath, newIndexPath) = indexPaths
+                collectionView.animator().moveItem(at: oldIndexPath, to: newIndexPath)
+        }
 
-        projectsCollectionView.reactive.makeBindingTarget { collectionView, itemsToUpdate in
-            for (indexPath, isLastInSection) in itemsToUpdate {
-                if let item = collectionView.item(at: indexPath) as? ProjectCollectionViewItem { // will only determine the status of already cached items
-                    item.isLastItemInSection = isLastInSection
+        // update "last in section" visual state
+        let updateLastItemInSectionState: BindingTarget<Dictionary<IndexPath, Bool>> =
+            projectsCollectionView.reactive.makeBindingTarget { collectionView, itemsToUpdate in
+                for (indexPath, isLastInSection) in itemsToUpdate {
+                    if let item = collectionView.item(at: indexPath) as? ProjectCollectionViewItem { // will only determine the status of already cached items
+                        item.isLastItemInSection = isLastInSection
+                    }
                 }
-            }
-            } <~ itemsWhoseLastInSectionStatusMustUpdate // update "last in section" visual state
+        }
+
+        moveItemsInCollectionView <~ indexPathUpdates
+        updateLastItemInSectionState <~ itemsWhoseLastInSectionStatusMustUpdate
     }
 
     /// Scrolls the collection view to display the currently selected item.

@@ -63,24 +63,26 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
             }
         )
 
-        let showStatusDetail = SignalProducer.merge(
+        let shouldShowStatusDetail = SignalProducer.merge(
             syncingStates.map { _ in true },
             errorStates.map { _ in true },
             successStates.map { _ in false },
             idleStates.map { _ in false }
         ).and(requestExpandDetails.negate()).skipRepeats()
 
-        statusDetailLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ showStatusDetail.negate()
+        statusDetailLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ shouldShowStatusDetail.negate()
 
         toggleRequestExpandedDetailsGestureRecognizer.reactive.makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
 
-        statusDetailLabel.reactive.makeBindingTarget { [unowned self] label, hidden in
+        let showStatusDetail: BindingTarget<Bool> = statusDetailLabel.reactive.makeBindingTarget { [unowned self] label, hidden in
             NSAnimationContext.runAnimationGroup({ context in
                 context.allowsImplicitAnimation = true
                 label.isHidden = hidden
                 self.view.layoutSubtreeIfNeeded()
             }, completionHandler: nil)
-        } <~ showStatusDetail.negate()
+        }
+
+        showStatusDetail <~ shouldShowStatusDetail.negate()
 
         requestExpandDetails <~ SignalProducer.merge(idleStates.map { _ in false },
                                                      errorStates.map { _ in true})
