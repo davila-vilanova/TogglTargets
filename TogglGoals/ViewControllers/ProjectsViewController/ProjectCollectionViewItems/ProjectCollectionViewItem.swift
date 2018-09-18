@@ -147,7 +147,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
         }
 
         let isInFocus = isInKeyWindow.producer.and(parentCollectionViewIsFirstResponder)
-        let selectedInFocus = SignalProducer.combineLatest(_isSelected.producer, isInFocus)
+        let selectedInFocus = SignalProducer.combineLatest(_isSelected.producer.observe(on: UIScheduler()), isInFocus)
         backgroundColor <~ selectedInFocus.map { selected, inFocus in
             selected ? (inFocus ? FocusedSelectedBackgroundColor : NonFocusedSelectedBackgroundColor) : NonSelectedBackgroundColor
         }
