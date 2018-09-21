@@ -117,7 +117,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectManuallySelected = selectedProjectID.signal.map { _ in () }
 
         let selectIndexPath = reactive.makeBindingTarget { controller, indexPath in
-            controller.projectsCollectionView.selectItems(at: [indexPath], scrollPosition: .centeredVertically)
+            controller.projectsCollectionView.selectItems(at: [indexPath], scrollPosition: .nearestHorizontalEdge)
         }
 
         let indexPathFromPersistedProjectId = SignalProducer.combineLatest(currentProjectIDs, restoredSelectedProjectId)

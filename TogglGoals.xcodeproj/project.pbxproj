@@ -75,6 +75,8 @@
 		635DCE1B1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */; };
 		635DCE1C1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */; };
 		635DCE1D1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */; };
+		6360175C2154E15A003B56F7 /* ProjectsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6360175B2154E15A003B56F7 /* ProjectsCollectionView.swift */; };
+		6360175D2154E15A003B56F7 /* ProjectsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6360175B2154E15A003B56F7 /* ProjectsCollectionView.swift */; };
 		636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */; };
 		637485611FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637485601FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift */; };
 		63786D56211F34CA0034A994 /* LoginMethodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63786D55211F34CA0034A994 /* LoginMethodViewController.swift */; };
@@ -346,6 +348,7 @@
 		635A25812052917A00EFCE90 /* ProjectCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCollectionViewItem.xib; sourceTree = "<group>"; };
 		635A25822052917A00EFCE90 /* ProjectsListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsListViewController.swift; sourceTree = "<group>"; };
 		635DCE191FD68F7D006FED93 /* ProjectIDsByGoals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectIDsByGoals.swift; sourceTree = "<group>"; };
+		6360175B2154E15A003B56F7 /* ProjectsCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsCollectionView.swift; sourceTree = "<group>"; };
 		636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountWeekdaysTests.swift; sourceTree = "<group>"; };
 		637485601FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectIDsByGoalsTests.swift; sourceTree = "<group>"; };
 		63786D55211F34CA0034A994 /* LoginMethodViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginMethodViewController.swift; sourceTree = "<group>"; };
@@ -577,6 +580,7 @@
 			children = (
 				635A25822052917A00EFCE90 /* ProjectsListViewController.swift */,
 				635A257C2052917A00EFCE90 /* VerticalListLayout.swift */,
+				6360175B2154E15A003B56F7 /* ProjectsCollectionView.swift */,
 				635A257D2052917A00EFCE90 /* ProjectCollectionViewItems */,
 			);
 			name = ProjectsViewController;
@@ -1000,6 +1004,7 @@
 				6334B49E20703EC000A5B796 /* CondensedActivityViewController.swift in Sources */,
 				6334B4A020703EC000A5B796 /* ActivitiesState.swift in Sources */,
 				63AB08131FB6305200565D87 /* PreferenceStore.swift in Sources */,
+				6360175C2154E15A003B56F7 /* ProjectsCollectionView.swift in Sources */,
 				63F150172098699A0044288F /* KeyViewsProviding.swift in Sources */,
 				639F38F3208FA4D500AE96CF /* InterfaceBinding.swift in Sources */,
 				6355C5BC1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
@@ -1088,6 +1093,7 @@
 				639F8B7320E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */,
 				6333B6D01F974690002CF189 /* Profile.swift in Sources */,
 				635DCE1C1FD68F7D006FED93 /* ProjectIDsByGoals.swift in Sources */,
+				6360175D2154E15A003B56F7 /* ProjectsCollectionView.swift in Sources */,
 				639F8B6C20E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift in Sources */,
 				63DC619C1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */,
 				63B1BBE91FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,
