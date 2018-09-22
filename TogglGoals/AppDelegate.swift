@@ -163,8 +163,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func windowWillClose(_ notification: Notification) {
-        // Only expecting the preferences window to notify of close
-        presentedPreferencesWindow = nil
+        if let closing = notification.object as? NSWindow,
+            let prefsWindow = presentedPreferencesWindow,
+            closing == prefsWindow {
+            presentedPreferencesWindow = nil
+        }
     }
 
     @IBAction func refreshAllData(_ sender: Any) {
