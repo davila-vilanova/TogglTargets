@@ -177,3 +177,12 @@
 
 /* error description: other HTTP error */
 "error.other-http" = "Received an HTTP error that I don't know how to handle. Response code is %d";
+
+/* undo action name: create goal */
+"undo.create-goal" = "Create Goal";
+
+/* undo action name: modify goal */
+"undo.modify-goal" = "Modify Goal";
+
+/* undo action name: delete goal */
+"undo.delete-goal" = "Delete Goal";

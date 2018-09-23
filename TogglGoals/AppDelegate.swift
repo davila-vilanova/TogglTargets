@@ -16,6 +16,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private lazy var mainStoryboard = NSStoryboard(name: .init("Main"), bundle: nil)
     private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
     private lazy var mainViewController: ProjectsMasterDetailController = mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
+    private lazy var mainWindow: NSWindow = {
+        let window = mainWindowController.window!
+        window.delegate = self
+        return window
+    }()
 
     private var presentedPreferencesWindow: NSWindow?
 
@@ -33,6 +38,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let (applicationLifetime, token) = Lifetime.make()
 
     private let modelCoordinator: ModelCoordinator
+
+    private let undoManager = UndoManager()
 
     override init() {
         let supportDir: URL
@@ -56,7 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                             retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
                                             retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
 
-            let goalsStore = ConcreteProjectIDsByGoalsProducingGoalsStore(persistenceProvider: goalsPersistenceProvider)
+            let goalsStore = ConcreteProjectIDsByGoalsProducingGoalsStore(persistenceProvider: goalsPersistenceProvider, undoManager: undoManager)
 
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
                                                 goalsStore: goalsStore,
@@ -78,8 +85,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         processLaunchArguments()
 
-        let mainWindow = mainWindowController.window
-        mainWindow!.makeKeyAndOrderFront(nil)
+        mainWindow.makeKeyAndOrderFront(nil)
 
         mainViewController <~ SignalProducer(
             value: (calendar: calendar.producer,
@@ -168,6 +174,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             closing == prefsWindow {
             presentedPreferencesWindow = nil
         }
+    }
+
+    func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
+        return window == mainWindow ? undoManager : nil
     }
 
     @IBAction func refreshAllData(_ sender: Any) {

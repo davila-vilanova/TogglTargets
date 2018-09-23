@@ -32,7 +32,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     internal var bindingTarget: BindingTarget<ProjectsMasterDetailController.Interface?> { return lastBinding.bindingTarget }
 
 
-    // MARK: - Internal
+    // MARK: - Private
 
     private let selectedProjectId = MutableProperty<ProjectID?>(nil)
 
@@ -93,10 +93,16 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.readReport)
         }
 
+        let interceptWriteGoal = MutableProperty<Goal?>(nil)
+        reactive.lifetime.observeEnded {
+            _ = interceptWriteGoal
+        }
+
         selectionDetailViewController <~
             SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.producer),
-                                         lastBinding.producer.skipNil())
-                .map { selectedProjectIdProducer, binding in
+                                         lastBinding.producer.skipNil(),
+                                         SignalProducer(value: interceptWriteGoal.deoptionalizedBindingTarget))
+                .map { selectedProjectIdProducer, binding, writeGoal in
                     (selectedProjectIdProducer,
                      binding.currentDate,
                      binding.calendar,
@@ -104,9 +110,15 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.runningEntry,
                      binding.readProject,
                      binding.readGoal,
-                     binding.writeGoal,
+                     writeGoal,
                      binding.readReport)
         }
+
+        interceptWriteGoal.producer.skipNil()
+            .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeGoal })
+        reactive.makeBindingTarget { controller, _ in
+            controller.undoManager?.setActionName(NSLocalizedString("undo.modify-goal", comment: "undo action name: modify goal"))
+            } <~ interceptWriteGoal.producer.skipNil().map { _ in () }
     }
 
     @IBAction public func createGoal(_ sender: Any?) {
@@ -115,6 +127,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
             let writeGoal = lastBinding.value?.writeGoal else {
                 return
         }
+        undoManager?.setActionName(NSLocalizedString("undo.create-goal", comment: "undo action name: create goal"))
         writeGoal <~ SignalProducer(value: Goal.createDefault(for: projectId))
     }
 
@@ -124,6 +137,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
             let deleteGoal = lastBinding.value?.deleteGoal else {
                 return
         }
+        undoManager?.setActionName(NSLocalizedString("undo.delete-goal", comment: "undo action name: delete goal"))
         deleteGoal <~ SignalProducer(value: projectId)
     }
 

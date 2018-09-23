@@ -177,3 +177,12 @@
 
 /* error description: other HTTP error */
 "error.other-http" = "He recibido un error de HTTP que no sé cómo interpretar. El código es %d";
+
+/* undo action name: create goal */
+"undo.create-goal" = "Crear Meta";
+
+/* undo action name: modify goal */
+"undo.modify-goal" = "Modificar Meta";
+
+/* undo action name: delete goal */
+"undo.delete-goal" = "Borrar Meta";

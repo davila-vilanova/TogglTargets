@@ -55,7 +55,7 @@ protocol ProjectIDsByGoalsProducing {
 protocol GoalPersistenceProvider {
     var persistGoal: BindingTarget<Goal> { get }
     var deleteGoal: BindingTarget<ProjectID> { get }
-    var allGoals: SignalProducer<ProjectIndexedGoals, NoError> { get }
+    var allGoals: MutableProperty<ProjectIndexedGoals> { get }
 }
 
 class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
@@ -76,24 +76,18 @@ class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
     private let (lifetime, token) = Lifetime.make()
     private lazy var scheduler = QueueScheduler()
 
+    private let _persistGoal = MutableProperty<Goal?>(nil)
+
     /// Persists the provided goal into the database synchronously.
-    lazy var persistGoal = BindingTarget<Goal>(on: scheduler, lifetime: lifetime) { [unowned self] goal in
-        try! self.db.run(self.goalsTable.insert(or: .replace,
-                                                self.projectIdExpression <- goal.projectId,
-                                                self.hoursTargetExpression <- goal.hoursTarget,
-                                                self.workWeekdaysExpression <- goal.workWeekdays))
-        // TODO: synchronize periodically instead of writing immediately
-    }
+    var persistGoal: BindingTarget<Goal> { return _persistGoal.deoptionalizedBindingTarget }
+
+    private let _deleteGoal = MutableProperty<ProjectID?>(nil)
 
     /// Deletes synchronously from the database the goal corresponding to the
     /// provided project ID.
-    lazy var deleteGoal = BindingTarget<ProjectID>(on: scheduler, lifetime: lifetime) { [unowned self] projectId in
-        let q = self.goalsTable.filter(self.projectIdExpression == projectId)
-        try! self.db.run(q.delete())
-    }
+    var deleteGoal: BindingTarget<ProjectID> { return _deleteGoal.deoptionalizedBindingTarget }
 
-    lazy var allGoals: SignalProducer<ProjectIndexedGoals, NoError>
-        = SignalProducer({ [weak self] in self?.retrieveAllGoals() ?? ProjectIndexedGoals() })
+    lazy var allGoals = MutableProperty<ProjectIndexedGoals>(retrieveAllGoals())
 
     /// Retrieves all goals from the database
     private func retrieveAllGoals() -> ProjectIndexedGoals {
@@ -131,6 +125,27 @@ class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
         }
 
         ensureSchemaCreated()
+
+        let persistProducer = _persistGoal.producer.skipNil().on(value: { [unowned self] goal in
+            try! self.db.run(self.goalsTable.insert(or: .replace,
+                                                    self.projectIdExpression <- goal.projectId,
+                                                    self.hoursTargetExpression <- goal.hoursTarget,
+                                                    self.workWeekdaysExpression <- goal.workWeekdays))
+            // TODO: synchronize periodically instead of writing immediately
+        }).start(on: goalWriteScheduler)
+
+        let deleteProducer = _deleteGoal.producer.skipNil().on(value: { [unowned self] projectId in
+            let q = self.goalsTable.filter(self.projectIdExpression == projectId)
+            try! self.db.run(q.delete())
+        }).start(on: goalWriteScheduler)
+
+        allGoals <~ persistProducer.withLatest(from: allGoals).map {
+            $1.updatingValue($0, forKey: $0.projectId)
+        }.logValues("modified allGoals")
+
+        allGoals <~ deleteProducer.withLatest(from: allGoals).map {
+            $1.updatingValue(nil, forKey: $0)
+        }
     }
 
     /// Creates the underlying database schema if not already created.
@@ -149,27 +164,48 @@ class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
     }
 }
 
+
+// MARK: -
+
 /// Represents an entity that conforms to both the `GoalsStore` and `ProjectIDsByGoalsProducing` protocols.
 protocol ProjectIDsByGoalsProducingGoalsStore: GoalsStore, ProjectIDsByGoalsProducing { }
+
+
+// MARK: -
 
 class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGoalsStore {
 
     private let (lifetime, token) = Lifetime.make()
 
     private let persistenceProvider: GoalPersistenceProvider
+    private let undoManager: UndoManager
 
-    init(persistenceProvider: GoalPersistenceProvider) {
+    init(persistenceProvider: GoalPersistenceProvider, undoManager: UndoManager) {
         self.persistenceProvider = persistenceProvider
+        self.undoManager = undoManager
 
         let writeGoalProducer = _writeGoal.producer.skipNil()
         let deleteGoalProducer = _deleteGoal.producer.skipNil()
 
-        let retrievedGoals = Property<ProjectIndexedGoals?>(initial: nil, then: persistenceProvider.allGoals)
+        let undoModifyOrDeleteGoal = BindingTarget<Goal>(on: goalWriteScheduler, lifetime: lifetime) { [unowned _writeGoal] goalBeforeEditing in
+            undoManager.registerUndo(withTarget: _writeGoal) { $0 <~ SignalProducer(value: goalBeforeEditing).start(on: UIScheduler()) }
+        }
+        let undoCreateGoal = BindingTarget<ProjectID>(on: goalWriteScheduler, lifetime: lifetime) { [unowned _deleteGoal] projectId in
+            undoManager.registerUndo(withTarget: _deleteGoal, handler: { $0 <~ SignalProducer(value: projectId).start(on: UIScheduler()) })
+        }
+        let goalsPreModification = writeGoalProducer.map { $0.projectId }.withLatest(from: persistenceProvider.allGoals).map { $0.1[$0.0] }.skipNil()
+        let goalsPreDeletion = deleteGoalProducer.withLatest(from: persistenceProvider.allGoals).map { $0.1[$0.0] }.skipNil()
+
+        undoModifyOrDeleteGoal <~ SignalProducer.merge(goalsPreModification, goalsPreDeletion)
+
+        let idsOfCreatedGoals = writeGoalProducer.map { $0.projectId }.withLatest(from: persistenceProvider.allGoals).map { ($0.1[$0.0], $0.0) }.filter { $0.0 == nil }.map { $0.1 }
+
+        undoCreateGoal <~ idsOfCreatedGoals
 
         let singleGoalUpdateComputer = Property<SingleGoalUpdateComputer?>(
             initial: nil,
-            then: SignalProducer.combineLatest(retrievedGoals.producer.skipNil(), projectIDsByGoalsFullRefresh)
-                .map { [unowned self] (indexedGoalsState, projectIDsByGoalsState) in
+            then: projectIDsByGoalsFullRefresh.withLatest(from: persistenceProvider.allGoals)
+                .map { [unowned self] (projectIDsByGoalsState, indexedGoalsState) in
                     SingleGoalUpdateComputer(initialStateIndexedGoals: indexedGoalsState,
                                              initialStateProjectIDsByGoals: projectIDsByGoalsState,
                                              inputWriteGoal: writeGoalProducer,
@@ -178,30 +214,14 @@ class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGo
             }
         )
 
-        let indexedGoalsState = Property<IndexedGoalsState?>(
-            initial: nil,
-            then: retrievedGoals.producer.skipNil()
-                .map { [unowned self] retrievedGoals in
-                    IndexedGoalsState(initialStateIndexedGoals: retrievedGoals,
-                                      inputWriteGoal: writeGoalProducer,
-                                      inputDeleteGoal: deleteGoalProducer,
-                                      outputIndexedGoals: self.allGoals.deoptionalizedBindingTarget)
-            }
-        )
-
         lifetime.observeEnded {
             _ = singleGoalUpdateComputer
-            _ = indexedGoalsState
         }
 
         persistenceProvider.persistGoal <~ writeGoalProducer
         persistenceProvider.deleteGoal <~ deleteGoalProducer
     }
 
-    // MARK: - All goals kept in memory
-
-    /// Tracks the values of all goals indexed by project ID.
-    private let allGoals = MutableProperty<ProjectIndexedGoals?>(nil)
 
     // MARK: - Goal interface
 
@@ -212,10 +232,8 @@ class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGo
     /// - note: `nil` goal values represent a goal that does not exist yet or
     ///         that has been deleted.
     lazy var readGoal: ReadGoal = { projectID in
-        self.allGoals.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
+        self.persistenceProvider.allGoals.producer.map { $0[projectID] }.skipRepeats { $0 == $1 }
     }
-
-    // MARK: - Public 
 
     var writeGoal: BindingTarget<Goal> { return _writeGoal.deoptionalizedBindingTarget }
     private let _writeGoal = MutableProperty<Goal?>(nil)
@@ -236,7 +254,7 @@ class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGo
     /// Produces a new `ProjectIDsByGoals` value each time a value is sent to the `projectIDs` target
     /// that contains a different set of unique IDs than the last seen one.
     private lazy var projectIDsByGoalsFullRefresh: SignalProducer<ProjectIDsByGoals, NoError> =
-        _projectIDs.producer.skipNil().combineLatest(with: allGoals.producer.skipNil())
+        _projectIDs.producer.skipNil().withLatest(from: persistenceProvider.allGoals)
             .skipRepeats { (old, new) -> Bool in // let through only changes in project IDs, order insensitive
                 let oldIds = Set(old.0)
                 let newIds = Set(new.0)
@@ -326,7 +344,7 @@ fileprivate class SingleGoalUpdateComputer {
             .forGoalChange(involving: newGoal,
                            for: projectID,
                            within: indexedGoals,
-                           affecting: projectIDsByGoals)! // returns nil only if `projectID` is not included in `projectIDsByGoals`
+                           affecting: projectIDsByGoals)! // would return nil only if `projectID` were not included in `projectIDsByGoals`
 
 
         // Update internal state
@@ -344,47 +362,4 @@ fileprivate class SingleGoalUpdateComputer {
 
 // MARK: -
 
-fileprivate class IndexedGoalsState {
-    private let (lifetime, token) = Lifetime.make()
-    private let scheduler = QueueScheduler()
-
-    init(initialStateIndexedGoals: ProjectIndexedGoals,
-         inputWriteGoal: SignalProducer<Goal, NoError>,
-         inputDeleteGoal: SignalProducer<ProjectID, NoError>,
-         outputIndexedGoals: BindingTarget<ProjectIndexedGoals>) {
-
-        indexedGoals = initialStateIndexedGoals
-
-        writeGoal <~ inputWriteGoal
-        deleteGoal <~ inputDeleteGoal
-
-        lifetime += outputIndexedGoals <~ indexedGoalsUpdatePipe.output
-
-        sendUpdate()
-    }
-
-    // MARK: - State
-
-    private var indexedGoals: ProjectIndexedGoals
-
-    // MARK: - Input
-
-    private lazy var writeGoal = BindingTarget<Goal>(on: scheduler, lifetime: lifetime) { [unowned self] in
-        self.indexedGoals[$0.projectId] = $0
-        self.sendUpdate()
-    }
-
-    private lazy var deleteGoal = BindingTarget<ProjectID>(on: scheduler, lifetime: lifetime) { [unowned self] in
-        self.indexedGoals.removeValue(forKey: $0)
-        self.sendUpdate()
-    }
-
-    private func sendUpdate() {
-        indexedGoalsUpdatePipe.input.send(value: indexedGoals)
-    }
-
-    // MARK: - Output
-
-    private let indexedGoalsUpdatePipe = Signal<ProjectIndexedGoals, NoError>.pipe()
-}
-
+fileprivate let goalWriteScheduler = UIScheduler()
