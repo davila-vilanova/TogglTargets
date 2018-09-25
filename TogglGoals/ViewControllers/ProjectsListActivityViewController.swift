@@ -20,6 +20,7 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
     internal typealias Interface = (
         projectIDsByGoals: ProjectIDsByGoalsProducer,
         selectedProjectId: BindingTarget<ProjectID?>,
+        selectProjectId: SignalProducer<ProjectID?, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
@@ -55,6 +56,7 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
             projects <~ lastBinding.producer.skipNil().map {
                 ($0.projectIDsByGoals,
                  $0.selectedProjectId,
+                 $0.selectProjectId,
                  $0.runningEntry,
                  $0.currentDate,
                  $0.periodPreference,

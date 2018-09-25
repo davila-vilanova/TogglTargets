@@ -43,7 +43,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     to its input project IDs.
     internal typealias Interface = (
         projectIDsByGoals: ProjectIDsByGoalsProducer,
-        selectedProjectId: BindingTarget<ProjectID?>,
+        selectionUpstream: BindingTarget<ProjectID?>,
+        selectionDownstream: SignalProducer<ProjectID?, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
@@ -110,7 +111,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private func invalidateRestorableStateWhenProjectManuallySelected() {
         reactive.makeBindingTarget { controller, _ in
             controller.invalidateRestorableState()
-            } <~  selectedProjectID
+            } <~ selectedProjectID
     }
 
     private func restoreSelectionInCollectionView() {
@@ -140,8 +141,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         super.viewDidLoad()
 
         initializeProjectsCollectionView()
-        wireUpdatesToCollectionView()
+        wireFullUpdatesToCollectionView()
+        wireSingleGoalUpdatesToCollectionView()
 
+        // Connect interface to private properties
         lastProjectIDsByGoalsUpdate <~ lastBinding.latestOutput { $0.projectIDsByGoals }
         runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
         currentDate <~ lastBinding.latestOutput { $0.currentDate }
@@ -152,11 +155,14 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         readGoal <~ lastValidBinding.map { $0.readGoal }
         readReport <~ lastValidBinding.map { $0.readReport }
 
-        let selectedProjectId = restoredSelectedProjectId.producer.take(untilReplacement: self.selectedProjectID.signal)
-        reactive.lifetime += selectedProjectId.bindOnlyToLatest(lastValidBinding.map { $0.selectedProjectId })
+        let selectedProjectId = restoredSelectedProjectId.producer
+            .take(untilReplacement: SignalProducer.merge(self.selectedProjectID.producer.skip(first: 1),
+                                                         lastBinding.latestOutput { $0.selectionDownstream }))
+        reactive.lifetime += selectedProjectId.bindOnlyToLatest(lastValidBinding.map { $0.selectionUpstream })
 
         invalidateRestorableStateWhenProjectManuallySelected()
         restoreSelectionInCollectionView()
+        wireDownstreamSelection()
     }
 
     private func initializeProjectsCollectionView() {
@@ -173,9 +179,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         layout.sectionHeadersPinToVisibleBounds = true
     }
 
-    private func wireUpdatesToCollectionView() {
-        // wire full updates: set the current value of `currentProjectIDs`
-        // and trigger a full refresh of the collection view
+    func wireFullUpdatesToCollectionView() {
+        // set the current value of `currentProjectIDs` and trigger a full refresh of the collection view
         let fullUpdates = lastProjectIDsByGoalsUpdate.producer.skipNil().filterMap { $0.fullyUpdated }
 
         currentProjectIDs <~ fullUpdates
@@ -183,11 +188,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         reactive.makeBindingTarget { controller, _ in
             controller.projectsCollectionView.reloadData()
             controller.scrollToSelection()
-        } <~ fullUpdates.map { _ in () }
+            } <~ fullUpdates.map { _ in () }
+    }
 
-
-        // wire single goal updates: reflect the provided update in the value of `currentProjectIDs`,
-        // reorder the affected item in the collection view and update the "last item in section" visual state
+    func wireSingleGoalUpdatesToCollectionView () {
+        // reflect the provided update in the value of `currentProjectIDs`, reorder the affected item in the
+        // collection view and update the "last item in section" visual state
         let singlePidsUpdates: Signal<(ProjectIDsByGoals.Update.GoalUpdate, ProjectIDsByGoals, ProjectIDsByGoals), NoError> =
             lastProjectIDsByGoalsUpdate.signal.skipNil().filterMap { $0.goalUpdate }
                 .withLatest(from: currentProjectIDs.producer)
@@ -243,6 +249,24 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         moveItemsInCollectionView <~ indexPathUpdates
         updateLastItemInSectionState <~ itemsWhoseLastInSectionStatusMustUpdate
+    }
+
+    private func wireDownstreamSelection() {
+        let selectInCollectionView: BindingTarget<IndexPath> = projectsCollectionView.reactive.makeBindingTarget {
+            $0.deselectItems(at: $0.selectionIndexPaths)
+            $0.selectItems(at: [$1], scrollPosition: .nearestHorizontalEdge)
+        }
+
+        let delayScheduler = QueueScheduler()
+        selectInCollectionView <~ lastBinding.latestOutput { $0.selectionDownstream }.withLatest(from: currentProjectIDs).map { (projectId, idsByGoals) -> IndexPath? in
+            guard let projectId = projectId else {
+                return nil
+            }
+            return idsByGoals.indexPath(for: projectId)
+            }
+            .skipNil()
+            .delay(0, on: delayScheduler) // ensure selection will happen last when it's combined with a partial collection update
+            .logValues("sel")
     }
 
     /// Scrolls the collection view to display the currently selected item.

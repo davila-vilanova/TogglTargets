@@ -36,6 +36,23 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private let selectedProjectId = MutableProperty<ProjectID?>(nil)
 
+    private let focusOnUndoProjectId = MutableProperty<ProjectID?>(nil)
+
+    private let createGoal = MutableProperty<Goal?>(nil)
+
+    private let modifyGoal = MutableProperty<Goal?>(nil)
+
+    private let deleteGoal = MutableProperty<ProjectID?>(nil)
+
+    private lazy var registerSelectionInUndoManager: BindingTarget<ProjectID> = reactive.makeBindingTarget { controller, projectId in
+        controller.undoManager?.registerUndo(withTarget: controller.focusOnUndoProjectId) {
+            $0 <~ SignalProducer(value: projectId) }
+    }
+
+    private lazy var setUndoActionName = reactive.makeBindingTarget { controller, actionName in
+        controller.undoManager?.setActionName(actionName)
+    }
+
     private lazy var readGoal = Property(initial: nil, then: lastBinding.producer.skipNil().map { $0.readGoal })
 
     private lazy var isProjectWithGoalCurrentlySelected =
@@ -81,9 +98,10 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         projectsListActivityViewController <~
             SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.bindingTarget),
                                          lastBinding.producer.skipNil())
-                .map { selectedProjectIdTarget, binding in
+                .map { [unowned focusOnUndoProjectId] selectedProjectIdTarget, binding in
                     (binding.projectIDsByGoals,
                      selectedProjectIdTarget,
+                     focusOnUndoProjectId.producer.skip(first: 1),
                      binding.runningEntry,
                      binding.currentDate,
                      binding.periodPreference,
@@ -93,16 +111,11 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.readReport)
         }
 
-        let interceptWriteGoal = MutableProperty<Goal?>(nil)
-        reactive.lifetime.observeEnded {
-            _ = interceptWriteGoal
-        }
-
         selectionDetailViewController <~
             SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.producer),
                                          lastBinding.producer.skipNil(),
-                                         SignalProducer(value: interceptWriteGoal.deoptionalizedBindingTarget))
-                .map { selectedProjectIdProducer, binding, writeGoal in
+                                         SignalProducer(value: modifyGoal.deoptionalizedBindingTarget))
+                .map { selectedProjectIdProducer, binding, modifyGoal in
                     (selectedProjectIdProducer,
                      binding.currentDate,
                      binding.calendar,
@@ -110,34 +123,48 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.runningEntry,
                      binding.readProject,
                      binding.readGoal,
-                     writeGoal,
+                     modifyGoal,
                      binding.readReport)
         }
 
-        interceptWriteGoal.producer.skipNil()
+        registerSelectionInUndoManager <~ SignalProducer.merge(createGoal.producer.skipNil().map { $0.projectId },
+                                                               modifyGoal.producer.skipNil().map { $0.projectId },
+                                                               deleteGoal.producer.skipNil())
+
+        createGoal.producer.skipNil()
             .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeGoal })
-        reactive.makeBindingTarget { controller, _ in
-            controller.undoManager?.setActionName(NSLocalizedString("undo.modify-goal", comment: "undo action name: modify goal"))
-            } <~ interceptWriteGoal.producer.skipNil().map { _ in () }
+
+        modifyGoal.producer.skipNil()
+            .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeGoal })
+
+        deleteGoal.producer.skipNil()
+            .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.deleteGoal })
+
+        setUndoActionName <~ createGoal.producer.skipNil()
+            .map { _ in NSLocalizedString("undo.create-goal", comment: "undo action name: create goal") }
+        setUndoActionName <~ modifyGoal.producer.skipNil()
+            .map { _ in NSLocalizedString("undo.modify-goal", comment: "undo action name: modify goal") }
+        setUndoActionName <~ deleteGoal.producer.skipNil()
+            .map { _ in NSLocalizedString("undo.delete-goal", comment: "undo action name: delete goal") }
+
+
+
+        registerSelectionInUndoManager <~ focusOnUndoProjectId.producer.skipNil()
     }
 
     @IBAction public func createGoal(_ sender: Any?) {
         guard canCreateGoal,
-            let projectId = selectedProjectId.value,
-            let writeGoal = lastBinding.value?.writeGoal else {
+            let projectId = selectedProjectId.value else {
                 return
         }
-        undoManager?.setActionName(NSLocalizedString("undo.create-goal", comment: "undo action name: create goal"))
-        writeGoal <~ SignalProducer(value: Goal.createDefault(for: projectId))
+        createGoal <~ SignalProducer(value: Goal.createDefault(for: projectId))
     }
 
     @IBAction public func deleteGoal(_ sender: Any?) {
         guard canDeleteGoal,
-            let projectId = selectedProjectId.value,
-            let deleteGoal = lastBinding.value?.deleteGoal else {
+            let projectId = selectedProjectId.value else {
                 return
         }
-        undoManager?.setActionName(NSLocalizedString("undo.delete-goal", comment: "undo action name: delete goal"))
         deleteGoal <~ SignalProducer(value: projectId)
     }
 

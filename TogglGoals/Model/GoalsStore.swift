@@ -141,7 +141,7 @@ class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
 
         allGoals <~ persistProducer.withLatest(from: allGoals).map {
             $1.updatingValue($0, forKey: $0.projectId)
-        }.logValues("modified allGoals")
+        }
 
         allGoals <~ deleteProducer.withLatest(from: allGoals).map {
             $1.updatingValue(nil, forKey: $0)
@@ -188,7 +188,9 @@ class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGo
         let deleteGoalProducer = _deleteGoal.producer.skipNil()
 
         let undoModifyOrDeleteGoal = BindingTarget<Goal>(on: goalWriteScheduler, lifetime: lifetime) { [unowned _writeGoal] goalBeforeEditing in
-            undoManager.registerUndo(withTarget: _writeGoal) { $0 <~ SignalProducer(value: goalBeforeEditing).start(on: UIScheduler()) }
+            undoManager.registerUndo(withTarget: _writeGoal) {
+                $0 <~ SignalProducer(value: goalBeforeEditing).start(on: UIScheduler())
+            }
         }
         let undoCreateGoal = BindingTarget<ProjectID>(on: goalWriteScheduler, lifetime: lifetime) { [unowned _deleteGoal] projectId in
             undoManager.registerUndo(withTarget: _deleteGoal, handler: { $0 <~ SignalProducer(value: projectId).start(on: UIScheduler()) })
