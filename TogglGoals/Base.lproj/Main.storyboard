@@ -62,7 +62,7 @@
                         <subviews>
                             <scrollView wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kat-8d-Ff9">
                                 <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
-                                <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="V9W-AF-Ttj">
+                                <clipView key="contentView" wantsLayer="YES" id="V9W-AF-Ttj">
                                     <rect key="frame" x="0.0" y="0.0" width="180" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -83,11 +83,11 @@
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="eXF-ou-lGI"/>
                                 </constraints>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="EPZ-py-eHf">
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="EPZ-py-eHf">
                                     <rect key="frame" x="2" y="282" width="157" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Q81-ig-h5S">
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Q81-ig-h5S">
                                     <rect key="frame" x="143" y="2" width="16" height="296"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
@@ -270,7 +270,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="522" height="424"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <visualEffectView appearanceType="vibrantLight" blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="5LN-R4-Z6o">
+                            <visualEffectView appearanceType="inheritedVibrantLight" blendingMode="behindWindow" material="underWindowBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="5LN-R4-Z6o">
                                 <rect key="frame" x="0.0" y="0.0" width="522" height="424"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ifD-zz-iY5">
@@ -287,11 +287,11 @@
                                     <box titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Hn0-YD-qa8">
                                         <rect key="frame" x="17" y="316" width="488" height="54"/>
                                         <view key="contentView" id="n5a-VU-s3O">
-                                            <rect key="frame" x="2" y="2" width="484" height="50"/>
+                                            <rect key="frame" x="3" y="3" width="482" height="48"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HTW-ic-thd">
-                                                    <rect key="frame" x="8" y="8" width="468" height="34"/>
+                                                    <rect key="frame" x="8" y="8" width="466" height="32"/>
                                                     <connections>
                                                         <segue destination="a81-xu-Ddi" kind="embed" id="QZe-xy-55G"/>
                                                     </connections>
@@ -466,7 +466,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="146" height="94"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <visualEffectView appearanceType="vibrantLight" blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="3Qd-mI-D9T">
+                            <visualEffectView appearanceType="inheritedVibrantLight" blendingMode="behindWindow" material="popover" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="3Qd-mI-D9T">
                                 <rect key="frame" x="0.0" y="0.0" width="146" height="94"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WTT-ou-k01">
@@ -777,7 +777,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="spt-9H-RBY">
-                                <rect key="frame" x="106" y="164" width="264" height="21"/>
+                                <rect key="frame" x="107" y="165" width="264" height="21"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KJB-2f-ZKw">
                                         <rect key="frame" x="-6" y="-7" width="119" height="32"/>
@@ -827,7 +827,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v1h-N7-niu">
-                                <rect key="frame" x="-2" y="340" width="4" height="17"/>
+                                <rect key="frame" x="-2" y="339" width="4" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="ZWJ-aR-s78">
                                     <font key="font" metaFont="systemMedium" size="13"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -835,7 +835,7 @@
                                 </textFieldCell>
                             </textField>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mFI-rM-DT6">
-                                <rect key="frame" x="270" y="334" width="210" height="26"/>
+                                <rect key="frame" x="269" y="334" width="211" height="25"/>
                                 <popUpButtonCell key="cell" type="push" title="compute from today" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="CSh-kF-rVJ" id="sdJ-bf-5uw" userLabel="Compute Strategy From Button Cell">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -957,11 +957,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <visualEffectView appearanceType="vibrantLight" blendingMode="behindWindow" material="appearanceBased" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="xSK-pP-iz5">
+                            <visualEffectView appearanceType="inheritedVibrantLight" blendingMode="behindWindow" material="underWindowBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="xSK-pP-iz5">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DHb-ma-adO">
-                                        <rect key="frame" x="154" y="142" width="141" height="17"/>
+                                        <rect key="frame" x="155" y="142" width="141" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="please select a project" id="EHa-P4-qQ6">
                                             <font key="font" metaFont="message"/>
                                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
