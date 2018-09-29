@@ -8,27 +8,26 @@
 
 import Cocoa
 
+fileprivate let TitleLabelTag = 1080
+
 class ProjectCollectionViewHeader: NSView, NSCollectionViewElement {
-    static let TitleLabelIdentifier = NSUserInterfaceItemIdentifier("titleLabel")
 
-    required init?(coder decoder: NSCoder) {
-        super.init(coder: decoder)
-        wantsLayer = true
-        layer?.backgroundColor = NSColor.textBackgroundColor.cgColor
-    }
-
-    var title: String = "" {
+    var title: String? {
         didSet {
             displayTitle()
         }
     }
-    
+
+    override func awakeFromNib() {
+        displayTitle()
+    }
+
     private func displayTitle() {
-        for view in subviews {
-            if let label = view as? NSTextField,
-                view.identifier == ProjectCollectionViewHeader.TitleLabelIdentifier {
-                label.stringValue = title
-            }
+        guard let title = title else {
+            return
+        }
+        if let label = viewWithTag(TitleLabelTag) as? NSTextField {
+            label.stringValue = title
         }
     }
 }

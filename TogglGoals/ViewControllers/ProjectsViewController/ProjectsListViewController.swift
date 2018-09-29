@@ -135,7 +135,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
 
-    // MARK: -
+    // MARK: - Setup
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -177,6 +177,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let layout = projectsCollectionView.collectionViewLayout as! VerticalListLayout
         layout.headerReferenceSize = CGSize(width: projectsCollectionView.bounds.width, height: 42)
         layout.sectionHeadersPinToVisibleBounds = true
+        layout.minimumLineSpacing = 0 // avoid gap between items
+        layout.itemHeight = 70
     }
 
     func wireFullUpdatesToCollectionView() {

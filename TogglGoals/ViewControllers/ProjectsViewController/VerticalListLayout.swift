@@ -11,6 +11,16 @@ import Cocoa
 class VerticalListLayout: NSCollectionViewFlowLayout {
     static let safeMinimumInteritemSpacing = CGFloat(1000) // big
 
+    var itemHeight: CGFloat {
+        get {
+            return itemSize.height
+        }
+        set {
+            itemSize = NSSize(width: 50, // this value is ultimately ignored, item width will match the available width
+                              height: newValue)
+        }
+    }
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.minimumInteritemSpacing = VerticalListLayout.safeMinimumInteritemSpacing

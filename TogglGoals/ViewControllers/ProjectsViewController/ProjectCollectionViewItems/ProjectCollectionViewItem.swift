@@ -34,6 +34,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
     // MARK: - Outlets
 
+    @IBOutlet weak var visualEffectView: NSVisualEffectView!
     @IBOutlet weak var projectNameField: NSTextField!
     @IBOutlet weak var goalField: NSTextField!
     @IBOutlet weak var reportField: NSTextField!
@@ -117,46 +118,10 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             lining.isHidden = isSelected || isLastItemInSection
         } <~ SignalProducer.combineLatest(_isSelected, _isLastItemInSection)
 
-        let isInKeyWindow = MutableProperty(false)
-        let observeWindowKeyChanges: BindingTarget<NSWindow> = NotificationCenter.default
-            .reactive.makeBindingTarget { notificationCenter, window in
-                func observe(_ name: Notification.Name, _ action: @escaping () -> ()) {
-                    notificationCenter.addObserver(forName: name,
-                                                   object: window,
-                                                   queue: OperationQueue.main,
-                                                   using: { _ in action() })
-                }
-                observe(NSWindow.didBecomeKeyNotification) { isInKeyWindow.value = true }
-                observe(NSWindow.didResignKeyNotification) { isInKeyWindow.value = false }
-                isInKeyWindow.value = window.isKeyWindow
+        let materialTarget = visualEffectView.reactive.makeBindingTarget {
+            $0.material = $1
         }
-        reactive.lifetime.observeEnded {
-            NotificationCenter.default.removeObserver(self)
-        }
-
-        observeWindowKeyChanges <~ view.reactive.producer(forKeyPath: "window")
-            .filterMap { $0 as? NSWindow }
-            .take(first: 1)
-
-        let superviewProducer = reactive.producer(forKeyPath: "view.superview").filterMap { $0 as? NSView }.throttle(while: _isSelected.negate(), on: UIScheduler())
-        let firstResponderProducer = reactive.producer(forKeyPath: "view.window.firstResponder").filterMap { $0 as? NSResponder }.throttle(while: _isSelected.negate(), on: UIScheduler()).skipRepeats()
-        let parentCollectionViewIsFirstResponder = superviewProducer.combineLatest(with: firstResponderProducer).map { $0 == $1 }.skipRepeats()
-
-        let backgroundColor = reactive.makeBindingTarget { (item: ProjectCollectionViewItem, color: NSColor) in
-            item.view.layer!.backgroundColor = color.cgColor
-        }
-
-        let isInFocus = isInKeyWindow.producer.and(parentCollectionViewIsFirstResponder)
-        let selectedInFocus = SignalProducer.combineLatest(_isSelected.producer.observe(on: UIScheduler()), isInFocus)
-        backgroundColor <~ selectedInFocus.map { selected, inFocus in
-            selected ? (inFocus ? FocusedSelectedBackgroundColor : NonFocusedSelectedBackgroundColor) : NonSelectedBackgroundColor
-        }
-
-        let textColor = selectedInFocus.map { selected, inFocus in
-            selected ? (inFocus ? FocusedSelectedTextColor : NonFocusedSelectedTextColor) : NonSelectedTextColor
-        }
-        for field in [projectNameField, goalField, reportField] as [NSTextField] {
-            field.reactive.textColor <~ textColor
-        }
+        let defaultMaterial = visualEffectView.material
+        materialTarget <~ _isSelected.producer.map { $0 ? NSVisualEffectView.Material.selection : defaultMaterial }
     }
 }
