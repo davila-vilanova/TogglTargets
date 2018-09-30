@@ -10,9 +10,6 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-fileprivate let ProjectsListVCContainment = "ProjectsListVCContainment"
-fileprivate let ActivityVCContainment = "ActivityVCContainment"
-
 class ProjectsListActivityViewController: NSViewController, BindingTargetProvider {
 
     // Interface
