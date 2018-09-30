@@ -28,8 +28,6 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
 
     private lazy var condensedActivityViewController: CondensedActivityViewController = {
         let condensed = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("CondensedActivityViewController")) as! CondensedActivityViewController
-        addChildViewController(condensed)
-        rootStackView.addArrangedSubview(condensed.view)
         condensed <~
             SignalProducer<CondensedActivityViewController.Interface, NoError>(
                 value: (activitiesState.output.producer, wantsExtendedDisplay.bindingTarget))
@@ -38,11 +36,11 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
 
     private lazy var detailedActivityViewController: DetailedActivityViewController = {
         let detailed = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("DetailedActivityViewController")) as! DetailedActivityViewController
-        addChildViewController(detailed)
-        rootStackView.addArrangedSubview(detailed.view)
 
+        let heldStatuses = Property(initial: [ActivityStatus](), then: activitiesState.output.producer)
         let statuses =
-            SignalProducer.merge(activitiesState.output.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
+            SignalProducer.merge(heldStatuses.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
+                                 heldStatuses.producer.sample(on: wantsExtendedDisplay.producer.filter { $0 }.map { _ in () }),
                                  wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
         let wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
         reactive.lifetime += wantsDisplay.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.requestDisplay })
@@ -57,8 +55,11 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        _ = condensedActivityViewController
-        _ = detailedActivityViewController
+        rootStackView.addArrangedSubview(condensedActivityViewController.view)
+        addChildViewController(condensedActivityViewController)
+        rootStackView.addArrangedSubview(detailedActivityViewController.view)
+        addChildViewController(detailedActivityViewController)
+
         activitiesState.input <~ lastBinding.latestOutput { $0.modelRetrievalStatus }
     }
 }
