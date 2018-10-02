@@ -83,7 +83,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        processLaunchArguments()
+        processEnvironmentVariables()
 
         mainWindow.makeKeyAndOrderFront(nil)
 
@@ -108,14 +108,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                using: { _ in self.presentPreferences(jumpingTo: .account) })
     }
 
-    private func processLaunchArguments() {
+    private func processEnvironmentVariables() {
         let environment = ProcessInfo.processInfo.environment
         if let customBaseTogglAPIURL = environment["customBaseTogglAPIURL"] {
             if URL(string: customBaseTogglAPIURL) != nil { // valid URL
                 overrideRootAPIURLString = customBaseTogglAPIURL
-                print ("Using custom base Toggl API URL: \(customBaseTogglAPIURL)")
+                print("Using custom base Toggl API URL: \(customBaseTogglAPIURL)")
             } else {
-                print ("Ignoring invalid value of customBaseTogglAPIURL environment variable")
+                print("Ignoring invalid value of customBaseTogglAPIURL environment variable")
             }
         }
     }
