@@ -28,5 +28,11 @@
 /* Class = "NSButtonCell"; title = "don't delete"; ObjectID = "P9m-mq-vQD"; */
 "P9m-mq-vQD.title" = "keep goal";
 
-/* Class = "NSButton";  ObjectID = ""z4E-Sz-bgD"; */
+/* Class = "NSButton";  ObjectID = "z4E-Sz-bgD"; */
 "z4E-Sz-bgD.ibExternalAccessibilityDescription" = "Delete goal";
+
+/* Class = "NSBox"; ObjectID = "5Kf-JW-Eii" */
+"5Kf-JW-Eii.title" = "";
+
+/* Class = "NSBox"; ObjectID = "49L-z8-fzZ" */
+"49L-z8-fzZ.title" = "";

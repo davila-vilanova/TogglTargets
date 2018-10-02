@@ -545,13 +545,13 @@
             <objects>
                 <viewController id="7US-0q-kKJ" customClass="TimeProgressViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="RdO-bs-OdZ">
-                        <rect key="frame" x="0.0" y="0.0" width="482" height="58"/>
+                        <rect key="frame" x="0.0" y="0.0" width="482" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box boxType="custom" cornerRadius="4" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="6HK-x0-iDc" userLabel="Goal Progress Box">
-                                <rect key="frame" x="0.0" y="0.0" width="482" height="58"/>
+                            <box boxType="secondary" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="6HK-x0-iDc" userLabel="Goal Progress Box">
+                                <rect key="frame" x="-3" y="-4" width="488" height="62"/>
                                 <view key="contentView" id="jPF-kb-6cT">
-                                    <rect key="frame" x="1" y="1" width="480" height="56"/>
+                                    <rect key="frame" x="3" y="3" width="482" height="56"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F3h-la-ipt">
@@ -563,7 +563,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dw8-fM-wEJ">
-                                            <rect key="frame" x="470" y="36" width="4" height="14"/>
+                                            <rect key="frame" x="472" y="36" width="4" height="14"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="GLG-pq-kiT">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -571,13 +571,13 @@
                                             </textFieldCell>
                                         </textField>
                                         <progressIndicator wantsLayer="YES" verticalHuggingPriority="251" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="69d-sn-O9n" userLabel="Work Days Progress Indicator">
-                                            <rect key="frame" x="8" y="27" width="464" height="10"/>
+                                            <rect key="frame" x="8" y="27" width="466" height="10"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="8" id="AU1-u4-S0m"/>
                                             </constraints>
                                         </progressIndicator>
                                         <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="dEQ-iu-srg" userLabel="Work Hours Progress Indicator">
-                                            <rect key="frame" x="8" y="19" width="464" height="10"/>
+                                            <rect key="frame" x="8" y="19" width="466" height="10"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="8" id="hHv-bK-iWW"/>
                                             </constraints>
@@ -591,7 +591,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qaU-xc-YBb">
-                                            <rect key="frame" x="470" y="6" width="4" height="14"/>
+                                            <rect key="frame" x="472" y="6" width="4" height="14"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="Jzz-qe-FIL">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -619,7 +619,6 @@
                                         <constraint firstItem="dEQ-iu-srg" firstAttribute="leading" secondItem="F3h-la-ipt" secondAttribute="leading" id="zpZ-4P-g6u"/>
                                     </constraints>
                                 </view>
-                                <color key="fillColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                             </box>
                         </subviews>
                         <constraints>
@@ -706,26 +705,26 @@
                         <rect key="frame" x="0.0" y="0.0" width="482" height="45"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box boxType="custom" cornerRadius="4" translatesAutoresizingMaskIntoConstraints="NO" id="ftS-M4-F1d" userLabel="Day Progress Box">
-                                <rect key="frame" x="0.0" y="0.0" width="482" height="45"/>
+                            <box boxType="secondary" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="ftS-M4-F1d" userLabel="Day Progress Box">
+                                <rect key="frame" x="-3" y="-4" width="488" height="51"/>
                                 <view key="contentView" id="EI2-Ya-YqH">
-                                    <rect key="frame" x="1" y="1" width="480" height="43"/>
+                                    <rect key="frame" x="3" y="3" width="482" height="45"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="2C1-IY-1Q6">
-                                            <rect key="frame" x="6" y="18" width="468" height="20"/>
+                                        <progressIndicator wantsLayer="YES" verticalCompressionResistancePriority="751" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="2C1-IY-1Q6">
+                                            <rect key="frame" x="6" y="19" width="470" height="21"/>
                                         </progressIndicator>
                                         <textField horizontalHuggingPriority="252" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jlV-Qy-Q9C">
-                                            <rect key="frame" x="4" y="6" width="4" height="14"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="5Kf-JW-Eii">
+                                            <rect key="frame" x="4" y="6" width="101" height="14"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="time worked today" id="5Kf-JW-Eii">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mOU-vK-gkk">
-                                            <rect key="frame" x="472" y="6" width="4" height="14"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="49L-z8-fzZ">
+                                            <rect key="frame" x="364" y="6" width="114" height="14"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="time remaining today" id="49L-z8-fzZ">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -737,6 +736,7 @@
                                         <constraint firstItem="jlV-Qy-Q9C" firstAttribute="leading" secondItem="2C1-IY-1Q6" secondAttribute="leading" id="D55-rZ-zwj"/>
                                         <constraint firstAttribute="bottom" secondItem="jlV-Qy-Q9C" secondAttribute="bottom" constant="6" id="NB0-ac-K0D"/>
                                         <constraint firstItem="mOU-vK-gkk" firstAttribute="trailing" secondItem="2C1-IY-1Q6" secondAttribute="trailing" id="Pwd-Bk-tmN"/>
+                                        <constraint firstItem="jlV-Qy-Q9C" firstAttribute="top" secondItem="2C1-IY-1Q6" secondAttribute="bottom" id="TxE-Dv-Vi0"/>
                                         <constraint firstItem="2C1-IY-1Q6" firstAttribute="top" secondItem="EI2-Ya-YqH" secondAttribute="top" constant="6" id="cUZ-n9-Huw"/>
                                         <constraint firstItem="mOU-vK-gkk" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="jlV-Qy-Q9C" secondAttribute="trailing" constant="8" symbolic="YES" id="gRh-uS-xUz"/>
                                         <constraint firstItem="mOU-vK-gkk" firstAttribute="baseline" secondItem="jlV-Qy-Q9C" secondAttribute="baseline" id="rXF-0M-kj5"/>
@@ -747,7 +747,6 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="ZE1-Ws-NmB"/>
                                 </constraints>
-                                <color key="fillColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                             </box>
                         </subviews>
                         <constraints>
