@@ -58,3 +58,6 @@
 
 /* Class = "NSTextFieldCell"; title = "starting on"; ObjectID = "yo1-u9-dge"; */
 "yo1-u9-dge.title" = "empezando en";
+
+/* Class = "NSButtonCell";  title = "Done" ObjectID = "XYD-6F-XR9" */
+"XYD-6F-XR9.title" = "OK";

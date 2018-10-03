@@ -128,7 +128,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         presentPreferences()
     }
 
-    private func presentPreferences(jumpingTo prefsSection: PreferencesViewController.Section? = nil) {
+    private func presentPreferences(jumpingTo prefsSection: PreferencesViewController.Section? = nil,
+                                    presentAsSheet: Bool = false) {
         assert(Thread.current.isMainThread)
 
         if let alreadyPresented = presentedPreferencesWindow {
@@ -137,9 +138,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         let preferencesStoryboard = NSStoryboard(name: .init("Preferences"), bundle: nil)
-        let windowController = preferencesStoryboard.instantiateInitialController() as! NSWindowController
-        let window = windowController.window!
-        let preferencesController = (window.contentViewController as! PreferencesViewControllerWrapper)
+        let preferencesWindowController = preferencesStoryboard.instantiateInitialController() as! NSWindowController
+        let preferencesWindow = preferencesWindowController.window!
+        let preferencesController = (preferencesWindow.contentViewController as! PreferencesViewControllerWrapper)
         let lifetime = preferencesController.reactive.lifetime
 
         let resolvedCredential = MutableProperty<TogglAPITokenCredential?>(nil)
@@ -163,9 +164,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         lifetime += credentialStore.input <~ resolvedCredential.signal
         lifetime += periodPreferenceStore.input <~ updatedPeriodPreference.signal
 
-        window.makeKeyAndOrderFront(nil)
-        window.delegate = self
-        presentedPreferencesWindow = window
+        if presentAsSheet {
+            mainWindow.beginSheet(preferencesWindow) { [unowned self] response in
+                self.presentedPreferencesWindow = nil
+            }
+        } else {
+            preferencesWindow.delegate = self
+            preferencesWindow.makeKeyAndOrderFront(nil)
+        }
+
+        presentedPreferencesWindow = preferencesWindow
     }
 
     func windowWillClose(_ notification: Notification) {
