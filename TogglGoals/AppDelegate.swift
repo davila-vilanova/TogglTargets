@@ -106,6 +106,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                object: nil,
                                                queue: OperationQueue.main,
                                                using: { _ in self.presentPreferences(jumpingTo: .account) })
+
+        if credentialStore.output.value == nil {
+            presentPreferences(jumpingTo: .account, asSheet: true)
+        }
     }
 
     private func processEnvironmentVariables() {
@@ -129,7 +133,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func presentPreferences(jumpingTo prefsSection: PreferencesViewController.Section? = nil,
-                                    presentAsSheet: Bool = false) {
+                                    asSheet presentAsSheet: Bool = false) {
         assert(Thread.current.isMainThread)
 
         if let alreadyPresented = presentedPreferencesWindow {
