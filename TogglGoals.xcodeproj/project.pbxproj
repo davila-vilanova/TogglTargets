@@ -20,6 +20,10 @@
 		6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 632957491DBA99F000E11A10 /* Assets.xcassets */; };
 		6329574D1DBA99F000E11A10 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6329574B1DBA99F000E11A10 /* Main.storyboard */; };
 		632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */; };
+		632A5FB42165621F00E61BBB /* OnboardingStepViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */; };
+		632A5FB52165621F00E61BBB /* OnboardingStepViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */; };
+		632A5FB62165621F00E61BBB /* OnboardingStepViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 632A5FB32165621F00E61BBB /* OnboardingStepViewController.xib */; };
+		632A5FB72165621F00E61BBB /* OnboardingStepViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 632A5FB32165621F00E61BBB /* OnboardingStepViewController.xib */; };
 		6333B6CE1F974690002CF189 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6CD1F974690002CF189 /* Profile.swift */; };
 		6333B6CF1F974690002CF189 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6CD1F974690002CF189 /* Profile.swift */; };
 		6333B6D01F974690002CF189 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6CD1F974690002CF189 /* Profile.swift */; };
@@ -114,6 +118,8 @@
 		638561EF20FE15DC002E97E8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638561F120FE15DC002E97E8 /* MainMenu.xib */; };
 		6392AB4820CFFC2C002CC903 /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */; };
 		639C5BBF20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */; };
+		639D5077216B897900B1DEA2 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639D5076216B897900B1DEA2 /* NSViewControllerExtensions.swift */; };
+		639D5078216B897900B1DEA2 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639D5076216B897900B1DEA2 /* NSViewControllerExtensions.swift */; };
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94A91F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
 		639E94AA1F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
@@ -225,6 +231,12 @@
 		63F15019209869EC0044288F /* APITokenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F15018209869EC0044288F /* APITokenViewController.swift */; };
 		63F1501B20986A150044288F /* EmailPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1501A20986A150044288F /* EmailPasswordViewController.swift */; };
 		63F1501D20986A3A0044288F /* LoggedInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1501C20986A3A0044288F /* LoggedInViewController.swift */; };
+		63F6D17C2164E3D5004EE7B9 /* OnboardingGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */; };
+		63F6D17D2164E3D5004EE7B9 /* OnboardingGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */; };
+		63F6D180216D5760004EE7B9 /* OnboardingEndedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6D17E216D5760004EE7B9 /* OnboardingEndedViewController.swift */; };
+		63F6D181216D5760004EE7B9 /* OnboardingEndedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6D17E216D5760004EE7B9 /* OnboardingEndedViewController.swift */; };
+		63F6D182216D5760004EE7B9 /* OnboardingEndedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63F6D17F216D5760004EE7B9 /* OnboardingEndedViewController.xib */; };
+		63F6D183216D5760004EE7B9 /* OnboardingEndedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63F6D17F216D5760004EE7B9 /* OnboardingEndedViewController.xib */; };
 		63F76B9B20F6212D0024939B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63F76B9920F6212D0024939B /* InfoPlist.strings */; };
 		63F76B9E20F6212D0024939B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63F76B9C20F6212D0024939B /* InfoPlist.strings */; };
 		63F76BA120F6212D0024939B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63F76B9F20F6212D0024939B /* Localizable.strings */; };
@@ -317,6 +329,8 @@
 		6329575E1DBA99F000E11A10 /* TogglGoalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglGoalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglGoalsUITests.swift; sourceTree = "<group>"; };
 		632957641DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepViewController.swift; sourceTree = "<group>"; };
+		632A5FB32165621F00E61BBB /* OnboardingStepViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OnboardingStepViewController.xib; sourceTree = "<group>"; };
 		6333B6CD1F974690002CF189 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		6333B6D11F9746E6002CF189 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		6333B6D51F9746FD002CF189 /* WeekdaySelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySelection.swift; sourceTree = "<group>"; };
@@ -369,6 +383,7 @@
 		638561F720FE16D3002E97E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		638561F920FE16D6002E97E8 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteGoalPersistenceProviderTests.swift; sourceTree = "<group>"; };
+		639D5076216B897900B1DEA2 /* NSViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NSViewControllerExtensions.swift; path = ViewControllers/NSViewControllerExtensions.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
 		639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalizedErrors.swift; path = ViewControllers/LocalizedErrors.swift; sourceTree = "<group>"; };
@@ -407,6 +422,9 @@
 		63F15018209869EC0044288F /* APITokenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APITokenViewController.swift; sourceTree = "<group>"; };
 		63F1501A20986A150044288F /* EmailPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPasswordViewController.swift; sourceTree = "<group>"; };
 		63F1501C20986A3A0044288F /* LoggedInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedInViewController.swift; sourceTree = "<group>"; };
+		63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGuide.swift; sourceTree = "<group>"; };
+		63F6D17E216D5760004EE7B9 /* OnboardingEndedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEndedViewController.swift; sourceTree = "<group>"; };
+		63F6D17F216D5760004EE7B9 /* OnboardingEndedViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OnboardingEndedViewController.xib; sourceTree = "<group>"; };
 		63F76B9A20F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		63F76B9D20F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		63F76BA020F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -505,6 +523,7 @@
 				635A2578205290CE00EFCE90 /* WindowControllers */,
 				637A32331EE16E7600667FC3 /* View Controllers */,
 				63D4BB981F7D80FC00B87298 /* Model */,
+				63F6D17A2164E3AE004EE7B9 /* Onboarding */,
 				632957491DBA99F000E11A10 /* Assets.xcassets */,
 			);
 			path = TogglGoals;
@@ -618,6 +637,7 @@
 				639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */,
 				639F8B6420DE7CE800FDC8C1 /* GoalFeasibility.swift */,
 				6344EF7A213DA1C900D0B00D /* GoalCreatingDeleting.swift */,
+				639D5076216B897900B1DEA2 /* NSViewControllerExtensions.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -729,9 +749,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		63F6D17A2164E3AE004EE7B9 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */,
+				632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */,
+				632A5FB32165621F00E61BBB /* OnboardingStepViewController.xib */,
+				63F6D17E216D5760004EE7B9 /* OnboardingEndedViewController.swift */,
+				63F6D17F216D5760004EE7B9 /* OnboardingEndedViewController.xib */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		63FF9EEA208FA3BC0087DD1C /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				63786D5E2121BB630034A994 /* PreferencesViewControllerWrapper.swift */,
 				63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */,
 				63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */,
 				63F15014209868430044288F /* LoginViewController.swift */,
@@ -741,7 +774,6 @@
 				63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */,
 				63F150162098699A0044288F /* KeyViewsProviding.swift */,
 				63786D55211F34CA0034A994 /* LoginMethodViewController.swift */,
-				63786D5E2121BB630034A994 /* PreferencesViewControllerWrapper.swift */,
 			);
 			name = Preferences;
 			path = ViewControllers/Preferences;
@@ -903,12 +935,14 @@
 				6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */,
 				63F76BA120F6212D0024939B /* Localizable.strings in Resources */,
 				6334B4A220703EC000A5B796 /* SyncingActivityViewController.xib in Resources */,
+				632A5FB62165621F00E61BBB /* OnboardingStepViewController.xib in Resources */,
 				63F76BD720F672940024939B /* Preferences.storyboard in Resources */,
 				6344EF78213C38F800D0B00D /* AccessibilityImageDescriptions.strings in Resources */,
 				6334B4AA2071A81600A5B796 /* ErrorViewController.xib in Resources */,
 				6334B4A520703EC000A5B796 /* ActivitySuccessViewController.xib in Resources */,
 				630274DB20FAB31000DE2698 /* Localizable.stringsdict in Resources */,
 				635A25872052917B00EFCE90 /* ProjectCollectionViewItem.xib in Resources */,
+				63F6D182216D5760004EE7B9 /* OnboardingEndedViewController.xib in Resources */,
 				6329574D1DBA99F000E11A10 /* Main.storyboard in Resources */,
 				630274DD20FB659D00DE2698 /* ActivityErrorViewController.xib in Resources */,
 				635A25852052917B00EFCE90 /* ProjectCollectionViewHeader.xib in Resources */,
@@ -928,9 +962,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				632A5FB72165621F00E61BBB /* OnboardingStepViewController.xib in Resources */,
 				638561EF20FE15DC002E97E8 /* MainMenu.xib in Resources */,
 				63F76B9B20F6212D0024939B /* InfoPlist.strings in Resources */,
 				63F76BD820F672940024939B /* Preferences.storyboard in Resources */,
+				63F6D183216D5760004EE7B9 /* OnboardingEndedViewController.xib in Resources */,
 				63F76BE320F6756A0024939B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -990,12 +1026,14 @@
 				63F1501B20986A150044288F /* EmailPasswordViewController.swift in Sources */,
 				63415BC220852A650083E40B /* ReadByProjectID.swift in Sources */,
 				63FF9EF0208FA3BC0087DD1C /* PreferencesViewController.swift in Sources */,
+				63F6D180216D5760004EE7B9 /* OnboardingEndedViewController.swift in Sources */,
 				6355C5B71FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				63D4BBAE1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				6334B4A92071A81600A5B796 /* ErrorViewController.swift in Sources */,
 				637A32461EE16FD600667FC3 /* GoalStrategyViewController.swift in Sources */,
 				63F15019209869EC0044288F /* APITokenViewController.swift in Sources */,
 				63D4BBAC1F7D821800B87298 /* ModelCoordinator.swift in Sources */,
+				63F6D17C2164E3D5004EE7B9 /* OnboardingGuide.swift in Sources */,
 				637DA20F202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				63786D5F2121BB630034A994 /* PreferencesViewControllerWrapper.swift in Sources */,
 				6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */,
@@ -1009,6 +1047,7 @@
 				639F38F3208FA4D500AE96CF /* InterfaceBinding.swift in Sources */,
 				6355C5BC1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
 				635A257A205290CE00EFCE90 /* ProjectsMasterDetailWindowController.swift in Sources */,
+				639D5077216B897900B1DEA2 /* NSViewControllerExtensions.swift in Sources */,
 				63E798B6211DE49B00386BF5 /* UniqueSubview.swift in Sources */,
 				6344EF7B213DA1C900D0B00D /* GoalCreatingDeleting.swift in Sources */,
 				637A32401EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
@@ -1016,6 +1055,7 @@
 				63F15015209868430044288F /* LoginViewController.swift in Sources */,
 				6333B6D21F9746E6002CF189 /* Project.swift in Sources */,
 				639F8B6A20E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift in Sources */,
+				632A5FB42165621F00E61BBB /* OnboardingStepViewController.swift in Sources */,
 				637A32501EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */,
 				6333B6E61F974791002CF189 /* RunningEntry.swift in Sources */,
 				6333B6E21F974763002CF189 /* Goal.swift in Sources */,
@@ -1112,12 +1152,15 @@
 				637DA2222034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */,
 				637A32411EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
+				632A5FB52165621F00E61BBB /* OnboardingStepViewController.swift in Sources */,
 				63E798B7211DE49B00386BF5 /* UniqueSubview.swift in Sources */,
+				63F6D17D2164E3D5004EE7B9 /* OnboardingGuide.swift in Sources */,
 				6355C5B91FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				637A32431EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
 				63D4BBC71F7D821900B87298 /* SignalProducerExtensions.swift in Sources */,
 				6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */,
 				637A32491EE16FD600667FC3 /* GoalViewController.swift in Sources */,
+				639D5078216B897900B1DEA2 /* NSViewControllerExtensions.swift in Sources */,
 				637DA211202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
 				63A67F421FCD9BE4004BEFC6 /* RetrieveRunningEntryNetworkAction.swift in Sources */,
 				63AB08151FB6305200565D87 /* PreferenceStore.swift in Sources */,
@@ -1130,6 +1173,7 @@
 				6333B6D41F9746E6002CF189 /* Project.swift in Sources */,
 				63D4BBC11F7D821900B87298 /* GoalsStore.swift in Sources */,
 				637A32511EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */,
+				63F6D181216D5760004EE7B9 /* OnboardingEndedViewController.swift in Sources */,
 				6333B6E81F974791002CF189 /* RunningEntry.swift in Sources */,
 				6333B6E41F974763002CF189 /* Goal.swift in Sources */,
 				6392AB4820CFFC2C002CC903 /* InterfaceBinding.swift in Sources */,
@@ -1417,6 +1461,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7ZT9GY93K7;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1427,6 +1473,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoals;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 			};
@@ -1436,6 +1483,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7ZT9GY93K7;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1446,6 +1495,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoals;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 			};

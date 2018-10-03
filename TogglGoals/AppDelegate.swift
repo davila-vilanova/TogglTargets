@@ -7,8 +7,10 @@
 //
 
 import Cocoa
-import ReactiveSwift
 import Result
+import ReactiveSwift
+
+fileprivate let defaults = UserDefaults.standard
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
@@ -29,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let currentDateGenerator = CurrentDateGenerator.shared
     private let calendar = Property(value: Calendar.iso8601)
 
-    private let userDefaults = Property(value: UserDefaults.standard)
+    private let userDefaults = Property(value: defaults)
     private lazy var credentialStore = PreferenceStore<TogglAPITokenCredential>(userDefaults: userDefaults,
                                                                                 scheduler: scheduler)
     private lazy var periodPreferenceStore = PreferenceStore<PeriodPreference>(userDefaults: userDefaults,
@@ -40,6 +42,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let modelCoordinator: ModelCoordinator
 
     private let undoManager = UndoManager()
+
+    private var onboardingGuide: OnboardingGuide?
+
+    private var mustSetupAccount: Bool {
+        return credentialStore.output.value == nil
+    }
 
     override init() {
         let supportDir: URL
@@ -107,7 +115,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                queue: OperationQueue.main,
                                                using: { _ in self.presentPreferences(jumpingTo: .account) })
 
-        if credentialStore.output.value == nil {
+        if shouldStartOnboarding {
+            startOnboarding(presentAccountPreferences: mustSetupAccount)
+        } else if mustSetupAccount {
             presentPreferences(jumpingTo: .account, asSheet: true)
         }
     }
@@ -133,7 +143,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func presentPreferences(jumpingTo prefsSection: PreferencesViewController.Section? = nil,
-                                    asSheet presentAsSheet: Bool = false) {
+                                    asSheet presentAsSheet: Bool = false,
+                                    onboardingGuide: OnboardingGuide? = nil) {
         assert(Thread.current.isMainThread)
 
         if let alreadyPresented = presentedPreferencesWindow {
@@ -176,6 +187,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             preferencesWindow.delegate = self
             preferencesWindow.makeKeyAndOrderFront(nil)
         }
+        
+        if let guide = onboardingGuide {
+            preferencesController.setOnboardingGuide(guide)
+        }
 
         presentedPreferencesWindow = preferencesWindow
     }
@@ -199,4 +214,36 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
     }
+
+    private var shouldStartOnboarding: Bool {
+        return OnboardingGuide.shouldOnboard(defaults) && !isCurrentlyOnboarding
+    }
+
+    private var isCurrentlyOnboarding: Bool {
+        return onboardingGuide?.isOnboarding == true
+    }
+
+    @IBAction func startOnboarding(_ sender: Any?) {
+        guard !isCurrentlyOnboarding else {
+            return
+        }
+        startOnboarding(presentAccountPreferences: mustSetupAccount)
+    }
+
+    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.tag == 90 {
+            return !isCurrentlyOnboarding
+        }
+        return true
+    }
+
+    private func startOnboarding(presentAccountPreferences: Bool) {
+        let onboardingGuide = OnboardingGuide()
+        self.onboardingGuide = onboardingGuide
+        if presentAccountPreferences {
+            presentPreferences(jumpingTo: .account, asSheet: true, onboardingGuide: onboardingGuide)
+        }
+        mainViewController.setOnboardingGuide(onboardingGuide)
+    }
 }
+

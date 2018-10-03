@@ -309,6 +309,7 @@
                         <constraints>
                             <constraint firstItem="tdS-eB-WB6" firstAttribute="top" relation="greaterThanOrEqual" secondItem="8oS-If-VvO" secondAttribute="bottom" constant="8" symbolic="YES" id="2jA-Us-gXI"/>
                             <constraint firstItem="8oS-If-VvO" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="BxQ-fb-urq" secondAttribute="trailing" constant="8" symbolic="YES" id="6Ju-Ai-bqT"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="0EA-D7-5ki" secondAttribute="trailing" constant="20" symbolic="YES" id="97j-1p-U3u"/>
                             <constraint firstAttribute="bottom" secondItem="tdS-eB-WB6" secondAttribute="bottom" id="ABs-bJ-Biv"/>
                             <constraint firstItem="0EA-D7-5ki" firstAttribute="leading" secondItem="BxQ-fb-urq" secondAttribute="leading" id="AL5-1H-VTY"/>
                             <constraint firstItem="tdS-eB-WB6" firstAttribute="leading" secondItem="vu3-r7-Up7" secondAttribute="leading" id="Ay5-kX-hjg"/>
@@ -367,7 +368,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="HCd-hZ-Y9D"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="YBy-cJ-99e">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="YBy-cJ-99e">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

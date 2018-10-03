@@ -27,9 +27,16 @@ fileprivate enum CredentialValidationResult {
         default: return false
         }
     }
+    
+    var isValid: Bool {
+        switch self {
+        case .valid: return true
+        default: return false
+        }
+    }
 }
 
-class LoginViewController: NSViewController, BindingTargetProvider {
+class LoginViewController: NSViewController, BindingTargetProvider, LoginViewProviding {
 
     // MARK: Interface
 
@@ -57,24 +64,16 @@ class LoginViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var errorField: NSTextField!
 
 
-    // MARK: - Wiring
+    // MARK: - Credential validation
 
-    private lazy var credentialFromUserEnteredData = MutableProperty<TogglAPICredential?>(nil)
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    
-
-        // Set up validation of credentials entered by the user
-        // (token or email+password, converted to token upon succesful validation)
-        // when login button is pressed
+    private lazy var validateCredential: Action<Void, CredentialValidationResult, NoError> = {
         typealias ValidateCredentialActionState = (TogglAPICredential, TestURLSessionAction)
         let validateCredentialActionState = Property<ValidateCredentialActionState?>(
             initial: nil,
             then: SignalProducer.combineLatest(credentialFromUserEnteredData, lastBinding.producer.map { $0?.testURLSessionAction })
                 .map { them -> ValidateCredentialActionState? in (them.0 == nil || them.1 == nil) ? nil : (them.0!, them.1!) })
 
-        let validateCredential = Action<Void, CredentialValidationResult, NoError>(
+        let validateAction = Action<Void, CredentialValidationResult, NoError>(
             unwrapping: validateCredentialActionState,
             execute: { (state: ValidateCredentialActionState) -> SignalProducer<CredentialValidationResult, NoError> in
                 let (credential, testURLSessionAction) = state
@@ -101,6 +100,20 @@ class LoginViewController: NSViewController, BindingTargetProvider {
                     }
                 }
         })
+
+        return validateAction
+    }()
+
+    // MARK: - Wiring
+
+    private lazy var credentialFromUserEnteredData = MutableProperty<TogglAPICredential?>(nil)
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Set up validation of credentials entered by the user
+        // (token or email+password, converted to token upon succesful validation)
+        // when login button is pressed
 
         loginButton.reactive.pressed = CocoaAction(validateCredential)
         loginButton.reactive.makeBindingTarget {
@@ -156,5 +169,15 @@ class LoginViewController: NSViewController, BindingTargetProvider {
                                          comment: "login error: cannot verify credential due to unexpected error")
             }
         }
+    }
+
+    // MARK : - Onboarding
+
+    var loginView: SignalProducer<NSView, NoError> {
+        let credentialSuccessfullyValidated = validateCredential.values.filter { $0.isValid }.map { _ in () }
+        return viewDidLoadProducer
+            .map { [unowned self] in self.view }
+            .concat(SignalProducer.never)
+            .take(until: credentialSuccessfullyValidated)
     }
 }

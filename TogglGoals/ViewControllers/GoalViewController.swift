@@ -11,7 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-class GoalViewController: NSViewController, BindingTargetProvider {
+class GoalViewController: NSViewController, BindingTargetProvider, TargetHoursViewProviding, WorkWeekdaysViewProviding {
 
     // MARK: - Interface
 
@@ -152,6 +152,35 @@ class GoalViewController: NSViewController, BindingTargetProvider {
             deleteGoalController <~ SignalProducer(value: deleteConfirmed.bindingTarget)
         }
     }
+    
+    
+    // MARK: - Onboarding
+
+    var targetHoursView: SignalProducer<NSView, NoError> {
+        let hoursTargetField = viewDidLoadProducer
+            .map { [unowned self] _ in self.hoursTargetField }
+            .skipNil()
+        
+        let targetHoursEdited = hoursTargetField.map { $0.reactive.stringValues.map { _ in () } }.flatten(.concat)
+        
+        return hoursTargetField
+            .map { $0 as NSView }
+            .concat(SignalProducer.never)
+            .take(until: targetHoursEdited)
+    }
+    
+    var workWeekdaysView: SignalProducer<NSView, NoError> {
+        let activeWeekdaysControl = viewDidLoadProducer
+            .map { [unowned self] _ in self.activeWeekdaysControl }
+            .skipNil()
+        
+        let activeWeekdaysEdited = activeWeekdaysControl.map { $0.reactive.selectedSegmentIndexes.map { _ in () } }.flatten(.concat)
+        
+        return activeWeekdaysControl
+            .map { $0 as NSView }
+            .concat(SignalProducer.never)
+            .take(until: activeWeekdaysEdited)
+    }
 }
 
 // MARK: -
@@ -191,6 +220,20 @@ class DeleteGoalPopup: NSViewController, BindingTargetProvider {
 
 // MARK: -
 
-class NoGoalViewController: NSViewController {
+class NoGoalViewController: NSViewController, GoalCreationViewProviding {
+    @IBOutlet weak var createGoalButton: NSButton!
 
+    var goalCreationView: SignalProducer<NSView, NoError> {
+        let createGoalButtonPressed = Action<Void, Void, NoError> {
+            SignalProducer(value: ())
+        }
+
+        let goalCreationViewProducer = viewDidLoadProducer
+            .on(value: { [unowned self] in
+                self.createGoalButton.reactive.pressed = CocoaAction(createGoalButtonPressed)
+            })
+            .map { [unowned self] in self.createGoalButton as NSView }
+
+        return goalCreationViewProducer.concat(SignalProducer.never).take(until: createGoalButtonPressed.values)
+    }
 }

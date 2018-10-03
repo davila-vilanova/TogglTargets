@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class TimeProgressViewController: NSViewController, BindingTargetProvider {
+class TimeProgressViewController: NSViewController, BindingTargetProvider, TimeProgressViewProviding {
 
     // MARK: Interface
 
@@ -162,6 +162,15 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider {
         workedTime <~ lastBinding.latestOutput { $0.workedTime }
         remainingTimeToGoal <~ lastBinding.latestOutput { $0.remainingTimeToGoal }
         strategyStartsToday <~ lastBinding.latestOutput { $0.strategyStartsToday }
+    }
+    
+    
+    // MARK: - Onboarding
+    
+    var timeProgressView: SignalProducer<NSView, NoError> {
+        return viewDidLoadProducer
+            .map { [unowned self] _ in self.view }
+            .concat(SignalProducer.never)
     }
 }
 

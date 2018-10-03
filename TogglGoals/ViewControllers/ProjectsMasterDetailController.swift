@@ -148,7 +148,6 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
             .map { _ in NSLocalizedString("undo.delete-goal", comment: "undo action name: delete goal") }
 
 
-
         registerSelectionInUndoManager <~ focusOnUndoProjectId.producer.skipNil()
     }
 

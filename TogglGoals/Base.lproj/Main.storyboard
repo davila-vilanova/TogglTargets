@@ -844,6 +844,9 @@
                             <constraint firstItem="spt-9H-RBY" firstAttribute="centerY" secondItem="1mY-6H-Sas" secondAttribute="centerY" id="YwG-K9-6jw"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="createGoalButton" destination="KJB-2f-ZKw" id="3VE-If-jbb"/>
+                    </connections>
                 </viewController>
                 <customObject id="fO8-4G-Gnl" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

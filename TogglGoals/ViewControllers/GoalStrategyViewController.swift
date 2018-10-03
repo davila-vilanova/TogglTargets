@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class GoalStrategyViewController: NSViewController, BindingTargetProvider {
+class GoalStrategyViewController: NSViewController, BindingTargetProvider, GoalStrategyViewProviding {
 
     // MARK: Interface
 
@@ -134,11 +134,19 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
         baselineDifferentialField.reactive.stringValue <~
             SignalProducer.merge(feasibleCaseDescriptions, unfeasibleCaseDescriptions, impossibleCaseDescriptions, baselineCalculationErrors)
     }
+    
+    // MARK: - Onboarding
+    
+    var goalStrategyView: SignalProducer<NSView, NoError> {
+        return viewDidLoadProducer
+            .map { [unowned self] _ in self.view }
+            .concat(SignalProducer.never)
+    }
 }
 
 // MARK: -
 
-class GoalReachedViewController: NSViewController, BindingTargetProvider {
+class GoalReachedViewController: NSViewController, BindingTargetProvider, GoalStrategyViewProviding {
 
     // MARK: - Interface
 
@@ -168,5 +176,14 @@ class GoalReachedViewController: NSViewController, BindingTargetProvider {
                     NSLocalizedString("goal-reached", comment: "the goal has been achieved"),
                     $0)
         }
+    }
+    
+    
+    // MARK: - Onboarding
+    
+    var goalStrategyView: SignalProducer<NSView, NoError> {
+        return viewDidLoadProducer
+            .map { [unowned self] _ in self.view }
+            .concat(SignalProducer.never)
     }
 }

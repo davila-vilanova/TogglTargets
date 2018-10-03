@@ -11,7 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-class GoalReportViewController: NSViewController, BindingTargetProvider {
+class GoalReportViewController: NSViewController, BindingTargetProvider, ComputeStrategyFromSelectionViewProviding {
 
     // MARK: Interface
 
@@ -226,5 +226,21 @@ class GoalReportViewController: NSViewController, BindingTargetProvider {
         goalProgress.startStrategyDay <~ computeStrategyFrom.producer.skipNil()
         goalProgress.currentDate <~ currentDate.producer.skipNil()
         goalProgress.calendar <~ calendar.producer.skipNil()
+    }
+    
+    
+    // MARK: - Onboarding
+    
+    var computeStrategyFromSelectionView: SignalProducer<NSView, NoError> {
+        let computeStrategyFromButton = viewDidLoadProducer
+            .map { [unowned self] _ in self.computeStrategyFromButton }
+            .skipNil()
+        
+        let computeStrategyFromSelectionChanged = computeStrategyFromButton.map { $0.reactive.selectedItems.map { _ in () } }.flatten(.concat)
+        
+        return computeStrategyFromButton
+            .map { $0 as NSView }
+            .concat(SignalProducer.never)
+            .take(until: computeStrategyFromSelectionChanged)
     }
 }

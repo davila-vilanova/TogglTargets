@@ -341,13 +341,15 @@ fileprivate class SingleGoalUpdateComputer {
 
     private func computeAndUpdate(newGoal: Goal?, projectID: ProjectID) {
         // Compute update
-        assert(projectIDsByGoals.sortedProjectIDs.contains(projectID), "projectID must be included in projectIDsByGoals")
-        let update = ProjectIDsByGoals.Update.GoalUpdate
+//        assert(projectIDsByGoals.sortedProjectIDs.contains(projectID), "projectID must be included in projectIDsByGoals")
+        guard let update = ProjectIDsByGoals.Update.GoalUpdate
             .forGoalChange(involving: newGoal,
                            for: projectID,
                            within: indexedGoals,
-                           affecting: projectIDsByGoals)! // would return nil only if `projectID` were not included in `projectIDsByGoals`
-
+                           affecting: projectIDsByGoals) // would return nil only if `projectID` were not included in `projectIDsByGoals`
+            else {
+                return
+        }
 
         // Update internal state
         indexedGoals[projectID] = newGoal

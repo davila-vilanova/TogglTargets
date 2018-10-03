@@ -12,7 +12,7 @@ import ReactiveSwift
 
 class ProjectsListActivityViewController: NSViewController, BindingTargetProvider {
 
-    // Interface
+    // MARK: - Interface
 
     internal typealias Interface = (
         projectIDsByGoals: ProjectIDsByGoalsProducer,

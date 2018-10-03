@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="OnboardingStepViewController" customModule="TogglGoals" customModuleProvider="target">
+            <connections>
+                <outlet property="moveOnToNextStepButton" destination="zab-he-ijT" id="23E-6W-CKw"/>
+                <outlet property="stepDescriptionField" destination="clj-S7-g6d" id="2mZ-dw-n0h"/>
+                <outlet property="stopOnboardingButton" destination="cB0-RP-rk2" id="l9m-Bb-XO5"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="300" height="168"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="clj-S7-g6d">
+                    <rect key="frame" x="18" y="46" width="264" height="102"/>
+                    <constraints>
+                        <constraint firstAttribute="width" priority="990" constant="260" id="Hln-HH-ZDp"/>
+                    </constraints>
+                    <textFieldCell key="cell" selectable="YES" id="ibN-gr-QAQ">
+                        <font key="font" metaFont="system"/>
+                        <string key="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zab-he-ijT">
+                    <rect key="frame" x="233" y="19" width="47" height="19"/>
+                    <buttonCell key="cell" type="recessed" title="Got it" bezelStyle="recessed" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wd2-Zk-A5y">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="systemBold" size="12"/>
+                    </buttonCell>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cB0-RP-rk2">
+                    <rect key="frame" x="20" y="19" width="166" height="19"/>
+                    <buttonCell key="cell" type="roundRect" title="I don't need no onboarding" bezelStyle="roundedRect" alignment="center" refusesFirstResponder="YES" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aav-Eq-gay">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="cellTitle"/>
+                    </buttonCell>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstItem="clj-S7-g6d" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="20" symbolic="YES" id="0kX-xi-ikl"/>
+                <constraint firstItem="clj-S7-g6d" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="9TT-pe-aE6"/>
+                <constraint firstAttribute="trailing" secondItem="zab-he-ijT" secondAttribute="trailing" constant="20" symbolic="YES" id="DmP-9F-kSn"/>
+                <constraint firstAttribute="trailing" secondItem="clj-S7-g6d" secondAttribute="trailing" constant="20" symbolic="YES" id="Kyh-89-30p"/>
+                <constraint firstItem="zab-he-ijT" firstAttribute="firstBaseline" secondItem="cB0-RP-rk2" secondAttribute="firstBaseline" id="LUf-iO-qzi"/>
+                <constraint firstAttribute="bottom" secondItem="cB0-RP-rk2" secondAttribute="bottom" constant="20" symbolic="YES" id="Ygx-8D-dZo"/>
+                <constraint firstItem="zab-he-ijT" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cB0-RP-rk2" secondAttribute="trailing" constant="8" symbolic="YES" id="sat-Dp-YIB"/>
+                <constraint firstItem="cB0-RP-rk2" firstAttribute="top" secondItem="clj-S7-g6d" secondAttribute="bottom" constant="8" id="tIT-au-VoS"/>
+                <constraint firstItem="cB0-RP-rk2" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" symbolic="YES" id="zlN-Fx-hm3"/>
+            </constraints>
+            <point key="canvasLocation" x="193" y="180"/>
+        </customView>
+    </objects>
+</document>

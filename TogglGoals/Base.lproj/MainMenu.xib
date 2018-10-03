@@ -206,9 +206,15 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" systemMenu="help" id="icm-Vh-Sgo">
                         <items>
-                            <menuItem title="TogglGoals Help" keyEquivalent="?" id="Mps-NS-KAM">
+                            <menuItem title="TogglGoals Help" hidden="YES" enabled="NO" keyEquivalent="?" id="Mps-NS-KAM">
                                 <connections>
                                     <action selector="showHelp:" target="-1" id="LE2-Ht-eiO"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Guided Tour" tag="90" id="flS-lt-dhS">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="startOnboarding:" target="-1" id="wYF-mR-Tfi"/>
                                 </connections>
                             </menuItem>
                         </items>

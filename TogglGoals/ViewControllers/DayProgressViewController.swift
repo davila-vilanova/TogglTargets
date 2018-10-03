@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class DayProgressViewController: NSViewController, BindingTargetProvider {
+class DayProgressViewController: NSViewController, BindingTargetProvider, DayProgressViewProviding {
 
     // MARK: Interface
 
@@ -77,5 +77,14 @@ class DayProgressViewController: NSViewController, BindingTargetProvider {
         let hide = isTimeRemainingMissing.or(isGoalImpossible)
         timeRemainingToWorkTodayLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ hide
         todayProgressIndicator.reactive.makeBindingTarget { $0.isIndeterminate = $1 } <~ hide
+    }
+    
+    
+    // MARK: - Onboarding
+    
+    var dayProgressView: SignalProducer<NSView, NoError> {
+        return viewDidLoadProducer
+            .map { [unowned self] _ in self.view }
+            .concat(SignalProducer.never)
     }
 }
