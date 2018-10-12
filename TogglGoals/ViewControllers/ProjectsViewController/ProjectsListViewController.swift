@@ -349,7 +349,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - Onboarding
 
     var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
-        let projectSelected = selectedProjectID.producer.skipNil().map { _ in () }
+        let projectSelected = selectedProjectID.producer.skipNil().map { _ in () }.skip(first: 1)
         let projectsListView = viewDidLoadProducer
             .map { [unowned self] _ in self.projectsCollectionView as NSView }
             .concat(SignalProducer.never)

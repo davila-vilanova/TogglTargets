@@ -13,7 +13,7 @@ import ReactiveSwift
 fileprivate let defaults = UserDefaults.standard
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInterfaceValidations {
     
     private lazy var mainStoryboard = NSStoryboard(name: .init("Main"), bundle: nil)
     private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
@@ -115,10 +115,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                                                queue: OperationQueue.main,
                                                using: { _ in self.presentPreferences(jumpingTo: .account) })
 
-        if shouldStartOnboarding {
-            startOnboarding(presentAccountPreferences: mustSetupAccount)
-        } else if mustSetupAccount {
+        if mustSetupAccount {
             presentPreferences(jumpingTo: .account, asSheet: true)
+        }
+
+        if shouldStartOnboarding {
+            startOnboarding()
         }
     }
 
@@ -143,8 +145,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func presentPreferences(jumpingTo prefsSection: PreferencesViewController.Section? = nil,
-                                    asSheet presentAsSheet: Bool = false,
-                                    onboardingGuide: OnboardingGuide? = nil) {
+                                    asSheet presentAsSheet: Bool = false) {
         assert(Thread.current.isMainThread)
 
         if let alreadyPresented = presentedPreferencesWindow {
@@ -188,10 +189,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             preferencesWindow.makeKeyAndOrderFront(nil)
         }
         
-        if let guide = onboardingGuide {
-            preferencesController.setOnboardingGuide(guide)
-        }
-
         presentedPreferencesWindow = preferencesWindow
     }
 
@@ -221,30 +218,35 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private var isCurrentlyOnboarding: Bool {
-        return onboardingGuide?.isOnboarding == true
+        return onboardingGuide != nil
     }
 
     @IBAction func startOnboarding(_ sender: Any?) {
         guard !isCurrentlyOnboarding else {
             return
         }
-        startOnboarding(presentAccountPreferences: mustSetupAccount)
+        if mustSetupAccount {
+            presentPreferences(jumpingTo: .account, asSheet: true)
+        }
+        startOnboarding()
     }
 
-    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
-        if menuItem.tag == 90 {
+    public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        if item.action == #selector(startOnboarding(_:)) {
             return !isCurrentlyOnboarding
+        } else {
+            return true
         }
-        return true
     }
 
-    private func startOnboarding(presentAccountPreferences: Bool) {
-        let onboardingGuide = OnboardingGuide(steps: OnboardingSteps)
-        self.onboardingGuide = onboardingGuide
-        if presentAccountPreferences {
-            presentPreferences(jumpingTo: .account, asSheet: true, onboardingGuide: onboardingGuide)
-        }
-        mainViewController.setOnboardingGuide(onboardingGuide)
+    private func startOnboarding() {
+        let initialRelevantStep: OnboardingStepIdentifier = mustSetupAccount ? .login : .selectProject
+        let guide = OnboardingGuide(steps: onboardingSteps(startingFrom: initialRelevantStep))
+
+        self.onboardingGuide = guide
+        reactive.makeBindingTarget { appDelegate, _ in appDelegate.onboardingGuide = nil } <~ guide.onboardingEnded
+
+        mainViewController.setOnboardingGuide(guide)
+        presentedPreferencesWindow?.contentViewController?.setOnboardingGuide(guide)
     }
 }
-

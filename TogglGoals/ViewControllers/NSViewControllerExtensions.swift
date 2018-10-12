@@ -22,7 +22,12 @@ extension NSViewController {
             .map { SignalProducer($0) }
             .flatten(.concat)
             .uniqueValues()
-            .startWithValues { $0.setOnboardingGuide(guide) }
+            .startWithValues { [weak guide] controller in
+                guard let guide = guide else {
+                    return
+                }
+                controller.setOnboardingGuide(guide)
+        }
     }
 }
 

@@ -31,10 +31,7 @@ class OnboardingGuide {
     var lifetime: Lifetime
     private let token: Lifetime.Token
 
-    private var _isOnboarding = MutableProperty(false)
-    var isOnboarding: Bool {
-        return _isOnboarding.value
-    }
+    let onboardingEnded: SignalProducer<Void, NoError>
 
     private let steps: [OnboardingStep]
     
@@ -71,7 +68,9 @@ class OnboardingGuide {
                 assert(false)
                 return
             }
-            assert(holder.value == nil)
+            if holder.value != nil {
+                print("+++ holder for \(stepIdentifier) already holds a non nil value: \(holder.value!)")
+            }
             holder <~ take(from: viewProducer, stepIdentifier: stepIdentifier)
         }
         
@@ -89,7 +88,12 @@ class OnboardingGuide {
         self.steps = steps
         
         (lifetime, token) = Lifetime.make()
-        
+        let onboardingEnded = MutableProperty<Void?>(nil)
+        lifetime.observeEnded {
+            _ = onboardingEnded
+        }
+        self.onboardingEnded = onboardingEnded.producer.skipNil()
+
         func extractViewProducer(_ prop: MutableProperty<Signal<NSView, NoError>.Event?>) -> SignalProducer<NSView, NoError> {
             return prop.producer.skipNil().dematerialize()
         }
@@ -134,6 +138,7 @@ class OnboardingGuide {
         }
 
         markOnboardingAsNotPending <~ SignalProducer.merge(lastStepFinished, onboardingAborted)
+        onboardingEnded <~ onboardingClosed
     }
     
     private lazy var stepViewController = OnboardingStepViewController(nibName: NSNib.Name(rawValue: "OnboardingStepViewController"), bundle: nil)

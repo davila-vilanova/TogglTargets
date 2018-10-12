@@ -127,3 +127,6 @@
 
 /* Class = "NSMenuItem"; title = "Goal"; ObjectID = "5SZ-Ad-K37"; */
 "5SZ-Ad-K37.title" = "Goal";
+
+/* Class = "NSMenuItem"; title = "Guided Tour"; ObjectID = "flS-lt-dhS"; */
+"flS-lt-dhS.title" = "Guided Tour";

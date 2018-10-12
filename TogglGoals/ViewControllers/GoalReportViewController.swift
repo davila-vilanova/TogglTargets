@@ -242,7 +242,13 @@ class GoalReportViewController: NSViewController, BindingTargetProvider, Onboard
             .map { $0 as NSView }
             .concat(SignalProducer.never)
             .take(until: computeStrategyFromSelectionChanged)
-        
-        return [.selectComputeStrategyFrom : computeStrategyFromSelectionView]
+
+        let goalStrategyView = viewDidLoadProducer
+            .map { [unowned self] _ in self.goalStrategyView }
+            .skipNil()
+            .concat(SignalProducer.never)
+
+        return [.selectComputeStrategyFrom : computeStrategyFromSelectionView,
+                .seeGoalStrategy : goalStrategyView]
     }
 }

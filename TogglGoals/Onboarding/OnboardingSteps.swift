@@ -21,7 +21,7 @@ enum OnboardingStepIdentifier: String {
     case seeDayProgress
 }
 
-let OnboardingSteps: [OnboardingStep] = [
+fileprivate let OnboardingSteps: [OnboardingStep] = [
     OnboardingStep(identifier: .login, text: NSLocalizedString("onboarding.step.login", comment: "onboarding step: login")),
     OnboardingStep(identifier: .closeLogin, text: NSLocalizedString("onboarding.step.close-login", comment: "onboarding step: close login")),
     OnboardingStep(identifier: .selectProject, text: NSLocalizedString("onboarding.step.select-project", comment: "onboarding step: select project")),
@@ -33,3 +33,12 @@ let OnboardingSteps: [OnboardingStep] = [
     OnboardingStep(identifier: .seeGoalStrategy, text: NSLocalizedString("onboarding.step.see-goal-strategy", comment: "onboarding step: see strategy to fulfill goal"), allowContinue: true),
     OnboardingStep(identifier: .seeDayProgress, text: NSLocalizedString("onboarding.step.see-day-progress", comment: "onboarding step: see day progress"), allowContinue: true),
 ]
+
+func onboardingSteps(startingFrom initialStepIdentifier: OnboardingStepIdentifier? = nil) -> [OnboardingStep] {
+    guard let initialStepIdentifier = initialStepIdentifier else {
+        return OnboardingSteps
+    }
+
+    let foundIndex = OnboardingSteps.firstIndex { $0.identifier == initialStepIdentifier }!
+    return [OnboardingStep](OnboardingSteps.suffix(from: foundIndex)) // TODO: return the slice instead of allocating new array?
+}

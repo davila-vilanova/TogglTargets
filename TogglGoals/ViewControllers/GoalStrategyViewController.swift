@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class GoalStrategyViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
+class GoalStrategyViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -134,22 +134,13 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider, Onboa
         baselineDifferentialField.reactive.stringValue <~
             SignalProducer.merge(feasibleCaseDescriptions, unfeasibleCaseDescriptions, impossibleCaseDescriptions, baselineCalculationErrors)
     }
-    
-    // MARK: - Onboarding
-    
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
-        let goalStrategyView = viewDidLoadProducer
-            .map { [unowned self] _ in self.view }
-            .concat(SignalProducer.never)
-        return [.seeGoalStrategy : goalStrategyView]
-    }
 }
 
 // MARK: -
 
-class GoalReachedViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
+class GoalReachedViewController: NSViewController, BindingTargetProvider {
 
-    // MARK: - Interface
+    // MARK: Interface
 
     internal typealias Interface = SignalProducer<TimeInterval, NoError>
 
@@ -177,15 +168,5 @@ class GoalReachedViewController: NSViewController, BindingTargetProvider, Onboar
                     NSLocalizedString("goal-reached", comment: "the goal has been achieved"),
                     $0)
         }
-    }
-    
-    
-    // MARK: - Onboarding
-    
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
-        let goalStrategyView = viewDidLoadProducer
-            .map { [unowned self] _ in self.view }
-            .concat(SignalProducer.never)
-        return [.seeGoalStrategy : goalStrategyView]
     }
 }
