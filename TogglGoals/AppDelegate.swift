@@ -216,7 +216,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private var shouldStartOnboarding: Bool {
-        return OnboardingGuide.shouldOnboard(defaults) && !isCurrentlyOnboarding
+        return //OnboardingGuide.shouldOnboard(defaults) &&
+            !isCurrentlyOnboarding
     }
 
     private var isCurrentlyOnboarding: Bool {
@@ -238,7 +239,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     private func startOnboarding(presentAccountPreferences: Bool) {
-        let onboardingGuide = OnboardingGuide()
+        let onboardingGuide = OnboardingGuide(steps: OnboardingSteps)
         self.onboardingGuide = onboardingGuide
         if presentAccountPreferences {
             presentPreferences(jumpingTo: .account, asSheet: true, onboardingGuide: onboardingGuide)

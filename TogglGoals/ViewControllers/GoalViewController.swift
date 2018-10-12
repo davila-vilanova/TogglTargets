@@ -156,7 +156,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
     
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
         let hoursTargetField = viewDidLoadProducer
             .map { [unowned self] _ in self.hoursTargetField }
             .skipNil()
@@ -223,7 +223,7 @@ class DeleteGoalPopup: NSViewController, BindingTargetProvider {
 class NoGoalViewController: NSViewController, OnboardingTargetViewsProvider {
     @IBOutlet weak var createGoalButton: NSButton!
 
-    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
         let createGoalButtonPressed = Action<Void, Void, NoError> {
             SignalProducer(value: ())
         }

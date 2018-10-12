@@ -167,7 +167,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
     
     // MARK: - Onboarding
     
-    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
         let timeProgressView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)

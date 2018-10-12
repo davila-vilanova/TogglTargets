@@ -231,7 +231,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider, Onboard
     
     // MARK: - Onboarding
     
-    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
         let computeStrategyFromButton = viewDidLoadProducer
             .map { [unowned self] _ in self.computeStrategyFromButton }
             .skipNil()

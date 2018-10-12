@@ -173,7 +173,7 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
 
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
         let credentialSuccessfullyValidated = validateCredential.values.filter { $0.isValid }.map { _ in () }
         let loginView = viewDidLoadProducer
             .map { [unowned self] in self.view }

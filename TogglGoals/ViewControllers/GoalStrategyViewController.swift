@@ -137,7 +137,7 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider, Onboa
     
     // MARK: - Onboarding
     
-    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
         let goalStrategyView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)
@@ -182,7 +182,7 @@ class GoalReachedViewController: NSViewController, BindingTargetProvider, Onboar
     
     // MARK: - Onboarding
     
-    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
         let goalStrategyView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)

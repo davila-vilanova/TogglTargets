@@ -25,7 +25,7 @@ class OnboardingStepViewController: NSViewController {
         return stopPressed.values.producer
     }
 
-    var moveOnToNextStep: SignalProducer<OnboardingStep.Identifier, NoError> {
+    var moveOnToNextStep: SignalProducer<OnboardingStepIdentifier, NoError> {
         return currentStep.producer.sample(on: moveOnPressed.values).filterMap { $0?.identifier }
     }
 

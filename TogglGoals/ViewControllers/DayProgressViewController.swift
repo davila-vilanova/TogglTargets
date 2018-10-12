@@ -82,7 +82,7 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
     
     // MARK: - Onboarding
     
-    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
         let dayProgressView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)
