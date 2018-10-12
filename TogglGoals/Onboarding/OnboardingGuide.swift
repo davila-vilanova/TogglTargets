@@ -98,35 +98,10 @@ class OnboardingGuide {
             holder <~ take(from: viewProducer, stepIdentifier: stepIdentifier)
         }
         
-        if let r = registree as? LoginViewProviding {
-            connect(r.loginView, toViewHolderFor: .login)
-        }
-        if let r = registree as? CloseLoginViewProviding {
-            connect(r.closeLoginView, toViewHolderFor: .closeLogin)
-        }
-        if let r = registree as? ProjectsListViewProviding {
-            connect(r.projectsListView, toViewHolderFor: .selectProject)
-        }
-        if let r = registree as? GoalCreationViewProviding {
-            connect(r.goalCreationView, toViewHolderFor: .createGoal)
-        }
-        if let r = registree as? TargetHoursViewProviding {
-            connect(r.targetHoursView, toViewHolderFor: .setTargetHours)
-        }
-        if let r = registree as? WorkWeekdaysViewProviding {
-            connect(r.workWeekdaysView, toViewHolderFor: .setWorkWeekdays)
-        }
-        if let r = registree as? ComputeStrategyFromSelectionViewProviding {
-            connect(r.computeStrategyFromSelectionView, toViewHolderFor: .selectComputeStrategyFrom)
-        }
-        if let r = registree as? TimeProgressViewProviding {
-            connect(r.timeProgressView, toViewHolderFor: .seeTimeProgress)
-        }
-        if let r = registree as? GoalStrategyViewProviding {
-            connect(r.goalStrategyView, toViewHolderFor: .seeGoalStrategy)
-        }
-        if let r = registree as? DayProgressViewController {
-            connect(r.dayProgressView, toViewHolderFor: .seeDayProgress)
+        if let r = registree as? OnboardingTargetViewsProvider {
+            for (stepIdentifier, targetView) in r.onboardingTargetViews {
+                connect(targetView, toViewHolderFor: stepIdentifier)
+            }
         }
     }
     
@@ -213,42 +188,6 @@ class OnboardingGuide {
     }
 }
 
-protocol LoginViewProviding {
-    var loginView: SignalProducer<NSView, NoError> { get }
-}
-
-protocol CloseLoginViewProviding {
-    var closeLoginView: SignalProducer<NSView, NoError> { get }
-}
-
-protocol ProjectsListViewProviding {
-    var projectsListView: SignalProducer<NSView, NoError> { get }
-}
-
-protocol GoalCreationViewProviding {
-    var goalCreationView: SignalProducer<NSView, NoError> { get }
-}
-
-protocol TargetHoursViewProviding {
-    var targetHoursView: SignalProducer<NSView, NoError> { get }
-}
-
-protocol WorkWeekdaysViewProviding {
-    var workWeekdaysView: SignalProducer<NSView, NoError> { get }
-}
-
-protocol ComputeStrategyFromSelectionViewProviding {
-    var computeStrategyFromSelectionView: SignalProducer<NSView, NoError> { get }
-}
-
-protocol TimeProgressViewProviding {
-    var timeProgressView: SignalProducer<NSView, NoError> { get }
-}
-
-protocol GoalStrategyViewProviding {
-    var goalStrategyView: SignalProducer<NSView, NoError> { get }
-}
-
-protocol DayProgressViewProviding {
-    var dayProgressView: SignalProducer<NSView, NoError> { get }
+protocol OnboardingTargetViewsProvider {
+    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] { get }
 }

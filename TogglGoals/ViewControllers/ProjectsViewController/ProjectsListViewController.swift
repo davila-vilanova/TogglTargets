@@ -19,7 +19,7 @@ fileprivate let NoSelectedProjectIdRestorationValue: Int64 = 0
 
 /// Manages a collection view that displays `Project` items organized by whether they have an associated goal.
 /// Produces a stream of selected `Project` values via the `selectedProject` property.
-class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, BindingTargetProvider, ProjectsListViewProviding {
+class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: - Interface
 
@@ -348,12 +348,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Onboarding
 
-    var projectsListView: SignalProducer<NSView, NoError> {
+    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
         let projectSelected = selectedProjectID.producer.skipNil().map { _ in () }
-
-        return viewDidLoadProducer
-            .map { [unowned self] _ in self.projectsCollectionView }
+        let projectsListView = viewDidLoadProducer
+            .map { [unowned self] _ in self.projectsCollectionView as NSView }
             .concat(SignalProducer.never)
             .take(until: projectSelected)
+        return [.selectProject : projectsListView]
     }
 }

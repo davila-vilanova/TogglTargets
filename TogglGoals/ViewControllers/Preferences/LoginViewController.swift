@@ -36,7 +36,7 @@ fileprivate enum CredentialValidationResult {
     }
 }
 
-class LoginViewController: NSViewController, BindingTargetProvider, LoginViewProviding {
+class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: Interface
 
@@ -171,13 +171,14 @@ class LoginViewController: NSViewController, BindingTargetProvider, LoginViewPro
         }
     }
 
-    // MARK : - Onboarding
+    // MARK: - Onboarding
 
-    var loginView: SignalProducer<NSView, NoError> {
+    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
         let credentialSuccessfullyValidated = validateCredential.values.filter { $0.isValid }.map { _ in () }
-        return viewDidLoadProducer
+        let loginView = viewDidLoadProducer
             .map { [unowned self] in self.view }
             .concat(SignalProducer.never)
             .take(until: credentialSuccessfullyValidated)
+        return [.login : loginView]
     }
 }

@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class GoalStrategyViewController: NSViewController, BindingTargetProvider, GoalStrategyViewProviding {
+class GoalStrategyViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: Interface
 
@@ -137,16 +137,17 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider, GoalS
     
     // MARK: - Onboarding
     
-    var goalStrategyView: SignalProducer<NSView, NoError> {
-        return viewDidLoadProducer
+    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+        let goalStrategyView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)
+        return [.seeGoalStrategy : goalStrategyView]
     }
 }
 
 // MARK: -
 
-class GoalReachedViewController: NSViewController, BindingTargetProvider, GoalStrategyViewProviding {
+class GoalReachedViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: - Interface
 
@@ -181,9 +182,10 @@ class GoalReachedViewController: NSViewController, BindingTargetProvider, GoalSt
     
     // MARK: - Onboarding
     
-    var goalStrategyView: SignalProducer<NSView, NoError> {
-        return viewDidLoadProducer
+    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+        let goalStrategyView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)
+        return [.seeGoalStrategy : goalStrategyView]
     }
 }

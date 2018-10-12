@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class DayProgressViewController: NSViewController, BindingTargetProvider, DayProgressViewProviding {
+class DayProgressViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: Interface
 
@@ -82,9 +82,10 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, DayPro
     
     // MARK: - Onboarding
     
-    var dayProgressView: SignalProducer<NSView, NoError> {
-        return viewDidLoadProducer
+    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+        let dayProgressView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)
+        return [.seeDayProgress : dayProgressView]
     }
 }

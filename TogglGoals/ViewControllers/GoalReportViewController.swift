@@ -11,7 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-class GoalReportViewController: NSViewController, BindingTargetProvider, ComputeStrategyFromSelectionViewProviding {
+class GoalReportViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: Interface
 
@@ -231,16 +231,18 @@ class GoalReportViewController: NSViewController, BindingTargetProvider, Compute
     
     // MARK: - Onboarding
     
-    var computeStrategyFromSelectionView: SignalProducer<NSView, NoError> {
+    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
         let computeStrategyFromButton = viewDidLoadProducer
             .map { [unowned self] _ in self.computeStrategyFromButton }
             .skipNil()
         
         let computeStrategyFromSelectionChanged = computeStrategyFromButton.map { $0.reactive.selectedItems.map { _ in () } }.flatten(.concat)
-        
-        return computeStrategyFromButton
+
+        let computeStrategyFromSelectionView = computeStrategyFromButton
             .map { $0 as NSView }
             .concat(SignalProducer.never)
             .take(until: computeStrategyFromSelectionChanged)
+        
+        return [.selectComputeStrategyFrom : computeStrategyFromSelectionView]
     }
 }

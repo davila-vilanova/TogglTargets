@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class TimeProgressViewController: NSViewController, BindingTargetProvider, TimeProgressViewProviding {
+class TimeProgressViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: Interface
 
@@ -167,10 +167,12 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, TimeP
     
     // MARK: - Onboarding
     
-    var timeProgressView: SignalProducer<NSView, NoError> {
-        return viewDidLoadProducer
+    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
+        let timeProgressView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)
+        
+        return [.seeTimeProgress : timeProgressView]
     }
 }
 

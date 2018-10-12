@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class PreferencesViewControllerWrapper: NSViewController, BindingTargetProvider, CloseLoginViewProviding {
+class PreferencesViewControllerWrapper: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     internal typealias Interface = PreferencesViewController.Interface
 
@@ -38,14 +38,14 @@ class PreferencesViewControllerWrapper: NSViewController, BindingTargetProvider,
 
     // MARK: - Onboarding
 
-    var closeLoginView: SignalProducer<NSView, NoError> {
+    var onboardingTargetViews: [OnboardingStep.Identifier : SignalProducer<NSView, NoError>] {
         let closeButtonPressedAction = Action<Void, Void, NoError> { SignalProducer(value: ()) }
         let closePreferencesButtonProducer = viewDidLoadProducer
             .on(value: { [unowned self] in
                 self.closePreferencesButton.reactive.pressed = CocoaAction(closeButtonPressedAction)
             })
             .map { [unowned self] in self.closePreferencesButton as NSView }
-
-        return closePreferencesButtonProducer.concat(SignalProducer.never).take(until: closeButtonPressedAction.values)
+        let closeLoginView = closePreferencesButtonProducer.concat(SignalProducer.never).take(until: closeButtonPressedAction.values)
+        return [.closeLogin : closeLoginView]
     }
 }
