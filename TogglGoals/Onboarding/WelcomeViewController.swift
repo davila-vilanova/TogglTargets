@@ -29,4 +29,7 @@ class WelcomeViewController: NSViewController {
         continueButton.reactive.pressed = CocoaAction(continueAction)
     }
     
+    @IBAction func openTogglDotCom(_ sender: Any) {
+        NSWorkspace.shared.open(URL(string: "https://toggl.com")!)
+    }
 }

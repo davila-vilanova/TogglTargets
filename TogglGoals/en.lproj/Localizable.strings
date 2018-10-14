@@ -188,7 +188,7 @@
 "undo.delete-goal" = "Delete Goal";
 
 /* onboarding step: login */
-"onboarding.step.login" = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+"onboarding.step.login" = "Enter your Toggl API token so that we can access your currently active projects and the amount of time worked on each one. If you prefer, you can enter your email address and password and we'll retrieve your API token for you (we will use your password exactly once and won't store it)";
 
 /* onboarding step: close login */
 "onboarding.step.close-login" = "Close this preferences sheet to continue";

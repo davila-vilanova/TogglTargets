@@ -33,11 +33,11 @@
             <objects>
                 <viewController id="7Vr-Nc-dGW" customClass="WelcomeViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="NiY-k9-5tL">
-                        <rect key="frame" x="0.0" y="0.0" width="525" height="187"/>
+                        <rect key="frame" x="0.0" y="0.0" width="525" height="197"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aYp-00-8db">
-                                <rect key="frame" x="18" y="145" width="489" height="22"/>
+                                <rect key="frame" x="18" y="155" width="489" height="22"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="TogglGoals keeps you on track to meet your time goals" id="DLC-cW-ECx">
                                     <font key="font" size="18" name=".AppleSystemUIFontMedium"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -45,7 +45,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oy1-8H-iDQ">
-                                <rect key="frame" x="18" y="86" width="489" height="51"/>
+                                <rect key="frame" x="18" y="96" width="489" height="51"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="485" id="Yym-ij-78a"/>
                                 </constraints>
@@ -57,7 +57,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gfN-IN-Lfx">
-                                <rect key="frame" x="18" y="61" width="489" height="17"/>
+                                <rect key="frame" x="18" y="71" width="489" height="17"/>
                                 <textFieldCell key="cell" selectable="YES" title="You can choose to work with your targets on a montly or weekly basis." id="4p3-AB-d9f">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -71,13 +71,24 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="igS-L0-w3j">
+                                <rect key="frame" x="20" y="21" width="108" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="what toggl.com?" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Erd-74-jPL">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="openTogglDotCom:" target="7Vr-Nc-dGW" id="uHG-ib-uKO"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="lIb-WD-ar6" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="1hP-bI-KZa"/>
                             <constraint firstItem="Oy1-8H-iDQ" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="1zJ-KT-Bcf"/>
                             <constraint firstItem="Oy1-8H-iDQ" firstAttribute="top" secondItem="aYp-00-8db" secondAttribute="bottom" constant="8" symbolic="YES" id="AQH-Ax-WVX"/>
-                            <constraint firstItem="lIb-WD-ar6" firstAttribute="top" secondItem="gfN-IN-Lfx" secondAttribute="bottom" constant="20" id="HJl-zi-TqR"/>
+                            <constraint firstItem="lIb-WD-ar6" firstAttribute="top" secondItem="gfN-IN-Lfx" secondAttribute="bottom" constant="30" id="HJl-zi-TqR"/>
                             <constraint firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" constant="20" symbolic="YES" id="HV9-P4-syx"/>
+                            <constraint firstItem="lIb-WD-ar6" firstAttribute="firstBaseline" secondItem="igS-L0-w3j" secondAttribute="firstBaseline" id="PJw-7L-r0t"/>
                             <constraint firstItem="aYp-00-8db" firstAttribute="top" secondItem="NiY-k9-5tL" secondAttribute="top" constant="20" symbolic="YES" id="Pms-sr-1xd"/>
                             <constraint firstItem="Oy1-8H-iDQ" firstAttribute="leading" secondItem="aYp-00-8db" secondAttribute="leading" id="UCg-Wm-Do1"/>
                             <constraint firstItem="gfN-IN-Lfx" firstAttribute="leading" secondItem="aYp-00-8db" secondAttribute="leading" id="ZDr-rC-eMd"/>
@@ -86,6 +97,7 @@
                             <constraint firstItem="lIb-WD-ar6" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="NiY-k9-5tL" secondAttribute="leading" constant="422" id="l4C-eI-0ZB"/>
                             <constraint firstItem="aYp-00-8db" firstAttribute="leading" secondItem="NiY-k9-5tL" secondAttribute="leading" constant="20" symbolic="YES" id="tOh-tC-lpM"/>
                             <constraint firstAttribute="bottom" secondItem="lIb-WD-ar6" secondAttribute="bottom" constant="20" symbolic="YES" id="wsC-Tp-A8e"/>
+                            <constraint firstItem="igS-L0-w3j" firstAttribute="leading" secondItem="aYp-00-8db" secondAttribute="leading" id="xjJ-8i-BuG"/>
                         </constraints>
                     </view>
                     <connections>
