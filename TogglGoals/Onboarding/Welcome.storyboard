@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="Ww4-Pu-BUY">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="H3i-h8-Ehi">
+            <objects>
+                <windowController id="Ww4-Pu-BUY" sceneMemberID="viewController">
+                    <window key="window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="n5A-0Q-jRO">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                        <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="425" y="461" width="480" height="270"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+                        <connections>
+                            <outlet property="delegate" destination="Ww4-Pu-BUY" id="uhK-uQ-VRz"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="7Vr-Nc-dGW" kind="relationship" relationship="window.shadowedContentViewController" id="oIm-Xn-2go"/>
+                    </connections>
+                </windowController>
+                <customObject id="bIZ-Wy-GhG" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-13" y="-407"/>
+        </scene>
+        <!--Welcome View Controller-->
+        <scene sceneID="e0x-wk-4lA">
+            <objects>
+                <viewController id="7Vr-Nc-dGW" customClass="WelcomeViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="NiY-k9-5tL">
+                        <rect key="frame" x="0.0" y="0.0" width="525" height="187"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aYp-00-8db">
+                                <rect key="frame" x="18" y="145" width="489" height="22"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="TogglGoals keeps you on track to meet your time goals" id="DLC-cW-ECx">
+                                    <font key="font" size="18" name=".AppleSystemUIFontMedium"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oy1-8H-iDQ">
+                                <rect key="frame" x="18" y="86" width="489" height="51"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="485" id="Yym-ij-78a"/>
+                                </constraints>
+                                <textFieldCell key="cell" selectable="YES" allowsEditingTextAttributes="YES" id="A8f-T6-ofs">
+                                    <font key="font" metaFont="system"/>
+                                    <string key="title">Connect your toggl.com account, set your target work hours for one or more projects and let TogglGoals help you hit your targets by showing you how you are doing and telling you how much you should work per day to stay on track.</string>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gfN-IN-Lfx">
+                                <rect key="frame" x="18" y="61" width="489" height="17"/>
+                                <textFieldCell key="cell" selectable="YES" title="You can choose to work with your targets on a montly or weekly basis." id="4p3-AB-d9f">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lIb-WD-ar6">
+                                <rect key="frame" x="416" y="13" width="95" height="32"/>
+                                <buttonCell key="cell" type="push" title="Continue" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qes-kY-tTz">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="lIb-WD-ar6" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="1hP-bI-KZa"/>
+                            <constraint firstItem="Oy1-8H-iDQ" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="1zJ-KT-Bcf"/>
+                            <constraint firstItem="Oy1-8H-iDQ" firstAttribute="top" secondItem="aYp-00-8db" secondAttribute="bottom" constant="8" symbolic="YES" id="AQH-Ax-WVX"/>
+                            <constraint firstItem="lIb-WD-ar6" firstAttribute="top" secondItem="gfN-IN-Lfx" secondAttribute="bottom" constant="20" id="HJl-zi-TqR"/>
+                            <constraint firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" constant="20" symbolic="YES" id="HV9-P4-syx"/>
+                            <constraint firstItem="aYp-00-8db" firstAttribute="top" secondItem="NiY-k9-5tL" secondAttribute="top" constant="20" symbolic="YES" id="Pms-sr-1xd"/>
+                            <constraint firstItem="Oy1-8H-iDQ" firstAttribute="leading" secondItem="aYp-00-8db" secondAttribute="leading" id="UCg-Wm-Do1"/>
+                            <constraint firstItem="gfN-IN-Lfx" firstAttribute="leading" secondItem="aYp-00-8db" secondAttribute="leading" id="ZDr-rC-eMd"/>
+                            <constraint firstItem="gfN-IN-Lfx" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="gG3-Lq-cgW"/>
+                            <constraint firstItem="gfN-IN-Lfx" firstAttribute="top" secondItem="Oy1-8H-iDQ" secondAttribute="bottom" constant="8" symbolic="YES" id="jYV-iF-DOn"/>
+                            <constraint firstItem="lIb-WD-ar6" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="NiY-k9-5tL" secondAttribute="leading" constant="422" id="l4C-eI-0ZB"/>
+                            <constraint firstItem="aYp-00-8db" firstAttribute="leading" secondItem="NiY-k9-5tL" secondAttribute="leading" constant="20" symbolic="YES" id="tOh-tC-lpM"/>
+                            <constraint firstAttribute="bottom" secondItem="lIb-WD-ar6" secondAttribute="bottom" constant="20" symbolic="YES" id="wsC-Tp-A8e"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="continueButton" destination="lIb-WD-ar6" id="rCV-cf-KYq"/>
+                    </connections>
+                </viewController>
+                <customObject id="J7o-1x-wrF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="716.5" y="-428"/>
+        </scene>
+    </scenes>
+</document>

@@ -93,8 +93,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         processEnvironmentVariables()
 
-        mainWindow.makeKeyAndOrderFront(nil)
-
         mainViewController <~ SignalProducer(
             value: (calendar: calendar.producer,
                     periodPreference: periodPreferenceStore.output.producer.skipNil(),
@@ -115,12 +113,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                                                queue: OperationQueue.main,
                                                using: { _ in self.presentPreferences(jumpingTo: .account) })
 
-        if mustSetupAccount {
-            presentPreferences(jumpingTo: .account, asSheet: true)
+        func showMainWindow(startOnboarding: Bool) {
+            mainWindow.makeKeyAndOrderFront(nil)
+            if mustSetupAccount {
+                presentPreferences(jumpingTo: .account, asSheet: true)
+            }
+            if startOnboarding {
+                self.startOnboarding()
+            }
         }
 
         if shouldStartOnboarding {
-            startOnboarding()
+            let welcomeStoryboard = NSStoryboard(name: .init("Welcome"), bundle: nil)
+            let welcomeWindowController = welcomeStoryboard.instantiateInitialController() as! NSWindowController
+            let welcomeWindow = welcomeWindowController.window!
+            let welcomeController = welcomeWindow.contentViewController as! WelcomeViewController
+
+            BindingTarget(on: UIScheduler(), lifetime: welcomeWindow.reactive.lifetime) {
+                welcomeWindow.close()
+                showMainWindow(startOnboarding: true)
+            } <~ welcomeController.continuePressed
+
+            welcomeWindow.makeKeyAndOrderFront(self)
+        } else {
+            showMainWindow(startOnboarding: false)
         }
     }
 
