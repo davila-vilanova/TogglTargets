@@ -53,4 +53,8 @@ class OnboardingStepViewController: NSViewController {
         } as BindingTarget<Void> <~ lastStepTrigger.producer.skipNil()
         stopOnboardingButton.reactive.makeBindingTarget { $0.isHidden = $1 } <~ lastStepTrigger.producer.skipNil().map { _ in true }
     }
+
+    override func viewWillAppear() {
+        view.window!.initialFirstResponder = moveOnToNextStepButton
+    }
 }
