@@ -11,8 +11,8 @@
 		630274DD20FB659D00DE2698 /* ActivityErrorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 630274DF20FB659D00DE2698 /* ActivityErrorViewController.xib */; };
 		63046233217342000086C524 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63046231217342000086C524 /* WelcomeViewController.swift */; };
 		63046234217342000086C524 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63046231217342000086C524 /* WelcomeViewController.swift */; };
-		63046238217358F70086C524 /* Welcome.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63046237217358F70086C524 /* Welcome.storyboard */; };
-		63046239217358F70086C524 /* Welcome.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63046237217358F70086C524 /* Welcome.storyboard */; };
+		6304623D217366440086C524 /* Welcome.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63046240217366440086C524 /* Welcome.storyboard */; };
+		6304623E217366440086C524 /* Welcome.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63046240217366440086C524 /* Welcome.storyboard */; };
 		6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
 		6310EFCC1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
 		6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
@@ -323,7 +323,9 @@
 		630274E120FB659F00DE2698 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/ActivityErrorViewController.strings; sourceTree = "<group>"; };
 		630274E320FB65A100DE2698 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/ActivityErrorViewController.strings; sourceTree = "<group>"; };
 		63046231217342000086C524 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
-		63046237217358F70086C524 /* Welcome.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Welcome.storyboard; sourceTree = "<group>"; };
+		6304623F217366440086C524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Welcome.storyboard; sourceTree = "<group>"; };
+		63046242217366460086C524 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Welcome.strings; sourceTree = "<group>"; };
+		630462442173664D0086C524 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Welcome.strings; sourceTree = "<group>"; };
 		6310EFCA1FAC6D3700B42C44 /* Period.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Period.swift; sourceTree = "<group>"; };
 		6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodPreference.swift; sourceTree = "<group>"; };
 		632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveProjectsNetworkActionTest.swift; sourceTree = "<group>"; };
@@ -768,7 +770,7 @@
 				63F6D17F216D5760004EE7B9 /* OnboardingEndedViewController.xib */,
 				63DCA5C92170BE7400D56DD9 /* OnboardingSteps.swift */,
 				63046231217342000086C524 /* WelcomeViewController.swift */,
-				63046237217358F70086C524 /* Welcome.storyboard */,
+				63046240217366440086C524 /* Welcome.storyboard */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -946,7 +948,7 @@
 				63F76BA420F6212D0024939B /* InfoPlist.strings in Resources */,
 				6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */,
 				63F76BA120F6212D0024939B /* Localizable.strings in Resources */,
-				63046238217358F70086C524 /* Welcome.storyboard in Resources */,
+				6304623D217366440086C524 /* Welcome.storyboard in Resources */,
 				6334B4A220703EC000A5B796 /* SyncingActivityViewController.xib in Resources */,
 				632A5FB62165621F00E61BBB /* OnboardingStepViewController.xib in Resources */,
 				63F76BD720F672940024939B /* Preferences.storyboard in Resources */,
@@ -979,7 +981,7 @@
 				638561EF20FE15DC002E97E8 /* MainMenu.xib in Resources */,
 				63F76B9B20F6212D0024939B /* InfoPlist.strings in Resources */,
 				63F76BD820F672940024939B /* Preferences.storyboard in Resources */,
-				63046239217358F70086C524 /* Welcome.storyboard in Resources */,
+				6304623E217366440086C524 /* Welcome.storyboard in Resources */,
 				63F6D183216D5760004EE7B9 /* OnboardingEndedViewController.xib in Resources */,
 				63F76BE320F6756A0024939B /* Main.storyboard in Resources */,
 			);
@@ -1276,6 +1278,16 @@
 				630274E320FB65A100DE2698 /* es */,
 			);
 			name = ActivityErrorViewController.xib;
+			sourceTree = "<group>";
+		};
+		63046240217366440086C524 /* Welcome.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6304623F217366440086C524 /* Base */,
+				63046242217366460086C524 /* es */,
+				630462442173664D0086C524 /* en */,
+			);
+			name = Welcome.storyboard;
 			sourceTree = "<group>";
 		};
 		6329574B1DBA99F000E11A10 /* Main.storyboard */ = {
