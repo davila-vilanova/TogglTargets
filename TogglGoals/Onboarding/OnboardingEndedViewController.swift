@@ -36,7 +36,7 @@ class OnboardingEndedViewController: NSViewController {
 
         let delayScheduler = QueueScheduler()
         let maxProgress = 100.0
-        let totalDurationUntilClose: TimeInterval = 3.0
+        let totalDurationUntilClose: TimeInterval = 2.0
         let period: TimeInterval = 0.1
         let stepCount = ceil(totalDurationUntilClose / period)
         let stepIncrement = maxProgress / Double(stepCount)
