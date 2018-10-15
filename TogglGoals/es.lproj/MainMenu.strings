@@ -29,9 +29,6 @@
 /* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "LBQ-N3-wxk"; */
 "LBQ-N3-wxk.title" = "Empezar a hablar";
 
-/* Class = "NSMenuItem"; title = "TogglGoals Help"; ObjectID = "Mps-NS-KAM"; */
-"Mps-NS-KAM.title" = "Ayuda de TogglGoals";
-
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "OFV-CG-5zD"; */
 "OFV-CG-5zD.title" = "Ventana";
 
@@ -40,9 +37,6 @@
 
 /* Class = "NSMenu"; title = "TogglGoals"; ObjectID = "RbL-PE-34I"; */
 "RbL-PE-34I.title" = "TogglGoals";
-
-/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "SmX-EA-7gS"; */
-"SmX-EA-7gS.title" = "Usar pantalla completa";
 
 /* Class = "NSMenu"; title = "View"; ObjectID = "TbP-c1-eOl"; */
 "TbP-c1-eOl.title" = "Ver";
