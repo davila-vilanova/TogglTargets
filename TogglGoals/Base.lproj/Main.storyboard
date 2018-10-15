@@ -176,7 +176,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="450"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="450" id="32F-5e-rbW"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="650" id="JoS-eX-zYx"/>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="350" id="sbg-Fm-T9a"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="550" id="y45-rn-Eqd"/>
                                 </constraints>
                             </customView>
                         </subviews>
@@ -961,6 +963,9 @@
                                         </connections>
                                     </containerView>
                                 </beginningViews>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="300" id="M6w-fL-T58"/>
+                                </constraints>
                                 <visibilityPriorities>
                                     <integer value="1000"/>
                                 </visibilityPriorities>
