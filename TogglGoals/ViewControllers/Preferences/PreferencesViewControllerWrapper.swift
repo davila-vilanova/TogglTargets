@@ -51,7 +51,8 @@ class PreferencesViewControllerWrapper: NSViewController, BindingTargetProvider,
                 self.closePreferencesButton.reactive.pressed = CocoaAction(closeButtonPressedAction)
             })
             .map { [unowned self] in self.closePreferencesButton as NSView }
-        let closeLoginView = closePreferencesButtonProducer.concat(SignalProducer.never).take(until: closeButtonPressedAction.values)
+        let closeLoginView = closePreferencesButtonProducer.concat(SignalProducer.never)
+            .take(until: closeButtonPressedAction.values)
         return [.closeLogin : closeLoginView]
     }
 }

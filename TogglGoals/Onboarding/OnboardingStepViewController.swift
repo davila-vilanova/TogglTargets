@@ -44,18 +44,23 @@ class OnboardingStepViewController: NSViewController {
         moveOnToNextStepButton.reactive.pressed = CocoaAction(moveOnPressed)
         stopOnboardingButton.reactive.pressed = CocoaAction(stopPressed)
 
-        let hideMoveOnButton = moveOnToNextStepButton.reactive.makeBindingTarget { $0.isHidden = $1 }
+        let hideMoveOnButton: BindingTarget<Bool> = moveOnToNextStepButton.reactive.makeBindingTarget {
+            $0.isHidden = $1
+            $0.isEnabled = !$1
+        }
         hideMoveOnButton <~ currentStep.producer.skipNil().map { $0.allowContinue }.negate()
         
         hideMoveOnButton <~ lastStepTrigger.producer.skipNil().map { _ in false }
         moveOnToNextStepButton.reactive.makeBindingTarget { button, _ in
             button.title = NSLocalizedString("onboarding.step.close-after-completion", comment: "onboarding: close after completion")
         } as BindingTarget<Void> <~ lastStepTrigger.producer.skipNil()
-        stopOnboardingButton.reactive.makeBindingTarget { $0.isHidden = $1 } <~ lastStepTrigger.producer.skipNil().map { _ in true }
+        stopOnboardingButton.reactive.makeBindingTarget {
+            $0.isHidden = $1
+            $0.isEnabled = !$1 } <~ lastStepTrigger.producer.skipNil().map { _ in true }
     }
 
-    override func viewWillAppear() {
-        super.viewWillAppear()
-        view.window!.initialFirstResponder = moveOnToNextStepButton
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        view.window!.makeFirstResponder(moveOnToNextStepButton)
     }
 }
