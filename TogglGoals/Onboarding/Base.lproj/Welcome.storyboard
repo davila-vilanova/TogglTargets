@@ -47,7 +47,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oy1-8H-iDQ">
                                 <rect key="frame" x="18" y="96" width="489" height="51"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="485" id="Yym-ij-78a"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="485" id="Yym-ij-78a"/>
                                 </constraints>
                                 <textFieldCell key="cell" selectable="YES" refusesFirstResponder="YES" allowsEditingTextAttributes="YES" id="A8f-T6-ofs">
                                     <font key="font" metaFont="system"/>
@@ -85,6 +85,7 @@
                         <constraints>
                             <constraint firstItem="lIb-WD-ar6" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="1hP-bI-KZa"/>
                             <constraint firstItem="Oy1-8H-iDQ" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="1zJ-KT-Bcf"/>
+                            <constraint firstItem="lIb-WD-ar6" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="igS-L0-w3j" secondAttribute="trailing" constant="8" symbolic="YES" id="310-iF-g26"/>
                             <constraint firstItem="Oy1-8H-iDQ" firstAttribute="top" secondItem="aYp-00-8db" secondAttribute="bottom" constant="8" symbolic="YES" id="AQH-Ax-WVX"/>
                             <constraint firstItem="lIb-WD-ar6" firstAttribute="top" secondItem="gfN-IN-Lfx" secondAttribute="bottom" constant="30" id="HJl-zi-TqR"/>
                             <constraint firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" constant="20" symbolic="YES" id="HV9-P4-syx"/>
