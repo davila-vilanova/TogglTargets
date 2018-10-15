@@ -83,7 +83,7 @@ class OnboardingGuide {
     
     private let delayScheduler = QueueScheduler()
     
-    init(steps: [OnboardingStep]) {
+    init(steps: [OnboardingStep], defaults: UserDefaults) {
         assert(!steps.isEmpty)
         self.steps = steps
         
@@ -133,7 +133,7 @@ class OnboardingGuide {
         stepPopover.reactive.makeBindingTarget { pop, controller in pop.contentViewController = controller }
             <~ SignalProducer(value: stepViewController).concat(SignalProducer.never).take(until: SignalProducer.merge(lastStepFinished, onboardingAborted)).concat(SignalProducer(value: endedViewController))
 
-        let markOnboardingAsNotPending: BindingTarget<Void> = UserDefaults.standard.reactive.makeBindingTarget { defaults, _ in
+        let markOnboardingAsNotPending: BindingTarget<Void> = defaults.reactive.makeBindingTarget { defaults, _ in
             defaults.set(true, forKey: OnboardingNotPendingKey)
         }
 

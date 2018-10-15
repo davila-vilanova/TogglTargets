@@ -229,7 +229,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
     }
 
     private var shouldStartOnboarding: Bool {
-        return //OnboardingGuide.shouldOnboard(defaults) &&
+        return OnboardingGuide.shouldOnboard(defaults) &&
             !isCurrentlyOnboarding
     }
 
@@ -257,7 +257,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
     private func startOnboarding() {
         let initialRelevantStep: OnboardingStepIdentifier = mustSetupAccount ? .login : .selectProject
-        let guide = OnboardingGuide(steps: onboardingSteps(startingFrom: initialRelevantStep))
+        let guide = OnboardingGuide(steps: onboardingSteps(startingFrom: initialRelevantStep), defaults: defaults)
 
         self.onboardingGuide = guide
         reactive.makeBindingTarget { appDelegate, _ in appDelegate.onboardingGuide = nil } <~ guide.onboardingEnded
