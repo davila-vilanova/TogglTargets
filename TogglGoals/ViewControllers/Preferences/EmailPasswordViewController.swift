@@ -26,7 +26,7 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
 
     // MARK: - Outlets and Actions
 
-    @IBOutlet weak var usernameField: NSTextField!
+    @IBOutlet weak var emailField: NSTextField!
     @IBOutlet weak var passwordField: NSSecureTextField!
 
     @IBAction func switchToDirectTokenEntry(_ sender: AnyObject) {
@@ -40,7 +40,7 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
 
     // MARK: - KeyViewsProviding
 
-    var firstKeyView: NSView { return usernameField }
+    var firstKeyView: NSView { return emailField }
     var lastKeyView: NSView { return passwordField }
 
 
@@ -52,7 +52,7 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let credentialUpstream = Signal.combineLatest(usernameField.reactive.continuousStringValues,
+        let credentialUpstream = Signal.combineLatest(emailField.reactive.continuousStringValues,
                                                       passwordField.reactive.continuousStringValues)
             .map(TogglAPIEmailCredential.init)
             // (The following mapping should be much simpler but for some reason I cannot condense it without upsetting the compiler)
@@ -73,7 +73,7 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
 
     override func viewDidAppear() {
         super.viewDidAppear()
-        reactive.makeBindingTarget { $1.makeFirstResponder($0.usernameField) } <~
+        reactive.makeBindingTarget { $1.makeFirstResponder($0.emailField) } <~
             reactive.producer(forKeyPath: "view.window").skipNil().filterMap { $0 as? NSWindow }
                 .delay(0, on: QueueScheduler())
                 .take(first: 1)

@@ -208,8 +208,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="emailField" destination="oDY-SB-O5V" id="7Yl-3A-ROL"/>
                         <outlet property="passwordField" destination="mB4-Z1-BU4" id="0t7-Gh-DP9"/>
-                        <outlet property="usernameField" destination="oDY-SB-O5V" id="7Yl-3A-ROL"/>
                     </connections>
                 </viewController>
                 <customObject id="yml-nP-qH9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
