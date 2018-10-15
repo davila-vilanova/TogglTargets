@@ -52,7 +52,10 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
         if let loginMethodController = segue.destinationController as? LoginMethodViewController {
-            loginMethodController <~ SignalProducer(value: credentialFromUserEnteredData.bindingTarget)
+            loginMethodController <~ SignalProducer(value: (
+                credentialUpstream: credentialFromUserEnteredData.bindingTarget,
+                attemptLogin: validateCredential.bindingTarget)
+            )
         }
     }
 

@@ -55,6 +55,7 @@ class OnboardingStepViewController: NSViewController {
     }
 
     override func viewWillAppear() {
+        super.viewWillAppear()
         view.window!.initialFirstResponder = moveOnToNextStepButton
     }
 }

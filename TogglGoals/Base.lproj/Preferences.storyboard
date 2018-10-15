@@ -155,7 +155,7 @@
                             </textField>
                             <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mB4-Z1-BU4">
                                 <rect key="frame" x="92" y="26" width="273" height="22"/>
-                                <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="never stored" drawsBackground="YES" usesSingleLineMode="YES" id="ZMn-4F-meU">
+                                <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="never stored" drawsBackground="YES" usesSingleLineMode="YES" id="ZMn-4F-meU">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -164,6 +164,7 @@
                                     </allowedInputSourceLocales>
                                 </secureTextFieldCell>
                                 <connections>
+                                    <action selector="enterPressed:" target="Luk-hD-CZ9" id="Qhg-di-XGF"/>
                                     <outlet property="nextKeyView" destination="oDY-SB-O5V" id="O8F-ex-O6h"/>
                                 </connections>
                             </secureTextField>
@@ -369,11 +370,14 @@
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="HCd-hZ-Y9D"/>
                                 </constraints>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="YBy-cJ-99e">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="YBy-cJ-99e">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <action selector="enterPressed:" target="ySu-bD-nwW" id="vde-aH-Mtf"/>
+                                </connections>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UTy-eG-7hT">
                                 <rect key="frame" x="266" y="-1" width="150" height="19"/>

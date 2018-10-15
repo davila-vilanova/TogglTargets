@@ -17,13 +17,14 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
 
     internal typealias Interface = (
         credentialUpstream: BindingTarget<TogglAPICredential?>,
+        attemptLogin: BindingTarget<Void>,
         switchToDirectTokenEntry: BindingTarget<Void>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
 
-    // MARK: - Outlets and Action
+    // MARK: - Outlets and Actions
 
     @IBOutlet weak var usernameField: NSTextField!
     @IBOutlet weak var passwordField: NSSecureTextField!
@@ -31,6 +32,11 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
     @IBAction func switchToDirectTokenEntry(_ sender: AnyObject) {
         requestSwitchToTokenController <~ SignalProducer(value: ())
     }
+
+    @IBAction func enterPressed(_ sender: Any) {
+        attemptLogin <~ SignalProducer(value: ())
+    }
+
 
     // MARK: - KeyViewsProviding
 
@@ -41,6 +47,7 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
     // MARK: -
 
     private let requestSwitchToTokenController = MutableProperty<Void>(())
+    private let attemptLogin = MutableProperty<Void>(())
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +55,7 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
         let credentialUpstream = Signal.combineLatest(usernameField.reactive.continuousStringValues,
                                                       passwordField.reactive.continuousStringValues)
             .map(TogglAPIEmailCredential.init)
-            // The following mapping should be much simpler but for some reason I cannot condense it without upsetting the compiler
+            // (The following mapping should be much simpler but for some reason I cannot condense it without upsetting the compiler)
             // Generalize the optional TogglAPIEmailCredential values to optional TogglAPICredential values
             .map { credentialOrNil -> TogglAPICredential? in
                 if let emailCredential = credentialOrNil {
@@ -61,5 +68,14 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
         let validBindings = lastBinding.producer.skipNil()
         credentialUpstream.bindOnlyToLatest(validBindings.map { $0.credentialUpstream })
         requestSwitchToTokenController.signal.bindOnlyToLatest(validBindings.map { $0.switchToDirectTokenEntry })
+        attemptLogin.signal.bindOnlyToLatest(validBindings.map { $0.attemptLogin })
+    }
+
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        reactive.makeBindingTarget { $1.makeFirstResponder($0.usernameField) } <~
+            reactive.producer(forKeyPath: "view.window").skipNil().filterMap { $0 as? NSWindow }
+                .delay(0, on: QueueScheduler())
+                .take(first: 1)
     }
 }

@@ -353,7 +353,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectsListView = viewDidLoadProducer
             .map { [unowned self] _ in self.projectsCollectionView as NSView }
             .concat(SignalProducer.never)
-            .take(until: projectSelected).logEvents(identifier: "onboardingTargetViews.projectsListView", events: [.value, .completed, .disposed])
+            .take(until: projectSelected)
         return [.selectProject : projectsListView]
     }
 }

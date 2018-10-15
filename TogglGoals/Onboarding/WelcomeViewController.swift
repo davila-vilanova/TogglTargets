@@ -30,6 +30,7 @@ class WelcomeViewController: NSViewController {
     }
 
     override func viewWillAppear() {
+        super.viewWillAppear()
         view.window!.initialFirstResponder = continueButton
     }
     
