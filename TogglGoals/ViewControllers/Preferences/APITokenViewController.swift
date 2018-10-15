@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class APITokenViewController: NSViewController, KeyViewsProviding, BindingTargetProvider {
+class APITokenViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -35,12 +35,6 @@ class APITokenViewController: NSViewController, KeyViewsProviding, BindingTarget
     @IBAction func enterPressed(_ sender: Any) {
         attemptLogin <~ SignalProducer(value: ())
     }
-
-
-    // MARK: - KeyViewsProviding
-
-    var firstKeyView: NSView { return apiTokenField }
-    var lastKeyView: NSView { return apiTokenField }
 
 
     // MARK: - Wiring

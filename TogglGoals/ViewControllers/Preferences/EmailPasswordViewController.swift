@@ -11,7 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingTargetProvider {
+class EmailPasswordViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -36,12 +36,6 @@ class EmailPasswordViewController: NSViewController, KeyViewsProviding, BindingT
     @IBAction func enterPressed(_ sender: Any) {
         attemptLogin <~ SignalProducer(value: ())
     }
-
-
-    // MARK: - KeyViewsProviding
-
-    var firstKeyView: NSView { return emailField }
-    var lastKeyView: NSView { return passwordField }
 
 
     // MARK: -
