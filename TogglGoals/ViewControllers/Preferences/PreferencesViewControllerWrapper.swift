@@ -26,13 +26,19 @@ class PreferencesViewControllerWrapper: NSViewController, BindingTargetProvider,
 
     @IBOutlet weak var closePreferencesButton: NSButton!
 
-    @IBAction func closePreferences(_ sender: Any) {
+    @IBAction func closePreferences(_ sender: Any?) {
         if let window = view.window,
             let parent = window.sheetParent {
             parent.endSheet(window)
         } else {
             _ = `try`(toPerform: #selector(NSWindow.close), with: sender)
         }
+    }
+
+    // NSResponder: -
+
+    override func cancelOperation(_ sender: Any?) {
+        closePreferences(sender)
     }
 
 

@@ -60,6 +60,9 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
 
     @IBOutlet weak var containerView: NSView!
 
+
+    // MARK: -
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
