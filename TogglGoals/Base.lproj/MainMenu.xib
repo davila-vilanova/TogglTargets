@@ -161,16 +161,7 @@
                 </menuItem>
                 <menuItem title="View" id="qGa-Wr-X9q">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="View" id="TbP-c1-eOl">
-                        <items>
-                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="SmX-EA-7gS">
-                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
-                                <connections>
-                                    <action selector="toggleFullScreen:" target="-1" id="ShU-z2-0Sj"/>
-                                </connections>
-                            </menuItem>
-                        </items>
-                    </menu>
+                    <menu key="submenu" title="View" id="TbP-c1-eOl"/>
                 </menuItem>
                 <menuItem title="Window" id="OFV-CG-5zD">
                     <modifierMask key="keyEquivalentModifierMask"/>
