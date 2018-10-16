@@ -144,8 +144,11 @@ class OnboardingGuide {
         let popover = NSPopover()
         popover.contentViewController = stepViewController
         popover.behavior = .applicationDefined
+        popover.delegate = stepPopoverDelegate
         return popover
     }()
+
+    private lazy var stepPopoverDelegate = PopoverDelegate()
     
     private lazy var showStep: BindingTarget<(OnboardingStep, NSView)> =
         BindingTarget(on: UIScheduler(), lifetime: lifetime) { [unowned self] (step, targetView) in
@@ -170,4 +173,16 @@ class OnboardingGuide {
 
 protocol OnboardingTargetViewsProvider {
     var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] { get }
+}
+
+fileprivate class PopoverDelegate: NSObject, NSPopoverDelegate {
+    private let _popoverCloseTrigger = MutableProperty<Void?>(nil)
+
+    private var popoverCloseTrigger: SignalProducer<Void, NoError> {
+        return _popoverCloseTrigger.producer.skipNil()
+    }
+
+    func popoverDidClose(_ notification: Notification) {
+        _popoverCloseTrigger.value = ()
+    }
 }
