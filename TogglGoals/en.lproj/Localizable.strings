@@ -218,4 +218,7 @@
 "onboarding.step.see-day-progress" = "This is how you are doing today";
 
 /* onboarding: close after completion */
-"onboarding.step.close-after-completion" = "Good, now let me play";
+"onboarding.close-after-completion" = "Good, now let me play";
+
+/* onboarding: small thank you note */
+"onboarding.thank-you" = "Thank you for your time!";
