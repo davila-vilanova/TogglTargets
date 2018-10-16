@@ -227,8 +227,10 @@ class NoGoalViewController: NSViewController, OnboardingTargetViewsProvider {
         let createGoalButtonPressed = Action<Void, Void, NoError> {
             SignalProducer(value: ())
         }
-        
-        let goalCreationViewProducer = viewDidLoadProducer
+
+        let viewDidAppearProducer = reactive.trigger(for: #selector(viewDidAppear)).producer.take(first: 1)
+
+        let goalCreationViewProducer = viewDidAppearProducer
             .on(value: { [unowned self] in
                 self.createGoalButton.reactive.pressed = CocoaAction(createGoalButtonPressed)
             })

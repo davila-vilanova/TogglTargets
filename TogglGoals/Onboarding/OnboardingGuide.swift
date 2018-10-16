@@ -65,7 +65,7 @@ class OnboardingGuide {
                     return viewProducer.take(until: moveOnButtonPressed(for: stepIdentifier)).materialize()
             }
             guard let holder = targetViewEventHolders[stepIdentifier] else {
-                assert(false)
+                print("+++ holder for \(stepIdentifier) does not exist")
                 return
             }
             if holder.value != nil {
