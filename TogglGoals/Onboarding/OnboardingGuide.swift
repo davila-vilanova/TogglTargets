@@ -102,8 +102,11 @@ class OnboardingGuide {
             .map(extractViewProducer)
             .flatten(.concat)
 
+        let lastStepFinished = targetViewEventHolders[steps.last!.identifier]!
+            .producer.skipNil().filter { $0.isCompleted }.map { _ in () }
+
         let onboardingAborted = stepViewController.stopOnboarding
-        let onboardingClosed = endedViewController.close
+        let onboardingClosed = SignalProducer.merge(onboardingAborted, lastStepFinished)
 
         let currentTargetViewCompleted = SignalProducer(sortedTargetViewEventHolders)
             .combinePrevious()
@@ -127,25 +130,19 @@ class OnboardingGuide {
         let lastStepStarted = pacedSteps.materialize().filter { $0.isCompleted }.map { _ in () }
         stepViewController.configureForLastStep <~ lastStepStarted
 
-        let lastStepFinished = targetViewEventHolders[steps.last!.identifier]!
-            .producer.skipNil().filter { $0.isCompleted }.map { _ in () }
-
-        stepPopover.reactive.makeBindingTarget { pop, controller in pop.contentViewController = controller }
-            <~ SignalProducer(value: stepViewController).concat(SignalProducer.never).take(until: SignalProducer.merge(lastStepFinished, onboardingAborted)).concat(SignalProducer(value: endedViewController))
-
         let markOnboardingAsNotPending: BindingTarget<Void> = defaults.reactive.makeBindingTarget { defaults, _ in
             defaults.set(true, forKey: OnboardingNotPendingKey)
         }
 
-        markOnboardingAsNotPending <~ SignalProducer.merge(lastStepFinished, onboardingAborted)
+        markOnboardingAsNotPending <~ onboardingClosed
         onboardingEnded <~ onboardingClosed
     }
     
     private lazy var stepViewController = OnboardingStepViewController(nibName: NSNib.Name(rawValue: "OnboardingStepViewController"), bundle: nil)
-    private lazy var endedViewController = OnboardingEndedViewController(nibName: NSNib.Name(rawValue: "OnboardingEndedViewController"), bundle: nil)
 
     private lazy var stepPopover: NSPopover = {
         let popover = NSPopover()
+        popover.contentViewController = stepViewController
         popover.behavior = .applicationDefined
         return popover
     }()

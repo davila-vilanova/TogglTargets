@@ -238,10 +238,6 @@
 		63F1501D20986A3A0044288F /* LoggedInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1501C20986A3A0044288F /* LoggedInViewController.swift */; };
 		63F6D17C2164E3D5004EE7B9 /* OnboardingGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */; };
 		63F6D17D2164E3D5004EE7B9 /* OnboardingGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */; };
-		63F6D180216D5760004EE7B9 /* OnboardingEndedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6D17E216D5760004EE7B9 /* OnboardingEndedViewController.swift */; };
-		63F6D181216D5760004EE7B9 /* OnboardingEndedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6D17E216D5760004EE7B9 /* OnboardingEndedViewController.swift */; };
-		63F6D182216D5760004EE7B9 /* OnboardingEndedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63F6D17F216D5760004EE7B9 /* OnboardingEndedViewController.xib */; };
-		63F6D183216D5760004EE7B9 /* OnboardingEndedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63F6D17F216D5760004EE7B9 /* OnboardingEndedViewController.xib */; };
 		63F76B9B20F6212D0024939B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63F76B9920F6212D0024939B /* InfoPlist.strings */; };
 		63F76B9E20F6212D0024939B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63F76B9C20F6212D0024939B /* InfoPlist.strings */; };
 		63F76BA120F6212D0024939B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63F76B9F20F6212D0024939B /* Localizable.strings */; };
@@ -432,8 +428,6 @@
 		63F1501A20986A150044288F /* EmailPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPasswordViewController.swift; sourceTree = "<group>"; };
 		63F1501C20986A3A0044288F /* LoggedInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedInViewController.swift; sourceTree = "<group>"; };
 		63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGuide.swift; sourceTree = "<group>"; };
-		63F6D17E216D5760004EE7B9 /* OnboardingEndedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingEndedViewController.swift; sourceTree = "<group>"; };
-		63F6D17F216D5760004EE7B9 /* OnboardingEndedViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OnboardingEndedViewController.xib; sourceTree = "<group>"; };
 		63F76B9A20F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		63F76B9D20F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		63F76BA020F6212D0024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -764,8 +758,6 @@
 				63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */,
 				632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */,
 				632A5FB32165621F00E61BBB /* OnboardingStepViewController.xib */,
-				63F6D17E216D5760004EE7B9 /* OnboardingEndedViewController.swift */,
-				63F6D17F216D5760004EE7B9 /* OnboardingEndedViewController.xib */,
 				63DCA5C92170BE7400D56DD9 /* OnboardingSteps.swift */,
 				63046231217342000086C524 /* WelcomeViewController.swift */,
 				63046240217366440086C524 /* Welcome.storyboard */,
@@ -954,7 +946,6 @@
 				6334B4A520703EC000A5B796 /* ActivitySuccessViewController.xib in Resources */,
 				630274DB20FAB31000DE2698 /* Localizable.stringsdict in Resources */,
 				635A25872052917B00EFCE90 /* ProjectCollectionViewItem.xib in Resources */,
-				63F6D182216D5760004EE7B9 /* OnboardingEndedViewController.xib in Resources */,
 				6329574D1DBA99F000E11A10 /* Main.storyboard in Resources */,
 				630274DD20FB659D00DE2698 /* ActivityErrorViewController.xib in Resources */,
 				635A25852052917B00EFCE90 /* ProjectCollectionViewHeader.xib in Resources */,
@@ -979,7 +970,6 @@
 				63F76B9B20F6212D0024939B /* InfoPlist.strings in Resources */,
 				63F76BD820F672940024939B /* Preferences.storyboard in Resources */,
 				6304623E217366440086C524 /* Welcome.storyboard in Resources */,
-				63F6D183216D5760004EE7B9 /* OnboardingEndedViewController.xib in Resources */,
 				63F76BE320F6756A0024939B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1039,7 +1029,6 @@
 				63F1501B20986A150044288F /* EmailPasswordViewController.swift in Sources */,
 				63415BC220852A650083E40B /* ReadByProjectID.swift in Sources */,
 				63FF9EF0208FA3BC0087DD1C /* PreferencesViewController.swift in Sources */,
-				63F6D180216D5760004EE7B9 /* OnboardingEndedViewController.swift in Sources */,
 				6355C5B71FDF3A26003F4DDC /* CurrentDateGenerator.swift in Sources */,
 				63DCA5CA2170BE7400D56DD9 /* OnboardingSteps.swift in Sources */,
 				63D4BBAE1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
@@ -1189,7 +1178,6 @@
 				6333B6D41F9746E6002CF189 /* Project.swift in Sources */,
 				63D4BBC11F7D821900B87298 /* GoalsStore.swift in Sources */,
 				637A32511EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */,
-				63F6D181216D5760004EE7B9 /* OnboardingEndedViewController.swift in Sources */,
 				6333B6E81F974791002CF189 /* RunningEntry.swift in Sources */,
 				6333B6E41F974763002CF189 /* Goal.swift in Sources */,
 				6392AB4820CFFC2C002CC903 /* InterfaceBinding.swift in Sources */,
