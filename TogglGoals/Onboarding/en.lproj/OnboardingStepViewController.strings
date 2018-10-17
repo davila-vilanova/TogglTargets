@@ -1,0 +1,15 @@
+
+/* Class = "NSButtonCell"; title = "Stop Guided Tour"; ObjectID = "VcD-QU-kOw"; */
+"VcD-QU-kOw.title" = "Stop Guided Tour";
+
+/* Class = "NSButtonCell"; title = "Got it"; ObjectID = "Wd2-Zk-A5y"; */
+"Wd2-Zk-A5y.title" = "Got it";
+
+/* Class = "NSTextFieldCell"; title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."; ObjectID = "ibN-gr-QAQ"; */
+"ibN-gr-QAQ.title" = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+
+/* onboarding: close after completion */
+"onboarding.close-after-completion" = "Good, now let me play";
+
+/* onboarding: small thank you note */
+"onboarding.thank-you" = "Thank you for your time!";

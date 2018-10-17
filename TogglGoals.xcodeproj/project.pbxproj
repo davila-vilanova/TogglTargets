@@ -13,6 +13,10 @@
 		63046234217342000086C524 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63046231217342000086C524 /* WelcomeViewController.swift */; };
 		6304623D217366440086C524 /* Welcome.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63046240217366440086C524 /* Welcome.storyboard */; };
 		6304623E217366440086C524 /* Welcome.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63046240217366440086C524 /* Welcome.storyboard */; };
+		630462472177D1510086C524 /* OnboardingSteps.strings in Resources */ = {isa = PBXBuildFile; fileRef = 630462452177D1510086C524 /* OnboardingSteps.strings */; };
+		630462482177D1510086C524 /* OnboardingSteps.strings in Resources */ = {isa = PBXBuildFile; fileRef = 630462452177D1510086C524 /* OnboardingSteps.strings */; };
+		6304624A2177D30F0086C524 /* OnboardingStepViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6304624D2177D30F0086C524 /* OnboardingStepViewController.xib */; };
+		6304624B2177D30F0086C524 /* OnboardingStepViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6304624D2177D30F0086C524 /* OnboardingStepViewController.xib */; };
 		6310EFCB1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
 		6310EFCC1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
 		6310EFCD1FAC6D3700B42C44 /* Period.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6310EFCA1FAC6D3700B42C44 /* Period.swift */; };
@@ -26,8 +30,6 @@
 		632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */; };
 		632A5FB42165621F00E61BBB /* OnboardingStepViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */; };
 		632A5FB52165621F00E61BBB /* OnboardingStepViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */; };
-		632A5FB62165621F00E61BBB /* OnboardingStepViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 632A5FB32165621F00E61BBB /* OnboardingStepViewController.xib */; };
-		632A5FB72165621F00E61BBB /* OnboardingStepViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 632A5FB32165621F00E61BBB /* OnboardingStepViewController.xib */; };
 		6333B6CE1F974690002CF189 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6CD1F974690002CF189 /* Profile.swift */; };
 		6333B6CF1F974690002CF189 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6CD1F974690002CF189 /* Profile.swift */; };
 		6333B6D01F974690002CF189 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6CD1F974690002CF189 /* Profile.swift */; };
@@ -321,6 +323,11 @@
 		6304623F217366440086C524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Welcome.storyboard; sourceTree = "<group>"; };
 		63046242217366460086C524 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Welcome.strings; sourceTree = "<group>"; };
 		630462442173664D0086C524 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Welcome.strings; sourceTree = "<group>"; };
+		630462462177D1510086C524 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/OnboardingSteps.strings; sourceTree = "<group>"; };
+		630462492177D1AE0086C524 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/OnboardingSteps.strings; sourceTree = "<group>"; };
+		6304624C2177D30F0086C524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/OnboardingStepViewController.xib; sourceTree = "<group>"; };
+		6304624F2177D3120086C524 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/OnboardingStepViewController.strings; sourceTree = "<group>"; };
+		630462512177D3140086C524 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/OnboardingStepViewController.strings; sourceTree = "<group>"; };
 		6310EFCA1FAC6D3700B42C44 /* Period.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Period.swift; sourceTree = "<group>"; };
 		6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodPreference.swift; sourceTree = "<group>"; };
 		632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveProjectsNetworkActionTest.swift; sourceTree = "<group>"; };
@@ -335,7 +342,6 @@
 		632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglGoalsUITests.swift; sourceTree = "<group>"; };
 		632957641DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepViewController.swift; sourceTree = "<group>"; };
-		632A5FB32165621F00E61BBB /* OnboardingStepViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OnboardingStepViewController.xib; sourceTree = "<group>"; };
 		6333B6CD1F974690002CF189 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		6333B6D11F9746E6002CF189 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		6333B6D51F9746FD002CF189 /* WeekdaySelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekdaySelection.swift; sourceTree = "<group>"; };
@@ -757,10 +763,11 @@
 			children = (
 				63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */,
 				632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */,
-				632A5FB32165621F00E61BBB /* OnboardingStepViewController.xib */,
+				6304624D2177D30F0086C524 /* OnboardingStepViewController.xib */,
 				63DCA5C92170BE7400D56DD9 /* OnboardingSteps.swift */,
 				63046231217342000086C524 /* WelcomeViewController.swift */,
 				63046240217366440086C524 /* Welcome.storyboard */,
+				630462452177D1510086C524 /* OnboardingSteps.strings */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -936,10 +943,11 @@
 				638561ED20FE15DC002E97E8 /* MainMenu.xib in Resources */,
 				63F76BA420F6212D0024939B /* InfoPlist.strings in Resources */,
 				6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */,
+				630462472177D1510086C524 /* OnboardingSteps.strings in Resources */,
 				63F76BA120F6212D0024939B /* Localizable.strings in Resources */,
 				6304623D217366440086C524 /* Welcome.storyboard in Resources */,
 				6334B4A220703EC000A5B796 /* SyncingActivityViewController.xib in Resources */,
-				632A5FB62165621F00E61BBB /* OnboardingStepViewController.xib in Resources */,
+				6304624A2177D30F0086C524 /* OnboardingStepViewController.xib in Resources */,
 				63F76BD720F672940024939B /* Preferences.storyboard in Resources */,
 				6344EF78213C38F800D0B00D /* AccessibilityImageDescriptions.strings in Resources */,
 				6334B4AA2071A81600A5B796 /* ErrorViewController.xib in Resources */,
@@ -965,12 +973,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				632A5FB72165621F00E61BBB /* OnboardingStepViewController.xib in Resources */,
+				6304624B2177D30F0086C524 /* OnboardingStepViewController.xib in Resources */,
 				638561EF20FE15DC002E97E8 /* MainMenu.xib in Resources */,
 				63F76B9B20F6212D0024939B /* InfoPlist.strings in Resources */,
 				63F76BD820F672940024939B /* Preferences.storyboard in Resources */,
 				6304623E217366440086C524 /* Welcome.storyboard in Resources */,
 				63F76BE320F6756A0024939B /* Main.storyboard in Resources */,
+				630462482177D1510086C524 /* OnboardingSteps.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1272,6 +1281,25 @@
 				630462442173664D0086C524 /* en */,
 			);
 			name = Welcome.storyboard;
+			sourceTree = "<group>";
+		};
+		630462452177D1510086C524 /* OnboardingSteps.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				630462462177D1510086C524 /* en */,
+				630462492177D1AE0086C524 /* es */,
+			);
+			name = OnboardingSteps.strings;
+			sourceTree = "<group>";
+		};
+		6304624D2177D30F0086C524 /* OnboardingStepViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6304624C2177D30F0086C524 /* Base */,
+				6304624F2177D3120086C524 /* en */,
+				630462512177D3140086C524 /* es */,
+			);
+			name = OnboardingStepViewController.xib;
 			sourceTree = "<group>";
 		};
 		6329574B1DBA99F000E11A10 /* Main.storyboard */ = {
