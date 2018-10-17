@@ -23,9 +23,9 @@
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="clj-S7-g6d">
                     <rect key="frame" x="18" y="34" width="264" height="102"/>
                     <constraints>
-                        <constraint firstAttribute="width" priority="990" constant="260" id="Hln-HH-ZDp"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" priority="990" constant="260" id="Hln-HH-ZDp"/>
                     </constraints>
-                    <textFieldCell key="cell" selectable="YES" refusesFirstResponder="YES" id="ibN-gr-QAQ">
+                    <textFieldCell key="cell" refusesFirstResponder="YES" id="ibN-gr-QAQ">
                         <font key="font" metaFont="system"/>
                         <string key="title">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

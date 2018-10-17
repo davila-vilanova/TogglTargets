@@ -1,13 +1,6 @@
-/* 
-  Steps.strings
-  TogglGoals
-
-  Created by David Dávila on 17.10.18.
-  Copyright © 2018 davi. All rights reserved.
-*/
 
 /* onboarding step: login */
-"onboarding.step.login" = "Enter your Toggl API token so that we can access your currently active projects and the amount of time worked on each one. If you prefer, you can enter your email address and password and we'll retrieve your API token for you (we will use your password exactly once and won't store it)";
+"onboarding.step.login" = "Enter your Toggl API token so that we can access your currently active projects and the amount of time worked on each one. If you prefer, you can enter the email address and password associated with your Toggl account and we'll retrieve your API token for you (we will use your password exactly once and won't store it)";
 
 /* onboarding step: close login */
 "onboarding.step.close-login" = "Close this preferences sheet to continue";
@@ -34,4 +27,4 @@
 "onboarding.step.see-goal-strategy" = "This is how much you should work per day to fulfill your goal";
 
 /* onboarding step: see day progress */
-"onboarding.step.see-day-progress" = "This is how you are doing today";
+"onboarding.step.see-day-progress" = "This is how you are doing today.";

@@ -1,43 +1,30 @@
-/* 
-  Steps.strings
-  TogglGoals
-
-  Created by David Dávila on 17.10.18.
-  Copyright © 2018 davi. All rights reserved.
-*/
 
 /* onboarding step: login */
-"onboarding.step.login" = "Enter your Toggl API token so that we can access your currently active projects and the amount of time worked on each one. If you prefer, you can enter your email address and password and we'll retrieve your API token for you (we will use your password exactly once and won't store it)";
+"onboarding.step.login" = "Introduce el API token correspondiente a tu cuenta de Toggl para que podamos acceder a los proyectos que tienes activos actualmente y la cantidad de tiempo que has trabajado en cada uno. O si lo prefieres puedes introducir la dirección de correo electrónico y contraseña asociadas con tu cuenta de Toggl: tu password será usado sólo una vez para obtener acceso y no se quedará guardado.";
 
 /* onboarding step: close login */
-"onboarding.step.close-login" = "Close this preferences sheet to continue";
+"onboarding.step.close-login" = "Cierra el panel de preferencias para continuar";
 
 /* onboarding step: select project */
-"onboarding.step.select-project" = "Select any project that does not currently have a goal and for which you would like to create a time goal";
+"onboarding.step.select-project" = "Selecciona cualquier proyecto que no tenga ninguna meta de tiempo todavía y para el que quieras crear una";
 
 /* onboarding step: create goal */
-"onboarding.step.create-goal" = "Create a time goal, you can tune your goal in the next step";
+"onboarding.step.create-goal" = "Crea una meta de tiempo con este botón. La puedes ajustar en el siguiente paso.";
 
 /* onboarding step: set target hours */
-"onboarding.step.set-target-hours" = "Set how many hours you would like to work per period (per month, or per week - you can choose to work on monthly or weekly periods in the application preferences)";
+"onboarding.step.set-target-hours" = "Elige cuántas horas te gustaría trabajar en este proyecto cada periodo (puedes elegir trabajar con periodos mensuales o semanales en las preferencias de esta aplicación)";
 
 /* onboarding step: set work weekdays */
-"onboarding.step.set-work-weekdays" = "Select which days of the week you intend to work for this project";
+"onboarding.step.set-work-weekdays" = "Elige qué días de la semana tienes intención de trabajar en este proyecto";
 
 /* onboarding step: select from which day to compute the goal strategy */
-"onboarding.step.select-compute-from" = "Calculate the strategy to fulfil your goal from today if you want today to be included in the calculation, or from the next work day if you want to see how much you will have to work on this goal after today";
+"onboarding.step.select-compute-from" = "Calcula la estategia para cumplir tu meta: desde hoy si quieres que el día de hoy se incluya en el cálculo, o desde el próximo día de trabajo si quieres ver cuánto tendrás que trabajar en esta meta después de hoy.";
 
 /* onboarding step: see time progress */
-"onboarding.step.see-time-progress" = "This where you are on your month or your week";
+"onboarding.step.see-time-progress" = "Aquí puedes ver dónde te encuentras en tu período de trabajo, mensual o semanal";
 
 /* onboarding step: see strategy to fulfill goal */
-"onboarding.step.see-goal-strategy" = "This is how much you should work per day to fulfill your goal";
+"onboarding.step.see-goal-strategy" = "Esto es cuánto tendrías que trabajar cada día para cumplir tu meta";
 
 /* onboarding step: see day progress */
-"onboarding.step.see-day-progress" = "This is how you are doing today";
-
-/* onboarding: close after completion */
-"onboarding.close-after-completion" = "Good, now let me play";
-
-/* onboarding: small thank you note */
-"onboarding.thank-you" = "Thank you for your time!";
+"onboarding.step.see-day-progress" = "Aquí puedes ver cuánto has trabajado hoy y, si estás calculando tu estrategia desde hoy, cuánto te falta.";

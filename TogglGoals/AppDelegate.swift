@@ -266,3 +266,4 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         presentedPreferencesWindow?.contentViewController?.setOnboardingGuide(guide)
     }
 }
+
