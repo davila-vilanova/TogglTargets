@@ -457,6 +457,14 @@
                                 <rect key="frame" x="151" y="28" width="19" height="27"/>
                                 <stepperCell key="cell" continuous="YES" alignment="left" increment="5" minValue="1" maxValue="1000" doubleValue="1" id="78C-Ks-KLb"/>
                             </stepper>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P41-qv-xxv">
+                                <rect key="frame" x="173" y="33" width="4" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" id="mhS-DW-nEm">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="z4E-Sz-bgD" secondAttribute="trailing" id="1fJ-Do-gcY"/>
@@ -466,9 +474,11 @@
                             <constraint firstAttribute="bottom" secondItem="z4E-Sz-bgD" secondAttribute="bottom" id="IPe-gF-J0x"/>
                             <constraint firstItem="xET-i9-eZV" firstAttribute="baseline" secondItem="0IY-al-1Yv" secondAttribute="baseline" id="Iwq-DE-rHm"/>
                             <constraint firstItem="vdS-WN-Sq2" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="rb9-j4-yIz" secondAttribute="leading" id="JN7-JO-tta"/>
+                            <constraint firstItem="P41-qv-xxv" firstAttribute="firstBaseline" secondItem="CBy-PQ-RVY" secondAttribute="firstBaseline" id="KKa-bM-edo"/>
                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="CBy-PQ-RVY" secondAttribute="trailing" constant="20" symbolic="YES" id="Mu6-98-mL1"/>
                             <constraint firstItem="CBy-PQ-RVY" firstAttribute="top" secondItem="rb9-j4-yIz" secondAttribute="top" id="R2N-Jf-O2S"/>
                             <constraint firstItem="0IY-al-1Yv" firstAttribute="leading" secondItem="rb9-j4-yIz" secondAttribute="leading" id="YS9-st-agx"/>
+                            <constraint firstItem="P41-qv-xxv" firstAttribute="leading" secondItem="a1F-2R-ZcW" secondAttribute="trailing" constant="8" symbolic="YES" id="cXV-T8-NNc"/>
                             <constraint firstAttribute="bottom" secondItem="xET-i9-eZV" secondAttribute="bottom" id="dZm-37-ewh"/>
                             <constraint firstItem="a1F-2R-ZcW" firstAttribute="leading" secondItem="CBy-PQ-RVY" secondAttribute="trailing" constant="2" id="eb3-Wg-u09"/>
                             <constraint firstItem="z4E-Sz-bgD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="xET-i9-eZV" secondAttribute="trailing" constant="8" symbolic="YES" id="fy2-jj-ktX"/>
@@ -485,6 +495,7 @@
                         <outlet property="hoursTargetFormatter" destination="Mc7-ow-3HZ" id="LlJ-68-FpM"/>
                         <outlet property="hoursTargetLabel" destination="vdS-WN-Sq2" id="87N-qS-eox"/>
                         <outlet property="hoursTargetStepper" destination="a1F-2R-ZcW" id="7CM-iA-VfZ"/>
+                        <outlet property="periodDescriptionLabel" destination="P41-qv-xxv" id="Ztg-0Y-igE"/>
                     </connections>
                 </viewController>
                 <customObject id="2PQ-kn-80x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

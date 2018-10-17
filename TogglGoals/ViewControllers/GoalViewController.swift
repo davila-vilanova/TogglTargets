@@ -18,6 +18,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
     internal typealias Interface = (
         calendar: SignalProducer<Calendar, NoError>,
         goal: SignalProducer<Goal?, NoError>,
+        periodPreference: SignalProducer<PeriodPreference, NoError>,
         userUpdates: BindingTarget<Goal>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -39,6 +40,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
     @IBOutlet weak var hoursTargetLabel: NSTextField!
     @IBOutlet weak var hoursTargetField: NSTextField!
     @IBOutlet weak var hoursTargetStepper: NSStepper!
+    @IBOutlet weak var periodDescriptionLabel: NSTextField!
     @IBOutlet weak var hoursTargetFormatter: NumberFormatter!
     @IBOutlet weak var activeWeekdaysLabel: NSTextField!
     @IBOutlet weak var activeWeekdaysControl: NSSegmentedControl!
@@ -51,13 +53,17 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
     /// taken from the received Calendar values.
     private lazy var weekdaySegments = activeWeekdaysControl.reactive
         .makeBindingTarget(on: UIScheduler()) { (control: NSSegmentedControl, calendar: Calendar) in
-            let daySymbols = calendar.veryShortWeekdaySymbols
-            let dayCount = daySymbols.count
+            let displayDaySymbols = calendar.veryShortStandaloneWeekdaySymbols
+            let toolTipDaySymbols = calendar.standaloneWeekdaySymbols
+            let dayCount = displayDaySymbols.count
             assert(dayCount == Weekday.allDays.count)
             control.segmentCount = dayCount
 
             for dayIndex in 0..<dayCount {
-                control.setLabel(daySymbols[dayIndex], forSegment: dayIndex)
+                control.setLabel(displayDaySymbols[dayIndex], forSegment: dayIndex)
+                if #available(OSX 10.13, *) {
+                    control.setToolTip(toolTipDaySymbols[dayIndex], forSegment: dayIndex)
+                }
             }
     }
 
@@ -93,6 +99,15 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
                 .flatten(.latest)
                 .withLatest(from: nonNilGoal.map { $0.workWeekdays })
                 .map { ($1.isSelected($0), $0.indexInGregorianCalendarSymbolsArray) }
+
+        // Bind period preference to period description
+        periodDescriptionLabel.reactive.stringValue <~ lastBinding.producer.skipNil().map { $0.periodPreference }.flatten(.latest)
+            .map {
+                switch $0 {
+                case .monthly: return NSLocalizedString("goal-controller.target-hours-period.month", comment: "month period description as it appears next to the target hours field in the goal VC")
+                case .weekly: return NSLocalizedString("goal-controller.target-hours-period.week", comment: "week period description as it appears next to the target hours field in the goal VC")
+                }
+        }
 
         // Bind hours stepper buttons and hours target field
         hoursTargetField.reactive.integerValue <~ hoursTargetStepper.reactive.integerValues

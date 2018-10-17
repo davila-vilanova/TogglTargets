@@ -92,13 +92,13 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
             let validBindings = lastBinding.producer.skipNil()
             goalController <~
                 SignalProducer.combineLatest(
-                    validBindings.map { $0.calendar },
-                    SignalProducer(value: goalForCurrentProject.producer),
-                    validBindings.map { $0.writeGoal })
+                    validBindings.map { ($0.calendar, $0.periodPreference, $0.writeGoal) },
+                    SignalProducer(value: goalForCurrentProject.producer))
                     .map {
-                        (calendar: $0,
+                        (calendar: $0.0,
                          goal: $1,
-                         userUpdates: $2)
+                         periodPreference: $0.1,
+                         userUpdates: $0.2)
             }
         }
     }

@@ -186,3 +186,9 @@
 
 /* undo action name: delete goal */
 "undo.delete-goal" = "Borrar Meta";
+
+/* month period description as it appears next to the target hours field in the goal VC */
+"goal-controller.target-hours-period.month" = "por mes";
+
+/* week period description as it appears next to the target hours field in the goal VC */
+"goal-controller.target-hours-period.week" = "por semana";
