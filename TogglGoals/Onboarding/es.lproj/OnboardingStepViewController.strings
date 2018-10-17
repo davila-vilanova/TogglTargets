@@ -7,3 +7,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."; ObjectID = "ibN-gr-QAQ"; */
 "ibN-gr-QAQ.title" = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+
+/* onboarding: small thank you note */
+"onboarding.thank-you" = "¡Gracias por tu tiempo!";
+
+/* onboarding: close after completion */
+"onboarding.close-after-completion" = "Bien, ahora déjame jugar";
