@@ -31,7 +31,11 @@ class OnboardingGuide {
     var lifetime: Lifetime
     private let token: Lifetime.Token
 
-    let onboardingEnded: SignalProducer<Void, NoError>
+    private let _onboardingEnded = MutableProperty<Void?>(nil)
+
+    var onboardingEnded: SignalProducer<Void, NoError> {
+        return _onboardingEnded.producer.skipNil()
+    }
 
     private let steps: [OnboardingStep]
     
@@ -88,11 +92,6 @@ class OnboardingGuide {
         self.steps = steps
         
         (lifetime, token) = Lifetime.make()
-        let onboardingEnded = MutableProperty<Void?>(nil)
-        lifetime.observeEnded {
-            _ = onboardingEnded
-        }
-        self.onboardingEnded = onboardingEnded.producer.skipNil()
 
         func extractViewProducer(_ prop: MutableProperty<Signal<NSView, NoError>.Event?>) -> SignalProducer<NSView, NoError> {
             return prop.producer.skipNil().dematerialize()
@@ -102,11 +101,13 @@ class OnboardingGuide {
             .map(extractViewProducer)
             .flatten(.concat)
 
-        let lastStepFinished = targetViewEventHolders[steps.last!.identifier]!
-            .producer.skipNil().filter { $0.isCompleted }.map { _ in () }
-
         let onboardingAborted = stepViewController.stopOnboarding
-        let onboardingClosed = SignalProducer.merge(onboardingAborted, lastStepFinished)
+        let windowAttachedViews = views.zip(with: views.map { $0.reactive.producer(forKeyPath: "window").skipNil().filterMap { $0 as? NSWindow }.take(first: 1) }.flatten(.concat)).map { $0.0 }
+        let pacedSteps = SignalProducer(steps).zip(with: windowAttachedViews).take(until: onboardingAborted)
+        let lastStepStarted = pacedSteps.materialize().filter { $0.isCompleted }.map { _ in () }
+        let lastStepShown = lastStepStarted.take(first: 1).then(stepPopoverDelegate.popoverDidShowTrigger.producer)
+        let lastStepClosed = lastStepShown.take(first: 1).then(stepPopoverDelegate.popoverDidCloseTrigger.producer)
+        let onboardingEnded = SignalProducer.merge(onboardingAborted, lastStepClosed)
 
         let currentTargetViewCompleted = SignalProducer(sortedTargetViewEventHolders)
             .combinePrevious()
@@ -118,24 +119,20 @@ class OnboardingGuide {
             }.flatten(.concat)
             .take(until: onboardingAborted)
 
-        let windowsAsAvailable = views.map { $0.reactive.producer(forKeyPath: "window").skipNil().filterMap { $0 as? NSWindow }.take(first: 1) }.flatten(.concat)
-        let windowAttachedViews = views.zip(with: windowsAsAvailable).map { $0.0 } // TODO: alternatively use https://developer.apple.com/documentation/appkit/nsview/1483329-viewdidmovetowindow
-        
-        let pacedSteps = SignalProducer(steps).zip(with: windowAttachedViews).take(until: onboardingAborted)
         showStep <~ pacedSteps
 
         let closePopover: BindingTarget<Void> = stepPopover.reactive.makeBindingTarget { pop, _ in pop.close() }
-        closePopover <~ SignalProducer.merge(currentTargetViewCompleted, onboardingClosed)
+        let lastStepIdentifier = steps.last!.identifier
+        closePopover <~ SignalProducer.merge(currentTargetViewCompleted, onboardingEnded, stepViewController.moveOnToNextStep.filter { $0 == lastStepIdentifier }.map { _ in () })
 
-        let lastStepStarted = pacedSteps.materialize().filter { $0.isCompleted }.map { _ in () }
         stepViewController.configureForLastStep <~ lastStepStarted
 
         let markOnboardingAsNotPending: BindingTarget<Void> = defaults.reactive.makeBindingTarget { defaults, _ in
             defaults.set(true, forKey: OnboardingNotPendingKey)
         }
 
-        markOnboardingAsNotPending <~ onboardingClosed
-        onboardingEnded <~ onboardingClosed
+        markOnboardingAsNotPending <~ onboardingEnded
+        _onboardingEnded <~ onboardingEnded
     }
     
     private lazy var stepViewController = OnboardingStepViewController(nibName: NSNib.Name(rawValue: "OnboardingStepViewController"), bundle: nil)
@@ -176,13 +173,25 @@ protocol OnboardingTargetViewsProvider {
 }
 
 fileprivate class PopoverDelegate: NSObject, NSPopoverDelegate {
-    private let _popoverCloseTrigger = MutableProperty<Void?>(nil)
+    private let _popoverDidShowTrigger = MutableProperty<Void?>(nil)
 
-    private var popoverCloseTrigger: SignalProducer<Void, NoError> {
-        return _popoverCloseTrigger.producer.skipNil()
+    private let _popoverDidCloseTrigger = MutableProperty<Void?>(nil)
+
+    var popoverDidShowTrigger: Signal<Void, NoError> {
+        return _popoverDidShowTrigger.signal.skipNil()
+    }
+
+    var popoverDidCloseTrigger: Signal<Void, NoError> {
+        return _popoverDidCloseTrigger.signal.skipNil()
+    }
+
+    func popoverDidShow(_ notification: Notification) {
+        print(#function)
+        _popoverDidShowTrigger.value = ()
     }
 
     func popoverDidClose(_ notification: Notification) {
-        _popoverCloseTrigger.value = ()
+        print(#function)
+        _popoverDidCloseTrigger.value = ()
     }
 }
