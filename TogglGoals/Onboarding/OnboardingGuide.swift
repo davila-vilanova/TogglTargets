@@ -101,13 +101,14 @@ class OnboardingGuide {
             .map(extractViewProducer)
             .flatten(.concat)
 
-        let onboardingAborted = stepViewController.stopOnboarding
         let windowAttachedViews = views.zip(with: views.map { $0.reactive.producer(forKeyPath: "window").skipNil().filterMap { $0 as? NSWindow }.take(first: 1) }.flatten(.concat)).map { $0.0 }
-        let pacedSteps = SignalProducer(steps).zip(with: windowAttachedViews).take(until: onboardingAborted)
+        let abortOnboardingRequested = stepViewController.stopOnboarding
+        let pacedSteps = SignalProducer(steps).zip(with: windowAttachedViews).take(until: abortOnboardingRequested)
         let lastStepStarted = pacedSteps.materialize().filter { $0.isCompleted }.map { _ in () }
         let lastStepShown = lastStepStarted.take(first: 1).then(stepPopoverDelegate.popoverDidShowTrigger.producer)
         let lastStepClosed = lastStepShown.take(first: 1).then(stepPopoverDelegate.popoverDidCloseTrigger.producer)
-        let onboardingEnded = SignalProducer.merge(onboardingAborted, lastStepClosed)
+        let moveOnRequestedOnLastStep = stepViewController.moveOnToNextStep.filter { $0 == steps.last!.identifier }.map { _ in () }
+        let onboardingEnded = SignalProducer.merge(abortOnboardingRequested, lastStepClosed)
 
         let currentTargetViewCompleted = SignalProducer(sortedTargetViewEventHolders)
             .combinePrevious()
@@ -117,13 +118,12 @@ class OnboardingGuide {
                     .take(until: extractViewProducer($0.1).map { _ in () })
                     .map { _ in () }
             }.flatten(.concat)
-            .take(until: onboardingAborted)
+            .take(until: abortOnboardingRequested)
 
         showStep <~ pacedSteps
 
         let closePopover: BindingTarget<Void> = stepPopover.reactive.makeBindingTarget { pop, _ in pop.close() }
-        let lastStepIdentifier = steps.last!.identifier
-        closePopover <~ SignalProducer.merge(currentTargetViewCompleted, onboardingEnded, stepViewController.moveOnToNextStep.filter { $0 == lastStepIdentifier }.map { _ in () })
+        closePopover <~ SignalProducer.merge(currentTargetViewCompleted, abortOnboardingRequested, moveOnRequestedOnLastStep)
 
         stepViewController.configureForLastStep <~ lastStepStarted
 
