@@ -21,7 +21,7 @@ class OnboardingStepViewController: NSViewController {
         return currentStep.deoptionalizedBindingTarget
     }
 
-    var stopOnboarding: SignalProducer<Void, NoError> {
+    var requestAbortOnboarding: SignalProducer<Void, NoError> {
         return stopPressed.values.producer
     }
 

@@ -100,30 +100,44 @@ class OnboardingGuide {
         let views = SignalProducer(sortedTargetViewEventHolders)
             .map(extractViewProducer)
             .flatten(.concat)
+        let windowAttachedViews = views.zip(with:
+            views.map {
+                $0.reactive.producer(forKeyPath: "window")
+                    .skipNil().filterMap { $0 as? NSWindow }
+                    .take(first: 1)
+                }
+                .flatten(.concat))
+            .map { $0.0 }
 
-        let windowAttachedViews = views.zip(with: views.map { $0.reactive.producer(forKeyPath: "window").skipNil().filterMap { $0 as? NSWindow }.take(first: 1) }.flatten(.concat)).map { $0.0 }
-        let abortOnboardingRequested = stepViewController.stopOnboarding
+        let sortedViewTerminations = SignalProducer(sortedTargetViewEventHolders)
+            .map {
+                $0.producer.skipNil()
+                    .filter { $0.isTerminating }
+                    .map { _ in () }
+                    .take(first: 1)
+            }
+            .flatten(.concat)
+
+        let abortOnboardingRequested = stepViewController.requestAbortOnboarding
+
         let pacedSteps = SignalProducer(steps).zip(with: windowAttachedViews).take(until: abortOnboardingRequested)
+
         let lastStepStarted = pacedSteps.materialize().filter { $0.isCompleted }.map { _ in () }
         let lastStepShown = lastStepStarted.take(first: 1).then(stepPopoverDelegate.popoverDidShowTrigger.producer)
         let lastStepClosed = lastStepShown.take(first: 1).then(stepPopoverDelegate.popoverDidCloseTrigger.producer)
-        let moveOnRequestedOnLastStep = stepViewController.moveOnToNextStep.filter { $0 == steps.last!.identifier }.map { _ in () }
         let onboardingEnded = SignalProducer.merge(abortOnboardingRequested, lastStepClosed)
 
-        let currentTargetViewCompleted = SignalProducer(sortedTargetViewEventHolders)
-            .combinePrevious()
-            .map {
-                $0.0.producer.skipNil()
-                    .filter { $0.isCompleted }
-                    .take(until: extractViewProducer($0.1).map { _ in () })
-                    .map { _ in () }
-            }.flatten(.concat)
-            .take(until: abortOnboardingRequested)
-
-        showStep <~ pacedSteps
-
+        let showPopover: BindingTarget<(NSView, NSRectEdge)> = stepPopover.reactive.makeBindingTarget { (pop, target) in
+            let (view, edge) = target
+            pop.show(relativeTo: view.bounds, of: view, preferredEdge: edge)
+        }
         let closePopover: BindingTarget<Void> = stepPopover.reactive.makeBindingTarget { pop, _ in pop.close() }
-        closePopover <~ SignalProducer.merge(currentTargetViewCompleted, abortOnboardingRequested, moveOnRequestedOnLastStep)
+
+        closePopover <~ SignalProducer.merge(sortedViewTerminations, abortOnboardingRequested)
+        showPopover <~ pacedSteps.map { step, view in (view, step.preferredEdge) }
+
+        stepViewController.representedStep <~
+            pacedSteps.zip(with: stepPopoverDelegate.popoverDidCloseTrigger.producer.prefix(value: ())).map { $0.0.0 }
 
         stepViewController.configureForLastStep <~ lastStepStarted
 
@@ -146,22 +160,6 @@ class OnboardingGuide {
     }()
 
     private lazy var stepPopoverDelegate = PopoverDelegate()
-    
-    private lazy var showStep: BindingTarget<(OnboardingStep, NSView)> =
-        BindingTarget(on: UIScheduler(), lifetime: lifetime) { [unowned self] (step, targetView) in
-            func updateAndShow() {
-                self.stepViewController.representedStep <~ SignalProducer(value: step)
-                self.stepPopover.show(relativeTo: targetView.bounds, of: targetView, preferredEdge: step.preferredEdge)
-            }
-            if self.stepPopover.isShown {
-               self.stepPopover.close()
-                self.delayScheduler.schedule(after: Date() + ShowStepDelay) {
-                    UIScheduler().schedule(updateAndShow)
-                }
-            } else {
-                updateAndShow()
-            }
-    }
 
     static func shouldOnboard(_ defaults: UserDefaults) -> Bool {
         return !defaults.bool(forKey: OnboardingNotPendingKey)
@@ -186,12 +184,10 @@ fileprivate class PopoverDelegate: NSObject, NSPopoverDelegate {
     }
 
     func popoverDidShow(_ notification: Notification) {
-        print(#function)
         _popoverDidShowTrigger.value = ()
     }
 
     func popoverDidClose(_ notification: Notification) {
-        print(#function)
         _popoverDidCloseTrigger.value = ()
     }
 }
