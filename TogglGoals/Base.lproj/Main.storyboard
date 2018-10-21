@@ -61,55 +61,44 @@
                         <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <visualEffectView appearanceType="inheritedVibrantLight" blendingMode="behindWindow" material="sidebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="UIm-Lo-uCx">
+                            <scrollView wantsLayer="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kat-8d-Ff9">
                                 <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
-                                <subviews>
-                                    <scrollView wantsLayer="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kat-8d-Ff9">
-                                        <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
-                                        <clipView key="contentView" wantsLayer="YES" id="V9W-AF-Ttj">
+                                <clipView key="contentView" wantsLayer="YES" id="V9W-AF-Ttj">
+                                    <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb" customClass="ProjectsCollectionView" customModule="TogglGoals" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb" customClass="ProjectsCollectionView" customModule="TogglGoals" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
-                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                    <collectionViewLayout key="collectionViewLayout" id="tRH-Rt-gTE" customClass="VerticalListLayout" customModule="TogglGoals" customModuleProvider="target"/>
-                                                    <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
-                                                    <connections>
-                                                        <outlet property="dataSource" destination="uJx-25-i9K" id="gHp-yR-3ye"/>
-                                                        <outlet property="delegate" destination="uJx-25-i9K" id="7P4-bb-f6u"/>
-                                                    </connections>
-                                                </collectionView>
-                                            </subviews>
-                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                        </clipView>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="eXF-ou-lGI"/>
-                                        </constraints>
-                                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="EPZ-py-eHf">
-                                            <rect key="frame" x="2" y="282" width="157" height="16"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                        <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Q81-ig-h5S">
-                                            <rect key="frame" x="-100" y="-100" width="16" height="260"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                        </scroller>
-                                    </scrollView>
-                                </subviews>
+                                            <collectionViewLayout key="collectionViewLayout" id="tRH-Rt-gTE" customClass="VerticalListLayout" customModule="TogglGoals" customModuleProvider="target"/>
+                                            <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
+                                            <connections>
+                                                <outlet property="dataSource" destination="uJx-25-i9K" id="gHp-yR-3ye"/>
+                                                <outlet property="delegate" destination="uJx-25-i9K" id="7P4-bb-f6u"/>
+                                            </connections>
+                                        </collectionView>
+                                    </subviews>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </clipView>
                                 <constraints>
-                                    <constraint firstItem="Kat-8d-Ff9" firstAttribute="top" secondItem="UIm-Lo-uCx" secondAttribute="top" id="A00-vB-bo0"/>
-                                    <constraint firstItem="Kat-8d-Ff9" firstAttribute="leading" secondItem="UIm-Lo-uCx" secondAttribute="leading" id="M8x-c7-pIP"/>
-                                    <constraint firstAttribute="bottom" secondItem="Kat-8d-Ff9" secondAttribute="bottom" id="iGa-HD-EWt"/>
-                                    <constraint firstAttribute="trailing" secondItem="Kat-8d-Ff9" secondAttribute="trailing" id="jJR-3S-L7w"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="eXF-ou-lGI"/>
                                 </constraints>
-                            </visualEffectView>
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="EPZ-py-eHf">
+                                    <rect key="frame" x="2" y="282" width="157" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Q81-ig-h5S">
+                                    <rect key="frame" x="-100" y="-100" width="16" height="260"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="UIm-Lo-uCx" firstAttribute="leading" secondItem="0s5-6J-xQn" secondAttribute="leading" id="Flb-2d-X97"/>
-                            <constraint firstAttribute="bottom" secondItem="UIm-Lo-uCx" secondAttribute="bottom" id="Fx7-F8-Lnm"/>
-                            <constraint firstAttribute="trailing" secondItem="UIm-Lo-uCx" secondAttribute="trailing" id="b4J-0z-xbZ"/>
-                            <constraint firstItem="UIm-Lo-uCx" firstAttribute="top" secondItem="0s5-6J-xQn" secondAttribute="top" id="qBi-pC-JZW"/>
+                            <constraint firstAttribute="bottom" secondItem="Kat-8d-Ff9" secondAttribute="bottom" id="AMV-Jv-h3u"/>
+                            <constraint firstAttribute="trailing" secondItem="Kat-8d-Ff9" secondAttribute="trailing" id="Q7f-bV-GLS"/>
+                            <constraint firstItem="Kat-8d-Ff9" firstAttribute="top" secondItem="0s5-6J-xQn" secondAttribute="top" id="Rbd-oX-My2"/>
+                            <constraint firstItem="Kat-8d-Ff9" firstAttribute="leading" secondItem="0s5-6J-xQn" secondAttribute="leading" id="Xbg-ke-RDI"/>
                         </constraints>
                     </view>
                     <connections>
@@ -954,32 +943,43 @@
                         <rect key="frame" x="0.0" y="0.0" width="163" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <stackView identifier="ProjectsListActivityStackView" wantsLayer="YES" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jyy-RP-JY6">
+                            <visualEffectView appearanceType="inheritedVibrantLight" blendingMode="behindWindow" material="sidebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="JC6-5E-cMk">
                                 <rect key="frame" x="0.0" y="0.0" width="163" height="300"/>
-                                <beginningViews>
-                                    <containerView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lPc-Ui-xhw">
+                                <subviews>
+                                    <stackView identifier="ProjectsListActivityStackView" wantsLayer="YES" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jyy-RP-JY6">
                                         <rect key="frame" x="0.0" y="0.0" width="163" height="300"/>
-                                        <connections>
-                                            <segue destination="uJx-25-i9K" kind="embed" id="ha7-Yy-ANQ"/>
-                                        </connections>
-                                    </containerView>
-                                </beginningViews>
+                                        <beginningViews>
+                                            <containerView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lPc-Ui-xhw">
+                                                <rect key="frame" x="0.0" y="0.0" width="163" height="300"/>
+                                                <connections>
+                                                    <segue destination="uJx-25-i9K" kind="embed" id="ha7-Yy-ANQ"/>
+                                                </connections>
+                                            </containerView>
+                                        </beginningViews>
+                                        <constraints>
+                                            <constraint firstAttribute="width" relation="lessThanOrEqual" constant="300" id="M6w-fL-T58"/>
+                                        </constraints>
+                                        <visibilityPriorities>
+                                            <integer value="1000"/>
+                                        </visibilityPriorities>
+                                        <customSpacing>
+                                            <real value="3.4028234663852886e+38"/>
+                                        </customSpacing>
+                                    </stackView>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="300" id="M6w-fL-T58"/>
+                                    <constraint firstAttribute="bottom" secondItem="jyy-RP-JY6" secondAttribute="bottom" id="2XR-A2-RGa"/>
+                                    <constraint firstItem="jyy-RP-JY6" firstAttribute="top" secondItem="JC6-5E-cMk" secondAttribute="top" id="6dh-j8-mVa"/>
+                                    <constraint firstAttribute="trailing" secondItem="jyy-RP-JY6" secondAttribute="trailing" id="7PP-fq-ZD5"/>
+                                    <constraint firstItem="jyy-RP-JY6" firstAttribute="leading" secondItem="JC6-5E-cMk" secondAttribute="leading" id="frW-wg-18w"/>
                                 </constraints>
-                                <visibilityPriorities>
-                                    <integer value="1000"/>
-                                </visibilityPriorities>
-                                <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
-                                </customSpacing>
-                            </stackView>
+                            </visualEffectView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="jyy-RP-JY6" firstAttribute="top" secondItem="VJj-ct-htK" secondAttribute="top" id="6v7-D9-Oad"/>
-                            <constraint firstAttribute="trailing" secondItem="jyy-RP-JY6" secondAttribute="trailing" id="HlK-bG-ShA"/>
-                            <constraint firstItem="jyy-RP-JY6" firstAttribute="leading" secondItem="VJj-ct-htK" secondAttribute="leading" id="fgT-fj-UB6"/>
-                            <constraint firstAttribute="bottom" secondItem="jyy-RP-JY6" secondAttribute="bottom" id="h2M-Aa-cnq"/>
+                            <constraint firstAttribute="bottom" secondItem="JC6-5E-cMk" secondAttribute="bottom" id="CF6-Ql-WlI"/>
+                            <constraint firstItem="JC6-5E-cMk" firstAttribute="leading" secondItem="VJj-ct-htK" secondAttribute="leading" id="TRC-v6-C3B"/>
+                            <constraint firstAttribute="trailing" secondItem="JC6-5E-cMk" secondAttribute="trailing" id="qNd-yc-RVZ"/>
+                            <constraint firstItem="JC6-5E-cMk" firstAttribute="top" secondItem="VJj-ct-htK" secondAttribute="top" id="u7x-MP-gbT"/>
                         </constraints>
                     </view>
                     <connections>
