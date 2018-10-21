@@ -42,9 +42,9 @@
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Oej-8K-uOr" userLabel="Report Label">
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Oej-8K-uOr" userLabel="Report Label">
                             <rect key="frame" x="18" y="6" width="37" height="14"/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="report" id="qMh-YV-Zys">
+                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="report" usesSingleLineMode="YES" id="qMh-YV-Zys">
                                 <font key="font" metaFont="smallSystem"/>
                                 <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -58,7 +58,7 @@
                         <constraint firstItem="pcZ-U4-eHq" firstAttribute="leading" secondItem="484-m5-m2m" secondAttribute="leading" id="2GD-N7-xd7"/>
                         <constraint firstItem="pcZ-U4-eHq" firstAttribute="top" secondItem="484-m5-m2m" secondAttribute="bottom" constant="5" id="635-Um-sIz"/>
                         <constraint firstItem="Oej-8K-uOr" firstAttribute="leading" secondItem="pcZ-U4-eHq" secondAttribute="leading" id="KRY-qD-Wto"/>
-                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Oej-8K-uOr" secondAttribute="trailing" constant="20" symbolic="YES" id="MN7-6j-R3R"/>
+                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Oej-8K-uOr" secondAttribute="trailing" constant="8" id="MN7-6j-R3R"/>
                         <constraint firstItem="484-m5-m2m" firstAttribute="leading" secondItem="2kA-EB-IKw" secondAttribute="leading" constant="20" id="PGc-zy-ZqE"/>
                         <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="pcZ-U4-eHq" secondAttribute="trailing" constant="20" symbolic="YES" id="PKX-ay-JPM"/>
                         <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="484-m5-m2m" secondAttribute="trailing" constant="20" symbolic="YES" id="Rur-pX-5hI"/>
