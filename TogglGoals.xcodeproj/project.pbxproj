@@ -416,6 +416,7 @@
 		63AB08231FB77C5100565D87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63B1BBE61FBE2570001E9FBE /* ReportPeriodsProducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportPeriodsProducer.swift; sourceTree = "<group>"; };
 		63C329321FEFBA63008AB9F2 /* MakeRetrieveReportsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveReportsNetworkActionTest.swift; sourceTree = "<group>"; };
+		63C9F09A217C8DB000142BEC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		63D4BB9B1F7D80FC00B87298 /* DateTimeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTimeExtensions.swift; sourceTree = "<group>"; };
 		63D4BB9C1F7D80FC00B87298 /* GoalProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgress.swift; sourceTree = "<group>"; };
 		63D4BB9D1F7D80FC00B87298 /* GoalsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsStore.swift; sourceTree = "<group>"; };
@@ -1360,6 +1361,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				63F76BA320F6212D0024939B /* es */,
+				63C9F09A217C8DB000142BEC /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
