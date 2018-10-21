@@ -172,26 +172,33 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     private func setupBackgroundOfAreasExposedByScrollElasticity() {
-        let backgroundColor = NSColor.underPageBackgroundColor.cgColor
-        let scrollBackgroundTop = NSView(frame: NSZeroRect)
-        scrollBackgroundTop.translatesAutoresizingMaskIntoConstraints = false
-        clipView.addSubview(scrollBackgroundTop)
-        scrollBackgroundTop.heightAnchor.constraint(equalToConstant: 1000).isActive = true
-        scrollBackgroundTop.bottomAnchor.constraint(equalTo: clipView.documentView!.topAnchor).isActive = true
-        scrollBackgroundTop.leadingAnchor.constraint(equalTo: clipView.leadingAnchor).isActive = true
-        scrollBackgroundTop.trailingAnchor.constraint(equalTo: clipView.trailingAnchor).isActive = true
-        scrollBackgroundTop.wantsLayer = true
-        scrollBackgroundTop.layer!.backgroundColor = backgroundColor
+        let attachedLength: CGFloat = 1000
 
-        let scrollBackgroundBottom = NSView(frame: NSZeroRect)
-        scrollBackgroundBottom.translatesAutoresizingMaskIntoConstraints = false
-        clipView.addSubview(scrollBackgroundBottom)
-        scrollBackgroundBottom.heightAnchor.constraint(equalToConstant: 1000).isActive = true
-        scrollBackgroundBottom.topAnchor.constraint(equalTo: clipView.documentView!.bottomAnchor).isActive = true
-        scrollBackgroundBottom.leadingAnchor.constraint(equalTo: clipView.leadingAnchor).isActive = true
-        scrollBackgroundBottom.trailingAnchor.constraint(equalTo: clipView.trailingAnchor).isActive = true
-        scrollBackgroundBottom.wantsLayer = true
-        scrollBackgroundBottom.layer!.backgroundColor = backgroundColor
+        func attachBackgroundView(_ createAdjacentConstraint: (NSView, NSClipView) -> NSLayoutConstraint ) -> NSView {
+            let backgroundView = NSView(frame: NSZeroRect)
+            backgroundView.translatesAutoresizingMaskIntoConstraints = false
+            clipView.addSubview(backgroundView)
+
+            backgroundView.leadingAnchor.constraint(equalTo: clipView.leadingAnchor).isActive = true
+            backgroundView.trailingAnchor.constraint(equalTo: clipView.trailingAnchor).isActive = true
+            backgroundView.heightAnchor.constraint(equalToConstant: attachedLength).isActive = true
+            createAdjacentConstraint(backgroundView, clipView).isActive = true
+
+            backgroundView.wantsLayer = true
+            return backgroundView
+        }
+
+        let backgroundViews = [
+            attachBackgroundView { background, clip in background.bottomAnchor.constraint(equalTo: clip.documentView!.topAnchor) },
+            attachBackgroundView { background, clip in background.topAnchor.constraint(equalTo: clip.documentView!.bottomAnchor) }
+        ]
+
+        for background in backgroundViews {
+            let updateColor: BindingTarget<Void> = background.reactive.makeBindingTarget { view, _ in
+                view.layer!.backgroundColor = NSColor.underPageBackgroundColor.cgColor
+            }
+            updateColor <~ clipView.reactive.trigger(for: #selector(NSView.layout)).logValues("updateColor")
+        }
     }
 
     private func initializeProjectsCollectionView() {
