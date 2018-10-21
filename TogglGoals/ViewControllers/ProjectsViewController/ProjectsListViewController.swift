@@ -178,7 +178,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         layout.headerReferenceSize = CGSize(width: projectsCollectionView.bounds.width, height: 42)
         layout.sectionHeadersPinToVisibleBounds = true
         layout.minimumLineSpacing = 0 // avoid gap between items
-        layout.itemHeight = 70
+        layout.itemHeight = 62
     }
 
     func wireFullUpdatesToCollectionView() {
@@ -268,7 +268,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             }
             .skipNil()
             .delay(0, on: delayScheduler) // ensure selection will happen last when it's combined with a partial collection update
-            .logValues("sel")
     }
 
     /// Scrolls the collection view to display the currently selected item.

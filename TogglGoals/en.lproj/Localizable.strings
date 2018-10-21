@@ -11,7 +11,7 @@
 "project-list.item.goal.target.weekly" = "%@ per week";
 
 /* message to show in each of the project list items when there is no associated goal */
-"project-list.item.goal.no-goal" = "-";
+"project-list.item.goal.no-goal" = "(no goal)";
 
 /* message to show in each of the project list items when there is no report data yet */
 "project-list.item.report.no-data" = "no report data";
