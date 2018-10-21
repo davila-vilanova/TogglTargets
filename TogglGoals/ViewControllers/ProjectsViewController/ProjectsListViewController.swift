@@ -13,6 +13,9 @@ import Result
 fileprivate let ProjectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
 fileprivate let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
 
+fileprivate let HeaderHeight: CGFloat = 42
+fileprivate let ProjectItemHeight: CGFloat = 62
+
 fileprivate let SelectedProjectIdRestorationKey = "SelectedProjectId"
 fileprivate let NoSelectedProjectIdRestorationValue: Int64 = 0
 
@@ -175,10 +178,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                                         withIdentifier: SectionHeaderIdentifier)
 
         let layout = projectsCollectionView.collectionViewLayout as! VerticalListLayout
-        layout.headerReferenceSize = CGSize(width: projectsCollectionView.bounds.width, height: 42)
+        layout.headerReferenceSize = CGSize(width: projectsCollectionView.bounds.width, height: HeaderHeight)
         layout.sectionHeadersPinToVisibleBounds = true
         layout.minimumLineSpacing = 0 // avoid gap between items
-        layout.itemHeight = 62
+        layout.itemHeight = ProjectItemHeight
     }
 
     func wireFullUpdatesToCollectionView() {
