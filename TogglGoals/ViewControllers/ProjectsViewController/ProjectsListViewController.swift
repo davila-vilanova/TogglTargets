@@ -13,7 +13,7 @@ import Result
 fileprivate let ProjectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
 fileprivate let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
 
-fileprivate let HeaderHeight: CGFloat = 42
+fileprivate let HeaderHeight: CGFloat = 30
 fileprivate let ProjectItemHeight: CGFloat = 62
 
 fileprivate let SelectedProjectIdRestorationKey = "SelectedProjectId"
