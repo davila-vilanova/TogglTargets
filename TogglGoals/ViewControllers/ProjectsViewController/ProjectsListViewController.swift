@@ -95,6 +95,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// project ID order and the structure of the current `ProjectIDsByGoals` value.
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
 
+    @IBOutlet weak var clipView: NSClipView!
 
     // MARK: - State restoration
 
@@ -143,6 +144,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupBackgroundOfAreasExposedByScrollElasticity()
+
         initializeProjectsCollectionView()
         wireFullUpdatesToCollectionView()
         wireSingleGoalUpdatesToCollectionView()
@@ -166,6 +169,29 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         invalidateRestorableStateWhenProjectManuallySelected()
         restoreSelectionInCollectionView()
         wireDownstreamSelection()
+    }
+
+    private func setupBackgroundOfAreasExposedByScrollElasticity() {
+        let backgroundColor = NSColor.underPageBackgroundColor.cgColor
+        let scrollBackgroundTop = NSView(frame: NSZeroRect)
+        scrollBackgroundTop.translatesAutoresizingMaskIntoConstraints = false
+        clipView.addSubview(scrollBackgroundTop)
+        scrollBackgroundTop.heightAnchor.constraint(equalToConstant: 1000).isActive = true
+        scrollBackgroundTop.bottomAnchor.constraint(equalTo: clipView.documentView!.topAnchor).isActive = true
+        scrollBackgroundTop.leadingAnchor.constraint(equalTo: clipView.leadingAnchor).isActive = true
+        scrollBackgroundTop.trailingAnchor.constraint(equalTo: clipView.trailingAnchor).isActive = true
+        scrollBackgroundTop.wantsLayer = true
+        scrollBackgroundTop.layer!.backgroundColor = backgroundColor
+
+        let scrollBackgroundBottom = NSView(frame: NSZeroRect)
+        scrollBackgroundBottom.translatesAutoresizingMaskIntoConstraints = false
+        clipView.addSubview(scrollBackgroundBottom)
+        scrollBackgroundBottom.heightAnchor.constraint(equalToConstant: 1000).isActive = true
+        scrollBackgroundBottom.topAnchor.constraint(equalTo: clipView.documentView!.bottomAnchor).isActive = true
+        scrollBackgroundBottom.leadingAnchor.constraint(equalTo: clipView.leadingAnchor).isActive = true
+        scrollBackgroundBottom.trailingAnchor.constraint(equalTo: clipView.trailingAnchor).isActive = true
+        scrollBackgroundBottom.wantsLayer = true
+        scrollBackgroundBottom.layer!.backgroundColor = backgroundColor
     }
 
     private func initializeProjectsCollectionView() {
