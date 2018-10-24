@@ -17,7 +17,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="160" height="26"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" tag="1080" translatesAutoresizingMaskIntoConstraints="NO" id="jxe-5E-Uhe">
-                            <rect key="frame" x="2" y="2" width="65" height="17"/>
+                            <rect key="frame" x="8" y="2" width="65" height="17"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="title label" id="7Zx-Sg-xFN">
                                 <font key="font" metaFont="systemBold"/>
                                 <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -29,7 +29,7 @@
                         <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="jxe-5E-Uhe" secondAttribute="trailing" constant="4" id="GX7-kH-60w"/>
                         <constraint firstAttribute="bottom" secondItem="jxe-5E-Uhe" secondAttribute="bottom" constant="2" id="Luj-5M-JPh"/>
                         <constraint firstItem="jxe-5E-Uhe" firstAttribute="top" relation="greaterThanOrEqual" secondItem="EPI-W0-Hte" secondAttribute="top" constant="2" id="h0d-J5-WZI"/>
-                        <constraint firstItem="jxe-5E-Uhe" firstAttribute="leading" secondItem="EPI-W0-Hte" secondAttribute="leading" constant="4" id="jBe-6C-R46"/>
+                        <constraint firstItem="jxe-5E-Uhe" firstAttribute="leading" secondItem="EPI-W0-Hte" secondAttribute="leading" constant="10" id="jBe-6C-R46"/>
                     </constraints>
                 </visualEffectView>
                 <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="zMn-ux-hJh">
