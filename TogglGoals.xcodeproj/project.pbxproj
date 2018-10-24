@@ -521,6 +521,7 @@
 			isa = PBXGroup;
 			children = (
 				6329574E1DBA99F000E11A10 /* Info.plist */,
+				632957491DBA99F000E11A10 /* Assets.xcassets */,
 				63F76BA220F6212D0024939B /* InfoPlist.strings */,
 				63F76B9F20F6212D0024939B /* Localizable.strings */,
 				630274D920FAB31000DE2698 /* Localizable.stringsdict */,
@@ -534,7 +535,6 @@
 				637A32331EE16E7600667FC3 /* View Controllers */,
 				63D4BB981F7D80FC00B87298 /* Model */,
 				63F6D17A2164E3AE004EE7B9 /* Onboarding */,
-				632957491DBA99F000E11A10 /* Assets.xcassets */,
 			);
 			path = TogglGoals;
 			sourceTree = "<group>";
