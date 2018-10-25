@@ -17,7 +17,7 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
 
     internal typealias Interface = (
         existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
-        testURLSessionAction: TestURLSessionAction,
+        testURLSessionAction: RetrieveProfileNetworkAction,
         logOut: BindingTarget<Void>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -44,7 +44,7 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
         let validBindings = lastBinding.producer.skipNil()
         let currentAction = Property(initial: nil, then: validBindings.map { $0.testURLSessionAction }).producer.skipNil()
         let currentCredential = Property(initial: nil, then: validBindings.map { $0.existingCredential }.flatten(.latest))
-        let currentActionPlusCredential = Property<(TestURLSessionAction, TogglAPITokenCredential?)?>(initial: nil, then: SignalProducer.combineLatest(currentAction, currentCredential.producer))
+        let currentActionPlusCredential = Property<(RetrieveProfileNetworkAction, TogglAPITokenCredential?)?>(initial: nil, then: SignalProducer.combineLatest(currentAction, currentCredential.producer))
 
         reactive.lifetime += currentActionPlusCredential.producer.skipNil()
             .on(value: { $0.0.apply(URLSession(togglAPICredential: $0.1)).start() }).start()

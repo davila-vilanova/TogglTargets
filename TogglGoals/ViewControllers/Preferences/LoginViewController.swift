@@ -42,7 +42,7 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
 
     internal typealias Interface = (
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
-        testURLSessionAction: TestURLSessionAction)
+        testURLSessionAction: RetrieveProfileNetworkAction)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -70,7 +70,7 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
     // MARK: - Credential validation
 
     private lazy var validateCredential: Action<Void, CredentialValidationResult, NoError> = {
-        typealias ValidateCredentialActionState = (TogglAPICredential, TestURLSessionAction)
+        typealias ValidateCredentialActionState = (TogglAPICredential, RetrieveProfileNetworkAction)
         let validateCredentialActionState = Property<ValidateCredentialActionState?>(
             initial: nil,
             then: SignalProducer.combineLatest(credentialFromUserEnteredData, lastBinding.producer.map { $0?.testURLSessionAction })

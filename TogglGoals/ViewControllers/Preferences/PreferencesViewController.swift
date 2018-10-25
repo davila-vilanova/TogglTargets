@@ -21,7 +21,7 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
         displaySection: SignalProducer<Section?, NoError>,
         existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
-        testURLSessionAction: TestURLSessionAction,
+        testURLSessionAction: RetrieveProfileNetworkAction,
         existingGoalPeriodPreference: SignalProducer<PeriodPreference, NoError>,
         calendar: SignalProducer<Calendar, NoError>,
         currentDate: SignalProducer<Date, NoError>,

@@ -187,7 +187,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             value: (displaySection: SignalProducer(value: prefsSection),
                     existingCredential: credentialStore.output.producer,
                     resolvedCredential: resolvedCredential.bindingTarget,
-                    testURLSessionAction: makeTestURLSessionNetworkAction(),
+                    testURLSessionAction: makeRetrieveProfileNetworkAction(),
                     existingGoalPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
                     calendar: calendar.producer,
                     currentDate: currentDateGenerator.currentDate.producer,

@@ -19,7 +19,7 @@ class AccountViewController: NSViewController, BindingTargetProvider {
     internal typealias Interface = (
         existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
-        testURLSessionAction: TestURLSessionAction)
+        testURLSessionAction: RetrieveProfileNetworkAction)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }

@@ -19,17 +19,6 @@ func makeRetrieveProfileNetworkAction() -> RetrieveProfileNetworkAction {
     }
 }
 
-typealias TestURLSessionAction = Action<URLSession?, Profile, APIAccessError>
-
-func makeTestURLSessionNetworkAction() -> TestURLSessionAction {
-    return TestURLSessionAction { sessionOrNil in
-        guard let session = sessionOrNil else {
-            return SignalProducer(error: APIAccessError.noCredentials)
-        }
-        return session.togglAPIRequestProducer(for: MeService.endpoint, decoder: MeService.decodeProfile)
-    }
-}
-
 fileprivate struct MeService: Decodable {
     static let endpoint = "/api/v8/me"
     let profile: Profile
