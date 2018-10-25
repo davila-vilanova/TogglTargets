@@ -32,12 +32,15 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var retryButton: NSButton!
     @IBOutlet weak var fullNameField: NSTextField!
     @IBOutlet weak var profileImageView: NSImageView!
+    @IBOutlet weak var profileImageWrapper: NSView!
     @IBOutlet weak var logOutButton: NSButton!
 
 
     // MARK: - Wiring
 
     override func viewDidLoad() {
+        setupProfileImageStyle()
+
         let validBindings = lastBinding.producer.skipNil()
         let currentAction = Property(initial: nil, then: validBindings.map { $0.testURLSessionAction }).producer.skipNil()
         let currentCredential = Property(initial: nil, then: validBindings.map { $0.existingCredential }.flatten(.latest))
@@ -101,6 +104,20 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
         logOutButton.reactive.pressed = CocoaAction(requestLogOut)
 
         requestLogOut.values.bindOnlyToLatest(validBindings.map { $0.logOut })
+    }
+
+    private func setupProfileImageStyle() {
+        if let picLayer = profileImageView.layer {
+            picLayer.borderColor = NSColor.darkGray.cgColor
+            picLayer.borderWidth = 0.5
+            picLayer.cornerRadius = 7.5
+            picLayer.masksToBounds = true
+        }
+        if let shadowLayer = profileImageWrapper.layer {
+            shadowLayer.shadowOpacity = 0.3
+            shadowLayer.shadowOffset = CGSize(width: 0, height: -1)
+            shadowLayer.masksToBounds = false
+        }
     }
 
     override func viewDidAppear() {
