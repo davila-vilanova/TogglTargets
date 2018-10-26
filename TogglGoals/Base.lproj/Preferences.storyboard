@@ -261,6 +261,9 @@
                                     <constraint firstItem="8oS-If-VvO" firstAttribute="top" secondItem="3r6-lk-CQH" secondAttribute="top" id="bYv-hs-htx"/>
                                     <constraint firstAttribute="bottom" secondItem="8oS-If-VvO" secondAttribute="bottom" id="fWe-4P-2Kz"/>
                                 </constraints>
+                                <shadow key="shadow" blurRadius="3">
+                                    <color key="color" white="0.0" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </shadow>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="tdS-eB-WB6" userLabel="Width Limiting View">
                                 <rect key="frame" x="0.0" y="0.0" width="315" height="0.0"/>

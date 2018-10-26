@@ -114,11 +114,6 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
             picLayer.cornerRadius = 7.5
             picLayer.masksToBounds = true
         }
-        if let shadowLayer = profileImageWrapper.layer {
-            shadowLayer.shadowOpacity = 0.3
-            shadowLayer.shadowOffset = CGSize(width: 0, height: -1)
-            shadowLayer.masksToBounds = false
-        }
     }
 
     override func viewDidAppear() {
