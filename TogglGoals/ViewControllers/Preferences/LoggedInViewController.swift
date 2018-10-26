@@ -31,6 +31,8 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var fullNameField: NSTextField!
     @IBOutlet weak var profileImageView: NSImageView!
     @IBOutlet weak var profileImageWrapper: NSView!
+    @IBOutlet weak var workspaceCountField: NSTextField!
+    @IBOutlet weak var timezoneField: NSTextField!
     @IBOutlet weak var logOutButton: NSButton!
 
 
@@ -52,6 +54,12 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
         fullNameField.reactive.stringValue <~ profile.filterMap { $0.name } // TODO: or make name not optional, it probably is not on Toggl's side
         profileImageView.reactive.image <~ retrieveProfilePictureImageData.values.map { $0.0 }.map { NSImage(data: $0) }
         retrieveProfilePictureImageData <~ profile.filterMap { $0.imageUrl } // TODO: ditto?
+        timezoneField.reactive.stringValue <~ profile.filterMap { $0.timezone } // once again
+        workspaceCountField.reactive.stringValue <~ profile.map {
+            String.localizedStringWithFormat(NSLocalizedString("preferences.logged-in.workspace-count",
+                                                               comment: "count of workspaces managed by the Toggl account"), $0.workspaces.count)
+
+        }
 
         showCredentialsErrorAlert <~ lastBinding.latestOutput { $0.apiAccessError }
             .map { _ in () }

@@ -6,7 +6,7 @@
 "4FU-Dn-LAc.title" = "API token";
 
 /* Class = "NSTextFieldCell"; title = "Logged in as "; ObjectID = "50e-oD-cKp"; */
-"50e-oD-cKp.title" = "Logged in as ";
+"50e-oD-cKp.title" = "Logged in as:";
 
 /* Class = "NSButtonCell"; title = "enter API token manually"; ObjectID = "84F-Y3-9no"; */
 "84F-Y3-9no.title" = "enter API token manually";
@@ -61,3 +61,6 @@
 
 /* Class = "NSButtonCell";  title = "Done" ObjectID = "XYD-6F-XR9" */
 "XYD-6F-XR9.title" = "Done";
+
+/* Class = "NSTextFieldCell"; title = "Account timezone:"; ObjectID = "uyW-zP-wTC"; */
+"uyW-zP-wTC.title" = "Current account timezone:";

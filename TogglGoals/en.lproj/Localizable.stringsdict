@@ -82,5 +82,21 @@
 			<string>%d syncing operations have errors</string>
 		</dict>
 	</dict>
+	<key>preferences.logged-in.workspace-count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@workspaces@</string>
+		<key>workspaces</key>
+		<dict>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>one</key>
+			<string>One workspace</string>
+			<key>other</key>
+			<string>%d workspaces</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
