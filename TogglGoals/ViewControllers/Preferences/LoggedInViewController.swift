@@ -16,24 +16,29 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
     // MARK: - Interface
 
     internal typealias Interface = (
-        existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
-        testURLSessionAction: RetrieveProfileNetworkAction,
+        profile: SignalProducer<Profile, NoError>,
+        apiAccessError: SignalProducer<APIAccessError, NoError>,
         logOut: BindingTarget<Void>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
+
     // MARK: - Outlets and action
 
-
     @IBOutlet weak var loggedInAsLabel: NSTextField!
-    @IBOutlet weak var statusLabel: NSTextField!
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
-    @IBOutlet weak var retryButton: NSButton!
     @IBOutlet weak var fullNameField: NSTextField!
     @IBOutlet weak var profileImageView: NSImageView!
     @IBOutlet weak var profileImageWrapper: NSView!
     @IBOutlet weak var logOutButton: NSButton!
+
+
+    // MARK: -
+
+    private lazy var retrieveProfilePictureImageData = Action<URL, (Data, URLResponse), AnyError> { imageURL in
+        URLSession.shared.reactive.data(with: URLRequest(url: imageURL))
+    }
 
 
     // MARK: - Wiring
@@ -41,69 +46,65 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         setupProfileImageStyle()
 
-        let validBindings = lastBinding.producer.skipNil()
-        let currentAction = Property(initial: nil, then: validBindings.map { $0.testURLSessionAction }).producer.skipNil()
-        let currentCredential = Property(initial: nil, then: validBindings.map { $0.existingCredential }.flatten(.latest))
-        let currentActionPlusCredential = Property<(RetrieveProfileNetworkAction, TogglAPITokenCredential?)?>(initial: nil, then: SignalProducer.combineLatest(currentAction, currentCredential.producer))
+        progressIndicator.reactive.makeBindingTarget { $1 ? $0.startAnimation(nil) : $0.stopAnimation(nil) } <~ retrieveProfilePictureImageData.isExecuting
 
-        reactive.lifetime += currentActionPlusCredential.producer.skipNil()
-            .on(value: { $0.0.apply(URLSession(togglAPICredential: $0.1)).start() }).start()
+        let profile = lastBinding.latestOutput { $0.profile }
+        fullNameField.reactive.stringValue <~ profile.filterMap { $0.name } // TODO: or make name not optional, it probably is not on Toggl's side
+        profileImageView.reactive.image <~ retrieveProfilePictureImageData.values.map { $0.0 }.map { NSImage(data: $0) }
+        retrieveProfilePictureImageData <~ profile.filterMap { $0.imageUrl } // TODO: ditto?
 
-        let retryActions = currentActionPlusCredential.producer.skipNil().map { (underlyingAction, credential) -> RetryAction in
-            return RetryAction(enabledIf: underlyingAction.isEnabled) {
-                underlyingAction.apply(URLSession(togglAPICredential: credential)).start()
-                return SignalProducer.empty
+        showCredentialsErrorAlert <~ lastBinding.latestOutput { $0.apiAccessError }
+            .map { _ in () }
+            .throttle(while: Property(initial: true,
+                                      then: reactive.producer(forKeyPath: "view.window").map { $0 == nil }),
+                      on: UIScheduler())
+
+        let requestLogOutButtonPress = Action<Void, Void, NoError> { SignalProducer(value: ()) }
+        logOutButton.reactive.pressed = CocoaAction(requestLogOutButtonPress)
+
+        let requestLogOut = Signal.merge(requestLogOutButtonPress.values,
+                                         showCredentialsErrorAlert.values.filter { $0.isReenter }
+                                            .map { _ in () })
+
+
+        requestLogOut.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.logOut })
+    }
+
+    private enum CredentialsErrorResolution {
+        case reenter
+        case ignore
+
+        var isReenter: Bool {
+            switch self {
+            case .reenter: return true
+            default: return false
             }
         }
+    }
 
-        retryButton.reactive.makeBindingTarget { $0.reactive.pressed = $1 } <~ retryActions.map { CocoaAction($0) }
+    private lazy var showCredentialsErrorAlert = Action<Void, CredentialsErrorResolution, NoError> { [unowned self] in
+        guard let window = self.view.window else {
+            return SignalProducer.empty
+        }
 
-        let profiles = currentAction.map { $0.values }.flatten(.latest)
-        let busyStates = currentAction.map { $0.isExecuting }.flatten(.latest)
-        let errors = currentAction.map { $0.errors }.flatten(.latest)
+        return SignalProducer { (observer: Signal<CredentialsErrorResolution, NoError>.Observer, lifetime: Lifetime) in
+            let alert = NSAlert()
+            alert.alertStyle = .warning
+            alert.messageText = NSLocalizedString("logged-in.invalid-credentials.title", comment: "credential seems no longer valid: title")
+            alert.informativeText = NSLocalizedString("logged-in.invalid-credentials.informative", comment: "credential seems no longer valid: informative text")
 
-        let showStatusLabel = SignalProducer.merge(busyStates,
-                                                   profiles.map { _ in false },
-                                                   errors.map { _ in true })
+            alert.addButton(withTitle: NSLocalizedString("logged-in.invalid-credentials.ignore", comment: "button caption: ignore invalid credentials error"))
+            alert.addButton(withTitle: NSLocalizedString("logged-in.invalid-credentials.reenter", comment: "Reenter Credentials"))
 
-        statusLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ showStatusLabel.negate()
-        fullNameField.reactive.makeBindingTarget { $0.isHidden = $1 } <~ showStatusLabel
-        loggedInAsLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ showStatusLabel
-        progressIndicator.reactive.makeBindingTarget { $1 ? $0.startAnimation(nil) : $0.stopAnimation(nil) } <~ busyStates
-        retryButton.isHidden = true
-        retryButton.reactive.makeBindingTarget { $0.isHidden = $1 } <~ SignalProducer.merge(profiles.map { _ in true },
-                                                                                            errors.map { _ in false })
-
-        statusLabel.reactive.stringValue <~
-            SignalProducer.merge(profiles.map { _ in "" },
-                                 busyStates.filter { $0 }
-                                    .map { _ in
-                                        NSLocalizedString("logged-in.loading-profile",
-                                                          comment: "loading profile status description") },
-                                 errors.map(localizedDescription))
-
-        fullNameField.reactive.stringValue <~ SignalProducer.merge(profiles.map { $0.name }.skipNil(),
-                                                                   errors.map { _ in "" })
-        profileImageView.reactive.image <~ SignalProducer.merge(profiles.map { $0.imageUrl }.skipNil().map { NSImage(contentsOf: $0) }.skipNil(),
-                                                                errors.map { _ in NSImage(named: NSImage.Name.user) }.skipNil())
-
-        let logOutTitle = logOutButton.title
-        logOutButton.reactive.makeBindingTarget { $0.title = $1 } <~
-            SignalProducer.merge(
-                errors.map {
-                    switch $0 {
-                    case .noCredentials, .authenticationError:
-                        return NSLocalizedString("logged-in.reenter-credentials", comment: "reenter credentials button caption")
-                    default: return logOutTitle
-                    }
-                },
-                profiles.map { _ in logOutTitle })
-
-
-        let requestLogOut = Action<Void, Void, NoError> { SignalProducer(value: ()) }
-        logOutButton.reactive.pressed = CocoaAction(requestLogOut)
-
-        requestLogOut.values.bindOnlyToLatest(validBindings.map { $0.logOut })
+            alert.beginSheetModal(for: window) { response in
+                switch response {
+                case .alertFirstButtonReturn: observer.send(value: .ignore)
+                case .alertSecondButtonReturn: fallthrough
+                default: observer.send(value: .reenter)
+                }
+                observer.sendCompleted()
+            }
+        }
     }
 
     private func setupProfileImageStyle() {

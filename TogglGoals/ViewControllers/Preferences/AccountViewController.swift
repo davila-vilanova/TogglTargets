@@ -18,6 +18,8 @@ class AccountViewController: NSViewController, BindingTargetProvider {
 
     internal typealias Interface = (
         existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
+        profile: SignalProducer<Profile, NoError>,
+        apiAccessError: SignalProducer<APIAccessError, NoError>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
         testURLSessionAction: RetrieveProfileNetworkAction)
 
@@ -40,8 +42,8 @@ class AccountViewController: NSViewController, BindingTargetProvider {
         let validBindings = lastBinding.producer.skipNil()
         let logOutRequested = MutableProperty<Void>(())
         logOutRequested.signal.map { nil as TogglAPITokenCredential? }.bindOnlyToLatest(validBindings.map { $0.resolvedCredential })
-        loggedInController <~ validBindings.map { (existingCredential: $0.existingCredential,
-                                                   testURLSessionAction: $0.testURLSessionAction,
+        loggedInController <~ validBindings.map { (profile: $0.profile,
+                                                   apiAccessError: $0.apiAccessError,
                                                    logOut: logOutRequested.bindingTarget) }
         return loggedInController
     }()

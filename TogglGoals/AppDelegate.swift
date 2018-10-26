@@ -183,9 +183,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             _ = updatedPeriodPreference
         }
 
+        let authErrors = modelCoordinator.retrievalStatus.filter { $0.isError }.filterMap { $0.error }.filter {
+            switch $0 {
+            case .noCredentials, .authenticationError: return true
+            default: return false
+            }
+        }
+
         preferencesController <~ SignalProducer<PreferencesViewControllerWrapper.Interface, NoError>(
             value: (displaySection: SignalProducer(value: prefsSection),
                     existingCredential: credentialStore.output.producer,
+                    profile: modelCoordinator.profile.producer.skipNil(),
+                    apiAccessError: authErrors,
                     resolvedCredential: resolvedCredential.bindingTarget,
                     testURLSessionAction: makeRetrieveProfileNetworkAction(),
                     existingGoalPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
@@ -204,7 +213,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             preferencesWindow.delegate = self
             preferencesWindow.makeKeyAndOrderFront(nil)
         }
-        
+
+        // Reload profile if user is logged in -- this tests that the credentials keep being valid and takes the latest changes in the user's profile
+        if credentialStore.output.value != nil {
+            modelCoordinator.refreshAllData <~ SignalProducer(value: ())
+        }
+
         presentedPreferencesWindow = preferencesWindow
     }
 

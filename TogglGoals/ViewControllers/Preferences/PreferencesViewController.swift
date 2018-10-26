@@ -20,6 +20,8 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     internal typealias Interface = (
         displaySection: SignalProducer<Section?, NoError>,
         existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
+        profile: SignalProducer<Profile, NoError>,
+        apiAccessError: SignalProducer<APIAccessError, NoError>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
         testURLSessionAction: RetrieveProfileNetworkAction,
         existingGoalPeriodPreference: SignalProducer<PeriodPreference, NoError>,
@@ -63,7 +65,7 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
 
         let validBindings = lastBinding.producer.skipNil()
         if let account = controller as? AccountViewController {
-            account <~ validBindings.map { ($0.existingCredential, $0.resolvedCredential, $0.testURLSessionAction) }
+            account <~ validBindings.map { ($0.existingCredential, $0.profile, $0.apiAccessError, $0.resolvedCredential, $0.testURLSessionAction) }
         } else if let goalPeriods = controller as? GoalPeriodsPreferencesViewController {
             goalPeriods <~ validBindings.map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference) }
         }

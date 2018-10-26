@@ -61,8 +61,17 @@
 /* loading profile status description */
 "logged-in.loading-profile" = "Cargando...";
 
-/* reenter credentials button caption */
-"logged-in.reenter-credentials" = "Reintroducir Credenciales";
+/* credential seems no longer valid: title */
+"logged-in.invalid-credentials.title" = "Parece que las credenciales que estamos usando para acceder Toggl ya no son válidas";
+
+/* credential seems no longer valid: informative text */
+"logged-in.invalid-credentials.informative" = "Esto podría ser un problema en el servidor pero lo más probable es que tengas que reintroducir tus credenciales de Toggl.";
+
+/* Reenter Credentials */
+"logged-in.invalid-credentials.reenter" = "Reintroducir credenciales";
+
+/* button caption: ignore invalid credentials error */
+"logged-in.invalid-credentials.ignore" = "Ignore for now";
 
 /* amount of time worked today */
 "day-progress.worked-today" = "trabajado hoy: %@";
