@@ -281,3 +281,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
     }
 }
 
+fileprivate func resetOnboardingState() {
+    defaults.removeObject(forKey: "OnboardingNotPending")
+}

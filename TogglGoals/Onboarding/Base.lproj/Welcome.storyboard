@@ -33,19 +33,19 @@
             <objects>
                 <viewController id="7Vr-Nc-dGW" customClass="WelcomeViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="NiY-k9-5tL">
-                        <rect key="frame" x="0.0" y="0.0" width="525" height="197"/>
+                        <rect key="frame" x="0.0" y="0.0" width="709" height="190"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aYp-00-8db">
-                                <rect key="frame" x="18" y="155" width="489" height="22"/>
+                                <rect key="frame" x="188" y="148" width="503" height="22"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" refusesFirstResponder="YES" title="TogglGoals keeps you on track to meet your time goals" id="DLC-cW-ECx">
                                     <font key="font" size="18" name=".AppleSystemUIFontMedium"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oy1-8H-iDQ">
-                                <rect key="frame" x="18" y="96" width="489" height="51"/>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="751" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oy1-8H-iDQ">
+                                <rect key="frame" x="188" y="89" width="503" height="51"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="485" id="Yym-ij-78a"/>
                                 </constraints>
@@ -57,7 +57,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gfN-IN-Lfx">
-                                <rect key="frame" x="18" y="71" width="489" height="17"/>
+                                <rect key="frame" x="188" y="64" width="503" height="17"/>
                                 <textFieldCell key="cell" selectable="YES" refusesFirstResponder="YES" title="You can choose to work with your targets on a montly or weekly basis." id="4p3-AB-d9f">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -65,14 +65,14 @@
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lIb-WD-ar6">
-                                <rect key="frame" x="416" y="13" width="95" height="32"/>
+                                <rect key="frame" x="600" y="13" width="95" height="25"/>
                                 <buttonCell key="cell" type="push" title="Continue" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qes-kY-tTz">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="igS-L0-w3j">
-                                <rect key="frame" x="20" y="21" width="108" height="19"/>
+                                <rect key="frame" x="190" y="14" width="108" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="what toggl.com?" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Erd-74-jPL">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -81,22 +81,33 @@
                                     <action selector="openTogglDotCom:" target="7Vr-Nc-dGW" id="uHG-ib-uKO"/>
                                 </connections>
                             </button>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yAh-aw-kaq">
+                                <rect key="frame" x="20" y="20" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="yAh-aw-kaq" secondAttribute="height" multiplier="1:1" id="slQ-yj-ymm"/>
+                                    <constraint firstAttribute="width" constant="150" id="wml-B4-jSN"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="Ijd-V0-UoC"/>
+                            </imageView>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="gfN-IN-Lfx" secondAttribute="bottom" constant="64" id="11c-HU-Nzd"/>
+                            <constraint firstItem="gfN-IN-Lfx" firstAttribute="trailing" secondItem="lIb-WD-ar6" secondAttribute="trailing" id="1eG-KX-h8S"/>
                             <constraint firstItem="lIb-WD-ar6" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="1hP-bI-KZa"/>
                             <constraint firstItem="Oy1-8H-iDQ" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="1zJ-KT-Bcf"/>
                             <constraint firstItem="lIb-WD-ar6" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="igS-L0-w3j" secondAttribute="trailing" constant="8" symbolic="YES" id="310-iF-g26"/>
                             <constraint firstItem="Oy1-8H-iDQ" firstAttribute="top" secondItem="aYp-00-8db" secondAttribute="bottom" constant="8" symbolic="YES" id="AQH-Ax-WVX"/>
-                            <constraint firstItem="lIb-WD-ar6" firstAttribute="top" secondItem="gfN-IN-Lfx" secondAttribute="bottom" constant="30" id="HJl-zi-TqR"/>
+                            <constraint firstAttribute="bottom" secondItem="yAh-aw-kaq" secondAttribute="bottom" constant="20" symbolic="YES" id="DG5-0j-fR1"/>
+                            <constraint firstItem="lIb-WD-ar6" firstAttribute="top" secondItem="gfN-IN-Lfx" secondAttribute="bottom" constant="30" id="FrU-LA-VWi"/>
                             <constraint firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" constant="20" symbolic="YES" id="HV9-P4-syx"/>
                             <constraint firstItem="lIb-WD-ar6" firstAttribute="firstBaseline" secondItem="igS-L0-w3j" secondAttribute="firstBaseline" id="PJw-7L-r0t"/>
                             <constraint firstItem="aYp-00-8db" firstAttribute="top" secondItem="NiY-k9-5tL" secondAttribute="top" constant="20" symbolic="YES" id="Pms-sr-1xd"/>
                             <constraint firstItem="Oy1-8H-iDQ" firstAttribute="leading" secondItem="aYp-00-8db" secondAttribute="leading" id="UCg-Wm-Do1"/>
-                            <constraint firstItem="gfN-IN-Lfx" firstAttribute="leading" secondItem="aYp-00-8db" secondAttribute="leading" id="ZDr-rC-eMd"/>
-                            <constraint firstItem="gfN-IN-Lfx" firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" id="gG3-Lq-cgW"/>
-                            <constraint firstItem="gfN-IN-Lfx" firstAttribute="top" secondItem="Oy1-8H-iDQ" secondAttribute="bottom" constant="8" symbolic="YES" id="jYV-iF-DOn"/>
+                            <constraint firstItem="gfN-IN-Lfx" firstAttribute="leading" secondItem="igS-L0-w3j" secondAttribute="leading" id="bVq-ip-WAV"/>
+                            <constraint firstItem="aYp-00-8db" firstAttribute="leading" secondItem="yAh-aw-kaq" secondAttribute="trailing" constant="20" id="chg-YJ-c9z"/>
                             <constraint firstItem="lIb-WD-ar6" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="NiY-k9-5tL" secondAttribute="leading" constant="422" id="l4C-eI-0ZB"/>
-                            <constraint firstItem="aYp-00-8db" firstAttribute="leading" secondItem="NiY-k9-5tL" secondAttribute="leading" constant="20" symbolic="YES" id="tOh-tC-lpM"/>
+                            <constraint firstItem="yAh-aw-kaq" firstAttribute="leading" secondItem="NiY-k9-5tL" secondAttribute="leading" constant="20" symbolic="YES" id="teA-aC-2nc"/>
+                            <constraint firstItem="yAh-aw-kaq" firstAttribute="top" secondItem="NiY-k9-5tL" secondAttribute="top" constant="20" symbolic="YES" id="uBX-zf-rwA"/>
                             <constraint firstAttribute="bottom" secondItem="lIb-WD-ar6" secondAttribute="bottom" constant="20" symbolic="YES" id="wsC-Tp-A8e"/>
                             <constraint firstItem="igS-L0-w3j" firstAttribute="leading" secondItem="aYp-00-8db" secondAttribute="leading" id="xjJ-8i-BuG"/>
                         </constraints>
@@ -107,7 +118,10 @@
                 </viewController>
                 <customObject id="J7o-1x-wrF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="716.5" y="-428"/>
+            <point key="canvasLocation" x="669.5" y="-429"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="logo" width="500" height="500"/>
+    </resources>
 </document>
