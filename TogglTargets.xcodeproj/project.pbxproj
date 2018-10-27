@@ -497,10 +497,10 @@
 		632957391DBA99F000E11A10 = {
 			isa = PBXGroup;
 			children = (
-				632957441DBA99F000E11A10 /* TogglGoals */,
-				632957561DBA99F000E11A10 /* TogglGoalsTests */,
-				632957611DBA99F000E11A10 /* TogglGoalsUITests */,
-				63AB08211FB77C5100565D87 /* TogglGoals-MacOS */,
+				632957441DBA99F000E11A10 /* TogglTargets */,
+				632957561DBA99F000E11A10 /* TogglTargetsTests */,
+				632957611DBA99F000E11A10 /* TogglTargetsUITests */,
+				63AB08211FB77C5100565D87 /* TogglTargets-MacOS */,
 				632957431DBA99F000E11A10 /* Products */,
 				63EAD8DA1DC6A97C001E7889 /* Frameworks */,
 			);
@@ -517,7 +517,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		632957441DBA99F000E11A10 /* TogglGoals */ = {
+		632957441DBA99F000E11A10 /* TogglTargets */ = {
 			isa = PBXGroup;
 			children = (
 				6329574E1DBA99F000E11A10 /* Info.plist */,
@@ -536,10 +536,10 @@
 				63D4BB981F7D80FC00B87298 /* Model */,
 				63F6D17A2164E3AE004EE7B9 /* Onboarding */,
 			);
-			path = TogglGoals;
+			path = TogglTargets;
 			sourceTree = "<group>";
 		};
-		632957561DBA99F000E11A10 /* TogglGoalsTests */ = {
+		632957561DBA99F000E11A10 /* TogglTargetsTests */ = {
 			isa = PBXGroup;
 			children = (
 				632957591DBA99F000E11A10 /* Info.plist */,
@@ -557,17 +557,17 @@
 				639F8B7A20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift */,
 				639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */,
 			);
-			path = TogglGoalsTests;
+			path = TogglTargetsTests;
 			sourceTree = "<group>";
 		};
-		632957611DBA99F000E11A10 /* TogglGoalsUITests */ = {
+		632957611DBA99F000E11A10 /* TogglTargetsUITests */ = {
 			isa = PBXGroup;
 			children = (
 				632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */,
 				632957641DBA99F000E11A10 /* Info.plist */,
 				63F76B9920F6212D0024939B /* InfoPlist.strings */,
 			);
-			path = TogglGoalsUITests;
+			path = TogglTargetsUITests;
 			sourceTree = "<group>";
 		};
 		6334B49320703EBF00A5B796 /* ActivityViewController */ = {
@@ -703,14 +703,14 @@
 			path = OfflineCache;
 			sourceTree = "<group>";
 		};
-		63AB08211FB77C5100565D87 /* TogglGoals-MacOS */ = {
+		63AB08211FB77C5100565D87 /* TogglTargets-MacOS */ = {
 			isa = PBXGroup;
 			children = (
 				63AB08221FB77C5100565D87 /* TogglGoals_MacOS.h */,
 				63AB08231FB77C5100565D87 /* Info.plist */,
 				63F76BA520F6212D0024939B /* InfoPlist.strings */,
 			);
-			path = "TogglGoals-MacOS";
+			path = "TogglTargets-MacOS";
 			sourceTree = "<group>";
 		};
 		63D4BB981F7D80FC00B87298 /* Model */ = {
@@ -1513,7 +1513,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
-				INFOPLIST_FILE = TogglGoals/Info.plist;
+				INFOPLIST_FILE = TogglTargets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoals;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1535,7 +1535,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
-				INFOPLIST_FILE = TogglGoals/Info.plist;
+				INFOPLIST_FILE = TogglTargets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoals;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1556,7 +1556,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
-				INFOPLIST_FILE = TogglGoalsTests/Info.plist;
+				INFOPLIST_FILE = TogglTargetsTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoalsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1577,7 +1577,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
-				INFOPLIST_FILE = TogglGoalsTests/Info.plist;
+				INFOPLIST_FILE = TogglTargetsTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoalsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1593,13 +1593,13 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7ZT9GY93K7;
-				INFOPLIST_FILE = TogglGoalsUITests/Info.plist;
+				INFOPLIST_FILE = TogglTargetsUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoalsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
-				TEST_TARGET_NAME = TogglGoals;
+				TEST_TARGET_NAME = TogglTargets;
 			};
 			name = Debug;
 		};
@@ -1609,13 +1609,13 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7ZT9GY93K7;
-				INFOPLIST_FILE = TogglGoalsUITests/Info.plist;
+				INFOPLIST_FILE = TogglTargetsUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoalsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
-				TEST_TARGET_NAME = TogglGoals;
+				TEST_TARGET_NAME = TogglTargets;
 			};
 			name = Release;
 		};
@@ -1640,7 +1640,7 @@
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = "TogglGoals-MacOS/Info.plist";
+				INFOPLIST_FILE = "TogglTargets-MacOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
@@ -1674,7 +1674,7 @@
 				);
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = "TogglGoals-MacOS/Info.plist";
+				INFOPLIST_FILE = "TogglTargets-MacOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
