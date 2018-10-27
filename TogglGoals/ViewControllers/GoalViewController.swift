@@ -17,9 +17,9 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
 
     internal typealias Interface = (
         calendar: SignalProducer<Calendar, NoError>,
-        goal: SignalProducer<Goal?, NoError>,
+        goal: SignalProducer<TimeTarget?, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
-        userUpdates: BindingTarget<Goal>)
+        userUpdates: BindingTarget<TimeTarget>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -27,7 +27,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
 
     // MARK: - Output
 
-    private var userUpdates = MutableProperty<Goal?>(nil)
+    private var userUpdates = MutableProperty<TimeTarget?>(nil)
 
 
     // MARK: - Internal
@@ -124,7 +124,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
         let goalFromEditedHours = Signal.merge(textFieldValues, stepperValues)
             .producer
             .withLatest(from: nonNilGoal)
-            .map { Goal(for: $1.projectId, hoursTarget: $0, workWeekdays: $1.workWeekdays) }
+            .map { TimeTarget(for: $1.projectId, hoursTarget: $0, workWeekdays: $1.workWeekdays) }
 
         
         let goalFromEditedActiveWeekdays = activeWeekdaysControl.reactive.selectedSegmentIndexes
@@ -144,7 +144,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
             }.skipNil()
             .producer
             .withLatest(from: nonNilGoal)
-            .map { Goal(for: $1.projectId, hoursTarget: $1.hoursTarget, workWeekdays: $0) }
+            .map { TimeTarget(for: $1.projectId, hoursTarget: $1.hoursTarget, workWeekdays: $0) }
 
         let editedGoal = SignalProducer.merge(goalFromEditedHours,
                                               goalFromEditedActiveWeekdays)

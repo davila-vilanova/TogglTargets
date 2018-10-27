@@ -17,7 +17,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider, Onboard
 
     internal typealias Interface = (
         projectId: SignalProducer<Int64, NoError>,
-        goal: SignalProducer<Goal, NoError>,
+        goal: SignalProducer<TimeTarget, NoError>,
         report: SignalProducer<TwoPartTimeReport?, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         calendar: SignalProducer<Calendar, NoError>,

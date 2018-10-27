@@ -14,8 +14,8 @@ fileprivate let timeoutForExpectations: TimeInterval = 1
 class SQLiteGoalPersistenceProviderTests: XCTestCase {
 
     func testStoreAndRetrieveGoals() {
-        let fixtureMonthly = Goal(for: 4121, hoursTarget: 24, workWeekdays: .exceptWeekend)
-        let fixtureWeekly = Goal(for: 1381, hoursTarget: 8, workWeekdays: .wholeWeek)
+        let fixtureMonthly = TimeTarget(for: 4121, hoursTarget: 24, workWeekdays: .exceptWeekend)
+        let fixtureWeekly = TimeTarget(for: 1381, hoursTarget: 8, workWeekdays: .wholeWeek)
 
         guard let store = SQLiteGoalPersistenceProvider(baseDirectory: FileManager.default.temporaryDirectory) else {
             XCTFail()

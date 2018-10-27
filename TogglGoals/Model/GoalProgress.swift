@@ -15,7 +15,7 @@ class GoalProgress {
     // MARK: - Interface
 
     public var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
-    public var goal: BindingTarget<Goal>{ return _goal.deoptionalizedBindingTarget }
+    public var goal: BindingTarget<TimeTarget>{ return _goal.deoptionalizedBindingTarget }
     public var report: BindingTarget<TwoPartTimeReport?>{ return _report.bindingTarget }
     public var runningEntry: BindingTarget<RunningEntry?>{ return _runningEntry.bindingTarget }
     public var startGoalDay: BindingTarget<DayComponents>{ return _startGoalDay.deoptionalizedBindingTarget }
@@ -170,7 +170,7 @@ class GoalProgress {
     // MARK: - Backing input properties
 
     private let _projectId = MutableProperty<Int64?>(nil)
-    private let _goal = MutableProperty<Goal?>(nil)
+    private let _goal = MutableProperty<TimeTarget?>(nil)
     private let _report = MutableProperty<TwoPartTimeReport?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
     private let _startGoalDay = MutableProperty<DayComponents?>(nil)

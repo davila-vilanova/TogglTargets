@@ -102,7 +102,7 @@ struct ProjectIDsByGoals {
             ///
             ///   - returns: The update corresponding to the change in the goal associated with `projectId`,
             ///              `nil` if `projectId` is not included in `idsByGoals`
-            static func forGoalChange(involving newGoal: Goal?,
+            static func forGoalChange(involving newGoal: TimeTarget?,
                                       for projectId: ProjectID,
                                       within goalsPreChange: ProjectIndexedGoals,
                                       affecting idsByGoals: ProjectIDsByGoals) -> Update.GoalUpdate?  {

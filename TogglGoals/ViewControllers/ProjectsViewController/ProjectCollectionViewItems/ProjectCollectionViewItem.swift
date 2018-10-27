@@ -24,7 +24,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
         project: SignalProducer<Project?, NoError>,
-        goal: SignalProducer<Goal?, NoError>,
+        goal: SignalProducer<TimeTarget?, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         report: SignalProducer<TwoPartTimeReport?, NoError>)
 

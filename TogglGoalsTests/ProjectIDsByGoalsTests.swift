@@ -68,14 +68,14 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
     var idsByGoals: ProjectIDsByGoals?
 
     var projectId: ProjectID?
-    var oldGoal: Goal?
-    var newGoal: Goal?
+    var oldGoal: TimeTarget?
+    var newGoal: TimeTarget?
     var newIndexedGoals: ProjectIndexedGoals?
 
     typealias GoalUpdate = ProjectIDsByGoals.Update.GoalUpdate
 
     // Updates the values of projectId, oldGoal, newGoal and newIndexedGoals
-    func setUpForProjectId(_ projectId: ProjectID, newGoal: Goal?) {
+    func setUpForProjectId(_ projectId: ProjectID, newGoal: TimeTarget?) {
         guard let oldIndexedGoals = indexedGoals else {
             XCTFail(SetupFailureNilIndexedGoals)
             return
@@ -97,10 +97,10 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        indexedGoals = [ 71 : Goal(for: 71, hoursTarget: 10, workWeekdays: WeekdaySelection.exceptWeekend),
-                         25 : Goal(for: 25, hoursTarget: 20, workWeekdays: WeekdaySelection.wholeWeek),
-                         90 : Goal(for: 90, hoursTarget: 50, workWeekdays: WeekdaySelection.exceptWeekend),
-                         48 : Goal(for: 48, hoursTarget: 30, workWeekdays: WeekdaySelection.exceptWeekend) ]
+        indexedGoals = [ 71 : TimeTarget(for: 71, hoursTarget: 10, workWeekdays: WeekdaySelection.exceptWeekend),
+                         25 : TimeTarget(for: 25, hoursTarget: 20, workWeekdays: WeekdaySelection.wholeWeek),
+                         90 : TimeTarget(for: 90, hoursTarget: 50, workWeekdays: WeekdaySelection.exceptWeekend),
+                         48 : TimeTarget(for: 48, hoursTarget: 30, workWeekdays: WeekdaySelection.exceptWeekend) ]
         projectIDs = [30, 12, 25, 89, 22, 48, 71, 60]
 
         idsByGoals = ProjectIDsByGoals(projectIDs: projectIDs!, goals: indexedGoals!)
@@ -130,7 +130,7 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             return
         }
 
-        setUpForProjectId(48, newGoal: Goal(for: 48, hoursTarget: 15, workWeekdays: WeekdaySelection.exceptWeekend))
+        setUpForProjectId(48, newGoal: TimeTarget(for: 48, hoursTarget: 15, workWeekdays: WeekdaySelection.exceptWeekend))
         guard let projectId = projectId else {
             XCTFail(SetupFailureNilProjectId)
             return
@@ -207,7 +207,7 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             return
         }
 
-        setUpForProjectId(22, newGoal: Goal(for: 22, hoursTarget: 16, workWeekdays: WeekdaySelection.exceptWeekend))
+        setUpForProjectId(22, newGoal: TimeTarget(for: 22, hoursTarget: 16, workWeekdays: WeekdaySelection.exceptWeekend))
         guard let projectId = projectId else {
             XCTFail(SetupFailureNilProjectId)
             return

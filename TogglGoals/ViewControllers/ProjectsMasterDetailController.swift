@@ -23,7 +23,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
         readProject: ReadProject,
         readGoal: ReadGoal,
-        writeGoal: BindingTarget<Goal>,
+        writeGoal: BindingTarget<TimeTarget>,
         deleteGoal: BindingTarget<ProjectID>,
         readReport: ReadReport)
 
@@ -38,9 +38,9 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private let focusOnUndoProjectId = MutableProperty<ProjectID?>(nil)
 
-    private let createGoal = MutableProperty<Goal?>(nil)
+    private let createGoal = MutableProperty<TimeTarget?>(nil)
 
-    private let modifyGoal = MutableProperty<Goal?>(nil)
+    private let modifyGoal = MutableProperty<TimeTarget?>(nil)
 
     private let deleteGoal = MutableProperty<ProjectID?>(nil)
 
@@ -57,11 +57,11 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private lazy var isProjectWithGoalCurrentlySelected =
         Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readGoal.producer)
-            .map { p, r -> SignalProducer<Goal?, NoError> in
+            .map { p, r -> SignalProducer<TimeTarget?, NoError> in
                 guard let projectId = p,
                     let readGoal = r
                     else {
-                        return SignalProducer<Goal?, NoError>(value: nil)
+                        return SignalProducer<TimeTarget?, NoError>(value: nil)
                 }
                 return readGoal(projectId)
             }
@@ -156,7 +156,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
             let projectId = selectedProjectId.value else {
                 return
         }
-        createGoal <~ SignalProducer(value: Goal.createDefault(for: projectId))
+        createGoal <~ SignalProducer(value: TimeTarget.createDefault(for: projectId))
     }
 
     @IBAction public func deleteGoal(_ sender: Any?) {

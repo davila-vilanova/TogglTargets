@@ -22,7 +22,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         readGoal: ReadGoal,
-        writeGoal: BindingTarget<Goal>,
+        writeGoal: BindingTarget<TimeTarget>,
         readReport: ReadReport)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -41,8 +41,8 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
 
     private lazy var projectId: SignalProducer<Int64, NoError> = project.producer.skipNil().map { $0.id }
 
-    /// Goal corresponding to the selected project.
-    private lazy var goalForCurrentProject: SignalProducer<Goal?, NoError> = projectId
+    /// TimeTarget corresponding to the selected project.
+    private lazy var goalForCurrentProject: SignalProducer<TimeTarget?, NoError> = projectId
         .throttle(while: readGoal.map { $0 == nil }, on: UIScheduler())
         .combineLatest(with: readGoal.producer.skipNil())
         .map { projectId, readGoal in readGoal(projectId) }

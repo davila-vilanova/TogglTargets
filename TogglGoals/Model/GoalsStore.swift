@@ -11,14 +11,14 @@ import SQLite
 import Result
 import ReactiveSwift
 
-typealias ProjectIndexedGoals = [ProjectID : Goal]
+typealias ProjectIndexedGoals = [ProjectID : TimeTarget]
 
 /// Producer of `ProjectIDsByGoals.Update` values that when started emits a
 // `full(ProjectIDsByGoals)` value which can be followed by full or
 /// incremental updates.
 typealias ProjectIDsByGoalsProducer = SignalProducer<ProjectIDsByGoals.Update, NoError>
 
-/// An entity that stores and retrieves Goal values
+/// An entity that stores and retrieves TimeTarget values
 protocol GoalsStore {
 
     /// Function which takes a project ID as input and returns a producer that
@@ -30,7 +30,7 @@ protocol GoalsStore {
     var readGoal: ReadGoal { get }
 
     /// Target which accepts new (or edited) goal values.
-    var writeGoal: BindingTarget<Goal> { get }
+    var writeGoal: BindingTarget<TimeTarget> { get }
 
     /// Target which for each received project ID deletes the goal associated with that project ID.
     var deleteGoal: BindingTarget<ProjectID> { get }
@@ -53,7 +53,7 @@ protocol ProjectIDsByGoalsProducing {
 }
 
 protocol GoalPersistenceProvider {
-    var persistGoal: BindingTarget<Goal> { get }
+    var persistGoal: BindingTarget<TimeTarget> { get }
     var deleteGoal: BindingTarget<ProjectID> { get }
     var allGoals: MutableProperty<ProjectIndexedGoals> { get }
 }
@@ -76,10 +76,10 @@ class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
     private let (lifetime, token) = Lifetime.make()
     private lazy var scheduler = QueueScheduler()
 
-    private let _persistGoal = MutableProperty<Goal?>(nil)
+    private let _persistGoal = MutableProperty<TimeTarget?>(nil)
 
     /// Persists the provided goal into the database synchronously.
-    var persistGoal: BindingTarget<Goal> { return _persistGoal.deoptionalizedBindingTarget }
+    var persistGoal: BindingTarget<TimeTarget> { return _persistGoal.deoptionalizedBindingTarget }
 
     private let _deleteGoal = MutableProperty<ProjectID?>(nil)
 
@@ -97,7 +97,7 @@ class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
             let projectIdValue = retrievedRow[projectIdExpression]
             let hoursTargetValue = retrievedRow[hoursTargetExpression]
             let workWeekdaysValue = try! /* TODO */ retrievedRow.get(workWeekdaysExpression) // [1]
-            let goal = Goal(for: projectIdValue,
+            let goal = TimeTarget(for: projectIdValue,
                             hoursTarget: hoursTargetValue,
                             workWeekdays: workWeekdaysValue)
             retrievedGoals[projectIdValue] = goal
@@ -187,7 +187,7 @@ class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGo
         let writeGoalProducer = _writeGoal.producer.skipNil()
         let deleteGoalProducer = _deleteGoal.producer.skipNil()
 
-        let undoModifyOrDeleteGoal = BindingTarget<Goal>(on: goalWriteScheduler, lifetime: lifetime) { [unowned _writeGoal] goalBeforeEditing in
+        let undoModifyOrDeleteGoal = BindingTarget<TimeTarget>(on: goalWriteScheduler, lifetime: lifetime) { [unowned _writeGoal] goalBeforeEditing in
             undoManager.registerUndo(withTarget: _writeGoal) {
                 $0 <~ SignalProducer(value: goalBeforeEditing).start(on: UIScheduler())
             }
@@ -225,7 +225,7 @@ class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGo
     }
 
 
-    // MARK: - Goal interface
+    // MARK: - TimeTarget interface
 
     /// Function which takes a project ID as input and returns a producer that
     /// emits values over time corresponding to the goal associated with that
@@ -237,8 +237,8 @@ class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGo
         self.persistenceProvider.allGoals.producer.map { $0[projectID] }.skipRepeats { $0 == $1 }
     }
 
-    var writeGoal: BindingTarget<Goal> { return _writeGoal.deoptionalizedBindingTarget }
-    private let _writeGoal = MutableProperty<Goal?>(nil)
+    var writeGoal: BindingTarget<TimeTarget> { return _writeGoal.deoptionalizedBindingTarget }
+    private let _writeGoal = MutableProperty<TimeTarget?>(nil)
 
     var deleteGoal: BindingTarget<ProjectID> { return _deleteGoal.deoptionalizedBindingTarget }
     private let _deleteGoal = MutableProperty<ProjectID?>(nil)
@@ -311,7 +311,7 @@ fileprivate class SingleGoalUpdateComputer {
 
     init(initialStateIndexedGoals: ProjectIndexedGoals,
          initialStateProjectIDsByGoals: ProjectIDsByGoals,
-         inputWriteGoal: SignalProducer<Goal, NoError>,
+         inputWriteGoal: SignalProducer<TimeTarget, NoError>,
          inputDeleteGoal: SignalProducer<ProjectID, NoError>,
          outputProjectIDsByGoalsUpdate: BindingTarget<ProjectIDsByGoals.Update.GoalUpdate>) {
 
@@ -331,7 +331,7 @@ fileprivate class SingleGoalUpdateComputer {
 
     // MARK: - Input
 
-    private lazy var writeGoal = BindingTarget<Goal>(on: scheduler, lifetime: lifetime) { [weak self] in
+    private lazy var writeGoal = BindingTarget<TimeTarget>(on: scheduler, lifetime: lifetime) { [weak self] in
         self?.computeAndUpdate(newGoal: $0, projectID: $0.projectId)
     }
 
@@ -339,7 +339,7 @@ fileprivate class SingleGoalUpdateComputer {
         self?.computeAndUpdate(newGoal: nil, projectID: $0)
     }
 
-    private func computeAndUpdate(newGoal: Goal?, projectID: ProjectID) {
+    private func computeAndUpdate(newGoal: TimeTarget?, projectID: ProjectID) {
         // Compute update
 //        assert(projectIDsByGoals.sortedProjectIDs.contains(projectID), "projectID must be included in projectIDsByGoals")
         guard let update = ProjectIDsByGoals.Update.GoalUpdate
