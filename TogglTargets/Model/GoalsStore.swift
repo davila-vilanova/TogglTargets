@@ -22,17 +22,17 @@ typealias ProjectIDsByGoalsProducer = SignalProducer<ProjectIDsByGoals.Update, N
 protocol GoalsStore {
 
     /// Function which takes a project ID as input and returns a producer that
-    /// emits values over time corresponding to the goal associated with that
+    /// emits values over time corresponding to the time target associated with that
     /// project ID.
     ///
-    /// - note: `nil` goal values represent a goal that does not exist yet or
+    /// - note: `nil` target values represent a time target that does not exist yet or
     ///         that has been deleted.
     var readGoal: ReadGoal { get }
 
-    /// Target which accepts new (or edited) goal values.
+    /// Target which accepts new (or edited) timeTarget values.
     var writeGoal: BindingTarget<TimeTarget> { get }
 
-    /// Target which for each received project ID deletes the goal associated with that project ID.
+    /// Target which for each received project ID deletes the timeTarget associated with that project ID.
     var deleteGoal: BindingTarget<ProjectID> { get }
 }
 
@@ -78,12 +78,12 @@ class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
 
     private let _persistGoal = MutableProperty<TimeTarget?>(nil)
 
-    /// Persists the provided goal into the database synchronously.
+    /// Persists the provided time target into the database synchronously.
     var persistGoal: BindingTarget<TimeTarget> { return _persistGoal.deoptionalizedBindingTarget }
 
     private let _deleteGoal = MutableProperty<ProjectID?>(nil)
 
-    /// Deletes synchronously from the database the goal corresponding to the
+    /// Deletes synchronously from the database the time target corresponding to the
     /// provided project ID.
     var deleteGoal: BindingTarget<ProjectID> { return _deleteGoal.deoptionalizedBindingTarget }
 
@@ -228,10 +228,10 @@ class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGo
     // MARK: - TimeTarget interface
 
     /// Function which takes a project ID as input and returns a producer that
-    /// emits values over time corresponding to the goal associated with that
+    /// emits values over time corresponding to the time target associated with that
     /// project ID.
     ///
-    /// - note: `nil` goal values represent a goal that does not exist yet or
+    /// - note: `nil` target values represent a time target that does not exist yet or
     ///         that has been deleted.
     lazy var readGoal: ReadGoal = { projectID in
         self.persistenceProvider.allGoals.producer.map { $0[projectID] }.skipRepeats { $0 == $1 }
@@ -278,7 +278,7 @@ class ConcreteProjectIDsByGoalsProducingGoalsStore: ProjectIDsByGoalsProducingGo
         SignalProducer.merge(
             // Send a full value and any full value updates that happen from now on
             projectIDsByGoalsFullRefresh.map (ProjectIDsByGoals.Update.full),
-            // Send any updates to a single goal that happen from now on
+            // Send any updates to a single time target that happen from now on
             projectIDsByGoalsLastSingleUpdate.producer.skipNil().map (ProjectIDsByGoals.Update.singleGoal)
     )
 }

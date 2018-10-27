@@ -21,9 +21,9 @@ typealias ReadProject = (ProjectID) -> SignalProducer<Project?, NoError>
 typealias ReadReport = (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>
 
 /// Function which takes a project ID as input and returns a producer that
-/// emits values over time corresponding to the goal associated with that
-/// project ID.
+/// emits values over time corresponding to the time target associated with
+/// that project ID.
 ///
-/// - note: `nil` goal values represent a goal that does not exist yet or
+/// - note: `nil` timeTarget values represent a target that does not exist yet or
 ///         that has been deleted.
 typealias ReadGoal = (ProjectID) -> SignalProducer<TimeTarget?, NoError>

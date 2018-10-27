@@ -14,8 +14,8 @@
 /* Class = "NSTextFieldCell"; title = "establish goals"; ObjectID = "D8W-TC-6OP"; */
 "D8W-TC-6OP.title" = "establish goals";
 
-/* Class = "NSViewController"; title = "Goal Periods"; ObjectID = "DPU-zp-q1w"; */
-"DPU-zp-q1w.title" = "Goal Periods";
+/* Class = "NSViewController"; title = "Time Periods"; ObjectID = "DPU-zp-q1w"; */
+"DPU-zp-q1w.title" = "Time Periods";
 
 /* Class = "NSButtonCell"; title = "weekly"; ObjectID = "Fbz-3b-gLb"; */
 "Fbz-3b-gLb.title" = "weekly";
@@ -42,7 +42,7 @@
 "6yZ-h5-296.title" = "Account";
 
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "g3l-v0-DaP"; */
-"g3l-v0-DaP.title" = "TogglGoals Preferences";
+"g3l-v0-DaP.title" = "TogglTargets Preferences";
 
 /* Class = "NSTextFieldCell"; title = "email address"; ObjectID = "ie6-ix-81j"; */
 "ie6-ix-81j.title" = "email address";

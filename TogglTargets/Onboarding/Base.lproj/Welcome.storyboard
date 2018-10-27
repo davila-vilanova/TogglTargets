@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="Ww4-Pu-BUY">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -38,7 +37,7 @@
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aYp-00-8db">
                                 <rect key="frame" x="188" y="148" width="503" height="22"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" refusesFirstResponder="YES" title="TogglGoals keeps you on track to meet your time goals" id="DLC-cW-ECx">
+                                <textFieldCell key="cell" lineBreakMode="clipping" refusesFirstResponder="YES" title="TogglTargets keeps you on track to meet your time goals" id="DLC-cW-ECx">
                                     <font key="font" size="18" name=".AppleSystemUIFontMedium"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -51,7 +50,7 @@
                                 </constraints>
                                 <textFieldCell key="cell" selectable="YES" refusesFirstResponder="YES" allowsEditingTextAttributes="YES" id="A8f-T6-ofs">
                                     <font key="font" metaFont="system"/>
-                                    <string key="title">Connect your toggl.com account, set your target work hours for one or more projects and let TogglGoals help you hit your targets by showing you how you are doing and telling you how much you should work per day to stay on track.</string>
+                                    <string key="title">Connect your toggl.com account, set your target work hours for one or more projects and let TogglTargets help you hit your targets by showing you how you are doing and telling you how much you should work per day to stay on track.</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>

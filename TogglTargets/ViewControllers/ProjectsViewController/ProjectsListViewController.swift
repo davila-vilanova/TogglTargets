@@ -20,7 +20,7 @@ fileprivate let SelectedProjectIdRestorationKey = "SelectedProjectId"
 fileprivate let NoSelectedProjectIdRestorationValue: Int64 = 0
 
 
-/// Manages a collection view that displays `Project` items organized by whether they have an associated goal.
+/// Manages a collection view that displays `Project` items organized by whether they have an associated time target.
 /// Produces a stream of selected `Project` values via the `selectedProject` property.
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, BindingTargetProvider, OnboardingTargetViewsProvider {
 
@@ -268,7 +268,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         // update values
         currentProjectIDs <~ updatedPids
 
-        // move items in the collection view according to the latest single-goal update
+        // move items in the collection view according to the latest single-TimeTarget update
         let moveItemsInCollectionView: BindingTarget<(IndexPath, IndexPath)> =
             projectsCollectionView.reactive.makeBindingTarget { collectionView, indexPaths in
                 let (oldIndexPath, newIndexPath) = indexPaths
@@ -356,10 +356,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                                                         withIdentifier: SectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
             switch ProjectIDsByGoals.Section(rawValue: indexPath.section)! {
-            case .withGoal: header.title = NSLocalizedString("project-list.header.with-goals",
-                                                             comment: "header of the 'projects with goals' section of the project list")
-            case .withoutGoal: header.title = NSLocalizedString("project-list.header.without-goals",
-                                                                comment: "header of the 'projects without goals' section of the project list")
+            case .withGoal: header.title = NSLocalizedString("project-list.header.with-time-targets",
+                                                             comment: "header of the 'projects with time targets' section of the project list")
+            case .withoutGoal: header.title = NSLocalizedString("project-list.header.without-time-targets",
+                                                                comment: "header of the 'projects without time targets' section of the project list")
             }
         }
         return view

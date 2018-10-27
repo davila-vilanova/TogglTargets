@@ -61,7 +61,7 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
         timeRemainingToWorkTodayLabel.reactive.text <~ remainingTimeToDayBaseline.mapToString(timeFormatter: timeFormatter)
             .map {
                 String.localizedStringWithFormat(
-                    NSLocalizedString("day-progress.to-work-today", comment: "amount of time left to meet daily goal"), $0)
+                    NSLocalizedString("day-progress.to-work-today", comment: "amount of time left to meet daily target"), $0)
         }
 
         // Update progress indicator

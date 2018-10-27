@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
-        <customObject id="Mk7-Bv-jsF" customClass="AppDelegate" customModule="TogglGoals" customModuleProvider="target"/>
+        <customObject id="Mk7-Bv-jsF" customClass="AppDelegate" customModule="TogglTargets" customModuleProvider="target"/>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject">
             <connections>
@@ -15,11 +16,11 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <menu title="Main Menu" systemMenu="main" id="Y6S-V3-X6T">
             <items>
-                <menuItem title="TogglGoals" id="GhY-j3-QHx">
+                <menuItem title="TogglTargets" id="GhY-j3-QHx">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="TogglGoals" systemMenu="apple" id="RbL-PE-34I">
+                    <menu key="submenu" title="TogglTargets" systemMenu="apple" id="RbL-PE-34I">
                         <items>
-                            <menuItem title="About TogglGoals" id="3BC-FC-Gqa">
+                            <menuItem title="About TogglTargets" id="3BC-FC-Gqa">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="orderFrontStandardAboutPanel:" target="-1" id="KeF-Zm-DpL"/>
@@ -37,7 +38,7 @@
                                 <menu key="submenu" title="Services" systemMenu="services" id="96M-lv-qei"/>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="CkM-4Q-FJ1"/>
-                            <menuItem title="Hide TogglGoals" keyEquivalent="h" id="1bG-DD-KFI">
+                            <menuItem title="Hide TogglTargets" keyEquivalent="h" id="1bG-DD-KFI">
                                 <connections>
                                     <action selector="hide:" target="-1" id="5WS-PA-FgM"/>
                                 </connections>
@@ -55,7 +56,7 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="u90-5h-4wV"/>
-                            <menuItem title="Quit TogglGoals" keyEquivalent="q" id="asV-Tm-J8V">
+                            <menuItem title="Quit TogglTargets" keyEquivalent="q" id="asV-Tm-J8V">
                                 <connections>
                                     <action selector="terminate:" target="-1" id="XKj-3e-ksJ"/>
                                 </connections>
@@ -127,17 +128,17 @@
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="Goal" id="5SZ-Ad-K37">
+                <menuItem title="Targets" id="5SZ-Ad-K37">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Goal" id="g5x-3p-Tzt">
+                    <menu key="submenu" title="Targets" id="g5x-3p-Tzt">
                         <items>
-                            <menuItem title="Create Goal" keyEquivalent="+" id="Mi4-ht-vZX">
+                            <menuItem title="Create Time Target" keyEquivalent="+" id="Mi4-ht-vZX">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="createGoal:" target="-1" id="1ai-Yl-ZBN"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Delete Goal" keyEquivalent="-" id="Ah4-MX-Odc">
+                            <menuItem title="Delete Time Target" keyEquivalent="-" id="Ah4-MX-Odc">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="deleteGoal:" target="-1" id="vFM-6S-yEZ"/>

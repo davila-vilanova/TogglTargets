@@ -10,26 +10,26 @@
 /* Class = "NSTextFieldCell"; title = "please select a project"; ObjectID = "EHa-P4-qQ6"; */
 "EHa-P4-qQ6.title" = "please select a project";
 
-/* Class = "NSWindow"; title = "TogglGoals"; ObjectID = "IQv-IB-iLA"; */
-"IQv-IB-iLA.title" = "TogglGoals";
+/* Class = "NSWindow"; title = "TogglTargets"; ObjectID = "IQv-IB-iLA"; */
+"IQv-IB-iLA.title" = "TogglTargets";
 
 /* Class = "NSTextFieldCell"; title = "to see its progress here"; ObjectID = "QYP-lQ-gLI"; */
 "QYP-lQ-gLI.title" = "to see its progress here";
 
-/* Class = "NSTextFieldCell"; title = "hours goal:"; ObjectID = "RWg-38-I3M"; */
-"RWg-38-I3M.title" = "hours goal:";
+/* Class = "NSTextFieldCell"; title = "hours target:"; ObjectID = "RWg-38-I3M"; */
+"RWg-38-I3M.title" = "hours target:";
 
-/* Class = "NSButtonCell"; title = "create a goal"; ObjectID = "sHt-AE-o6F"; */
-"sHt-AE-o6F.title" = "create a goal";
+/* Class = "NSButtonCell"; title = "create a time target"; ObjectID = "sHt-AE-o6F"; */
+"sHt-AE-o6F.title" = "create a time target";
 
-/* Class = "NSButtonCell"; title = "delete goal"; ObjectID = "v26-FD-5np"; */
-"v26-FD-5np.title" = "delete goal";
+/* Class = "NSButtonCell"; title = "delete time target"; ObjectID = "v26-FD-5np"; */
+"v26-FD-5np.title" = "delete time target";
 
 /* Class = "NSButtonCell"; title = "don't delete"; ObjectID = "P9m-mq-vQD"; */
-"P9m-mq-vQD.title" = "keep goal";
+"P9m-mq-vQD.title" = "keep time target";
 
 /* Class = "NSButton";  ObjectID = "z4E-Sz-bgD"; */
-"z4E-Sz-bgD.ibExternalAccessibilityDescription" = "Delete goal";
+"z4E-Sz-bgD.ibExternalAccessibilityDescription" = "Delete time target";
 
 /* Class = "NSBox"; ObjectID = "5Kf-JW-Eii" */
 "5Kf-JW-Eii.title" = "";

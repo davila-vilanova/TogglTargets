@@ -149,7 +149,7 @@ class GoalProgress {
     }()
 
     // remainingTimeToDayBaseline will publish nil values when either of this is true:
-    // * today's date is not included in the period for which the goal-accomplishing strategy is being calculated (there is no day baseline),
+    // * today's date is not included in the period for which the target-reaching strategy is being calculated (there is no day baseline),
     // * dayBaselineAdjustedToProgress itself returns nil
     public lazy var remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError> = {
         return SignalProducer.combineLatest(strategyStartsToday.skipRepeats(),

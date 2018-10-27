@@ -79,10 +79,10 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
         let targetPeriodFormat = SignalProducer.merge(
             periodPreference.filter(isMonthly).map { _ in
-                NSLocalizedString("project-list.item.goal.target.monthly", comment: "target amount of time per month as it appears in each of the project list items")
+                NSLocalizedString("project-list.item.target.time.monthly", comment: "target amount of time per month as it appears in each of the project list items")
             },
             periodPreference.filter(isWeekly).map { _ in
-                NSLocalizedString("project-list.item.goal.target.weekly", comment: "target amount of time per week as it appears in each of the project list items")
+                NSLocalizedString("project-list.item.target.time.weekly", comment: "target amount of time per week as it appears in each of the project list items")
         })
 
         goalField.reactive.text <~ goal.skipNil().map{ $0.hoursTarget }
@@ -92,7 +92,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             .map { String.localizedStringWithFormat($1, $0) }
         goalField.reactive.text <~ goal.filter { $0 == nil }
             .map { _ in () }
-            .map { NSLocalizedString("project-list.item.goal.no-goal", comment: "message to show in each of the project list items when there is no associated goal") }
+            .map { NSLocalizedString("project-list.item.target.no-time-target", comment: "message to show in each of the project list items when there is no associated time target") }
 
         let noReport = report.filter { $0 == nil }.map { _ in () }
         let workedTimeFromReport = report.skipNil().map { $0.workedTime }

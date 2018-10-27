@@ -31,7 +31,7 @@
         <!--Preferences View Controller-->
         <scene sceneID="yIZ-dt-DHE">
             <objects>
-                <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" id="cFd-GK-h7o" customClass="PreferencesViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <tabViewController selectedTabViewItemIndex="0" tabStyle="unspecified" id="cFd-GK-h7o" customClass="PreferencesViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <tabViewItems>
                         <tabViewItem id="kuZ-1d-hQI"/>
                         <tabViewItem id="Kq9-YD-6mI"/>
@@ -58,7 +58,7 @@
         <!--Login View Controller-->
         <scene sceneID="wUP-qS-shd">
             <objects>
-                <viewController storyboardIdentifier="LoginViewController" id="dvF-Cf-Qok" customClass="LoginViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" id="dvF-Cf-Qok" customClass="LoginViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="kBz-yA-1xn">
                         <rect key="frame" x="0.0" y="0.0" width="442" height="252"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -118,7 +118,7 @@
         <!--Email Password View Controller-->
         <scene sceneID="WoN-Sb-uiO">
             <objects>
-                <viewController storyboardIdentifier="EmailPasswordViewController" id="Luk-hD-CZ9" customClass="EmailPasswordViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EmailPasswordViewController" id="Luk-hD-CZ9" customClass="EmailPasswordViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="EAt-GK-mDh">
                         <rect key="frame" x="0.0" y="0.0" width="365" height="130"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -221,7 +221,7 @@
         <!--Logged In View Controller-->
         <scene sceneID="ysq-hC-rcl">
             <objects>
-                <viewController storyboardIdentifier="LoggedInViewController" id="kCP-3W-Peo" customClass="LoggedInViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoggedInViewController" id="kCP-3W-Peo" customClass="LoggedInViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="vu3-r7-Up7">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="140"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -343,7 +343,7 @@
         <!--Token View Controller-->
         <scene sceneID="vTJ-KD-t4P">
             <objects>
-                <viewController storyboardIdentifier="APITokenViewController" id="ySu-bD-nwW" customClass="APITokenViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="APITokenViewController" id="ySu-bD-nwW" customClass="APITokenViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="d9g-Vu-E5t">
                         <rect key="frame" x="0.0" y="0.0" width="416" height="70"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -415,7 +415,7 @@
         <!--Preferences View Controller Wrapper-->
         <scene sceneID="UF4-Zr-Eac">
             <objects>
-                <viewController id="9ZC-GO-nSV" customClass="PreferencesViewControllerWrapper" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="9ZC-GO-nSV" customClass="PreferencesViewControllerWrapper" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="A6z-Zo-qRG">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -458,7 +458,7 @@
         <!--Account-->
         <scene sceneID="hxl-2u-k5T">
             <objects>
-                <viewController title="Account" id="6yZ-h5-296" customClass="AccountViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Account" id="6yZ-h5-296" customClass="AccountViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="fDu-S3-UId">
                         <rect key="frame" x="0.0" y="0.0" width="351" height="242"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -482,10 +482,10 @@
             </objects>
             <point key="canvasLocation" x="627.5" y="-73"/>
         </scene>
-        <!--Goal Periods-->
+        <!--Time Periods-->
         <scene sceneID="moW-Kh-FCL">
             <objects>
-                <viewController title="Goal Periods" id="DPU-zp-q1w" customClass="GoalPeriodsPreferencesViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Time Periods" id="DPU-zp-q1w" customClass="GoalPeriodsPreferencesViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kQJ-7X-Tb0">
                         <rect key="frame" x="0.0" y="0.0" width="351" height="120"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -604,7 +604,7 @@
         <!--Login Method View Controller-->
         <scene sceneID="50G-pA-Txm">
             <objects>
-                <viewController id="FAE-df-niE" customClass="LoginMethodViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="FAE-df-niE" customClass="LoginMethodViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="BhK-At-7zZ">
                         <rect key="frame" x="0.0" y="0.0" width="372" height="172"/>
                         <autoresizingMask key="autoresizingMask"/>

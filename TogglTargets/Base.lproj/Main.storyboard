@@ -10,7 +10,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="TogglGoals" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" animationBehavior="default" tabbingMode="disallowed" id="IQv-IB-iLA">
+                    <window key="window" title="TogglTargets" allowsToolTipsWhenApplicationIsInactive="NO" releasedWhenClosed="NO" animationBehavior="default" tabbingMode="disallowed" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -31,7 +31,7 @@
         <!--Projects Master Detail Controller-->
         <scene sceneID="7Pg-Xa-28v">
             <objects>
-                <splitViewController id="ak2-zI-3MP" customClass="ProjectsMasterDetailController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <splitViewController id="ak2-zI-3MP" customClass="ProjectsMasterDetailController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <splitViewItems>
                         <splitViewItem id="ehc-kE-Cok"/>
                         <splitViewItem id="PCV-aA-EUl"/>
@@ -56,7 +56,7 @@
         <!--Projects List View Controller-->
         <scene sceneID="yrl-iP-dwh">
             <objects>
-                <viewController id="uJx-25-i9K" customClass="ProjectsListViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="uJx-25-i9K" customClass="ProjectsListViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="0s5-6J-xQn">
                         <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -67,10 +67,10 @@
                                     <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb" customClass="ProjectsCollectionView" customModule="TogglGoals" customModuleProvider="target">
+                                        <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb" customClass="ProjectsCollectionView" customModule="TogglTargets" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <collectionViewLayout key="collectionViewLayout" id="tRH-Rt-gTE" customClass="VerticalListLayout" customModule="TogglGoals" customModuleProvider="target"/>
+                                            <collectionViewLayout key="collectionViewLayout" id="tRH-Rt-gTE" customClass="VerticalListLayout" customModule="TogglTargets" customModuleProvider="target"/>
                                             <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
                                             <connections>
@@ -113,7 +113,7 @@
         <!--Activity View Controller-->
         <scene sceneID="mbv-uH-b3T">
             <objects>
-                <viewController storyboardIdentifier="ActivityViewController" id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ActivityViewController" id="tS7-EF-bJw" customClass="ActivityViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="Zto-kN-hsB">
                         <rect key="frame" x="0.0" y="0.0" width="180" height="40"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -157,7 +157,7 @@
         <!--Selection Detail View Controller-->
         <scene sceneID="tDJ-Pw-hGS">
             <objects>
-                <viewController id="b9w-hi-JZl" customClass="SelectionDetailViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="b9w-hi-JZl" customClass="SelectionDetailViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="gqT-EK-tTo">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="450"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -190,7 +190,7 @@
         <!--Condensed Activity View Controller-->
         <scene sceneID="NSH-HH-SX2">
             <objects>
-                <viewController storyboardIdentifier="CondensedActivityViewController" id="d3P-5j-IhJ" customClass="CondensedActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CondensedActivityViewController" id="d3P-5j-IhJ" customClass="CondensedActivityViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="Z67-5j-RY0">
                         <rect key="frame" x="0.0" y="0.0" width="175" height="32"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -260,7 +260,7 @@
         <!--Detailed Activity View Controller-->
         <scene sceneID="Qxj-pa-5eC">
             <objects>
-                <viewController storyboardIdentifier="DetailedActivityViewController" id="AJO-lx-pZ5" customClass="DetailedActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="DetailedActivityViewController" id="AJO-lx-pZ5" customClass="DetailedActivityViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="PIw-M0-HkN">
                         <rect key="frame" x="0.0" y="0.0" width="180" height="86"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -287,7 +287,7 @@
         <!--Project Details View Controller-->
         <scene sceneID="huO-mY-84c">
             <objects>
-                <viewController storyboardIdentifier="ProjectDetailsViewController" id="zvs-ll-aji" customClass="ProjectDetailsViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ProjectDetailsViewController" id="zvs-ll-aji" customClass="ProjectDetailsViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="aCi-JH-WTK">
                         <rect key="frame" x="0.0" y="0.0" width="522" height="424"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -303,7 +303,7 @@
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="k1G-X5-OO2">
                                 <rect key="frame" x="20" y="374" width="482" height="5"/>
                             </box>
-                            <box boxType="custom" borderType="line" cornerRadius="4" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Hn0-YD-qa8" userLabel="Goal Box">
+                            <box boxType="custom" borderType="line" cornerRadius="4" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="Hn0-YD-qa8" userLabel="Time Target Box">
                                 <rect key="frame" x="20" y="312" width="482" height="48"/>
                                 <view key="contentView" id="n5a-VU-s3O">
                                     <rect key="frame" x="1" y="1" width="480" height="46"/>
@@ -360,7 +360,7 @@
         <!--Goal View Controller-->
         <scene sceneID="VH6-GV-Mqt">
             <objects>
-                <viewController id="a81-xu-Ddi" customClass="GoalViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="a81-xu-Ddi" customClass="GoalViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="rb9-j4-yIz">
                         <rect key="frame" x="0.0" y="0.0" width="522" height="52"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -403,7 +403,7 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
-                                <accessibility description="Delete goal"/>
+                                <accessibility description="Delete time target"/>
                                 <connections>
                                     <segue destination="UAE-bD-MnG" kind="popover" popoverAnchorView="z4E-Sz-bgD" popoverBehavior="t" preferredEdge="maxY" id="FKU-3e-21a"/>
                                 </connections>
@@ -485,24 +485,24 @@
         <!--Delete Goal Popup-->
         <scene sceneID="nwh-bh-Z7X">
             <objects>
-                <viewController id="UAE-bD-MnG" customClass="DeleteGoalPopup" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="UAE-bD-MnG" customClass="DeleteGoalPopup" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="qvY-FJ-u9C">
-                        <rect key="frame" x="0.0" y="0.0" width="146" height="94"/>
+                        <rect key="frame" x="0.0" y="0.0" width="181" height="94"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <visualEffectView appearanceType="inheritedVibrantLight" blendingMode="behindWindow" material="popover" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="3Qd-mI-D9T">
-                                <rect key="frame" x="0.0" y="0.0" width="146" height="94"/>
+                                <rect key="frame" x="0.0" y="0.0" width="181" height="94"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WTT-ou-k01">
-                                        <rect key="frame" x="14" y="46" width="118" height="32"/>
-                                        <buttonCell key="cell" type="push" title="delete goal" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="v26-FD-5np">
+                                        <rect key="frame" x="14" y="46" width="153" height="32"/>
+                                        <buttonCell key="cell" type="push" title="delete time target" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="v26-FD-5np">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="systemSemibold" size="13"/>
                                         </buttonCell>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jg5-zA-F6y">
-                                        <rect key="frame" x="14" y="13" width="118" height="32"/>
-                                        <buttonCell key="cell" type="push" title="keep goal" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="P9m-mq-vQD">
+                                        <rect key="frame" x="14" y="13" width="153" height="32"/>
+                                        <buttonCell key="cell" type="push" title="keep time target" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="P9m-mq-vQD">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -537,12 +537,12 @@
         <!--Time Progress View Controller-->
         <scene sceneID="j3N-S5-RVt">
             <objects>
-                <viewController id="7US-0q-kKJ" customClass="TimeProgressViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="7US-0q-kKJ" customClass="TimeProgressViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="RdO-bs-OdZ">
                         <rect key="frame" x="0.0" y="0.0" width="482" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box boxType="secondary" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="6HK-x0-iDc" userLabel="Goal Progress Box">
+                            <box boxType="secondary" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="6HK-x0-iDc" userLabel="Progress Box">
                                 <rect key="frame" x="-3" y="-4" width="488" height="62"/>
                                 <view key="contentView" id="jPF-kb-6cT">
                                     <rect key="frame" x="3" y="3" width="482" height="56"/>
@@ -638,7 +638,7 @@
         <!--Goal Strategy View Controller-->
         <scene sceneID="H6m-Ts-Ik0">
             <objects>
-                <viewController storyboardIdentifier="GoalStrategyViewController" id="izu-wK-mXn" customClass="GoalStrategyViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GoalStrategyViewController" id="izu-wK-mXn" customClass="GoalStrategyViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="CWe-Ok-q92">
                         <rect key="frame" x="0.0" y="0.0" width="482" height="53"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -694,7 +694,7 @@
         <!--Day Progress View Controller-->
         <scene sceneID="uoF-Pf-sPn">
             <objects>
-                <viewController id="hvJ-dC-Kbs" customClass="DayProgressViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="hvJ-dC-Kbs" customClass="DayProgressViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="FAT-aC-hEs">
                         <rect key="frame" x="0.0" y="0.0" width="482" height="45"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -764,7 +764,7 @@
         <!--Goal Reached View Controller-->
         <scene sceneID="6vA-eI-u7E">
             <objects>
-                <viewController storyboardIdentifier="GoalReachedViewController" id="dwg-Fo-eQ6" customClass="GoalReachedViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GoalReachedViewController" id="dwg-Fo-eQ6" customClass="GoalReachedViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3In-vf-KdN">
                         <rect key="frame" x="0.0" y="0.0" width="482" height="38"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -796,17 +796,17 @@
         <!--No Goal View Controller-->
         <scene sceneID="PGj-gw-9GS">
             <objects>
-                <viewController storyboardIdentifier="NoGoalViewController" id="uCS-Tc-pwg" customClass="NoGoalViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NoGoalViewController" id="uCS-Tc-pwg" customClass="NoGoalViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="1mY-6H-Sas">
                         <rect key="frame" x="0.0" y="0.0" width="477" height="350"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="spt-9H-RBY">
-                                <rect key="frame" x="107" y="165" width="264" height="21"/>
+                                <rect key="frame" x="87" y="165" width="304" height="21"/>
                                 <subviews>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KJB-2f-ZKw">
-                                        <rect key="frame" x="-6" y="-7" width="119" height="32"/>
-                                        <buttonCell key="cell" type="push" title="create a goal" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sHt-AE-o6F">
+                                        <rect key="frame" x="-6" y="-7" width="159" height="32"/>
+                                        <buttonCell key="cell" type="push" title="create a time target" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sHt-AE-o6F">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -815,7 +815,7 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="asI-eB-ORh">
-                                        <rect key="frame" x="113" y="3" width="153" height="17"/>
+                                        <rect key="frame" x="153" y="3" width="153" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="to see its progress here" id="QYP-lQ-gLI">
                                             <font key="font" metaFont="systemSemibold" size="13"/>
                                             <color key="textColor" white="0.48844866071428572" alpha="1" colorSpace="calibratedWhite"/>
@@ -849,7 +849,7 @@
         <!--Goal Report View Controller-->
         <scene sceneID="ymg-Za-fLN">
             <objects>
-                <viewController storyboardIdentifier="GoalReportViewController" id="xQT-IJ-aTE" customClass="GoalReportViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GoalReportViewController" id="xQT-IJ-aTE" customClass="GoalReportViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="AwW-7C-Ykd">
                         <rect key="frame" x="0.0" y="0.0" width="477" height="366"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -939,7 +939,7 @@
         <!--Projects List Activity View Controller-->
         <scene sceneID="TeI-Ga-lEs">
             <objects>
-                <viewController id="nBn-WS-EwZ" customClass="ProjectsListActivityViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="nBn-WS-EwZ" customClass="ProjectsListActivityViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="VJj-ct-htK">
                         <rect key="frame" x="0.0" y="0.0" width="163" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -994,7 +994,7 @@
         <!--Empty Selection View Controller-->
         <scene sceneID="hIu-gf-ZQy">
             <objects>
-                <viewController storyboardIdentifier="EmptySelectionViewController" id="iZ6-o4-gFV" customClass="EmptySelectionViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EmptySelectionViewController" id="iZ6-o4-gFV" customClass="EmptySelectionViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="MjY-gb-2eL">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>

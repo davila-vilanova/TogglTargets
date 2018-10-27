@@ -1,17 +1,17 @@
-/* header of the 'projects with goals' sections of the project list */
-"project-list.header.with-goals" = "proyectos con metas";
+/* header of the 'projects with time targets' sections of the project list */
+"project-list.header.with-time-targets" = "proyectos con metas";
 
-/* header of the 'projects without goals' section of the project list */
-"project-list.header.without-goals" = "proyectos sin metas";
+/* header of the 'projects without time targets' section of the project list */
+"project-list.header.without-time-targets" = "proyectos sin metas";
 
 /* target amount of time per month as it appears in each of the project list items */
-"project-list.item.goal.target.monthly" = "%@ por mes";
+"project-list.item.target.time.monthly" = "%@ por mes";
 
 /* target amount of time per week as it appears in each of the project list items */
-"project-list.item.goal.target.weekly" = "%@ por semana";
+"project-list.item.target.time.weekly" = "%@ por semana";
 
-/* message to show in each of the project list items when there is no associated goal */
-"project-list.item.goal.no-goal" = "(sin meta)";
+/* message to show in each of the project list items when there is no associated time target */
+"project-list.item.target.no-time-target" = "(sin meta)";
 
 /* message to show in each of the project list items when there is no report data */
 "project-list.item.report.no-data" = "esperando datos del informe";
@@ -28,35 +28,35 @@
 /* worked time not including today */
 "time-progress.report.worked-time.excluding-today" = "trabajado: %@ (sin incluir hoy)";
 
-/* amount of time remaining to achieve the goal */
-"time-progress.report.goal.remaining" = "para cumplir la meta: %@";
+/* amount of time remaining to achieve the target time */
+"time-progress.report.target-time.remaining" = "para cumplir la meta: %@";
 
-/* header of the strategy section -- describing the target hours of the goal */
-"goal-strategy.header" = "para lograr tu meta de %@";
+/* header of the strategy section -- describing the target hours */
+"target-strategy.header" = "para lograr tu meta de %@";
 
-/* amount of time to work per day to achieve the goal (adjusted day baseline) */
-"goal-strategy.adjusted-baseline" = "trabaja %@ por día";
+/* amount of time to work per day to achieve the target time (adjusted day baseline) */
+"target-strategy.adjusted-baseline" = "trabaja %@ por día";
 
 /* the adjusted day baseline could not be calculated */
-"goal-strategy.cannot-calculate-baseline" = "no se pudo calcular el tiempo diario de trabajo";
+"target-strategy.cannot-calculate-baseline" = "no se pudo calcular el tiempo diario de trabajo";
 
 /* the adjusted baseline approximately matches the a priori baseline */
-"goal-strategy.adusted-baseline-matches" = "Esto es similar a tu base de %@";
+"target-strategy.adusted-baseline-matches" = "Esto es similar a tu base de %@";
 
-/* need to catch up to achieve the goal */
-"goal-strategy.differential.more" = "Esto es %@ más que tu base de %@";
+/* need to catch up to achieve the target time */
+"target-strategy.differential.more" = "Esto es %@ más que tu base de %@";
 
-/* could work less and still achieve the goal */
-"goal-strategy.differential.less" = "Esto es %@ menos que tu base de %@";
+/* could work less and still achieve the target time */
+"target-strategy.differential.less" = "Esto es %@ menos que tu base de %@";
 
-/* reaching the goal is unfeasible but not impossible */
-"goal-strategy.unfeasible" = "Lograr tu meta sería posible si durmieras muy poquito y tuvieras una capacidad sobrehumana de concentración";
+/* reaching the target time is unfeasible but not impossible */
+"target-strategy.unfeasible" = "Lograr tu meta sería posible si durmieras muy poquito y tuvieras una capacidad sobrehumana de concentración";
 
-/* reaching the goal is impossible */
-"goal-strategy.impossible" = "Para lograr tu meta deberías de trabajar más de 24 horas al día";
+/* reaching the target time is impossible */
+"target-strategy.impossible" = "Para lograr tu meta deberías de trabajar más de 24 horas al día";
 
-/* the goal has been achieved */
-"goal-reached" = "¡Has logrado tu meta de %@!";
+/* the target time has been reached */
+"target-time-reached" = "¡Has logrado tu meta de %@!";
 
 /* loading profile status description */
 "logged-in.loading-profile" = "Cargando...";
@@ -76,7 +76,7 @@
 /* amount of time worked today */
 "day-progress.worked-today" = "trabajado hoy: %@";
 
-/* amount of time left to meet daily goal */
+/* amount of time left to meet daily target */
 "day-progress.to-work-today" = "resta para cumplir tu objetivo diario: %@";
 
 /* data syncing in progress */
@@ -187,17 +187,17 @@
 /* error description: other HTTP error */
 "error.other-http" = "He recibido un error de HTTP que no sé cómo interpretar. El código es %d";
 
-/* undo action name: create goal */
-"undo.create-goal" = "Crear Meta";
+/* undo action name: create time target */
+"undo.create-time-target" = "Crear Meta";
 
-/* undo action name: modify goal */
-"undo.modify-goal" = "Modificar Meta";
+/* undo action name: modify time target */
+"undo.modify-time-target" = "Modificar Meta";
 
-/* undo action name: delete goal */
-"undo.delete-goal" = "Borrar Meta";
+/* undo action name: delete time target */
+"undo.delete-time-target" = "Borrar Meta";
 
-/* month period description as it appears next to the target hours field in the goal VC */
-"goal-controller.target-hours-period.month" = "por mes";
+/* month period description as it appears next to the target hours field in the time target VC */
+"time-target-controller.target-hours-period.month" = "por mes";
 
-/* week period description as it appears next to the target hours field in the goal VC */
-"goal-controller.target-hours-period.week" = "por semana";
+/* week period description as it appears next to the target hours field in the time target VC */
+"time-target-controller.target-hours-period.week" = "por semana";

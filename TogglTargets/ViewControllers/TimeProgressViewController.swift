@@ -116,7 +116,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
             remainingHoursField.reactive.text <~ remainingTimeToGoal.producer.mapToString(timeFormatter: timeFormatter)
                 .map {
                     String.localizedStringWithFormat(
-                        NSLocalizedString("time-progress.report.goal.remaining", comment: "amount of time remaining to achieve the goal"),
+                        NSLocalizedString("time-progress.report.target-time.remaining", comment: "amount of time remaining to achieve the target time"),
                         $0)
             }
             remainingHoursField.reactive.makeBindingTarget { $0.isHidden = $1 } <~ reportAvailable.negate()
@@ -132,7 +132,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
                     let total = totalOrNil ?? 0.0
                     let remaining = remainingOrNil ?? 0.0
                     indicator!.maxValue = total
-                    // Has a hard limit (the end of the time period for which the goal is being calculated)
+                    // Has a hard limit (the end of the time period for which the target is being calculated)
                     indicator!.doubleValue = total - remaining
             }
         }
@@ -145,7 +145,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
                 .observe(on: UIScheduler())
                 .startWithValues { [indicator = workHoursProgressIndicator] (timeGoal, workedTime) in
                     indicator!.maxValue = timeGoal
-                    // No hard limit (nothing prevents one from exceeding their time goal)
+                    // No hard limit (nothing prevents one from exceeding their time target)
                     indicator!.doubleValue = workedTime
             }
             workHoursProgressIndicator.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ reportAvailable.negate()

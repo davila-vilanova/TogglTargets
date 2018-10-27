@@ -13,7 +13,7 @@ class SupportDirectoryProvider {
 
     private let fileManager = FileManager.default
 
-    private let defaultAppIdentifier = "la.davi.TogglGoals" // fallback if no bundle ID available
+    private let defaultAppIdentifier = "la.davi.TogglTargets" // fallback if no bundle ID available
     private var _appIdentifier: String?
     private var appIdentifier: String {
         get {

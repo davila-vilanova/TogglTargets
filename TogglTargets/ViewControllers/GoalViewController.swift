@@ -80,10 +80,10 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
         // Populate controls that depend on calendar values
         weekdaySegments <~ calendar
 
-        // Emits non nil goal values coming through the interface
+        // Emits non nil timeTarget values coming through the interface
         let nonNilGoal = goal.producer.skipNil()
 
-        // Bind goal values to the values displayed in the controls
+        // Bind timeTarget values to the values displayed in the controls
         hoursTargetField.reactive.text <~ nonNilGoal.map { $0.hoursTarget }
             .map(NSNumber.init)
             .map(hoursTargetFormatter.string(from:))
@@ -104,8 +104,8 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
         periodDescriptionLabel.reactive.stringValue <~ lastBinding.producer.skipNil().map { $0.periodPreference }.flatten(.latest)
             .map {
                 switch $0 {
-                case .monthly: return NSLocalizedString("goal-controller.target-hours-period.month", comment: "month period description as it appears next to the target hours field in the goal VC")
-                case .weekly: return NSLocalizedString("goal-controller.target-hours-period.week", comment: "week period description as it appears next to the target hours field in the goal VC")
+                case .monthly: return NSLocalizedString("time-target-controller.target-hours-period.month", comment: "month period description as it appears next to the target hours field in the time target VC")
+                case .weekly: return NSLocalizedString("time-target-controller.target-hours-period.week", comment: "week period description as it appears next to the target hours field in the time target VC")
                 }
         }
 
@@ -151,7 +151,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
 
         userUpdates <~ editedGoal.map { Optional($0) }
 
-        // Enable controls only if goal exists
+        // Enable controls only if time target exists
         let goalExists = goal.producer.map { $0 != nil }.skipRepeats()
         for control in [hoursTargetLabel, hoursTargetField, activeWeekdaysLabel, activeWeekdaysControl, deleteGoalButton] as [NSControl] {
             control.reactive.isEnabled <~ goalExists

@@ -1,17 +1,17 @@
-/* header of the 'projects with goals' sections of the project list */
-"project-list.header.with-goals" = "projects with goals";
+/* header of the 'projects with time targets' sections of the project list */
+"project-list.header.with-time-targets" = "projects with time targets";
 
-/* header of the 'projects without goals' section of the project list */
-"project-list.header.without-goals" = "projects without goals";
+/* header of the 'projects without time targets' section of the project list */
+"project-list.header.without-time-targets" = "projects without time targets";
 
 /* target amount of time per month as it appears in each of the project list items */
-"project-list.item.goal.target.monthly" = "%@ per month";
+"project-list.item.target.time.monthly" = "%@ per month";
 
 /* target amount of time per week as it appears in each of the project list items */
-"project-list.item.goal.target.weekly" = "%@ per week";
+"project-list.item.target.time.weekly" = "%@ per week";
 
-/* message to show in each of the project list items when there is no associated goal */
-"project-list.item.goal.no-goal" = "(no goal)";
+/* message to show in each of the project list items when there is no associated time target */
+"project-list.item.target.no-time-target" = "(no time target)";
 
 /* message to show in each of the project list items when there is no report data yet */
 "project-list.item.report.no-data" = "no report data";
@@ -28,35 +28,35 @@
 /* worked time not including today */
 "time-progress.report.worked-time.excluding-today" = "%@ worked (not including today)";
 
-/* amount of time remaining to achieve the goal */
-"time-progress.report.goal.remaining" = "%@ remaining";
+/* amount of time remaining to achieve the target time */
+"time-progress.report.target-time.remaining" = "%@ remaining";
 
-/* header of the strategy section -- describing the target hours of the goal */
-"goal-strategy.header" = "to reach your goal of %@";
+/* header of the strategy section -- describing the target hours */
+"target-strategy.header" = "to reach your target of %@";
 
-/* amount of time to work per day to achieve the goal (adjusted day baseline) */
-"goal-strategy.adjusted-baseline" = "work %@ per day";
+/* amount of time to work per day to achieve the target time (adjusted day baseline) */
+"target-strategy.adjusted-baseline" = "work %@ per day";
 
 /* the adjusted day baseline could not be calculated */
-"goal-strategy.cannot-calculate-baseline" = "the day baseline could not be calculated";
+"target-strategy.cannot-calculate-baseline" = "the day baseline could not be calculated";
 
 /* the adjusted baseline approximately matches the a priori baseline */
-"goal-strategy.adusted-baseline-matches" = "That pretty much matches your baseline of %@";
+"target-strategy.adusted-baseline-matches" = "That pretty much matches your baseline of %@";
 
-/* need to catch up to achieve the goal */
-"goal-strategy.differential.more" = "That is %@ more than your baseline of %@";
+/* need to catch up to achieve the target time */
+"target-strategy.differential.more" = "That is %@ more than your baseline of %@";
 
-/* could work less and still achieve the goal */
-"goal-strategy.differential.less" = "That is %@ less than your baseline of %@";
+/* could work less and still achieve the target time */
+"target-strategy.differential.less" = "That is %@ less than your baseline of %@";
 
-/* reaching the goal is unfeasible but not impossible */
-"goal-strategy.unfeasible" = "This may be possible if you sleep very little and have superhuman focusing abilities";
+/* reaching the target time is unfeasible but not impossible */
+"target-strategy.unfeasible" = "This may be possible if you sleep very little and have superhuman focusing abilities";
 
-/* reaching the goal is impossible */
-"goal-strategy.impossible" = "This would require more than a full day of work per day";
+/* reaching the target time is impossible */
+"target-strategy.impossible" = "This would require more than a full day of work per day";
 
-/* the goal has been achieved */
-"goal-reached" = "You have achieved your goal of %@";
+/* the target time has been reached */
+"target-time-reached" = "You have achieved your target time of %@";
 
 /* loading profile status description */
 "logged-in.loading-profile" = "Loading...";
@@ -76,8 +76,8 @@
 /* amount of time worked today */
 "day-progress.worked-today" = "%@ worked today";
 
-/* amount of time left to meet daily goal */
-"day-progress.to-work-today" = "%@ left to meet your goal today";
+/* amount of time left to meet daily target */
+"day-progress.to-work-today" = "%@ left to meet your target today";
 
 /* data syncing in progress */
 "status.condensed.all-data.syncing" = "Syncing...";
@@ -187,17 +187,17 @@
 /* error description: other HTTP error */
 "error.other-http" = "Received an HTTP error that I don't know how to handle. Response code is %d";
 
-/* undo action name: create goal */
-"undo.create-goal" = "Create Goal";
+/* undo action name: create time target */
+"undo.create-time-target" = "Create Time Target";
 
-/* undo action name: modify goal */
-"undo.modify-goal" = "Modify Goal";
+/* undo action name: modify time target */
+"undo.modify-time-target" = "Modify Time Target";
 
-/* undo action name: delete goal */
-"undo.delete-goal" = "Delete Goal";
+/* undo action name: delete time target */
+"undo.delete-time-target" = "Delete Time Target";
 
-/* month period description as it appears next to the target hours field in the goal VC */
-"goal-controller.target-hours-period.month" = "per month";
+/* month period description as it appears next to the target hours field in the time target VC */
+"time-target-controller.target-hours-period.month" = "per month";
 
-/* week period description as it appears next to the target hours field in the goal VC */
-"goal-controller.target-hours-period.week" = "per week";
+/* week period description as it appears next to the target hours field in the time target VC */
+"time-target-controller.target-hours-period.week" = "per week";

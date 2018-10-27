@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Encloses a sorted array of project IDs, ordered primarily by descending goal size
+/// Encloses a sorted array of project IDs, ordered primarily by descending time target size
 /// and a count of projects that have goals associated with them.
 struct ProjectIDsByGoals {
     /// The sorted collection of project IDs
@@ -23,7 +23,7 @@ struct ProjectIDsByGoals {
         /// An update that entails a full refresh.
         case full(ProjectIDsByGoals)
 
-        /// An update that affects a single goal.
+        /// An update that affects a single time target.
         case singleGoal(GoalUpdate)
 
         /// Represents an update that consists of a reorder operation for a single project ID
@@ -39,13 +39,13 @@ struct ProjectIDsByGoals {
                 let new: Int
             }
 
-            /// Represents the update resulting from the creation of one goal.
+            /// Represents the update resulting from the creation of one time target.
             case create(IndexChange)
 
-            /// Represents the update resulting from the removal of one goal.
+            /// Represents the update resulting from the removal of one time target.
             case remove(IndexChange)
 
-            /// Represents the update resulting from the change of the values of a single goal.
+            /// Represents the update resulting from the change of the values of a single time target.
             case update(IndexChange)
 
             /// Returns the `IndexChange` resulting form this update.
@@ -87,20 +87,20 @@ struct ProjectIDsByGoals {
                                          countOfProjectsWithGoals: computeNewCount(from: idsByGoals))
             }
 
-            /// Generates the update corresponding to creating, deleting or updating the goal associated
+            /// Generates the update corresponding to creating, deleting or updating the time target associated
             /// with a project ID
             ///
             /// - parameters:
-            ///   - newGoal: The value of the affected goal after the update. Pass `nil` for a goal deletion.
-            ///   - projectId: The project ID whose goal will be created, deleted or updated.
+            ///   - newGoal: The value of the affected time target after the update. Pass `nil` for a target deletion.
+            ///   - projectId: The project ID whose time target will be created, deleted or updated.
             ///                This ID must be included in the project IDs associated with the `idsByGoals`
             ///                argument. If it is not, this call will return nil.
-            ///   - goalsPreChange: The `ProjectIndexedGoals` value previous to updating the goal.
+            ///   - goalsPreChange: The `ProjectIndexedGoals` value previous to updating the time target.
             ///   - idsByGoals: The `ProjectIDsByGoals` value that will be affected by this update.
             ///
-            ///   - note: The old goal value will be extracted from `goalsPreChange`
+            ///   - note: The old time target value will be extracted from `goalsPreChange`
             ///
-            ///   - returns: The update corresponding to the change in the goal associated with `projectId`,
+            ///   - returns: The update corresponding to the change in the time target associated with `projectId`,
             ///              `nil` if `projectId` is not included in `idsByGoals`
             static func forGoalChange(involving newGoal: TimeTarget?,
                                       for projectId: ProjectID,
@@ -167,7 +167,7 @@ extension ProjectIDsByGoals: Equatable {
 }
 
 extension ProjectIDsByGoals {
-    /// The count of project IDs without a goal associated to them.
+    /// The count of project IDs without a time target associated to them.
     var countOfProjectsWithoutGoals: Int {
         let count = sortedProjectIDs.count - countOfProjectsWithGoals
         assert(count >= 0)
@@ -291,10 +291,11 @@ extension ProjectIDsByGoals {
 }
 
 /// Makes a function that can be used as input to `Array<ProjectID>.sort(by:)` and will determine the
-/// order of the project IDs by whether they have a goal or not and the size of the goal. IDs will be ordered
-/// with those that have a goal first ordered by descending goal size. To guarantee stable order as long as
-/// the IDs are unique, if two goals are considered of equivalent size (including the case in which they are
-/// both missing) the order will be determined by project ID descending.
+/// order of the project IDs by whether they have a time target or not and the size of the target (the
+/// length of time associated with it). IDs will be ordered with those that have a timeTarget first ordered by
+/// descending timeTarget size. To guarantee stable order as long as the IDs are unique, if two targets are
+/// considered of equivalent size (including the case in which they are both missing) the order will be
+/// determined by project ID descending.
 ///
 /// - parameters:
 ///   - goals: The `ProjectIndexedGoals` that the returned function will use as context.
@@ -306,10 +307,10 @@ fileprivate func makeAreProjectIDsInIncreasingOrderFunction(for goals: ProjectIn
             let left = goals[idL]
             let right = goals[idR]
             if let left = left, let right = right {
-                // the larger goal comes first
+                // the larger time target comes first
                 return left > right
             } else if left != nil, right == nil {
-                // a goal is more goaler than a no goal
+                // a target is more targeter than a no target
                 return true
             } else if left == nil, right == nil {
                 // order needs to be stable, so use project ID which is assumed to be unique

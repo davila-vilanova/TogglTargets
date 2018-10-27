@@ -14,8 +14,8 @@
 /* Class = "NSTextFieldCell"; title = "establish goals"; ObjectID = "D8W-TC-6OP"; */
 "D8W-TC-6OP.title" = "establecer metas";
 
-/* Class = "NSViewController"; title = "Goal Periods"; ObjectID = "DPU-zp-q1w"; */
-"DPU-zp-q1w.title" = "Periodos";
+/* Class = "NSViewController"; title = "Time Periods"; ObjectID = "DPU-zp-q1w"; */
+"DPU-zp-q1w.title" = "Periodos de tiempo";
 
 /* Class = "NSButtonCell"; title = "weekly"; ObjectID = "Fbz-3b-gLb"; */
 "Fbz-3b-gLb.title" = "semanalmente";
@@ -42,7 +42,7 @@
 "6yZ-h5-296.title" = "Cuenta de usuario";
 
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "g3l-v0-DaP"; */
-"g3l-v0-DaP.title" = "Preferencias de TogglGoals";
+"g3l-v0-DaP.title" = "Preferencias de TogglTargets";
 
 /* Class = "NSTextFieldCell"; title = "email address"; ObjectID = "ie6-ix-81j"; */
 "ie6-ix-81j.title" = "dirección de email";

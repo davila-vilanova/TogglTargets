@@ -164,14 +164,14 @@ class GoalProgressRemainingTimeTests: GoalProgressTests {
     }
 
     func testRemainingTimeStartingStrategyTomorrow() {
-        // Calculating strategy from tomorrow should result in the goal time minus the full time worked
+        // Calculating strategy from tomorrow should result in the target time minus the full time worked
         goalProgress.startStrategyDay <~ SignalProducer(value: tomorrowComponents)
         XCTAssertEqual(remainingTimeResult.value, TimeInterval.from(hours: hoursPerMonthGoal) - report.workedTime - timeRunningEntryA)
     }
 
     func testRemainingTimeStartingStrategyToday() {
         // Calculating strategy from same day as currentDate (that is, "today", which also is the end date for the report)
-        // should result in the goal time minus the time worked until yesterday according to the report
+        // should result in the target time minus the time worked until yesterday according to the report
         // because today's time is already part of the execution of the current strategy.
         // runningEntry should be ignored
         assert(todayComponents == report.period.end) // internal tests consistency

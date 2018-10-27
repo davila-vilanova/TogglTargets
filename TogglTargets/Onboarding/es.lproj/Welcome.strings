@@ -2,11 +2,11 @@
 /* Class = "NSTextFieldCell"; title = "You can choose to work with your targets on a montly or weekly basis."; ObjectID = "4p3-AB-d9f"; */
 "4p3-AB-d9f.title" = "Puedes elegir si quieres establecer tus metas de tiempo como metas mensuales o semanales.";
 
-/* Class = "NSTextFieldCell"; title = "Connect your toggl.com account, set your target work hours for one or more projects and let TogglGoals help you hit your targets by showing you how you are doing and telling you how much you should work per day to stay on track."; ObjectID = "A8f-T6-ofs"; */
-"A8f-T6-ofs.title" = "Conecta tu cuenta de toggl.com, establece una meta de tiempo de trabajo para uno o más de tus proyectos y deja que  TogglGoals te ayude a cumplirlas mostrándote cómo vas y contándote cuánto tienes que trabajar para mantenerte al día.";
+/* Class = "NSTextFieldCell"; title = "Connect your toggl.com account, set your target work hours for one or more projects and let TogglTargets help you hit your targets by showing you how you are doing and telling you how much you should work per day to stay on track."; ObjectID = "A8f-T6-ofs"; */
+"A8f-T6-ofs.title" = "Conecta tu cuenta de toggl.com, establece una meta de tiempo de trabajo para uno o más de tus proyectos y deja que  TogglTargets te ayude a cumplirlas mostrándote cómo vas y contándote cuánto tienes que trabajar para mantenerte al día.";
 
-/* Class = "NSTextFieldCell"; title = "TogglGoals keeps you on track to meet your time goals"; ObjectID = "DLC-cW-ECx"; */
-"DLC-cW-ECx.title" = "TogglGoals te mantiene al día para que cumplas tus metas (de tiempo)";
+/* Class = "NSTextFieldCell"; title = "TogglTargets keeps you on track to meet your time goals"; ObjectID = "DLC-cW-ECx"; */
+"DLC-cW-ECx.title" = "TogglTargets te mantiene al día para que cumplas tus metas (de tiempo)";
 
 /* Class = "NSButtonCell"; title = "what toggl.com?"; ObjectID = "Erd-74-jPL"; */
 "Erd-74-jPL.title" = "¿qué es eso de toggl.com?";

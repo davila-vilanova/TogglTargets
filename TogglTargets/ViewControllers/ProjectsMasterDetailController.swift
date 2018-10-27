@@ -141,11 +141,11 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
             .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.deleteGoal })
 
         setUndoActionName <~ createGoal.producer.skipNil()
-            .map { _ in NSLocalizedString("undo.create-goal", comment: "undo action name: create goal") }
+            .map { _ in NSLocalizedString("undo.create-time-target", comment: "undo action name: create time target") }
         setUndoActionName <~ modifyGoal.producer.skipNil()
-            .map { _ in NSLocalizedString("undo.modify-goal", comment: "undo action name: modify goal") }
+            .map { _ in NSLocalizedString("undo.modify-time-target", comment: "undo action name: modify time target") }
         setUndoActionName <~ deleteGoal.producer.skipNil()
-            .map { _ in NSLocalizedString("undo.delete-goal", comment: "undo action name: delete goal") }
+            .map { _ in NSLocalizedString("undo.delete-time-target", comment: "undo action name: delete time target") }
 
 
         registerSelectionInUndoManager <~ focusOnUndoProjectId.producer.skipNil()

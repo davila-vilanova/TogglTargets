@@ -8,8 +8,8 @@
 /* onboarding step: select project */
 "onboarding.step.select-project" = "Selecciona cualquier proyecto que no tenga ninguna meta de tiempo todavía y para el que quieras crear una";
 
-/* onboarding step: create goal */
-"onboarding.step.create-goal" = "Crea una meta de tiempo con este botón. La puedes ajustar en el siguiente paso.";
+/* onboarding step: create time target */
+"onboarding.step.create-time-target" = "Crea una meta de tiempo con este botón. La puedes ajustar en el siguiente paso.";
 
 /* onboarding step: set target hours */
 "onboarding.step.set-target-hours" = "Elige cuántas horas te gustaría trabajar en este proyecto cada periodo (puedes elegir trabajar con periodos mensuales o semanales en las preferencias de esta aplicación)";
@@ -17,14 +17,14 @@
 /* onboarding step: set work weekdays */
 "onboarding.step.set-work-weekdays" = "Elige qué días de la semana tienes intención de trabajar en este proyecto";
 
-/* onboarding step: select from which day to compute the goal strategy */
+/* onboarding step: select from which day to compute the target strategy */
 "onboarding.step.select-compute-from" = "Calcula la estategia para cumplir tu meta: desde hoy si quieres que el día de hoy se incluya en el cálculo, o desde el próximo día de trabajo si quieres ver cuánto tendrás que trabajar en esta meta después de hoy.";
 
 /* onboarding step: see time progress */
 "onboarding.step.see-time-progress" = "Aquí puedes ver dónde te encuentras en tu período de trabajo, mensual o semanal";
 
-/* onboarding step: see strategy to fulfill goal */
-"onboarding.step.see-goal-strategy" = "Esto es cuánto tendrías que trabajar cada día para cumplir tu meta";
+/* onboarding step: see strategy to reach time target */
+"onboarding.step.see-strategy" = "Esto es cuánto tendrías que trabajar cada día para cumplir tu meta";
 
 /* onboarding step: see day progress */
 "onboarding.step.see-day-progress" = "Aquí puedes ver cuánto has trabajado hoy y, si estás calculando tu estrategia desde hoy, cuánto te falta.";

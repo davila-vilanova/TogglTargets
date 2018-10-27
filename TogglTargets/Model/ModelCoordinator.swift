@@ -111,19 +111,19 @@ internal class ModelCoordinator: NSObject {
     // MARK: - Goals
 
     /// Function which takes a project ID as input and returns a producer that
-    /// emits values over time corresponding to the goal associated with that
+    /// emits values over time corresponding to the time target associated with that
     /// project ID.
     ///
-    /// - note: `nil` goal values represent a goal that does not exist yet or
+    /// - note: `nil` timeTarget values represent a target that does not exist yet or
     ///         that has been deleted.
     internal var readGoal: ReadGoal {
         return goalsStore.readGoal
     }
 
-    /// Target which accepts new (or edited) goal values.
+    /// Target which accepts new (or edited) time target values.
     internal var writeGoal: BindingTarget<TimeTarget> { return goalsStore.writeGoal }
 
-    /// Target which for each received project ID deletes the goal associated with that project ID.
+    /// Target which for each received project ID deletes the time target associated with that project ID.
     internal var deleteGoal: BindingTarget<ProjectID> { return goalsStore.deleteGoal }
 
 
