@@ -19,7 +19,7 @@ fileprivate let runningEntryProjectA = makeRunningEntry(projectId: projectIdA, r
 fileprivate let runningEntryProjectB = makeRunningEntry(projectId: projectIdB, runningTime: timeRunningEntryB)
 
 fileprivate let hoursPerMonthGoal = 95
-fileprivate let goal = TimeTarget(for: projectIdA, hoursTarget: hoursPerMonthGoal, workWeekdays: .exceptWeekend)
+fileprivate let timeTarget = TimeTarget(for: projectIdA, hoursTarget: hoursPerMonthGoal, workWeekdays: .exceptWeekend)
 fileprivate let todayComponents = DayComponents(year: 2017, month: 10, day: 11)
 fileprivate let tomorrowComponents = DayComponents(year: 2017, month: 10, day: 12)
 fileprivate let period = Period(start: DayComponents(year: 2017, month: 10, day: 1), end: todayComponents)
@@ -58,7 +58,7 @@ class GoalProgressTests: XCTestCase {
 class GoalProgressWorkDaysTests: GoalProgressTests {
     override func setUp() {
         super.setUp()
-        goalProgress.goal <~ SignalProducer(value: goal)
+        goalProgress.timeTarget <~ SignalProducer(value: timeTarget)
         goalProgress.endGoalDay <~ SignalProducer(value: DayComponents(year: 2017, month: 10, day: 31))
     }
 
@@ -158,7 +158,7 @@ class GoalProgressRemainingTimeTests: GoalProgressTests {
     override func setUp() {
         super.setUp()
         goalProgress.report <~ SignalProducer(value: report)
-        goalProgress.goal <~ SignalProducer(value: goal)
+        goalProgress.timeTarget <~ SignalProducer(value: timeTarget)
         goalProgress.runningEntry <~ SignalProducer(value: runningEntryProjectA)
         remainingTimeResult <~ goalProgress.remainingTimeToGoal
     }
@@ -185,7 +185,7 @@ class GoalProgressDayBaselineTests: GoalProgressTests {
 
     override func setUp() {
         super.setUp()
-        goalProgress.goal <~ SignalProducer(value: goal)
+        goalProgress.timeTarget <~ SignalProducer(value: timeTarget)
         goalProgress.startGoalDay <~ SignalProducer(value: DayComponents(year: 2017, month: 10, day: 1))
         goalProgress.endGoalDay <~ SignalProducer(value: DayComponents(year: 2017, month: 10, day: 31))
         dayBaselineResult <~ goalProgress.dayBaseline
@@ -203,7 +203,7 @@ class GoalProgressAdjustedDayBaselineTests: GoalProgressTests {
 
     override func setUp() {
         super.setUp()
-        goalProgress.goal <~ SignalProducer(value: goal)
+        goalProgress.timeTarget <~ SignalProducer(value: timeTarget)
         goalProgress.startGoalDay <~ SignalProducer(value: DayComponents(year: 2017, month: 10, day: 1))
         goalProgress.endGoalDay <~ SignalProducer(value: DayComponents(year: 2017, month: 10, day: 31))
         goalProgress.report <~ SignalProducer(value: report)
@@ -231,7 +231,7 @@ class GoalProgressBaselineDifferentialTests: GoalProgressTests {
 
     override func setUp() {
         super.setUp()
-        goalProgress.goal <~ SignalProducer(value: goal)
+        goalProgress.timeTarget <~ SignalProducer(value: timeTarget)
         goalProgress.startGoalDay <~ SignalProducer(value: DayComponents(year: 2017, month: 10, day: 1))
         goalProgress.endGoalDay <~ SignalProducer(value: DayComponents(year: 2017, month: 10, day: 31))
         goalProgress.report <~ SignalProducer(value: report)
@@ -258,7 +258,7 @@ class GoalProgressRemainingTimeToDayBaselineTests: GoalProgressTests {
 
     override func setUp() {
         super.setUp()
-        goalProgress.goal <~ SignalProducer(value: goal)
+        goalProgress.timeTarget <~ SignalProducer(value: timeTarget)
         goalProgress.startGoalDay <~ SignalProducer(value: DayComponents(year: 2017, month: 10, day: 1))
         goalProgress.endGoalDay <~ SignalProducer(value: DayComponents(year: 2017, month: 10, day: 31))
         goalProgress.report <~ SignalProducer(value: report)

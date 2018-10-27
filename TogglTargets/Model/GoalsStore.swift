@@ -97,10 +97,10 @@ class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
             let projectIdValue = retrievedRow[projectIdExpression]
             let hoursTargetValue = retrievedRow[hoursTargetExpression]
             let workWeekdaysValue = try! /* TODO */ retrievedRow.get(workWeekdaysExpression) // [1]
-            let goal = TimeTarget(for: projectIdValue,
+            let timeTarget = TimeTarget(for: projectIdValue,
                             hoursTarget: hoursTargetValue,
                             workWeekdays: workWeekdaysValue)
-            retrievedGoals[projectIdValue] = goal
+            retrievedGoals[projectIdValue] = timeTarget
         }
 
         return retrievedGoals
@@ -126,11 +126,11 @@ class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
 
         ensureSchemaCreated()
 
-        let persistProducer = _persistGoal.producer.skipNil().on(value: { [unowned self] goal in
+        let persistProducer = _persistGoal.producer.skipNil().on(value: { [unowned self] timeTarget in
             try! self.db.run(self.goalsTable.insert(or: .replace,
-                                                    self.projectIdExpression <- goal.projectId,
-                                                    self.hoursTargetExpression <- goal.hoursTarget,
-                                                    self.workWeekdaysExpression <- goal.workWeekdays))
+                                                    self.projectIdExpression <- timeTarget.projectId,
+                                                    self.hoursTargetExpression <- timeTarget.hoursTarget,
+                                                    self.workWeekdaysExpression <- timeTarget.workWeekdays))
             // TODO: synchronize periodically instead of writing immediately
         }).start(on: goalWriteScheduler)
 

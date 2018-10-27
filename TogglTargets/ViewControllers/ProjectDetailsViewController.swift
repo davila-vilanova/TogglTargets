@@ -62,7 +62,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         let goalReport = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalReportViewController")) as! GoalReportViewController
         goalReport <~ SignalProducer(
             value: (projectId: projectId,
-                    goal: goalForCurrentProject.skipNil(),
+                    timeTarget: goalForCurrentProject.skipNil(),
                     report: reportForCurrentProject,
                     runningEntry: lastBinding.latestOutput { $0.runningEntry },
                     calendar: lastBinding.latestOutput { $0.calendar },
@@ -96,7 +96,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
                     SignalProducer(value: goalForCurrentProject.producer))
                     .map {
                         (calendar: $0.0,
-                         goal: $1,
+                         timeTarget: $1,
                          periodPreference: $0.1,
                          userUpdates: $0.2)
             }

@@ -17,7 +17,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider, Onboard
 
     internal typealias Interface = (
         projectId: SignalProducer<Int64, NoError>,
-        goal: SignalProducer<TimeTarget, NoError>,
+        timeTarget: SignalProducer<TimeTarget, NoError>,
         report: SignalProducer<TwoPartTimeReport?, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         calendar: SignalProducer<Calendar, NoError>,
@@ -156,7 +156,7 @@ class GoalReportViewController: NSViewController, BindingTargetProvider, Onboard
         super.viewDidLoad()
 
         goalProgress.projectId <~ lastBinding.latestOutput { $0.projectId }
-        goalProgress.goal <~ lastBinding.latestOutput { $0.goal }
+        goalProgress.timeTarget <~ lastBinding.latestOutput { $0.timeTarget }
         goalProgress.report <~ lastBinding.latestOutput {$0.report }
         goalProgress.runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
         calendar <~ lastBinding.latestOutput { $0.calendar }

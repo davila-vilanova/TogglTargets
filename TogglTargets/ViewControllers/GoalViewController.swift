@@ -17,7 +17,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
 
     internal typealias Interface = (
         calendar: SignalProducer<Calendar, NoError>,
-        goal: SignalProducer<TimeTarget?, NoError>,
+        timeTarget: SignalProducer<TimeTarget?, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         userUpdates: BindingTarget<TimeTarget>)
 
@@ -74,14 +74,14 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
 
         // Connect interface
         let calendar = lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
-        let goal = lastBinding.producer.skipNil().map { $0.goal }.flatten(.latest)
+        let timeTarget = lastBinding.producer.skipNil().map { $0.timeTarget }.flatten(.latest)
         userUpdates.signal.skipNil().bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.userUpdates })
 
         // Populate controls that depend on calendar values
         weekdaySegments <~ calendar
 
         // Emits non nil timeTarget values coming through the interface
-        let nonNilGoal = goal.producer.skipNil()
+        let nonNilGoal = timeTarget.producer.skipNil()
 
         // Bind timeTarget values to the values displayed in the controls
         hoursTargetField.reactive.text <~ nonNilGoal.map { $0.hoursTarget }
@@ -152,7 +152,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
         userUpdates <~ editedGoal.map { Optional($0) }
 
         // Enable controls only if time target exists
-        let goalExists = goal.producer.map { $0 != nil }.skipRepeats()
+        let goalExists = timeTarget.producer.map { $0 != nil }.skipRepeats()
         for control in [hoursTargetLabel, hoursTargetField, activeWeekdaysLabel, activeWeekdaysControl, deleteGoalButton] as [NSControl] {
             control.reactive.isEnabled <~ goalExists
         }

@@ -15,7 +15,7 @@ class GoalProgress {
     // MARK: - Interface
 
     public var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
-    public var goal: BindingTarget<TimeTarget>{ return _goal.deoptionalizedBindingTarget }
+    public var timeTarget: BindingTarget<TimeTarget>{ return _goal.deoptionalizedBindingTarget }
     public var report: BindingTarget<TwoPartTimeReport?>{ return _report.bindingTarget }
     public var runningEntry: BindingTarget<RunningEntry?>{ return _runningEntry.bindingTarget }
     public var startGoalDay: BindingTarget<DayComponents>{ return _startGoalDay.deoptionalizedBindingTarget }
@@ -36,8 +36,8 @@ class GoalProgress {
                                             _startGoalDay.producer.skipNil().skipRepeats(),
                                             _endGoalDay.producer.skipNil().skipRepeats(),
                                             _calendar.producer.skipNil().skipRepeats())
-            .map { (goal, startGoalDay, endGoalDay, calendar) in
-                return try? calendar.countWeekdaysMatching(goal.workWeekdays, from: startGoalDay, to: endGoalDay)
+            .map { (timeTarget, startGoalDay, endGoalDay, calendar) in
+                return try? calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startGoalDay, to: endGoalDay)
         }
     }()
 
@@ -47,8 +47,8 @@ class GoalProgress {
                                             _startStrategyDay.producer.skipNil().skipRepeats(),
                                             _endGoalDay.producer.skipNil().skipRepeats(),
                                             _calendar.producer.skipNil().skipRepeats())
-            .map { (goal, startStrategyDay, endGoalDay, calendar) in
-                return try? calendar.countWeekdaysMatching(goal.workWeekdays, from: startStrategyDay, to: endGoalDay)
+            .map { (timeTarget, startStrategyDay, endGoalDay, calendar) in
+                return try? calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startStrategyDay, to: endGoalDay)
         }
     }()
 
