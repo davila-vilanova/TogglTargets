@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:TogglGoals.xcodeproj">
+      location = "self:/Users/david/devspace/togglreports/TogglGoals/TogglTargets.xcodeproj">
    </FileRef>
 </Workspace>

@@ -331,14 +331,14 @@
 		6310EFCA1FAC6D3700B42C44 /* Period.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Period.swift; sourceTree = "<group>"; };
 		6310EFCE1FAC6E8700B42C44 /* PeriodPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodPreference.swift; sourceTree = "<group>"; };
 		632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveProjectsNetworkActionTest.swift; sourceTree = "<group>"; };
-		632957421DBA99F000E11A10 /* TogglGoals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TogglGoals.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		632957421DBA99F000E11A10 /* TogglTargets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TogglTargets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957451DBA99F000E11A10 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		632957491DBA99F000E11A10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6329574C1DBA99F000E11A10 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6329574E1DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		632957531DBA99F000E11A10 /* TogglGoalsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglGoalsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		632957531DBA99F000E11A10 /* TogglTargetsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglTargetsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957591DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6329575E1DBA99F000E11A10 /* TogglGoalsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglGoalsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6329575E1DBA99F000E11A10 /* TogglTargetsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglTargetsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglGoalsUITests.swift; sourceTree = "<group>"; };
 		632957641DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepViewController.swift; sourceTree = "<group>"; };
@@ -411,7 +411,7 @@
 		63A67F441FCD9C77004BEFC6 /* URLSessionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionExtensions.swift; sourceTree = "<group>"; };
 		63A67F491FCD9D42004BEFC6 /* APIAccessError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIAccessError.swift; sourceTree = "<group>"; };
 		63AB08121FB6305200565D87 /* PreferenceStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceStore.swift; sourceTree = "<group>"; };
-		63AB08201FB77C5100565D87 /* TogglGoals_MacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TogglGoals_MacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		63AB08201FB77C5100565D87 /* TogglTargets_MacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TogglTargets_MacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		63AB08221FB77C5100565D87 /* TogglGoals_MacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TogglGoals_MacOS.h; sourceTree = "<group>"; };
 		63AB08231FB77C5100565D87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63B1BBE61FBE2570001E9FBE /* ReportPeriodsProducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportPeriodsProducer.swift; sourceTree = "<group>"; };
@@ -509,10 +509,10 @@
 		632957431DBA99F000E11A10 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				632957421DBA99F000E11A10 /* TogglGoals.app */,
-				632957531DBA99F000E11A10 /* TogglGoalsTests.xctest */,
-				6329575E1DBA99F000E11A10 /* TogglGoalsUITests.xctest */,
-				63AB08201FB77C5100565D87 /* TogglGoals_MacOS.framework */,
+				632957421DBA99F000E11A10 /* TogglTargets.app */,
+				632957531DBA99F000E11A10 /* TogglTargetsTests.xctest */,
+				6329575E1DBA99F000E11A10 /* TogglTargetsUITests.xctest */,
+				63AB08201FB77C5100565D87 /* TogglTargets_MacOS.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -804,9 +804,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		632957411DBA99F000E11A10 /* TogglGoals */ = {
+		632957411DBA99F000E11A10 /* TogglTargets */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 632957671DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglGoals" */;
+			buildConfigurationList = 632957671DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglTargets" */;
 			buildPhases = (
 				6329573E1DBA99F000E11A10 /* Sources */,
 				6329573F1DBA99F000E11A10 /* Frameworks */,
@@ -819,14 +819,14 @@
 			dependencies = (
 				63AB08261FB77C5100565D87 /* PBXTargetDependency */,
 			);
-			name = TogglGoals;
+			name = TogglTargets;
 			productName = TogglGoals;
-			productReference = 632957421DBA99F000E11A10 /* TogglGoals.app */;
+			productReference = 632957421DBA99F000E11A10 /* TogglTargets.app */;
 			productType = "com.apple.product-type.application";
 		};
-		632957521DBA99F000E11A10 /* TogglGoalsTests */ = {
+		632957521DBA99F000E11A10 /* TogglTargetsTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6329576A1DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglGoalsTests" */;
+			buildConfigurationList = 6329576A1DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglTargetsTests" */;
 			buildPhases = (
 				6329574F1DBA99F000E11A10 /* Sources */,
 				632957501DBA99F000E11A10 /* Frameworks */,
@@ -836,14 +836,14 @@
 			);
 			dependencies = (
 			);
-			name = TogglGoalsTests;
+			name = TogglTargetsTests;
 			productName = TogglGoalsTests;
-			productReference = 632957531DBA99F000E11A10 /* TogglGoalsTests.xctest */;
+			productReference = 632957531DBA99F000E11A10 /* TogglTargetsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		6329575D1DBA99F000E11A10 /* TogglGoalsUITests */ = {
+		6329575D1DBA99F000E11A10 /* TogglTargetsUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6329576D1DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglGoalsUITests" */;
+			buildConfigurationList = 6329576D1DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglTargetsUITests" */;
 			buildPhases = (
 				6329575A1DBA99F000E11A10 /* Sources */,
 				6329575B1DBA99F000E11A10 /* Frameworks */,
@@ -854,14 +854,14 @@
 			dependencies = (
 				632957601DBA99F000E11A10 /* PBXTargetDependency */,
 			);
-			name = TogglGoalsUITests;
+			name = TogglTargetsUITests;
 			productName = TogglGoalsUITests;
-			productReference = 6329575E1DBA99F000E11A10 /* TogglGoalsUITests.xctest */;
+			productReference = 6329575E1DBA99F000E11A10 /* TogglTargetsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		63AB081F1FB77C5100565D87 /* TogglGoals-MacOS */ = {
+		63AB081F1FB77C5100565D87 /* TogglTargets-MacOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 63AB08291FB77C5100565D87 /* Build configuration list for PBXNativeTarget "TogglGoals-MacOS" */;
+			buildConfigurationList = 63AB08291FB77C5100565D87 /* Build configuration list for PBXNativeTarget "TogglTargets-MacOS" */;
 			buildPhases = (
 				63AB081B1FB77C5100565D87 /* Sources */,
 				63AB081C1FB77C5100565D87 /* Frameworks */,
@@ -872,9 +872,9 @@
 			);
 			dependencies = (
 			);
-			name = "TogglGoals-MacOS";
+			name = "TogglTargets-MacOS";
 			productName = "TogglGoals-MacOS";
-			productReference = 63AB08201FB77C5100565D87 /* TogglGoals_MacOS.framework */;
+			productReference = 63AB08201FB77C5100565D87 /* TogglTargets_MacOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -914,7 +914,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 6329573D1DBA99F000E11A10 /* Build configuration list for PBXProject "TogglGoals" */;
+			buildConfigurationList = 6329573D1DBA99F000E11A10 /* Build configuration list for PBXProject "TogglTargets" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -928,10 +928,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				632957411DBA99F000E11A10 /* TogglGoals */,
-				632957521DBA99F000E11A10 /* TogglGoalsTests */,
-				6329575D1DBA99F000E11A10 /* TogglGoalsUITests */,
-				63AB081F1FB77C5100565D87 /* TogglGoals-MacOS */,
+				632957411DBA99F000E11A10 /* TogglTargets */,
+				632957521DBA99F000E11A10 /* TogglTargetsTests */,
+				6329575D1DBA99F000E11A10 /* TogglTargetsUITests */,
+				63AB081F1FB77C5100565D87 /* TogglTargets-MacOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1244,12 +1244,12 @@
 /* Begin PBXTargetDependency section */
 		632957601DBA99F000E11A10 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 632957411DBA99F000E11A10 /* TogglGoals */;
+			target = 632957411DBA99F000E11A10 /* TogglTargets */;
 			targetProxy = 6329575F1DBA99F000E11A10 /* PBXContainerItemProxy */;
 		};
 		63AB08261FB77C5100565D87 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 63AB081F1FB77C5100565D87 /* TogglGoals-MacOS */;
+			target = 63AB081F1FB77C5100565D87 /* TogglTargets-MacOS */;
 			targetProxy = 63AB08251FB77C5100565D87 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -1562,7 +1562,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TogglGoals.app/Contents/MacOS/TogglGoals";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TogglTargets.app/Contents/MacOS/TogglTargets";
 			};
 			name = Debug;
 		};
@@ -1583,7 +1583,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TogglGoals.app/Contents/MacOS/TogglGoals";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TogglTargets.app/Contents/MacOS/TogglTargets";
 			};
 			name = Release;
 		};
@@ -1690,7 +1690,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6329573D1DBA99F000E11A10 /* Build configuration list for PBXProject "TogglGoals" */ = {
+		6329573D1DBA99F000E11A10 /* Build configuration list for PBXProject "TogglTargets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				632957651DBA99F000E11A10 /* Debug */,
@@ -1699,7 +1699,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		632957671DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglGoals" */ = {
+		632957671DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglTargets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				632957681DBA99F000E11A10 /* Debug */,
@@ -1708,7 +1708,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6329576A1DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglGoalsTests" */ = {
+		6329576A1DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglTargetsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6329576B1DBA99F000E11A10 /* Debug */,
@@ -1717,7 +1717,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6329576D1DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglGoalsUITests" */ = {
+		6329576D1DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglTargetsUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6329576E1DBA99F000E11A10 /* Debug */,
@@ -1726,7 +1726,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		63AB08291FB77C5100565D87 /* Build configuration list for PBXNativeTarget "TogglGoals-MacOS" */ = {
+		63AB08291FB77C5100565D87 /* Build configuration list for PBXNativeTarget "TogglTargets-MacOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				63AB082A1FB77C5100565D87 /* Debug */,
