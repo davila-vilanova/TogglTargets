@@ -1,6 +1,6 @@
 //
 //  ProjectCollectionViewItem.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 22/10/2016.
 //  Copyright © 2016 davi. All rights reserved.

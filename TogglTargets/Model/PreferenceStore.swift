@@ -1,6 +1,6 @@
 //
 //  PreferenceStore.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 10.11.17.
 //  Copyright © 2017 davi. All rights reserved.

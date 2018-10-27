@@ -1,6 +1,6 @@
 //
 //  ModelCoordinator.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 26/10/2016.
 //  Copyright © 2016 davi. All rights reserved.

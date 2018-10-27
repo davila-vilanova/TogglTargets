@@ -1,6 +1,6 @@
 //
 //  GoalStrategyViewController.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 27.05.17.
 //  Copyright © 2017 davi. All rights reserved.

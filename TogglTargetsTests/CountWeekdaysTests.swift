@@ -1,6 +1,6 @@
 //
 //  CountWeekdaysTests.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 06.03.17.
 //  Copyright © 2017 davi. All rights reserved.

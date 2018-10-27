@@ -1,6 +1,6 @@
 //
 //  ErrorViewController.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 01.04.18.
 //  Copyright © 2018 davi. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  OnboardingSteps.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 12.10.18.
 //  Copyright © 2018 davi. All rights reserved.

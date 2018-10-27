@@ -1,6 +1,6 @@
 //
 //  DateTimeExtensions.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 15.03.17.
 //  Copyright © 2017 davi. All rights reserved.

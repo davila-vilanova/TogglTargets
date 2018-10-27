@@ -1,6 +1,6 @@
 //
 //  GoalsStore.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 01.02.17.
 //  Copyright © 2017 davi. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  TogglAPINetworkRetriever.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 22.12.17.
 //  Copyright © 2017 davi. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  GoalPeriodsPreferencesViewController.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 03.11.17.
 //  Copyright © 2017 davi. All rights reserved.

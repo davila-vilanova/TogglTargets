@@ -1,6 +1,6 @@
 //
 //  ProjectDetailsViewController.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 21/10/2016.
 //  Copyright © 2016 davi. All rights reserved.

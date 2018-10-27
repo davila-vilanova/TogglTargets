@@ -1,6 +1,6 @@
 //
 //  SignalProducerExtensions.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 24.09.17.
 //  Copyright © 2017 davi. All rights reserved.

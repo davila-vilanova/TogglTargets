@@ -1,6 +1,6 @@
 //
 //  TogglGoals_MacOS.h
-//  TogglGoals-MacOS
+//  TogglTargets-MacOS
 //
 //  Created by David Dávila on 11.11.17.
 //  Copyright © 2017 davi. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  PreferencesViewControllerWrapper.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 13.08.18.
 //  Copyright © 2018 davi. All rights reserved.

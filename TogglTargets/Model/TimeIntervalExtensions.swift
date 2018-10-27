@@ -1,6 +1,6 @@
 //
 //  TimeIntervalExtensions.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 01.10.17.
 //  Copyright © 2017 davi. All rights reserved.

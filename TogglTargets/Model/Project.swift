@@ -1,6 +1,6 @@
 //
 //  Project.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 18.10.17.
 //  Copyright © 2017 davi. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  PropertyExtensions.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 25.09.17.
 //  Copyright © 2017 davi. All rights reserved.

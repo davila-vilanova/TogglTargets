@@ -1,6 +1,6 @@
 //
 //  NSViewControllerExtensions.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 08.10.18.
 //  Copyright © 2018 davi. All rights reserved.

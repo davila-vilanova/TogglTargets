@@ -1,6 +1,6 @@
 //
 //  CollectionExtensions.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 10.02.18.
 //  Copyright © 2018 davi. All rights reserved.

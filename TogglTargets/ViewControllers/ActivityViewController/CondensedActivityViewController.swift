@@ -1,6 +1,6 @@
 //
 //  CondensedActivityViewController.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 09.03.18.
 //  Copyright © 2018 davi. All rights reserved.

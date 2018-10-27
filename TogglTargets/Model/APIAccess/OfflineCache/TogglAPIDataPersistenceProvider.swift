@@ -1,6 +1,6 @@
 //
 //  TogglAPIDataPersistenceProvider.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 28.06.18.
 //  Copyright © 2018 davi. All rights reserved.

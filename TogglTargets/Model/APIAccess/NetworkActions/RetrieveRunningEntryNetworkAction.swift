@@ -1,6 +1,6 @@
 //
 //  RetrieveRunningEntryNetworkAction.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 28.11.17.
 //  Copyright © 2017 davi. All rights reserved.

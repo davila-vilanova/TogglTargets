@@ -1,6 +1,6 @@
 //
 //  SelectionDetailViewController.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 03.04.17.
 //  Copyright © 2017 davi. All rights reserved.

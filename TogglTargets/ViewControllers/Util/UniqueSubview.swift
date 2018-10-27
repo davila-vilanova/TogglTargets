@@ -1,6 +1,6 @@
 //
 //  UniqueSubview.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 10.08.18.
 //  Copyright © 2018 davi. All rights reserved.

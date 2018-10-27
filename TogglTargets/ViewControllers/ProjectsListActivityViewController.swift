@@ -1,6 +1,6 @@
 //
 //  ProjectsListActivitySplitViewController.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 28.12.17.
 //  Copyright © 2017 davi. All rights reserved.

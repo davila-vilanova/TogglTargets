@@ -1,6 +1,6 @@
 //
 //  EmptySelectionViewController.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Davila on 21.03.17.
 //  Copyright © 2017 davi. All rights reserved.

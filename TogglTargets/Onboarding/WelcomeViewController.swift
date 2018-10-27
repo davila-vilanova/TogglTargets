@@ -1,6 +1,6 @@
 //
 //  WelcomeViewController.swift
-//  TogglGoals
+//  TogglTargets
 //
 //  Created by David Dávila on 14.10.18.
 //  Copyright © 2018 davi. All rights reserved.
