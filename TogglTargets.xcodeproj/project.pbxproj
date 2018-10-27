@@ -1515,7 +1515,7 @@
 				);
 				INFOPLIST_FILE = TogglTargets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoals;
+				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
@@ -1537,7 +1537,7 @@
 				);
 				INFOPLIST_FILE = TogglTargets/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoals;
+				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
@@ -1558,7 +1558,7 @@
 				);
 				INFOPLIST_FILE = TogglTargetsTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoalsTests;
+				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargetsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -1579,7 +1579,7 @@
 				);
 				INFOPLIST_FILE = TogglTargetsTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoalsTests;
+				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargetsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -1595,7 +1595,7 @@
 				DEVELOPMENT_TEAM = 7ZT9GY93K7;
 				INFOPLIST_FILE = TogglTargetsUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoalsUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargetsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -1611,7 +1611,7 @@
 				DEVELOPMENT_TEAM = 7ZT9GY93K7;
 				INFOPLIST_FILE = TogglTargetsUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglGoalsUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargetsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -1644,7 +1644,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = "la.davi.TogglGoals-MacOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "la.davi.TogglTargets-MacOS";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
@@ -1678,7 +1678,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				PRODUCT_BUNDLE_IDENTIFIER = "la.davi.TogglGoals-MacOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "la.davi.TogglTargets-MacOS";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.0;
