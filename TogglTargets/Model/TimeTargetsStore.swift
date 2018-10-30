@@ -59,7 +59,7 @@ protocol TimeTargetPersistenceProvider {
 }
 
 class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
-    /// The database connection used to store and retrieve goals.
+    /// The database connection used to store and retrieve time targets.
     private let db: Connection
 
     // MARK: - Table and expression entities

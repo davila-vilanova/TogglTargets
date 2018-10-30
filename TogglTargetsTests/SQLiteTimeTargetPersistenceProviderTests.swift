@@ -13,7 +13,7 @@ fileprivate let timeoutForExpectations: TimeInterval = 1
 
 class SQLiteTimeTargetPersistenceProviderTests: XCTestCase {
 
-    func testStoreAndRetrieveGoals() {
+    func testStoreAndRetrieveTimeTargets() {
         let fixtureMonthly = TimeTarget(for: 4121, hoursTarget: 24, workWeekdays: .exceptWeekend)
         let fixtureWeekly = TimeTarget(for: 1381, hoursTarget: 8, workWeekdays: .wholeWeek)
 
@@ -21,16 +21,16 @@ class SQLiteTimeTargetPersistenceProviderTests: XCTestCase {
             XCTFail()
             return
         }
-        store.persistGoal <~ SignalProducer([fixtureMonthly, fixtureWeekly])
+        store.persistTimeTarget <~ SignalProducer([fixtureMonthly, fixtureWeekly])
 
-        let goalsRetrievedExpectation = expectation(description: "All goals retrieved from database")
-        store.allGoals.start(on: UIScheduler()).startWithValues { indexedGoals in
-            goalsRetrievedExpectation.fulfill()
-            XCTAssertEqual(indexedGoals[4121], fixtureMonthly)
-            XCTAssertEqual(indexedGoals[1381], fixtureWeekly)
+        let timeTargetsRetrievedExpectation = expectation(description: "All time targets retrieved from database")
+        store.allTimeTargets.producer.start(on: UIScheduler()).startWithValues { indexedTargets in
+            timeTargetsRetrievedExpectation.fulfill()
+            XCTAssertEqual(indexedTargets[4121], fixtureMonthly)
+            XCTAssertEqual(indexedTargets[1381], fixtureWeekly)
         }
 
-        wait(for: [goalsRetrievedExpectation], timeout: timeoutForExpectations)
+        wait(for: [timeTargetsRetrievedExpectation], timeout: timeoutForExpectations)
     }
 
 }
