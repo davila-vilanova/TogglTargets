@@ -17,7 +17,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     internal typealias Interface = (
         calendar: SignalProducer<Calendar, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
-        projectIDsByGoals: ProjectIDsByGoalsProducer,
+        projectIDsByTimeTargets: ProjectIDsByTimeTargetsProducer,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
         modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
@@ -99,7 +99,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
             SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.bindingTarget),
                                          lastBinding.producer.skipNil())
                 .map { [unowned focusOnUndoProjectId] selectedProjectIdTarget, binding in
-                    (binding.projectIDsByGoals,
+                    (binding.projectIDsByTimeTargets,
                      selectedProjectIdTarget,
                      focusOnUndoProjectId.producer.skip(first: 1),
                      binding.runningEntry,

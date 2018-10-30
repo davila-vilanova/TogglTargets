@@ -96,7 +96,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         mainViewController <~ SignalProducer(
             value: (calendar: calendar.producer,
                     periodPreference: periodPreferenceStore.output.producer.skipNil(),
-                    projectIDsByGoals: modelCoordinator.projectIDsByGoals,
+                    projectIDsByTimeTargets: modelCoordinator.projectIDsByTimeTargets,
                     runningEntry: modelCoordinator.runningEntry.producer,
                     currentDate: currentDateGenerator.currentDate.producer,
                     modelRetrievalStatus: modelCoordinator.retrievalStatus,

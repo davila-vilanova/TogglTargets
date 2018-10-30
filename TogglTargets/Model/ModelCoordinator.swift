@@ -55,8 +55,8 @@ internal class ModelCoordinator: NSObject {
     // MARK: - Projects
 
     /// Combines the project IDs from the Toggl API and the user's goals.
-    var projectIDsByGoals: ProjectIDsByGoalsProducer {
-        return self.goalsStore.projectIDsByGoalsProducer
+    var projectIDsByTimeTargets: ProjectIDsByTimeTargetsProducer {
+        return self.goalsStore.projectIDsByTimeTargetsProducer
     }
 
     /// Function which takes a project ID as input and returns a producer that

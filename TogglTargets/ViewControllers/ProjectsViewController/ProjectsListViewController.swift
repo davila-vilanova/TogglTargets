@@ -26,8 +26,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Interface
 
-    ///   - projectIDsByGoals: a producer of `ProjectIDsByGoals.Update` values
-    ///     that when started emits a `full(ProjectIDsByGoals)` value which can
+    ///   - projectIDsByTimeTargets: a producer of `ProjectIDsByTimeTargets.Update` values
+    ///     that when started emits a `full(ProjectIDsByTimeTargets)` value which can
     ///     be followed by full or incremental updates.
     ///     Full values cause a full refresh. Incremental updates cause a reorder of projects in the
     ///     displayed collection.
@@ -45,7 +45,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s corresponding
     ///     to its input project IDs.
     internal typealias Interface = (
-        projectIDsByGoals: ProjectIDsByGoalsProducer,
+        projectIDsByTimeTargets: ProjectIDsByTimeTargetsProducer,
         selectionUpstream: BindingTarget<ProjectID?>,
         selectionDownstream: SignalProducer<ProjectID?, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
@@ -84,15 +84,15 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - Private properties
 
     /// The current value of `ProjectsIDsByGoals`.
-    private var currentProjectIDs = MutableProperty(ProjectIDsByGoals.empty)
+    private var currentProjectIDs = MutableProperty(ProjectIDsByTimeTargets.empty)
 
-    private var lastProjectIDsByGoalsUpdate = MutableProperty<ProjectIDsByGoals.Update?>(nil)
+    private var lastProjectIDsByGoalsUpdate = MutableProperty<ProjectIDsByTimeTargets.Update?>(nil)
 
 
     // MARK: - Outlets
 
     /// The collection view in charge of displaying the projects organized by goals following the
-    /// project ID order and the structure of the current `ProjectIDsByGoals` value.
+    /// project ID order and the structure of the current `ProjectIDsByTimeTargets` value.
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
 
     @IBOutlet weak var clipView: NSClipView!
@@ -151,7 +151,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         wireSingleGoalUpdatesToCollectionView()
 
         // Connect interface to private properties
-        lastProjectIDsByGoalsUpdate <~ lastBinding.latestOutput { $0.projectIDsByGoals }
+        lastProjectIDsByGoalsUpdate <~ lastBinding.latestOutput { $0.projectIDsByTimeTargets }
         runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
         currentDate <~ lastBinding.latestOutput { $0.currentDate }
         periodPreference <~ lastBinding.latestOutput { $0.periodPreference }
@@ -232,7 +232,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func wireSingleGoalUpdatesToCollectionView () {
         // reflect the provided update in the value of `currentProjectIDs`, reorder the affected item in the
         // collection view and update the "last item in section" visual state
-        let singlePidsUpdates: Signal<(ProjectIDsByGoals.Update.GoalUpdate, ProjectIDsByGoals, ProjectIDsByGoals), NoError> =
+        let singlePidsUpdates: Signal<(ProjectIDsByTimeTargets.Update.GoalUpdate, ProjectIDsByTimeTargets, ProjectIDsByTimeTargets), NoError> =
             lastProjectIDsByGoalsUpdate.signal.skipNil().filterMap { $0.goalUpdate }
                 .withLatest(from: currentProjectIDs.producer)
                 .map { ($0.0, $0.1, $0.0.apply(to: $0.1)) }
@@ -249,10 +249,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let itemsWhoseLastInSectionStatusMustUpdate = newIndexPaths.zip(with: updatedPids)
             .map { (newIndexPath, updatedPids) -> Dictionary<IndexPath, Bool> in
                 var possiblyAffectedItems: Set<IndexPath> = [newIndexPath,
-                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByGoals.Section.withGoal),
-                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByGoals.Section.withoutGoal)]
+                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withGoal),
+                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withoutGoal)]
 
-                if let section = ProjectIDsByGoals.Section.init(rawValue: newIndexPath.section),
+                if let section = ProjectIDsByTimeTargets.Section.init(rawValue: newIndexPath.section),
                     newIndexPath == updatedPids.indexPathOfLastItem(in: section),
                     newIndexPath.item > 0 {
                     possiblyAffectedItems.insert(IndexPath(item: newIndexPath.item - 1, section: newIndexPath.section))
@@ -318,12 +318,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - NSCollectionViewDataSource
 
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
-        return ProjectIDsByGoals.Section.count
+        return ProjectIDsByTimeTargets.Section.count
     }
 
     func collectionView(_ collectionView: NSCollectionView,
                         numberOfItemsInSection rawSection: Int) -> Int {
-        guard let section = ProjectIDsByGoals.Section(rawValue: rawSection) else {
+        guard let section = ProjectIDsByTimeTargets.Section(rawValue: rawSection) else {
             return 0
         }
         return currentProjectIDs.value.numberOfItems(in: section)
@@ -355,7 +355,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
                                                         withIdentifier: SectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
-            switch ProjectIDsByGoals.Section(rawValue: indexPath.section)! {
+            switch ProjectIDsByTimeTargets.Section(rawValue: indexPath.section)! {
             case .withGoal: header.title = NSLocalizedString("project-list.header.with-time-targets",
                                                              comment: "header of the 'projects with time targets' section of the project list")
             case .withoutGoal: header.title = NSLocalizedString("project-list.header.without-time-targets",
@@ -387,7 +387,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectWithoutGoalSelected = SignalProducer.combineLatest(
             currentProjectIDs.producer,
             selectedProjectID.producer.skip(first: 1).skipNil())
-            .filter { $0.0.indexPath(for: $0.1)?.section == ProjectIDsByGoals.Section.withoutGoal.rawValue }
+            .filter { $0.0.indexPath(for: $0.1)?.section == ProjectIDsByTimeTargets.Section.withoutGoal.rawValue }
             .map { _ in () }
 
         let projectsListView = viewDidLoadProducer

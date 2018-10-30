@@ -8,12 +8,12 @@
 
 import XCTest
 
-fileprivate let withGoal = ProjectIDsByGoals.Section.withGoal.rawValue
-fileprivate let withoutGoal = ProjectIDsByGoals.Section.withoutGoal.rawValue
+fileprivate let withGoal = ProjectIDsByTimeTargets.Section.withGoal.rawValue
+fileprivate let withoutGoal = ProjectIDsByTimeTargets.Section.withoutGoal.rawValue
 
 class ProjectIDsByGoalsTests: XCTestCase {
 
-    let idsByGoals = ProjectIDsByGoals(sortedProjectIDs: [897, 1243, 6103, 321407, 23, 0, 1432075, 12, 400],
+    let idsByGoals = ProjectIDsByTimeTargets(sortedProjectIDs: [897, 1243, 6103, 321407, 23, 0, 1432075, 12, 400],
                                        countOfProjectsWithGoals: 4)
 
     func testCountOfProjectsWithoutGoals() {
@@ -21,22 +21,22 @@ class ProjectIDsByGoalsTests: XCTestCase {
     }
 
     func testEquality() {
-        let a = ProjectIDsByGoals(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 2)
-        let b = ProjectIDsByGoals(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 2)
+        let a = ProjectIDsByTimeTargets(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 2)
+        let b = ProjectIDsByTimeTargets(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 2)
         XCTAssertTrue(a == b)
         XCTAssertFalse(a != b)
     }
 
     func testNonEqualityByDifferingOrder() {
-        let a = ProjectIDsByGoals(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 2)
-        let b = ProjectIDsByGoals(sortedProjectIDs: [1, 2, 2], countOfProjectsWithGoals: 2)
+        let a = ProjectIDsByTimeTargets(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 2)
+        let b = ProjectIDsByTimeTargets(sortedProjectIDs: [1, 2, 2], countOfProjectsWithGoals: 2)
         XCTAssertTrue(a != b)
         XCTAssertFalse(a == b)
     }
 
     func testNonEqualityByDifferingCount() {
-        let a = ProjectIDsByGoals(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 2)
-        let b = ProjectIDsByGoals(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 1)
+        let a = ProjectIDsByTimeTargets(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 2)
+        let b = ProjectIDsByTimeTargets(sortedProjectIDs: [1, 2, 3], countOfProjectsWithGoals: 1)
         XCTAssertTrue(a != b)
         XCTAssertFalse(a == b)
     }
@@ -65,14 +65,14 @@ fileprivate let SetupFailureNilProjectId = "\(SetupFailure)after calling setupFo
 class ProjectIDsByGoalsUpdateTests: XCTestCase {
     var indexedGoals: ProjectIndexedGoals?
     var projectIDs: [ProjectID]?
-    var idsByGoals: ProjectIDsByGoals?
+    var idsByGoals: ProjectIDsByTimeTargets?
 
     var projectId: ProjectID?
     var oldGoal: TimeTarget?
     var newGoal: TimeTarget?
     var newIndexedGoals: ProjectIndexedGoals?
 
-    typealias GoalUpdate = ProjectIDsByGoals.Update.GoalUpdate
+    typealias GoalUpdate = ProjectIDsByTimeTargets.Update.GoalUpdate
 
     // Updates the values of projectId, oldGoal, newGoal and newIndexedGoals
     func setUpForProjectId(_ projectId: ProjectID, newGoal: TimeTarget?) {
@@ -103,7 +103,7 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
                          48 : TimeTarget(for: 48, hoursTarget: 30, workWeekdays: WeekdaySelection.exceptWeekend) ]
         projectIDs = [30, 12, 25, 89, 22, 48, 71, 60]
 
-        idsByGoals = ProjectIDsByGoals(projectIDs: projectIDs!, goals: indexedGoals!)
+        idsByGoals = ProjectIDsByTimeTargets(projectIDs: projectIDs!, goals: indexedGoals!)
 
         projectId = nil
         oldGoal = nil
