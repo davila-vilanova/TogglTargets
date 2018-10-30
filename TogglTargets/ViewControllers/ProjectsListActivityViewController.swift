@@ -23,7 +23,7 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
         readProject: ReadProject,
-        readGoal: ReadTimeTarget,
+        readTimeTarget: ReadTimeTarget,
         readReport: ReadReport)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -58,7 +58,7 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
                  $0.currentDate,
                  $0.periodPreference,
                  $0.readProject,
-                 $0.readGoal,
+                 $0.readTimeTarget,
                  $0.readReport)
             }
         }

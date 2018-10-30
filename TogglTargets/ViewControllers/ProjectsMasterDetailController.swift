@@ -22,7 +22,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         currentDate: SignalProducer<Date, NoError>,
         modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
         readProject: ReadProject,
-        readGoal: ReadTimeTarget,
+        readTimeTarget: ReadTimeTarget,
         writeGoal: BindingTarget<TimeTarget>,
         deleteGoal: BindingTarget<ProjectID>,
         readReport: ReadReport)
@@ -53,17 +53,17 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         controller.undoManager?.setActionName(actionName)
     }
 
-    private lazy var readGoal = Property(initial: nil, then: lastBinding.producer.skipNil().map { $0.readGoal })
+    private lazy var readTimeTarget = Property(initial: nil, then: lastBinding.producer.skipNil().map { $0.readTimeTarget })
 
     private lazy var isProjectWithGoalCurrentlySelected =
-        Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readGoal.producer)
+        Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readTimeTarget.producer)
             .map { p, r -> SignalProducer<TimeTarget?, NoError> in
                 guard let projectId = p,
-                    let readGoal = r
+                    let readTimeTarget = r
                     else {
                         return SignalProducer<TimeTarget?, NoError>(value: nil)
                 }
-                return readGoal(projectId)
+                return readTimeTarget(projectId)
             }
             .flatten(.latest)
             .map { $0 != nil }
@@ -107,7 +107,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.periodPreference,
                      binding.modelRetrievalStatus,
                      binding.readProject,
-                     binding.readGoal,
+                     binding.readTimeTarget,
                      binding.readReport)
         }
 
@@ -122,7 +122,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.periodPreference,
                      binding.runningEntry,
                      binding.readProject,
-                     binding.readGoal,
+                     binding.readTimeTarget,
                      modifyGoal,
                      binding.readReport)
         }

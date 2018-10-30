@@ -24,7 +24,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         readProject: ReadProject,
-        readGoal: ReadTimeTarget,
+        readTimeTarget: ReadTimeTarget,
         writeGoal: BindingTarget<TimeTarget>,
         readReport: ReadReport)
 
@@ -63,7 +63,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
                  binding.calendar,
                  binding.periodPreference,
                  binding.runningEntry,
-                 binding.readGoal,
+                 binding.readTimeTarget,
                  binding.writeGoal,
                  binding.readReport)
         }

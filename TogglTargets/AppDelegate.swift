@@ -101,7 +101,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                     currentDate: currentDateGenerator.currentDate.producer,
                     modelRetrievalStatus: modelCoordinator.retrievalStatus,
                     readProject: modelCoordinator.readProject,
-                    readGoal: modelCoordinator.readGoal,
+                    readTimeTarget: modelCoordinator.readTimeTarget,
                     writeGoal: modelCoordinator.writeGoal,
                     deleteGoal: modelCoordinator.deleteGoal,
                     readReport: modelCoordinator.readReport))

@@ -21,7 +21,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         calendar: SignalProducer<Calendar, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
-        readGoal: ReadTimeTarget,
+        readTimeTarget: ReadTimeTarget,
         writeGoal: BindingTarget<TimeTarget>,
         readReport: ReadReport)
 
@@ -33,7 +33,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     /// Selected project.
     private let project = MutableProperty<Project?>(nil)
 
-    private let readGoal = MutableProperty<ReadTimeTarget?>(nil)
+    private let readTimeTarget = MutableProperty<ReadTimeTarget?>(nil)
     private let readReport = MutableProperty<ReadReport?>(nil)
 
 
@@ -43,9 +43,9 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
 
     /// TimeTarget corresponding to the selected project.
     private lazy var goalForCurrentProject: SignalProducer<TimeTarget?, NoError> = projectId
-        .throttle(while: readGoal.map { $0 == nil }, on: UIScheduler())
-        .combineLatest(with: readGoal.producer.skipNil())
-        .map { projectId, readGoal in readGoal(projectId) }
+        .throttle(while: readTimeTarget.map { $0 == nil }, on: UIScheduler())
+        .combineLatest(with: readTimeTarget.producer.skipNil())
+        .map { projectId, readTimeTarget in readTimeTarget(projectId) }
         .flatten(.latest)
 
 
@@ -53,7 +53,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     private lazy var reportForCurrentProject: SignalProducer<TwoPartTimeReport?, NoError> = projectId
         .throttle(while: readReport.map { $0 == nil }, on: UIScheduler())
         .combineLatest(with: readReport.producer.skipNil())
-        .map { projectId, readGoal in readGoal(projectId) }
+        .map { projectId, readTimeTarget in readTimeTarget(projectId) }
         .flatten(.latest) // TODO: generalize and reuse
 
     // MARK: - Contained view controllers
@@ -117,7 +117,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         project <~ lastBinding.latestOutput { $0.project }
 
         let lastValidBinding = lastBinding.producer.skipNil()
-        readGoal <~ lastValidBinding.map { $0.readGoal }
+        readTimeTarget <~ lastValidBinding.map { $0.readTimeTarget }
         readReport <~ lastValidBinding.map { $0.readReport }
 
         setupLocalProjectDisplay()

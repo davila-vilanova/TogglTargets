@@ -40,7 +40,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     This is useful to calculate the elapsed running time of the active time entry provided by `runningEntry`.
     ///   - readProject: A function this controller will use to read projects corresponding
     ///     to its input project IDs.
-    ///   - readGoal: A function this controller will use to read goals corresponding
+    ///   - readTimeTarget: A function this controller will use to read goals corresponding
     ///     to its input project IDs.
     ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s corresponding
     ///     to its input project IDs.
@@ -52,7 +52,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         currentDate: SignalProducer<Date, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         readProject: ReadProject,
-        readGoal: ReadTimeTarget,
+        readTimeTarget: ReadTimeTarget,
         readReport: ReadReport)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -76,7 +76,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private let readProject = MutableProperty<ReadProject?>(nil)
 
     /// The function used to read goals by project ID.
-    private let readGoal = MutableProperty<ReadTimeTarget?>(nil)
+    private let readTimeTarget = MutableProperty<ReadTimeTarget?>(nil)
 
     /// The action used to read reports by project ID.
     private let readReport = MutableProperty<ReadReport?>(nil)
@@ -158,7 +158,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         let lastValidBinding = lastBinding.producer.skipNil()
         readProject <~ lastValidBinding.map { $0.readProject }
-        readGoal <~ lastValidBinding.map { $0.readGoal }
+        readTimeTarget <~ lastValidBinding.map { $0.readTimeTarget }
         readReport <~ lastValidBinding.map { $0.readReport }
 
         let selectedProjectId = restoredSelectedProjectId.producer
@@ -340,7 +340,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             value: (runningEntry.producer,
                     currentDate.producer.skipNil(),
                     readProject.value!(projectId),
-                    readGoal.value!(projectId),
+                    readTimeTarget.value!(projectId),
                     periodPreference.producer.skipNil(),
                     readReport.value!(projectId)))
 
