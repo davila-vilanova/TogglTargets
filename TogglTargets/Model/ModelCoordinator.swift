@@ -23,7 +23,7 @@ internal class ModelCoordinator: NSObject {
     private let togglDataRetriever: TogglAPIDataRetriever
 
     /// The store for the user's goals.
-    private let goalsStore: ProjectIDsProducingTimeTargetsStore
+    private let timeTargetsStore: ProjectIDsProducingTimeTargetsStore
 
     /// The current date generator used to access and trigger updates to the
     /// current date.
@@ -56,7 +56,7 @@ internal class ModelCoordinator: NSObject {
 
     /// Combines the project IDs from the Toggl API and the user's goals.
     var projectIDsByTimeTargets: ProjectIDsByTimeTargetsProducer {
-        return self.goalsStore.projectIDsByTimeTargetsProducer
+        return self.timeTargetsStore.projectIDsByTimeTargetsProducer
     }
 
     /// Function which takes a project ID as input and returns a producer that
@@ -117,14 +117,14 @@ internal class ModelCoordinator: NSObject {
     /// - note: `nil` timeTarget values represent a target that does not exist yet or
     ///         that has been deleted.
     internal var readTimeTarget: ReadTimeTarget {
-        return goalsStore.readTimeTarget
+        return timeTargetsStore.readTimeTarget
     }
 
     /// Target which accepts new (or edited) time target values.
-    internal var writeGoal: BindingTarget<TimeTarget> { return goalsStore.writeGoal }
+    internal var writeGoal: BindingTarget<TimeTarget> { return timeTargetsStore.writeGoal }
 
     /// Target which for each received project ID deletes the time target associated with that project ID.
-    internal var deleteGoal: BindingTarget<ProjectID> { return goalsStore.deleteGoal }
+    internal var deleteGoal: BindingTarget<ProjectID> { return timeTargetsStore.deleteGoal }
 
 
     // MARK: - Forcing a refresh of all data
@@ -145,18 +145,18 @@ internal class ModelCoordinator: NSObject {
     /// - parameters:
     ///   - togglDataRetriever: The `TogglAPIDataRetriever` used to access data
     ///     from the Toggl API.
-    ///   - goalsStore: The store for the user's goals.
+    ///   - timeTargetsStore: The store for the user's goals.
     ///   - currentDateGenerator: The current date generator used to access and
     ///     trigger updates to the current date.
     ///   - reportPeriodsProducer: The `ReportPeriodsProducer` used to determine
     ///     the dates to scope the requests for reports.
     internal init(togglDataRetriever: TogglAPIDataRetriever,
-                  goalsStore: ProjectIDsProducingTimeTargetsStore,
+                  timeTargetsStore: ProjectIDsProducingTimeTargetsStore,
                   currentDateGenerator: CurrentDateGeneratorProtocol,
                   calendar: SignalProducer<Calendar, NoError>,
                   reportPeriodsProducer: ReportPeriodsProducer) {
         self.togglDataRetriever = togglDataRetriever
-        self.goalsStore = goalsStore
+        self.timeTargetsStore = timeTargetsStore
         self.currentDateGenerator = currentDateGenerator
         self.reportPeriodsProducer = reportPeriodsProducer
         self.runningEntryUpdateTimer = RunningEntryUpdateTimer(now: currentDateGenerator.producer,
@@ -169,7 +169,7 @@ internal class ModelCoordinator: NSObject {
 
         super.init()
 
-        self.goalsStore.projectIDs <~ self.togglDataRetriever.projects.producer.skipNil().map { [ProjectID]($0.keys) }
+        self.timeTargetsStore.projectIDs <~ self.togglDataRetriever.projects.producer.skipNil().map { [ProjectID]($0.keys) }
         reportPeriodsProducer.calendar <~ calendar
         reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
         togglDataRetriever.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod.skipRepeats()

@@ -71,10 +71,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                                             retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
                                             retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
 
-            let goalsStore = ConcreteProjectIDsProducingTimeTargetsStore(persistenceProvider: timeTargetsPersistenceProvider, undoManager: undoManager)
+            let timeTargetsStore = ConcreteProjectIDsProducingTimeTargetsStore(persistenceProvider: timeTargetsPersistenceProvider, undoManager: undoManager)
 
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
-                                                goalsStore: goalsStore,
+                                                timeTargetsStore: timeTargetsStore,
                                                 currentDateGenerator: currentDateGenerator,
                                                 calendar: calendar.producer,
                                                 reportPeriodsProducer: ReportPeriodsProducer())
