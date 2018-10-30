@@ -71,7 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                                             retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
                                             retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
 
-            let goalsStore = ConcreteProjectIDsByGoalsProducingGoalsStore(persistenceProvider: goalsPersistenceProvider, undoManager: undoManager)
+            let goalsStore = ConcreteProjectIDsProducingTimeTargetsStore(persistenceProvider: goalsPersistenceProvider, undoManager: undoManager)
 
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
                                                 goalsStore: goalsStore,

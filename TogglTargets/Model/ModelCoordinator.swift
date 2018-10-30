@@ -23,7 +23,7 @@ internal class ModelCoordinator: NSObject {
     private let togglDataRetriever: TogglAPIDataRetriever
 
     /// The store for the user's goals.
-    private let goalsStore: ProjectIDsByGoalsProducingGoalsStore
+    private let goalsStore: ProjectIDsProducingTimeTargetsStore
 
     /// The current date generator used to access and trigger updates to the
     /// current date.
@@ -151,7 +151,7 @@ internal class ModelCoordinator: NSObject {
     ///   - reportPeriodsProducer: The `ReportPeriodsProducer` used to determine
     ///     the dates to scope the requests for reports.
     internal init(togglDataRetriever: TogglAPIDataRetriever,
-                  goalsStore: ProjectIDsByGoalsProducingGoalsStore,
+                  goalsStore: ProjectIDsProducingTimeTargetsStore,
                   currentDateGenerator: CurrentDateGeneratorProtocol,
                   calendar: SignalProducer<Calendar, NoError>,
                   reportPeriodsProducer: ReportPeriodsProducer) {
