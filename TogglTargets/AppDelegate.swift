@@ -197,10 +197,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                     apiAccessError: authErrors,
                     resolvedCredential: resolvedCredential.bindingTarget,
                     testURLSessionAction: makeRetrieveProfileNetworkAction(),
-                    existingGoalPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
+                    existingTimeTargetPeriodPreference: periodPreferenceStore.output.producer.skipNil(),
                     calendar: calendar.producer,
                     currentDate: currentDateGenerator.currentDate.producer,
-                    updatedGoalPeriodPreference: updatedPeriodPreference.deoptionalizedBindingTarget))
+                    updatedTimeTargetPeriodPreference: updatedPeriodPreference.deoptionalizedBindingTarget))
 
         lifetime += credentialStore.input <~ resolvedCredential.signal
         lifetime += periodPreferenceStore.input <~ updatedPeriodPreference.signal

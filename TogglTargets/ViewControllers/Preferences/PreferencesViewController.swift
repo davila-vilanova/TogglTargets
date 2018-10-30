@@ -24,10 +24,10 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
         apiAccessError: SignalProducer<APIAccessError, NoError>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
         testURLSessionAction: RetrieveProfileNetworkAction,
-        existingGoalPeriodPreference: SignalProducer<PeriodPreference, NoError>,
+        existingTimeTargetPeriodPreference: SignalProducer<PeriodPreference, NoError>,
         calendar: SignalProducer<Calendar, NoError>,
         currentDate: SignalProducer<Date, NoError>,
-        updatedGoalPeriodPreference: BindingTarget<PeriodPreference>)
+        updatedTimeTargetPeriodPreference: BindingTarget<PeriodPreference>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -67,7 +67,7 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
         if let account = controller as? AccountViewController {
             account <~ validBindings.map { ($0.existingCredential, $0.profile, $0.apiAccessError, $0.resolvedCredential, $0.testURLSessionAction) }
         } else if let goalPeriods = controller as? GoalPeriodsPreferencesViewController {
-            goalPeriods <~ validBindings.map { ($0.calendar, $0.currentDate, $0.existingGoalPeriodPreference, $0.updatedGoalPeriodPreference) }
+            goalPeriods <~ validBindings.map { ($0.calendar, $0.currentDate, $0.existingTimeTargetPeriodPreference, $0.updatedTimeTargetPeriodPreference) }
         }
     }
 
