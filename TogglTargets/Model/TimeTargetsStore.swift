@@ -27,7 +27,7 @@ protocol TimeTargetsStore {
     ///
     /// - note: `nil` target values represent a time target that does not exist yet or
     ///         that has been deleted.
-    var readGoal: ReadGoal { get }
+    var readGoal: ReadTimeTarget { get }
 
     /// Target which accepts new (or edited) timeTarget values.
     var writeGoal: BindingTarget<TimeTarget> { get }
@@ -233,7 +233,7 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
     ///
     /// - note: `nil` target values represent a time target that does not exist yet or
     ///         that has been deleted.
-    lazy var readGoal: ReadGoal = { projectID in
+    lazy var readGoal: ReadTimeTarget = { projectID in
         self.persistenceProvider.allGoals.producer.map { $0[projectID] }.skipRepeats { $0 == $1 }
     }
 

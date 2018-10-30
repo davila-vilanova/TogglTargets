@@ -26,4 +26,4 @@ typealias ReadReport = (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError
 ///
 /// - note: `nil` timeTarget values represent a target that does not exist yet or
 ///         that has been deleted.
-typealias ReadGoal = (ProjectID) -> SignalProducer<TimeTarget?, NoError>
+typealias ReadTimeTarget = (ProjectID) -> SignalProducer<TimeTarget?, NoError>

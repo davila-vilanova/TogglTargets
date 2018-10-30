@@ -22,7 +22,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         currentDate: SignalProducer<Date, NoError>,
         modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
         readProject: ReadProject,
-        readGoal: ReadGoal,
+        readGoal: ReadTimeTarget,
         writeGoal: BindingTarget<TimeTarget>,
         deleteGoal: BindingTarget<ProjectID>,
         readReport: ReadReport)

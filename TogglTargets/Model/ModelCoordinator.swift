@@ -116,7 +116,7 @@ internal class ModelCoordinator: NSObject {
     ///
     /// - note: `nil` timeTarget values represent a target that does not exist yet or
     ///         that has been deleted.
-    internal var readGoal: ReadGoal {
+    internal var readGoal: ReadTimeTarget {
         return goalsStore.readGoal
     }
 

@@ -52,7 +52,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         currentDate: SignalProducer<Date, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         readProject: ReadProject,
-        readGoal: ReadGoal,
+        readGoal: ReadTimeTarget,
         readReport: ReadReport)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -76,7 +76,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private let readProject = MutableProperty<ReadProject?>(nil)
 
     /// The function used to read goals by project ID.
-    private let readGoal = MutableProperty<ReadGoal?>(nil)
+    private let readGoal = MutableProperty<ReadTimeTarget?>(nil)
 
     /// The action used to read reports by project ID.
     private let readReport = MutableProperty<ReadReport?>(nil)

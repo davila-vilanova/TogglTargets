@@ -24,7 +24,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         readProject: ReadProject,
-        readGoal: ReadGoal,
+        readGoal: ReadTimeTarget,
         writeGoal: BindingTarget<TimeTarget>,
         readReport: ReadReport)
 

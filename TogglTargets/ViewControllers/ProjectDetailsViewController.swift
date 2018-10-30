@@ -21,7 +21,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         calendar: SignalProducer<Calendar, NoError>,
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
-        readGoal: ReadGoal,
+        readGoal: ReadTimeTarget,
         writeGoal: BindingTarget<TimeTarget>,
         readReport: ReadReport)
 
@@ -33,7 +33,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     /// Selected project.
     private let project = MutableProperty<Project?>(nil)
 
-    private let readGoal = MutableProperty<ReadGoal?>(nil)
+    private let readGoal = MutableProperty<ReadTimeTarget?>(nil)
     private let readReport = MutableProperty<ReadReport?>(nil)
 
 
