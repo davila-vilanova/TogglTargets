@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="Ww4-Pu-BUY">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -30,7 +31,7 @@
         <!--Welcome View Controller-->
         <scene sceneID="e0x-wk-4lA">
             <objects>
-                <viewController id="7Vr-Nc-dGW" customClass="WelcomeViewController" customModule="TogglGoals" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="7Vr-Nc-dGW" customClass="WelcomeViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="NiY-k9-5tL">
                         <rect key="frame" x="0.0" y="0.0" width="709" height="190"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -71,7 +72,7 @@
                                 </buttonCell>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="igS-L0-w3j">
-                                <rect key="frame" x="190" y="14" width="108" height="19"/>
+                                <rect key="frame" x="190" y="17" width="108" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="what toggl.com?" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Erd-74-jPL">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -99,7 +100,7 @@
                             <constraint firstAttribute="bottom" secondItem="yAh-aw-kaq" secondAttribute="bottom" constant="20" symbolic="YES" id="DG5-0j-fR1"/>
                             <constraint firstItem="lIb-WD-ar6" firstAttribute="top" secondItem="gfN-IN-Lfx" secondAttribute="bottom" constant="30" id="FrU-LA-VWi"/>
                             <constraint firstAttribute="trailing" secondItem="aYp-00-8db" secondAttribute="trailing" constant="20" symbolic="YES" id="HV9-P4-syx"/>
-                            <constraint firstItem="lIb-WD-ar6" firstAttribute="firstBaseline" secondItem="igS-L0-w3j" secondAttribute="firstBaseline" id="PJw-7L-r0t"/>
+                            <constraint firstItem="lIb-WD-ar6" firstAttribute="centerY" secondItem="igS-L0-w3j" secondAttribute="centerY" id="PJw-7L-r0t"/>
                             <constraint firstItem="aYp-00-8db" firstAttribute="top" secondItem="NiY-k9-5tL" secondAttribute="top" constant="20" symbolic="YES" id="Pms-sr-1xd"/>
                             <constraint firstItem="Oy1-8H-iDQ" firstAttribute="leading" secondItem="aYp-00-8db" secondAttribute="leading" id="UCg-Wm-Do1"/>
                             <constraint firstItem="gfN-IN-Lfx" firstAttribute="leading" secondItem="igS-L0-w3j" secondAttribute="leading" id="bVq-ip-WAV"/>
