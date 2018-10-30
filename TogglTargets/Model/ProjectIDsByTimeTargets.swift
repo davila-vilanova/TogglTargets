@@ -102,10 +102,10 @@ struct ProjectIDsByTimeTargets {
             ///
             ///   - returns: The update corresponding to the change in the time target associated with `projectId`,
             ///              `nil` if `projectId` is not included in `idsByGoals`
-            static func forGoalChange(involving newGoal: TimeTarget?,
-                                      for projectId: ProjectID,
-                                      within goalsPreChange: ProjectIndexedGoals,
-                                      affecting idsByGoals: ProjectIDsByTimeTargets) -> Update.TimeTargetUpdate?  {
+            static func forTimeTargetChange(involving newGoal: TimeTarget?,
+                                            for projectId: ProjectID,
+                                            within goalsPreChange: ProjectIdIndexedTimeTargets,
+                                            affecting idsByGoals: ProjectIDsByTimeTargets) -> Update.TimeTargetUpdate?  {
                 let currentSortedIDs = idsByGoals.sortedProjectIDs
                 let newlySortedIDs = currentSortedIDs
                     .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
@@ -141,7 +141,7 @@ extension ProjectIDsByTimeTargets {
     /// - parameters:
     ///   - projectIDs: The IDs to sort by the provided goals. All IDs must be unique.
     ///   - goals: The goals upon which to base the primary ordering of the IDs.
-    init(projectIDs: [ProjectID], goals: ProjectIndexedGoals) {
+    init(projectIDs: [ProjectID], goals: ProjectIdIndexedTimeTargets) {
         let sortedIDs = projectIDs.sorted(by: makeAreProjectIDsInIncreasingOrderFunction(for: goals))
         let countWithGoals = sortedIDs.prefix { goals[$0] != nil }.count
         self.init(sortedProjectIDs: sortedIDs, countOfProjectsWithGoals: countWithGoals)
@@ -154,7 +154,7 @@ extension ProjectIDsByTimeTargets {
     /// - parameters:
     ///   - projectIDs: The IDs to sort by the provided goals.
     ///   - goals: The goals upon which to base the primary ordering of the IDs.
-    init(projectIDs: Set<ProjectID>, goals: ProjectIndexedGoals) {
+    init(projectIDs: Set<ProjectID>, goals: ProjectIdIndexedTimeTargets) {
         self.init(projectIDs: [ProjectID](projectIDs), goals: goals)
     }
 }
@@ -301,7 +301,7 @@ extension ProjectIDsByTimeTargets {
 ///   - goals: The `ProjectIndexedGoals` that the returned function will use as context.
 ///
 /// - returns: A function that determines the relative order of two project IDs.
-fileprivate func makeAreProjectIDsInIncreasingOrderFunction(for goals: ProjectIndexedGoals)
+fileprivate func makeAreProjectIDsInIncreasingOrderFunction(for goals: ProjectIdIndexedTimeTargets)
     -> (ProjectID, ProjectID) -> Bool {
         return { (idL, idR) -> Bool in
             let left = goals[idL]
