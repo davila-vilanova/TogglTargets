@@ -11,7 +11,7 @@
 /* Class = "NSButtonCell"; title = "enter API token manually"; ObjectID = "84F-Y3-9no"; */
 "84F-Y3-9no.title" = "proveer API token manualmente";
 
-/* Class = "NSTextFieldCell"; title = "establish goals"; ObjectID = "D8W-TC-6OP"; */
+/* Class = "NSTextFieldCell"; title = "set time targets"; ObjectID = "D8W-TC-6OP"; */
 "D8W-TC-6OP.title" = "establecer metas";
 
 /* Class = "NSViewController"; title = "Time Periods"; ObjectID = "DPU-zp-q1w"; */

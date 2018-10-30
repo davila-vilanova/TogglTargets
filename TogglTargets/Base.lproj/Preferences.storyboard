@@ -491,15 +491,15 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6U9-Og-MS6">
-                                <rect key="frame" x="116" y="82" width="71" height="18"/>
+                                <rect key="frame" x="121" y="82" width="71" height="18"/>
                                 <buttonCell key="cell" type="radio" title="monthly" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="psz-Uk-uK7">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
                             <textField horizontalHuggingPriority="271" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="drt-Fg-Fko">
-                                <rect key="frame" x="18" y="83" width="95" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="establish goals" id="D8W-TC-6OP">
+                                <rect key="frame" x="18" y="83" width="100" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="set time targets" id="D8W-TC-6OP">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -535,14 +535,14 @@
                                 </customSpacing>
                             </stackView>
                             <button horizontalHuggingPriority="270" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H9z-u0-oBU">
-                                <rect key="frame" x="116" y="60" width="64" height="18"/>
+                                <rect key="frame" x="121" y="60" width="64" height="18"/>
                                 <buttonCell key="cell" type="radio" title="weekly" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Fbz-3b-gLb">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </button>
                             <textField horizontalHuggingPriority="271" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mUX-SE-Fka">
-                                <rect key="frame" x="182" y="61" width="70" height="17"/>
+                                <rect key="frame" x="187" y="61" width="70" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="starting on" id="yo1-u9-dge">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" red="0.4756349325" green="0.47564673419999998" blue="0.47564041610000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -550,7 +550,7 @@
                                 </textFieldCell>
                             </textField>
                             <popUpButton horizontalHuggingPriority="260" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ufd-f2-Rcb">
-                                <rect key="frame" x="256" y="55" width="78" height="25"/>
+                                <rect key="frame" x="261" y="55" width="73" height="25"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="oeo-BS-D5I">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
