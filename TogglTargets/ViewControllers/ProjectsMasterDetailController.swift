@@ -24,7 +24,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         readProject: ReadProject,
         readTimeTarget: ReadTimeTarget,
         writeTimeTarget: BindingTarget<TimeTarget>,
-        deleteGoal: BindingTarget<ProjectID>,
+        deleteTimeTarget: BindingTarget<ProjectID>,
         readReport: ReadReport)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -42,7 +42,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private let modifyGoal = MutableProperty<TimeTarget?>(nil)
 
-    private let deleteGoal = MutableProperty<ProjectID?>(nil)
+    private let deleteTimeTarget = MutableProperty<ProjectID?>(nil)
 
     private lazy var registerSelectionInUndoManager: BindingTarget<ProjectID> = reactive.makeBindingTarget { controller, projectId in
         controller.undoManager?.registerUndo(withTarget: controller.focusOnUndoProjectId) {
@@ -129,7 +129,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
         registerSelectionInUndoManager <~ SignalProducer.merge(createGoal.producer.skipNil().map { $0.projectId },
                                                                modifyGoal.producer.skipNil().map { $0.projectId },
-                                                               deleteGoal.producer.skipNil())
+                                                               deleteTimeTarget.producer.skipNil())
 
         createGoal.producer.skipNil()
             .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeTimeTarget })
@@ -137,14 +137,14 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         modifyGoal.producer.skipNil()
             .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeTimeTarget })
 
-        deleteGoal.producer.skipNil()
-            .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.deleteGoal })
+        deleteTimeTarget.producer.skipNil()
+            .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.deleteTimeTarget })
 
         setUndoActionName <~ createGoal.producer.skipNil()
             .map { _ in NSLocalizedString("undo.create-time-target", comment: "undo action name: create time target") }
         setUndoActionName <~ modifyGoal.producer.skipNil()
             .map { _ in NSLocalizedString("undo.modify-time-target", comment: "undo action name: modify time target") }
-        setUndoActionName <~ deleteGoal.producer.skipNil()
+        setUndoActionName <~ deleteTimeTarget.producer.skipNil()
             .map { _ in NSLocalizedString("undo.delete-time-target", comment: "undo action name: delete time target") }
 
 
@@ -159,12 +159,12 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         createGoal <~ SignalProducer(value: TimeTarget.createDefault(for: projectId))
     }
 
-    @IBAction public func deleteGoal(_ sender: Any?) {
+    @IBAction public func deleteTimeTarget(_ sender: Any?) {
         guard canDeleteGoal,
             let projectId = selectedProjectId.value else {
                 return
         }
-        deleteGoal <~ SignalProducer(value: projectId)
+        deleteTimeTarget <~ SignalProducer(value: projectId)
     }
 
     private var canCreateGoal: Bool {
@@ -178,7 +178,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     public override func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
         if item.action == #selector(createGoal(_:)) {
             return canCreateGoal
-        } else if item.action == #selector(deleteGoal(_:)) {
+        } else if item.action == #selector(deleteTimeTarget(_:)) {
             return canDeleteGoal
         } else {
             return true

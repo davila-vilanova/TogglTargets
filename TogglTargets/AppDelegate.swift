@@ -103,7 +103,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                     readProject: modelCoordinator.readProject,
                     readTimeTarget: modelCoordinator.readTimeTarget,
                     writeTimeTarget: modelCoordinator.writeTimeTarget,
-                    deleteGoal: modelCoordinator.deleteGoal,
+                    deleteTimeTarget: modelCoordinator.deleteTimeTarget,
                     readReport: modelCoordinator.readReport))
 
         modelCoordinator.apiCredential <~ credentialStore.output.producer.map { $0 as TogglAPICredential? }

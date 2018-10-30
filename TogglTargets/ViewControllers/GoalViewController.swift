@@ -158,7 +158,7 @@ class GoalViewController: NSViewController, BindingTargetProvider, OnboardingTar
         }
 
         reactive.makeBindingTarget { (goalVC, _: Void) in
-            goalVC.try(toPerform: #selector(GoalCreatingDeleting.deleteGoal(_:)), with: goalVC)
+            goalVC.try(toPerform: #selector(GoalCreatingDeleting.deleteTimeTarget(_:)), with: goalVC)
         } <~ deleteConfirmed.signal
     }
 

@@ -10,5 +10,5 @@ import Cocoa
 
 @objc protocol GoalCreatingDeleting: NSUserInterfaceValidations {
     func createGoal(_ sender: Any?)
-    func deleteGoal(_ sender: Any?)
+    func deleteTimeTarget(_ sender: Any?)
 }
