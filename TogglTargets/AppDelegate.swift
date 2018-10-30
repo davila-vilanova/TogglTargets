@@ -82,7 +82,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                 _ = togglAPIDataCache
             }
         } else {
-            fatalError("Goals store failed to initialize")
+            fatalError("Time targets store failed to initialize")
         }
 
         super.init()
@@ -102,7 +102,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                     modelRetrievalStatus: modelCoordinator.retrievalStatus,
                     readProject: modelCoordinator.readProject,
                     readTimeTarget: modelCoordinator.readTimeTarget,
-                    writeGoal: modelCoordinator.writeGoal,
+                    writeTimeTarget: modelCoordinator.writeTimeTarget,
                     deleteGoal: modelCoordinator.deleteGoal,
                     readReport: modelCoordinator.readReport))
 

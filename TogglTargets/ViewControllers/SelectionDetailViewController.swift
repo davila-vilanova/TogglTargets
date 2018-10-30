@@ -25,7 +25,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         readProject: ReadProject,
         readTimeTarget: ReadTimeTarget,
-        writeGoal: BindingTarget<TimeTarget>,
+        writeTimeTarget: BindingTarget<TimeTarget>,
         readReport: ReadReport)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -64,7 +64,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
                  binding.periodPreference,
                  binding.runningEntry,
                  binding.readTimeTarget,
-                 binding.writeGoal,
+                 binding.writeTimeTarget,
                  binding.readReport)
         }
 

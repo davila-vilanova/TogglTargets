@@ -121,7 +121,7 @@ internal class ModelCoordinator: NSObject {
     }
 
     /// Target which accepts new (or edited) time target values.
-    internal var writeGoal: BindingTarget<TimeTarget> { return timeTargetsStore.writeTimeTarget }
+    internal var writeTimeTarget: BindingTarget<TimeTarget> { return timeTargetsStore.writeTimeTarget }
 
     /// Target which for each received project ID deletes the time target associated with that project ID.
     internal var deleteGoal: BindingTarget<ProjectID> { return timeTargetsStore.deleteTimeTarget }

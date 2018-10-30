@@ -23,7 +23,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
         readProject: ReadProject,
         readTimeTarget: ReadTimeTarget,
-        writeGoal: BindingTarget<TimeTarget>,
+        writeTimeTarget: BindingTarget<TimeTarget>,
         deleteGoal: BindingTarget<ProjectID>,
         readReport: ReadReport)
 
@@ -132,10 +132,10 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                                                                deleteGoal.producer.skipNil())
 
         createGoal.producer.skipNil()
-            .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeGoal })
+            .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeTimeTarget })
 
         modifyGoal.producer.skipNil()
-            .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeGoal })
+            .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeTimeTarget })
 
         deleteGoal.producer.skipNil()
             .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.deleteGoal })

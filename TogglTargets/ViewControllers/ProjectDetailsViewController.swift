@@ -22,7 +22,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         periodPreference: SignalProducer<PeriodPreference, NoError>,
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         readTimeTarget: ReadTimeTarget,
-        writeGoal: BindingTarget<TimeTarget>,
+        writeTimeTarget: BindingTarget<TimeTarget>,
         readReport: ReadReport)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -92,7 +92,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
             let validBindings = lastBinding.producer.skipNil()
             goalController <~
                 SignalProducer.combineLatest(
-                    validBindings.map { ($0.calendar, $0.periodPreference, $0.writeGoal) },
+                    validBindings.map { ($0.calendar, $0.periodPreference, $0.writeTimeTarget) },
                     SignalProducer(value: goalForCurrentProject.producer))
                     .map {
                         (calendar: $0.0,
