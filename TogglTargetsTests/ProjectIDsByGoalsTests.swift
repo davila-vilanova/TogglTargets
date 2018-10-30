@@ -72,7 +72,7 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
     var newGoal: TimeTarget?
     var newIndexedGoals: ProjectIndexedGoals?
 
-    typealias GoalUpdate = ProjectIDsByTimeTargets.Update.GoalUpdate
+    typealias TimeTargetUpdate = ProjectIDsByTimeTargets.Update.TimeTargetUpdate
 
     // Updates the values of projectId, oldGoal, newGoal and newIndexedGoals
     func setUpForProjectId(_ projectId: ProjectID, newGoal: TimeTarget?) {
@@ -136,11 +136,11 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             return
         }
 
-        let goalUpdate = GoalUpdate.forGoalChange(involving: newGoal,
-                                                  for: projectId,
-                                                  within: indexedGoals,
-                                                  affecting: idsByGoals)
-        guard let update = goalUpdate else {
+        let timeTargetUpdate = TimeTargetUpdate.forGoalChange(involving: newGoal,
+                                                              for: projectId,
+                                                              within: indexedGoals,
+                                                              affecting: idsByGoals)
+        guard let update = timeTargetUpdate else {
             XCTFail()
             return
         }
@@ -175,11 +175,11 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             return
         }
 
-        let goalUpdate = GoalUpdate.forGoalChange(involving: newGoal,
-                                                  for: projectId,
-                                                  within: indexedGoals,
-                                                  affecting: idsByGoals)
-        guard let update = goalUpdate else {
+        let timeTargetUpdate = TimeTargetUpdate.forGoalChange(involving: newGoal,
+                                                              for: projectId,
+                                                              within: indexedGoals,
+                                                              affecting: idsByGoals)
+        guard let update = timeTargetUpdate else {
             XCTFail()
             return
         }
@@ -213,12 +213,12 @@ class ProjectIDsByGoalsUpdateTests: XCTestCase {
             return
         }
 
-        let goalUpdate = GoalUpdate.forGoalChange(involving: newGoal,
-                                                  for: projectId,
-                                                  within: indexedGoals,
-                                                  affecting: idsByGoals)
+        let timeTargetUpdate = TimeTargetUpdate.forGoalChange(involving: newGoal,
+                                                              for: projectId,
+                                                              within: indexedGoals,
+                                                              affecting: idsByGoals)
 
-        guard let update = goalUpdate else {
+        guard let update = timeTargetUpdate else {
             XCTFail()
             return
         }

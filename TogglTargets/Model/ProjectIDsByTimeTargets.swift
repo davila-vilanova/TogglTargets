@@ -24,11 +24,11 @@ struct ProjectIDsByTimeTargets {
         case full(ProjectIDsByTimeTargets)
 
         /// An update that affects a single time target.
-        case singleGoal(GoalUpdate)
+        case singleTimeTarget(TimeTargetUpdate)
 
         /// Represents an update that consists of a reorder operation for a single project ID
         /// and possibly an increment or decrement of the count of projects associated with goals.
-        enum GoalUpdate {
+        enum TimeTargetUpdate {
 
             /// Represents the effect of a reorder operation affecting a single project ID.
             struct IndexChange {
@@ -105,7 +105,7 @@ struct ProjectIDsByTimeTargets {
             static func forGoalChange(involving newGoal: TimeTarget?,
                                       for projectId: ProjectID,
                                       within goalsPreChange: ProjectIndexedGoals,
-                                      affecting idsByGoals: ProjectIDsByTimeTargets) -> Update.GoalUpdate?  {
+                                      affecting idsByGoals: ProjectIDsByTimeTargets) -> Update.TimeTargetUpdate?  {
                 let currentSortedIDs = idsByGoals.sortedProjectIDs
                 let newlySortedIDs = currentSortedIDs
                     .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
@@ -176,9 +176,9 @@ extension ProjectIDsByTimeTargets {
 }
 
 extension ProjectIDsByTimeTargets.Update {
-    var goalUpdate: GoalUpdate? {
+    var timeTargetUpdate: TimeTargetUpdate? {
         switch self {
-        case .singleGoal(let goalUpdate): return goalUpdate
+        case .singleTimeTarget(let timeTargetUpdate): return timeTargetUpdate
         default: return nil
         }
     }
@@ -190,9 +190,9 @@ extension ProjectIDsByTimeTargets.Update {
         }
     }
 
-    var isSingleGoalUpdate: Bool {
+    var isSingleTimeTargetUpdate: Bool {
         switch self {
-        case .singleGoal: return true
+        case .singleTimeTarget: return true
         default: return false
         }
     }

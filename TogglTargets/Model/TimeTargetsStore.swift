@@ -204,11 +204,11 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
 
         undoCreateGoal <~ idsOfCreatedGoals
 
-        let singleGoalUpdateComputer = Property<SingleGoalUpdateComputer?>(
+        let singleTimeTargetUpdateComputer = Property<SingleTimeTargetUpdateComputer?>(
             initial: nil,
             then: projectIDsByGoalsFullRefresh.withLatest(from: persistenceProvider.allTimeTargets)
                 .map { [unowned self] (projectIDsByGoalsState, indexedGoalsState) in
-                    SingleGoalUpdateComputer(initialStateIndexedGoals: indexedGoalsState,
+                    SingleTimeTargetUpdateComputer(initialStateIndexedGoals: indexedGoalsState,
                                              initialStateProjectIDsByGoals: projectIDsByGoalsState,
                                              inputWriteGoal: writeGoalProducer,
                                              inputDeleteGoal: deleteGoalProducer,
@@ -217,7 +217,7 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
         )
 
         lifetime.observeEnded {
-            _ = singleGoalUpdateComputer
+            _ = singleTimeTargetUpdateComputer
         }
 
         persistenceProvider.persistTimeTarget <~ writeGoalProducer
@@ -264,9 +264,9 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
             }
             .map(ProjectIDsByTimeTargets.init)
 
-    /// Used to connect the output of the current `SingleGoalUpdateComputer`
+    /// Used to connect the output of the current `SingleTimeTargetUpdateComputer`
     /// to `projectIDsByTimeTargetsProducer`.
-    private let projectIDsByGoalsLastSingleUpdate = MutableProperty<ProjectIDsByTimeTargets.Update.GoalUpdate?>(nil)
+    private let projectIDsByGoalsLastSingleUpdate = MutableProperty<ProjectIDsByTimeTargets.Update.TimeTargetUpdate?>(nil)
 
 
     /// Producer of `ProjectIDsByTimeTargets.Update` values that when started emits a
@@ -279,7 +279,7 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
             // Send a full value and any full value updates that happen from now on
             projectIDsByGoalsFullRefresh.map (ProjectIDsByTimeTargets.Update.full),
             // Send any updates to a single time target that happen from now on
-            projectIDsByGoalsLastSingleUpdate.producer.skipNil().map (ProjectIDsByTimeTargets.Update.singleGoal)
+            projectIDsByGoalsLastSingleUpdate.producer.skipNil().map (ProjectIDsByTimeTargets.Update.singleTimeTarget)
     )
 }
 
@@ -305,7 +305,7 @@ extension WeekdaySelection: Value {
 
 // MARK : -
 
-fileprivate class SingleGoalUpdateComputer {
+fileprivate class SingleTimeTargetUpdateComputer {
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
 
@@ -313,7 +313,7 @@ fileprivate class SingleGoalUpdateComputer {
          initialStateProjectIDsByGoals: ProjectIDsByTimeTargets,
          inputWriteGoal: SignalProducer<TimeTarget, NoError>,
          inputDeleteGoal: SignalProducer<ProjectID, NoError>,
-         outputProjectIDsByGoalsUpdate: BindingTarget<ProjectIDsByTimeTargets.Update.GoalUpdate>) {
+         outputProjectIDsByGoalsUpdate: BindingTarget<ProjectIDsByTimeTargets.Update.TimeTargetUpdate>) {
 
         indexedGoals = initialStateIndexedGoals
         projectIDsByTimeTargets = initialStateProjectIDsByGoals
@@ -342,7 +342,7 @@ fileprivate class SingleGoalUpdateComputer {
     private func computeAndUpdate(newGoal: TimeTarget?, projectID: ProjectID) {
         // Compute update
 //        assert(projectIDsByTimeTargets.sortedProjectIDs.contains(projectID), "projectID must be included in projectIDsByTimeTargets")
-        guard let update = ProjectIDsByTimeTargets.Update.GoalUpdate
+        guard let update = ProjectIDsByTimeTargets.Update.TimeTargetUpdate
             .forGoalChange(involving: newGoal,
                            for: projectID,
                            within: indexedGoals,
@@ -361,7 +361,7 @@ fileprivate class SingleGoalUpdateComputer {
 
     // MARK: - Output
 
-    private let projectIDsByGoalsUpdatePipe = Signal<ProjectIDsByTimeTargets.Update.GoalUpdate, NoError>.pipe()
+    private let projectIDsByGoalsUpdatePipe = Signal<ProjectIDsByTimeTargets.Update.TimeTargetUpdate, NoError>.pipe()
 }
 
 // MARK: -

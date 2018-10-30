@@ -148,7 +148,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         initializeProjectsCollectionView()
         wireFullUpdatesToCollectionView()
-        wireSingleGoalUpdatesToCollectionView()
+        wireSingleTimeTargetUpdatesToCollectionView()
 
         // Connect interface to private properties
         lastProjectIDsByGoalsUpdate <~ lastBinding.latestOutput { $0.projectIDsByTimeTargets }
@@ -229,11 +229,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             } <~ fullUpdates.map { _ in () }
     }
 
-    func wireSingleGoalUpdatesToCollectionView () {
+    func wireSingleTimeTargetUpdatesToCollectionView () {
         // reflect the provided update in the value of `currentProjectIDs`, reorder the affected item in the
         // collection view and update the "last item in section" visual state
-        let singlePidsUpdates: Signal<(ProjectIDsByTimeTargets.Update.GoalUpdate, ProjectIDsByTimeTargets, ProjectIDsByTimeTargets), NoError> =
-            lastProjectIDsByGoalsUpdate.signal.skipNil().filterMap { $0.goalUpdate }
+        let singlePidsUpdates: Signal<(ProjectIDsByTimeTargets.Update.TimeTargetUpdate, ProjectIDsByTimeTargets, ProjectIDsByTimeTargets), NoError> =
+            lastProjectIDsByGoalsUpdate.signal.skipNil().filterMap { $0.timeTargetUpdate }
                 .withLatest(from: currentProjectIDs.producer)
                 .map { ($0.0, $0.1, $0.0.apply(to: $0.1)) }
         let indexPathUpdates = singlePidsUpdates.map { update, pidsBefore, pidsAfter -> (IndexPath, IndexPath) in
