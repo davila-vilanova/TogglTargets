@@ -10,7 +10,7 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvider, GoalCreatingDeleting {
+class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvider, TimeTargetCreatingDeleting {
 
     // MARK: - Interface
 
@@ -151,7 +151,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         registerSelectionInUndoManager <~ focusOnUndoProjectId.producer.skipNil()
     }
 
-    @IBAction public func createGoal(_ sender: Any?) {
+    @IBAction public func createTimeTarget(_ sender: Any?) {
         guard canCreateGoal,
             let projectId = selectedProjectId.value else {
                 return
@@ -176,7 +176,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     }
 
     public override func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
-        if item.action == #selector(createGoal(_:)) {
+        if item.action == #selector(createTimeTarget(_:)) {
             return canCreateGoal
         } else if item.action == #selector(deleteTimeTarget(_:)) {
             return canDeleteGoal

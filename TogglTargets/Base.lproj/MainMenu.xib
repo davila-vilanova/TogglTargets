@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
     </dependencies>
     <objects>
@@ -134,7 +135,7 @@
                             <menuItem title="Create Time Target" keyEquivalent="+" id="Mi4-ht-vZX">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="createGoal:" target="-1" id="1ai-Yl-ZBN"/>
+                                    <action selector="createTimeTarget:" target="-1" id="V2I-7S-Uy0"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Delete Time Target" keyEquivalent="-" id="Ah4-MX-Odc">

@@ -1,5 +1,5 @@
 //
-//  GoalCreatingDeleting.swift
+//  TimeTargetCreatingDeleting.swift
 //  TogglTargets
 //
 //  Created by David Dávila on 03.09.18.
@@ -8,7 +8,7 @@
 
 import Cocoa
 
-@objc protocol GoalCreatingDeleting: NSUserInterfaceValidations {
-    func createGoal(_ sender: Any?)
+@objc protocol TimeTargetCreatingDeleting: NSUserInterfaceValidations {
+    func createTimeTarget(_ sender: Any?)
     func deleteTimeTarget(_ sender: Any?)
 }
