@@ -58,7 +58,7 @@ protocol GoalPersistenceProvider {
     var allGoals: MutableProperty<ProjectIndexedGoals> { get }
 }
 
-class SQLiteGoalPersistenceProvider: GoalPersistenceProvider {
+class SQLiteTimeTargetPersistenceProvider: GoalPersistenceProvider {
     /// The database connection used to store and retrieve goals.
     private let db: Connection
 

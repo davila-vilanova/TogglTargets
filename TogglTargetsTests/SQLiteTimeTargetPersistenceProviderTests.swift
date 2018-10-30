@@ -1,5 +1,5 @@
 //
-//  SQLiteGoalPersistenceProviderTests.swift
+//  SQLiteTimeTargetPersistenceProviderTests.swift
 //  TogglGoalsTests
 //
 //  Created by David Dávila on 15.05.18.
@@ -11,13 +11,13 @@ import ReactiveSwift
 
 fileprivate let timeoutForExpectations: TimeInterval = 1
 
-class SQLiteGoalPersistenceProviderTests: XCTestCase {
+class SQLiteTimeTargetPersistenceProviderTests: XCTestCase {
 
     func testStoreAndRetrieveGoals() {
         let fixtureMonthly = TimeTarget(for: 4121, hoursTarget: 24, workWeekdays: .exceptWeekend)
         let fixtureWeekly = TimeTarget(for: 1381, hoursTarget: 8, workWeekdays: .wholeWeek)
 
-        guard let store = SQLiteGoalPersistenceProvider(baseDirectory: FileManager.default.temporaryDirectory) else {
+        guard let store = SQLiteTimeTargetPersistenceProvider(baseDirectory: FileManager.default.temporaryDirectory) else {
             XCTFail()
             return
         }

@@ -58,7 +58,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             fatalError("Can't access app support directory")
         }
 
-        if let timeTargetsPersistenceProvider = SQLiteGoalPersistenceProvider(baseDirectory: supportDir),
+        if let timeTargetsPersistenceProvider = SQLiteTimeTargetPersistenceProvider(baseDirectory: supportDir),
             let cachePersistenceProvider = SQLiteTogglAPIDataPersistenceProvider(baseDirectory: supportDir) {
             let togglAPIDataCache = TogglAPIDataCache(persistenceProvider: cachePersistenceProvider)
             let togglAPIDataRetriever =

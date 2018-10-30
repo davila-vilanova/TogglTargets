@@ -123,7 +123,7 @@
 		638561EE20FE15DC002E97E8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638561F120FE15DC002E97E8 /* MainMenu.xib */; };
 		638561EF20FE15DC002E97E8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638561F120FE15DC002E97E8 /* MainMenu.xib */; };
 		6392AB4820CFFC2C002CC903 /* InterfaceBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */; };
-		639C5BBF20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */; };
+		639C5BBF20F2D07100567FF7 /* SQLiteTimeTargetPersistenceProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639C5BBE20F2D07100567FF7 /* SQLiteTimeTargetPersistenceProviderTests.swift */; };
 		639D5077216B897900B1DEA2 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639D5076216B897900B1DEA2 /* NSViewControllerExtensions.swift */; };
 		639D5078216B897900B1DEA2 /* NSViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639D5076216B897900B1DEA2 /* NSViewControllerExtensions.swift */; };
 		639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */; };
@@ -393,7 +393,7 @@
 		638561F020FE15DC002E97E8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		638561F720FE16D3002E97E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		638561F920FE16D6002E97E8 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainMenu.strings; sourceTree = "<group>"; };
-		639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteGoalPersistenceProviderTests.swift; sourceTree = "<group>"; };
+		639C5BBE20F2D07100567FF7 /* SQLiteTimeTargetPersistenceProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteTimeTargetPersistenceProviderTests.swift; sourceTree = "<group>"; };
 		639D5076216B897900B1DEA2 /* NSViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NSViewControllerExtensions.swift; path = ViewControllers/NSViewControllerExtensions.swift; sourceTree = "<group>"; };
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
@@ -555,7 +555,7 @@
 				637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */,
 				639F8B6E20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift */,
 				639F8B7A20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift */,
-				639C5BBE20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift */,
+				639C5BBE20F2D07100567FF7 /* SQLiteTimeTargetPersistenceProviderTests.swift */,
 			);
 			path = TogglTargetsTests;
 			sourceTree = "<group>";
@@ -1109,7 +1109,7 @@
 				63D4BBB31F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				6333B6D71F9746FD002CF189 /* WeekdaySelection.swift in Sources */,
 				639F8B7B20E7790E00FDC8C1 /* TogglAPIDataCacheTest.swift in Sources */,
-				639C5BBF20F2D07100567FF7 /* SQLiteGoalPersistenceProviderTests.swift in Sources */,
+				639C5BBF20F2D07100567FF7 /* SQLiteTimeTargetPersistenceProviderTests.swift in Sources */,
 				639F8B6F20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift in Sources */,
 				637DA2212034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */,
