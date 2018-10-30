@@ -58,7 +58,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             fatalError("Can't access app support directory")
         }
 
-        if let goalsPersistenceProvider = SQLiteGoalPersistenceProvider(baseDirectory: supportDir),
+        if let timeTargetsPersistenceProvider = SQLiteGoalPersistenceProvider(baseDirectory: supportDir),
             let cachePersistenceProvider = SQLiteTogglAPIDataPersistenceProvider(baseDirectory: supportDir) {
             let togglAPIDataCache = TogglAPIDataCache(persistenceProvider: cachePersistenceProvider)
             let togglAPIDataRetriever =
@@ -71,7 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                                             retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
                                             retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
 
-            let goalsStore = ConcreteProjectIDsProducingTimeTargetsStore(persistenceProvider: goalsPersistenceProvider, undoManager: undoManager)
+            let goalsStore = ConcreteProjectIDsProducingTimeTargetsStore(persistenceProvider: timeTargetsPersistenceProvider, undoManager: undoManager)
 
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
                                                 goalsStore: goalsStore,
