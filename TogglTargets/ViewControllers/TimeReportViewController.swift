@@ -51,7 +51,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     // MARK: - Outlets
     
     @IBOutlet weak var periodDescriptionLabel: NSTextField!
-    @IBOutlet weak var goalStrategyView: NSView!
+    @IBOutlet weak var strategyView: NSView!
     @IBOutlet weak var computeStrategyFromButton: NSPopUpButton!
     @IBOutlet weak var fromTodayItem: NSMenuItem!
     @IBOutlet weak var fromNextWorkDayItem: NSMenuItem!
@@ -72,16 +72,16 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         }
     }
 
-    private lazy var goalStrategyViewController: GoalStrategyViewController = {
-        let goalStrategy = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalStrategyViewController")) as! GoalStrategyViewController
-        goalStrategy <~
+    private lazy var strategyViewController: StrategyViewController = {
+        let strategy = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("StrategyViewController")) as! StrategyViewController
+        strategy <~
             SignalProducer(value: (timeGoal: goalProgress.timeGoal,
                                    dayBaseline: goalProgress.dayBaseline,
                                    dayBaselineAdjustedToProgress: goalProgress.dayBaselineAdjustedToProgress,
                                    dayBaselineDifferential: goalProgress.dayBaselineDifferential,
                                    feasibility: goalProgress.feasibility))
-        addChildViewController(goalStrategy)
-        return goalStrategy
+        addChildViewController(strategy)
+        return strategy
     }()
 
     private lazy var goalReachedViewController: TargetReachedViewController = {
@@ -114,14 +114,14 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
                 remainingTime == 0
         }
 
-        let selectedGoalStrategyController = isGoalReached
+        let selectedStrategyController = isGoalReached
             .producer
             .observe(on: UIScheduler())
-            .map { [goalStrategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
-                return isGoalReached ? goalReachedViewController : goalStrategyViewController
+            .map { [strategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
+                return isGoalReached ? goalReachedViewController : strategyViewController
         }
 
-        goalStrategyView.uniqueSubview <~ selectedGoalStrategyController.map { $0.view }.skipRepeats()
+        strategyView.uniqueSubview <~ selectedStrategyController.map { $0.view }.skipRepeats()
     }
 
     
@@ -243,12 +243,12 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
             .concat(SignalProducer.never)
             .take(until: computeStrategyFromSelectionChanged)
 
-        let goalStrategyView = viewDidLoadProducer
-            .map { [unowned self] _ in self.goalStrategyView }
+        let strategyView = viewDidLoadProducer
+            .map { [unowned self] _ in self.strategyView }
             .skipNil()
             .concat(SignalProducer.never)
 
         return [.selectComputeStrategyFrom : computeStrategyFromSelectionView,
-                .seeGoalStrategy : goalStrategyView]
+                .seeStrategy : strategyView]
     }
 }

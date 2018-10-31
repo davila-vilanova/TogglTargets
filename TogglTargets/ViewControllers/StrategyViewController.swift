@@ -1,5 +1,5 @@
 //
-//  GoalStrategyViewController.swift
+//  StrategyViewController.swift
 //  TogglTargets
 //
 //  Created by David Davila on 27.05.17.
@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-class GoalStrategyViewController: NSViewController, BindingTargetProvider {
+class StrategyViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 

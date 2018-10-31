@@ -17,7 +17,7 @@ enum OnboardingStepIdentifier: String {
     case setWorkWeekdays
     case selectComputeStrategyFrom
     case seeTimeProgress
-    case seeGoalStrategy
+    case seeStrategy
     case seeDayProgress
 }
 
@@ -32,7 +32,7 @@ fileprivate let OnboardingSteps: [OnboardingStep] = [
     OnboardingStep(identifier: .setWorkWeekdays, text: NSLocalizedString("onboarding.step.set-work-weekdays", tableName: StringsTableName, comment: "onboarding step: set work weekdays"), allowContinue: true),
     OnboardingStep(identifier: .selectComputeStrategyFrom, text: NSLocalizedString("onboarding.step.select-compute-from",  tableName: StringsTableName, comment: "onboarding step: select from which day to compute the target strategy"), allowContinue: true),
     OnboardingStep(identifier: .seeTimeProgress, text: NSLocalizedString("onboarding.step.see-time-progress", tableName: StringsTableName, comment: "onboarding step: see time progress"), allowContinue: true),
-    OnboardingStep(identifier: .seeGoalStrategy, text: NSLocalizedString("onboarding.step.see-strategy", tableName: StringsTableName, comment: "onboarding step: see strategy to reach time target"), allowContinue: true),
+    OnboardingStep(identifier: .seeStrategy, text: NSLocalizedString("onboarding.step.see-strategy", tableName: StringsTableName, comment: "onboarding step: see strategy to reach time target"), allowContinue: true),
     OnboardingStep(identifier: .seeDayProgress, text: NSLocalizedString("onboarding.step.see-day-progress", tableName: StringsTableName, comment: "onboarding step: see day progress"), allowContinue: true),
 ]
 
