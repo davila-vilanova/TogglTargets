@@ -811,7 +811,7 @@
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="createGoal:" target="fO8-4G-Gnl" id="9Cp-kQ-sZ8"/>
+                                            <action selector="createTimeTarget:" target="fO8-4G-Gnl" id="CkR-cg-duy"/>
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="asI-eB-ORh">
@@ -839,7 +839,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="createGoalButton" destination="KJB-2f-ZKw" id="3VE-If-jbb"/>
+                        <outlet property="createTimeTargetButton" destination="KJB-2f-ZKw" id="MnP-38-Ii6"/>
                     </connections>
                 </viewController>
                 <customObject id="fO8-4G-Gnl" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

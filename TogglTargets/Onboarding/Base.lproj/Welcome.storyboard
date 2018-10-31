@@ -32,20 +32,20 @@
         <scene sceneID="e0x-wk-4lA">
             <objects>
                 <viewController id="7Vr-Nc-dGW" customClass="WelcomeViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="NiY-k9-5tL">
-                        <rect key="frame" x="0.0" y="0.0" width="709" height="190"/>
+                    <view key="view" misplaced="YES" id="NiY-k9-5tL">
+                        <rect key="frame" x="0.0" y="0.0" width="758" height="190"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aYp-00-8db">
-                                <rect key="frame" x="188" y="148" width="503" height="22"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" refusesFirstResponder="YES" title="TogglTargets keeps you on track to meet your time goals" id="DLC-cW-ECx">
+                                <rect key="frame" x="188" y="148" width="552" height="22"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" refusesFirstResponder="YES" title="TogglTargets keeps you on track to meet your worked time targets" id="DLC-cW-ECx">
                                     <font key="font" size="18" name=".AppleSystemUIFontMedium"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="751" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oy1-8H-iDQ">
-                                <rect key="frame" x="188" y="89" width="503" height="51"/>
+                                <rect key="frame" x="188" y="89" width="552" height="51"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="485" id="Yym-ij-78a"/>
                                 </constraints>
@@ -57,7 +57,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="gfN-IN-Lfx">
-                                <rect key="frame" x="188" y="64" width="503" height="17"/>
+                                <rect key="frame" x="188" y="64" width="552" height="17"/>
                                 <textFieldCell key="cell" selectable="YES" refusesFirstResponder="YES" title="You can choose to work with your targets on a montly or weekly basis." id="4p3-AB-d9f">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -65,7 +65,7 @@
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lIb-WD-ar6">
-                                <rect key="frame" x="600" y="13" width="95" height="25"/>
+                                <rect key="frame" x="649" y="13" width="95" height="25"/>
                                 <buttonCell key="cell" type="push" title="Continue" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qes-kY-tTz">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>

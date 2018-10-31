@@ -5,7 +5,7 @@
 /* Class = "NSTextFieldCell"; title = "Connect your toggl.com account, set your target work hours for one or more projects and let TogglTargets help you hit your targets by showing you how you are doing and telling you how much you should work per day to stay on track."; ObjectID = "A8f-T6-ofs"; */
 "A8f-T6-ofs.title" = "Conecta tu cuenta de toggl.com, establece una meta de tiempo de trabajo para uno o más de tus proyectos y deja que  TogglTargets te ayude a cumplirlas mostrándote cómo vas y contándote cuánto tienes que trabajar para mantenerte al día.";
 
-/* Class = "NSTextFieldCell"; title = "TogglTargets keeps you on track to meet your time goals"; ObjectID = "DLC-cW-ECx"; */
+/* Class = "NSTextFieldCell"; title = "TogglTargets keeps you on track to meet your worked time targets"; ObjectID = "DLC-cW-ECx"; */
 "DLC-cW-ECx.title" = "TogglTargets te mantiene al día para que cumplas tus metas (de tiempo)";
 
 /* Class = "NSButtonCell"; title = "what toggl.com?"; ObjectID = "Erd-74-jPL"; */
