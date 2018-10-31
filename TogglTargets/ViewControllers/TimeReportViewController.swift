@@ -84,8 +84,8 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         return goalStrategy
     }()
 
-    private lazy var goalReachedViewController: GoalReachedViewController = {
-        let goalReached = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalReachedViewController")) as! GoalReachedViewController
+    private lazy var goalReachedViewController: TargetReachedViewController = {
+        let goalReached = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("TargetReachedViewController")) as! TargetReachedViewController
         goalReached <~ SignalProducer(value: goalProgress.timeGoal)
         addChildViewController(goalReached)
         return goalReached

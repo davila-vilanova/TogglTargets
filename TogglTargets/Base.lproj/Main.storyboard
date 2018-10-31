@@ -761,10 +761,10 @@
             </objects>
             <point key="canvasLocation" x="2682" y="1475"/>
         </scene>
-        <!--Goal Reached View Controller-->
+        <!--Target Reached View Controller-->
         <scene sceneID="6vA-eI-u7E">
             <objects>
-                <viewController storyboardIdentifier="GoalReachedViewController" id="dwg-Fo-eQ6" customClass="GoalReachedViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TargetReachedViewController" id="dwg-Fo-eQ6" customClass="TargetReachedViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="3In-vf-KdN">
                         <rect key="frame" x="0.0" y="0.0" width="482" height="38"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -786,7 +786,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="goalReachedField" destination="wWm-OC-vkq" id="Z4L-G4-x8S"/>
+                        <outlet property="targetReachedField" destination="wWm-OC-vkq" id="Z4L-G4-x8S"/>
                     </connections>
                 </viewController>
                 <customObject id="raR-zX-gAF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

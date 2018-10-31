@@ -138,7 +138,7 @@ class GoalStrategyViewController: NSViewController, BindingTargetProvider {
 
 // MARK: -
 
-class GoalReachedViewController: NSViewController, BindingTargetProvider {
+class TargetReachedViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
@@ -156,13 +156,13 @@ class GoalReachedViewController: NSViewController, BindingTargetProvider {
         return f
     }()
 
-    @IBOutlet weak var goalReachedField: NSTextField!
+    @IBOutlet weak var targetReachedField: NSTextField!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let timeGoal = lastBinding.latestOutput { $0 }
-        goalReachedField.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
+        targetReachedField.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
             .map {
                 String.localizedStringWithFormat(
                     NSLocalizedString("target-time-reached", comment: "the target time has been reached"),
