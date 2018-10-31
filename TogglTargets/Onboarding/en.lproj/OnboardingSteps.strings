@@ -6,10 +6,10 @@
 "onboarding.step.close-login" = "Close this preferences sheet to continue";
 
 /* onboarding step: select project */
-"onboarding.step.select-project" = "Select any project that does not currently have a time target and for which you would like to create a time time target";
+"onboarding.step.select-project" = "Select any project that does not currently have a time target and for which you would like to create one";
 
 /* onboarding step: create time target */
-"onboarding.step.create-time-target" = "Create a time target, you can tune your target in the next step";
+"onboarding.step.create-time-target" = "Create a time target, you can tune it in the next step";
 
 /* onboarding step: set target hours */
 "onboarding.step.set-target-hours" = "Set how many hours you would like to work per period (per month, or per week - you can choose to work on monthly or weekly periods in the application preferences)";
