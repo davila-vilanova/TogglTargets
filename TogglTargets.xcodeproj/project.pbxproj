@@ -178,7 +178,7 @@
 		63AB08131FB6305200565D87 /* PreferenceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AB08121FB6305200565D87 /* PreferenceStore.swift */; };
 		63AB08141FB6305200565D87 /* PreferenceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AB08121FB6305200565D87 /* PreferenceStore.swift */; };
 		63AB08151FB6305200565D87 /* PreferenceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AB08121FB6305200565D87 /* PreferenceStore.swift */; };
-		63AB08241FB77C5100565D87 /* TogglGoals_MacOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 63AB08221FB77C5100565D87 /* TogglGoals_MacOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		63AB08241FB77C5100565D87 /* TogglTargets_MacOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 63AB08221FB77C5100565D87 /* TogglTargets_MacOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		63AB082C1FB77CB500565D87 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6CD1F974690002CF189 /* Profile.swift */; };
 		63AB082D1FB77CB500565D87 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6D11F9746E6002CF189 /* Project.swift */; };
 		63AB082E1FB77CB500565D87 /* WeekdaySelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6D51F9746FD002CF189 /* WeekdaySelection.swift */; };
@@ -412,7 +412,7 @@
 		63A67F491FCD9D42004BEFC6 /* APIAccessError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIAccessError.swift; sourceTree = "<group>"; };
 		63AB08121FB6305200565D87 /* PreferenceStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceStore.swift; sourceTree = "<group>"; };
 		63AB08201FB77C5100565D87 /* TogglTargets_MacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TogglTargets_MacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		63AB08221FB77C5100565D87 /* TogglGoals_MacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TogglGoals_MacOS.h; sourceTree = "<group>"; };
+		63AB08221FB77C5100565D87 /* TogglTargets_MacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TogglTargets_MacOS.h; sourceTree = "<group>"; };
 		63AB08231FB77C5100565D87 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63B1BBE61FBE2570001E9FBE /* ReportPeriodsProducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportPeriodsProducer.swift; sourceTree = "<group>"; };
 		63C329321FEFBA63008AB9F2 /* MakeRetrieveReportsNetworkActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeRetrieveReportsNetworkActionTest.swift; sourceTree = "<group>"; };
@@ -706,7 +706,7 @@
 		63AB08211FB77C5100565D87 /* TogglTargets-MacOS */ = {
 			isa = PBXGroup;
 			children = (
-				63AB08221FB77C5100565D87 /* TogglGoals_MacOS.h */,
+				63AB08221FB77C5100565D87 /* TogglTargets_MacOS.h */,
 				63AB08231FB77C5100565D87 /* Info.plist */,
 				63F76BA520F6212D0024939B /* InfoPlist.strings */,
 			);
@@ -797,7 +797,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63AB08241FB77C5100565D87 /* TogglGoals_MacOS.h in Headers */,
+				63AB08241FB77C5100565D87 /* TogglTargets_MacOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
