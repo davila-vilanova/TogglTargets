@@ -61,7 +61,7 @@
 		63415BC320852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
 		63415BC420852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
 		63415BC520852A650083E40B /* ReadByProjectID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63415BC120852A650083E40B /* ReadByProjectID.swift */; };
-		6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634396891F80456200FDADE3 /* GoalProgressTests.swift */; };
+		6343968A1F80456200FDADE3 /* ProgressToTimeTargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634396891F80456200FDADE3 /* ProgressToTimeTargetTests.swift */; };
 		6344EF78213C38F800D0B00D /* AccessibilityImageDescriptions.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6344EF76213C38F800D0B00D /* AccessibilityImageDescriptions.strings */; };
 		6344EF7B213DA1C900D0B00D /* TimeTargetCreatingDeleting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344EF7A213DA1C900D0B00D /* TimeTargetCreatingDeleting.swift */; };
 		6344EF7C213DA1C900D0B00D /* TimeTargetCreatingDeleting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6344EF7A213DA1C900D0B00D /* TimeTargetCreatingDeleting.swift */; };
@@ -358,7 +358,7 @@
 		6334B4A72071A81600A5B796 /* ErrorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorViewController.swift; sourceTree = "<group>"; };
 		6334B4A82071A81600A5B796 /* ErrorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ErrorViewController.xib; sourceTree = "<group>"; };
 		63415BC120852A650083E40B /* ReadByProjectID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadByProjectID.swift; sourceTree = "<group>"; };
-		634396891F80456200FDADE3 /* GoalProgressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalProgressTests.swift; sourceTree = "<group>"; };
+		634396891F80456200FDADE3 /* ProgressToTimeTargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressToTimeTargetTests.swift; sourceTree = "<group>"; };
 		6344EF77213C38F800D0B00D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AccessibilityImageDescriptions.strings; sourceTree = "<group>"; };
 		6344EF79213C390800D0B00D /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AccessibilityImageDescriptions.strings; sourceTree = "<group>"; };
 		6344EF7A213DA1C900D0B00D /* TimeTargetCreatingDeleting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimeTargetCreatingDeleting.swift; path = ViewControllers/TimeTargetCreatingDeleting.swift; sourceTree = "<group>"; };
@@ -547,7 +547,7 @@
 				636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */,
 				63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */,
 				63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */,
-				634396891F80456200FDADE3 /* GoalProgressTests.swift */,
+				634396891F80456200FDADE3 /* ProgressToTimeTargetTests.swift */,
 				637485601FD9E0F600EC7E87 /* ProjectIDsByTimeTargetsTests.swift */,
 				63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */,
 				632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */,
@@ -1112,7 +1112,7 @@
 				639C5BBF20F2D07100567FF7 /* SQLiteTimeTargetPersistenceProviderTests.swift in Sources */,
 				639F8B6F20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift in Sources */,
 				637DA2212034760F000D7EB8 /* ValueLogger.swift in Sources */,
-				6343968A1F80456200FDADE3 /* GoalProgressTests.swift in Sources */,
+				6343968A1F80456200FDADE3 /* ProgressToTimeTargetTests.swift in Sources */,
 				63A67F3C1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
 				63C329331FEFBA63008AB9F2 /* MakeRetrieveReportsNetworkActionTest.swift in Sources */,
 				639F8B6B20E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift in Sources */,

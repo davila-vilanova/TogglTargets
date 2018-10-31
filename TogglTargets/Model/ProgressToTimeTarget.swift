@@ -15,40 +15,40 @@ class ProgressToTimeTarget {
     // MARK: - Interface
 
     public var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
-    public var timeTarget: BindingTarget<TimeTarget>{ return _goal.deoptionalizedBindingTarget }
+    public var timeTarget: BindingTarget<TimeTarget>{ return _timeTarget.deoptionalizedBindingTarget }
     public var report: BindingTarget<TwoPartTimeReport?>{ return _report.bindingTarget }
     public var runningEntry: BindingTarget<RunningEntry?>{ return _runningEntry.bindingTarget }
-    public var startGoalDay: BindingTarget<DayComponents>{ return _startGoalDay.deoptionalizedBindingTarget }
-    public var endGoalDay: BindingTarget<DayComponents>{ return _endGoalDay.deoptionalizedBindingTarget }
+    public var startDay: BindingTarget<DayComponents>{ return _startDay.deoptionalizedBindingTarget }
+    public var endDay: BindingTarget<DayComponents>{ return _endDay.deoptionalizedBindingTarget }
     public var startStrategyDay: BindingTarget<DayComponents>{ return _startStrategyDay.deoptionalizedBindingTarget }
     public var currentDate: BindingTarget<Date>{ return _currentDate.deoptionalizedBindingTarget }
     public var calendar: BindingTarget<Calendar>{ return _calendar.deoptionalizedBindingTarget }
 
     // MARK: - Outputs
 
-    public lazy var timeGoal: SignalProducer<TimeInterval, NoError> = {
-        return _goal.producer.skipNil().skipRepeats().map { TimeInterval.from(hours: $0.hoursTarget) }
+    public lazy var targetTime: SignalProducer<TimeInterval, NoError> = {
+        return _timeTarget.producer.skipNil().skipRepeats().map { TimeInterval.from(hours: $0.hoursTarget) }
     }()
 
     // Will be nil if start or end are invalid dates
     public lazy var totalWorkDays: SignalProducer<Int?, NoError> = {
-        return SignalProducer.combineLatest(_goal.producer.skipNil().skipRepeats(),
-                                            _startGoalDay.producer.skipNil().skipRepeats(),
-                                            _endGoalDay.producer.skipNil().skipRepeats(),
+        return SignalProducer.combineLatest(_timeTarget.producer.skipNil().skipRepeats(),
+                                            _startDay.producer.skipNil().skipRepeats(),
+                                            _endDay.producer.skipNil().skipRepeats(),
                                             _calendar.producer.skipNil().skipRepeats())
-            .map { (timeTarget, startGoalDay, endGoalDay, calendar) in
-                return try? calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startGoalDay, to: endGoalDay)
+            .map { (timeTarget, startDay, endDay, calendar) in
+                return try? calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startDay, to: endDay)
         }
     }()
 
     // Will be nil if start or end are invalid dates
     public lazy var remainingWorkDays: SignalProducer<Int?, NoError> = {
-        return SignalProducer.combineLatest(_goal.producer.skipNil().skipRepeats(),
+        return SignalProducer.combineLatest(_timeTarget.producer.skipNil().skipRepeats(),
                                             _startStrategyDay.producer.skipNil().skipRepeats(),
-                                            _endGoalDay.producer.skipNil().skipRepeats(),
+                                            _endDay.producer.skipNil().skipRepeats(),
                                             _calendar.producer.skipNil().skipRepeats())
-            .map { (timeTarget, startStrategyDay, endGoalDay, calendar) in
-                return try? calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startStrategyDay, to: endGoalDay)
+            .map { (timeTarget, startStrategyDay, endDay, calendar) in
+                return try? calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startStrategyDay, to: endDay)
         }
     }()
 
@@ -76,26 +76,26 @@ class ProgressToTimeTarget {
             }
     }()
 
-    public lazy var remainingTimeToGoal: SignalProducer<TimeInterval, NoError>  = {
-        return SignalProducer.combineLatest(timeGoal.skipRepeats(),
+    public lazy var remainingTimeToTarget: SignalProducer<TimeInterval, NoError>  = {
+        return SignalProducer.combineLatest(targetTime.skipRepeats(),
                                             workedTime.skipRepeats())
-            .map { (timeGoal, workedTime) in
-                return Double.maximum(timeGoal - workedTime, 0.0)
+            .map { (targetTime, workedTime) in
+                return Double.maximum(targetTime - workedTime, 0.0)
         }
     }()
 
     // dayBaseline will publish nil values when totalWorkDays itself returns nil
     public lazy var dayBaseline: SignalProducer<TimeInterval?, NoError> = {
-        return SignalProducer.combineLatest(timeGoal.skipRepeats(),
+        return SignalProducer.combineLatest(targetTime.skipRepeats(),
                                             totalWorkDays.skipRepeats())
-            .map { (timeGoal, totalWorkDays) -> TimeInterval? in
+            .map { (targetTime, totalWorkDays) -> TimeInterval? in
                 guard let totalWorkDays = totalWorkDays else {
                     return nil
                 }
                 guard totalWorkDays > 0 else {
                     return 0
                 }
-                return timeGoal / TimeInterval(totalWorkDays)
+                return targetTime / TimeInterval(totalWorkDays)
         }
     }()
 
@@ -103,7 +103,7 @@ class ProgressToTimeTarget {
     // dayBaselineAdjustedToProgress will publish nil values when remainingWorkDays itself returns nil
     public lazy var dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError> = {
         return SignalProducer.combineLatest(remainingWorkDays.skipRepeats(),
-                                            remainingTimeToGoal.skipRepeats())
+                                            remainingTimeToTarget.skipRepeats())
             .map { (remainingWorkDays, remainingTimeToGoal) -> TimeInterval? in
                 guard let remainingWorkDays = remainingWorkDays else {
                     return nil
@@ -170,11 +170,11 @@ class ProgressToTimeTarget {
     // MARK: - Backing input properties
 
     private let _projectId = MutableProperty<Int64?>(nil)
-    private let _goal = MutableProperty<TimeTarget?>(nil)
+    private let _timeTarget = MutableProperty<TimeTarget?>(nil)
     private let _report = MutableProperty<TwoPartTimeReport?>(nil)
     private let _runningEntry = MutableProperty<RunningEntry?>(nil)
-    private let _startGoalDay = MutableProperty<DayComponents?>(nil)
-    private let _endGoalDay = MutableProperty<DayComponents?>(nil)
+    private let _startDay = MutableProperty<DayComponents?>(nil)
+    private let _endDay = MutableProperty<DayComponents?>(nil)
     private let _startStrategyDay = MutableProperty<DayComponents?>(nil)
     private let _currentDate = MutableProperty<Date?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)

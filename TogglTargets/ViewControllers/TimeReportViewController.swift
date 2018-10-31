@@ -62,12 +62,12 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     var timeProgressViewController: TimeProgressViewController! {
         didSet {
             timeProgressViewController <~
-                SignalProducer(value: (timeGoal: progress.timeGoal,
+                SignalProducer(value: (timeGoal: progress.targetTime,
                                        totalWorkDays: progress.totalWorkDays,
                                        remainingWorkDays: progress.remainingWorkDays,
                                        reportAvailable: progress.reportAvailable.producer,
                                        workedTime: progress.workedTime,
-                                       remainingTimeToGoal: progress.remainingTimeToGoal,
+                                       remainingTimeToGoal: progress.remainingTimeToTarget,
                                        strategyStartsToday: progress.strategyStartsToday))
         }
     }
@@ -75,7 +75,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     private lazy var strategyViewController: StrategyViewController = {
         let strategy = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("StrategyViewController")) as! StrategyViewController
         strategy <~
-            SignalProducer(value: (timeGoal: progress.timeGoal,
+            SignalProducer(value: (timeGoal: progress.targetTime,
                                    dayBaseline: progress.dayBaseline,
                                    dayBaselineAdjustedToProgress: progress.dayBaselineAdjustedToProgress,
                                    dayBaselineDifferential: progress.dayBaselineDifferential,
@@ -84,11 +84,11 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         return strategy
     }()
 
-    private lazy var goalReachedViewController: TargetReachedViewController = {
-        let goalReached = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("TargetReachedViewController")) as! TargetReachedViewController
-        goalReached <~ SignalProducer(value: progress.timeGoal)
-        addChildViewController(goalReached)
-        return goalReached
+    private lazy var targetReachedViewController: TargetReachedViewController = {
+        let targetReached = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("TargetReachedViewController")) as! TargetReachedViewController
+        targetReached <~ SignalProducer(value: progress.targetTime)
+        addChildViewController(targetReached)
+        return targetReached
     }()
 
     var dayProgressViewController: DayProgressViewController! {
@@ -109,16 +109,16 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }
 
     private func setupConditionalVisibilityOfContainedViews() {
-        let isGoalReached = progress.remainingTimeToGoal
+        let isTargetReached = progress.remainingTimeToTarget
             .map { (remainingTime: TimeInterval) -> Bool in
                 remainingTime == 0
         }
 
-        let selectedStrategyController = isGoalReached
+        let selectedStrategyController = isTargetReached
             .producer
             .observe(on: UIScheduler())
-            .map { [strategyViewController, goalReachedViewController] (isGoalReached: Bool) -> NSViewController in
-                return isGoalReached ? goalReachedViewController : strategyViewController
+            .map { [strategyViewController, targetReachedViewController] (isTargetReached: Bool) -> NSViewController in
+                return isTargetReached ? targetReachedViewController : strategyViewController
         }
 
         strategyView.uniqueSubview <~ selectedStrategyController.map { $0.view }.skipRepeats()
@@ -165,7 +165,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
 
         wirePeriodDescription()
         setupComputeStrategyFromButton()
-        connectPropertiesToGoalProgress()
+        connectPropertiesToProgressToTimeTarget()
         setupConditionalVisibilityOfContainedViews()
     }
 
@@ -220,9 +220,9 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         enabledTarget <~ isLastDayOfMonth
     }
     
-    private func connectPropertiesToGoalProgress() {
-        progress.startGoalDay <~ timePeriod.map { $0.start }
-        progress.endGoalDay <~ timePeriod.map { $0.end }
+    private func connectPropertiesToProgressToTimeTarget() {
+        progress.startDay <~ timePeriod.map { $0.start }
+        progress.endDay <~ timePeriod.map { $0.end }
         progress.startStrategyDay <~ computeStrategyFrom.producer.skipNil()
         progress.currentDate <~ currentDate.producer.skipNil()
         progress.calendar <~ calendar.producer.skipNil()
