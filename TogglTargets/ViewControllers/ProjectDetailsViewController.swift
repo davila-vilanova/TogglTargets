@@ -58,9 +58,9 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Contained view controllers
 
-    private lazy var goalReportViewController: GoalReportViewController = {
-        let goalReport = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalReportViewController")) as! GoalReportViewController
-        goalReport <~ SignalProducer(
+    private lazy var timeReportViewController: TimeReportViewController = {
+        let timeReport = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("TimeReportViewController")) as! TimeReportViewController
+        timeReport <~ SignalProducer(
             value: (projectId: projectId,
                     timeTarget: timeTargetForCurrentProject.skipNil(),
                     report: reportForCurrentProject,
@@ -68,8 +68,8 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
                     calendar: lastBinding.latestOutput { $0.calendar },
                     currentDate: lastBinding.latestOutput { $0.currentDate },
                     periodPreference: lastBinding.latestOutput { $0.periodPreference }))
-        addChildViewController(goalReport)
-        return goalReport
+        addChildViewController(timeReport)
+        return timeReport
     }()
 
     private lazy var noGoalViewController: NoGoalViewController = {
@@ -82,9 +82,9 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         let selectedGoalController = timeTargetForCurrentProject
             .observe(on: UIScheduler())
             .map { [unowned self] in
-            $0 == nil ? self.noGoalViewController : self.goalReportViewController
+            $0 == nil ? self.noGoalViewController : self.timeReportViewController
         }
-        goalReportView.uniqueSubview <~ selectedGoalController.map { $0.view }.skipRepeats()
+        timeReportView.uniqueSubview <~ selectedGoalController.map { $0.view }.skipRepeats()
     }
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
@@ -106,7 +106,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     // MARK: - Outlets
 
     @IBOutlet weak var projectName: NSTextField!
-    @IBOutlet weak var goalReportView: NSView!
+    @IBOutlet weak var timeReportView: NSView!
 
 
     //  MARK: -

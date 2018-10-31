@@ -1,5 +1,5 @@
 //
-//  GoalReportViewController.swift
+//  TimeReportViewController.swift
 //  TogglTargets
 //
 //  Created by David Davila on 27.05.17.
@@ -11,7 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-class GoalReportViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
+class TimeReportViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: Interface
 

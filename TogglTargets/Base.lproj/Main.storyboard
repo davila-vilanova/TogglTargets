@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -65,7 +64,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
                                 <clipView key="contentView" wantsLayer="YES" id="V9W-AF-Ttj">
                                     <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb" customClass="ProjectsCollectionView" customModule="TogglTargets" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
@@ -349,8 +348,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="goalReportView" destination="OOB-9P-pYC" id="69Z-CY-Vgu"/>
                         <outlet property="projectName" destination="ifD-zz-iY5" id="pO9-jg-jgp"/>
+                        <outlet property="timeReportView" destination="OOB-9P-pYC" id="69Z-CY-Vgu"/>
                     </connections>
                 </viewController>
                 <customObject id="sX4-zk-LDV" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -846,10 +845,10 @@
             </objects>
             <point key="canvasLocation" x="1811" y="1729"/>
         </scene>
-        <!--Goal Report View Controller-->
+        <!--Time Report View Controller-->
         <scene sceneID="ymg-Za-fLN">
             <objects>
-                <viewController storyboardIdentifier="GoalReportViewController" id="xQT-IJ-aTE" customClass="GoalReportViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GoalReportViewController" id="xQT-IJ-aTE" customClass="TimeReportViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="AwW-7C-Ykd">
                         <rect key="frame" x="0.0" y="0.0" width="477" height="366"/>
                         <autoresizingMask key="autoresizingMask"/>
