@@ -17,7 +17,7 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
 
     internal typealias Interface = (timeWorkedToday: SignalProducer<TimeInterval, NoError>,
         remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError>,
-        feasibility: SignalProducer<GoalFeasibility?, NoError>)
+        feasibility: SignalProducer<TargetFeasibility?, NoError>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }

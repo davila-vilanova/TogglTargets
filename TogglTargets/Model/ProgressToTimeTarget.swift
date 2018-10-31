@@ -115,12 +115,12 @@ class ProgressToTimeTarget {
         }
     }()
 
-    public lazy var feasibility: SignalProducer<GoalFeasibility?, NoError> =
+    public lazy var feasibility: SignalProducer<TargetFeasibility?, NoError> =
         dayBaselineAdjustedToProgress.map {
             guard let baseline = $0 else {
                 return nil
             }
-            return GoalFeasibility.from(dayBaseline: baseline)
+            return TargetFeasibility.from(dayBaseline: baseline)
     }
 
     // dayBaselineDifferential will publish nil values if either dayBaseline or dayBaselineAdjustedToProgress are nil

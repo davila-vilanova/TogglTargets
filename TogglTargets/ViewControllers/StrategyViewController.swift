@@ -20,7 +20,7 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
         dayBaseline: SignalProducer<TimeInterval?, NoError>,
         dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError>,
         dayBaselineDifferential: SignalProducer<Double?, NoError>,
-        feasibility: SignalProducer<GoalFeasibility?, NoError>)
+        feasibility: SignalProducer<TargetFeasibility?, NoError>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }

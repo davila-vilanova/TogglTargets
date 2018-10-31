@@ -1,5 +1,5 @@
 //
-//  GoalFeasibility.swift
+//  TargetFeasibility.swift
 //  TogglTargets
 //
 //  Created by David Dávila on 23.06.18.
@@ -11,12 +11,12 @@ import Foundation
 fileprivate let fullDay = TimeInterval(24 * 60 * 60)
 fileprivate let fullWorkDay = fullDay * (2 / 3) // Admittedly subjective
 
-enum GoalFeasibility {
+enum TargetFeasibility {
     case feasible(relativeFeasibility: Double)
     case unfeasible(relativeFeasibility: Double)
     case impossible
 
-    static func from(dayBaseline: TimeInterval) -> GoalFeasibility {
+    static func from(dayBaseline: TimeInterval) -> TargetFeasibility {
         switch dayBaseline {
         case 0..<fullWorkDay: return .feasible(relativeFeasibility: 1 - (dayBaseline / fullWorkDay))
         case fullWorkDay...fullDay: return .unfeasible(relativeFeasibility: 1 - (dayBaseline / fullDay))
@@ -25,7 +25,7 @@ enum GoalFeasibility {
     }
 }
 
-extension GoalFeasibility {
+extension TargetFeasibility {
     var isFeasible: Bool {
         switch self {
         case .feasible:

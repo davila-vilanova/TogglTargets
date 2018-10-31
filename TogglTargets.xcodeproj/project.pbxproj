@@ -134,10 +134,10 @@
 		639F8B6120DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */; };
 		639F8B6220DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */; };
 		639F8B6320DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */; };
-		639F8B6520DE7CE800FDC8C1 /* GoalFeasibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6420DE7CE800FDC8C1 /* GoalFeasibility.swift */; };
-		639F8B6620DE7CE800FDC8C1 /* GoalFeasibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6420DE7CE800FDC8C1 /* GoalFeasibility.swift */; };
-		639F8B6720DE7CE800FDC8C1 /* GoalFeasibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6420DE7CE800FDC8C1 /* GoalFeasibility.swift */; };
-		639F8B6820DE7CE800FDC8C1 /* GoalFeasibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6420DE7CE800FDC8C1 /* GoalFeasibility.swift */; };
+		639F8B6520DE7CE800FDC8C1 /* TargetFeasibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */; };
+		639F8B6620DE7CE800FDC8C1 /* TargetFeasibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */; };
+		639F8B6720DE7CE800FDC8C1 /* TargetFeasibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */; };
+		639F8B6820DE7CE800FDC8C1 /* TargetFeasibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */; };
 		639F8B6A20E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6920E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift */; };
 		639F8B6B20E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6920E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift */; };
 		639F8B6C20E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639F8B6920E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift */; };
@@ -398,7 +398,7 @@
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
 		639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalizedErrors.swift; path = ViewControllers/LocalizedErrors.swift; sourceTree = "<group>"; };
-		639F8B6420DE7CE800FDC8C1 /* GoalFeasibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GoalFeasibility.swift; path = Model/GoalFeasibility.swift; sourceTree = "<group>"; };
+		639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TargetFeasibility.swift; path = Model/TargetFeasibility.swift; sourceTree = "<group>"; };
 		639F8B6920E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataPersistenceProvider.swift; sourceTree = "<group>"; };
 		639F8B6E20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteTogglAPIDataPersistenceProviderTest.swift; sourceTree = "<group>"; };
 		639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportDirectoryProvider.swift; sourceTree = "<group>"; };
@@ -645,7 +645,7 @@
 				63FF9EEA208FA3BC0087DD1C /* Preferences */,
 				639F38EF208FA4D500AE96CF /* Util */,
 				639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */,
-				639F8B6420DE7CE800FDC8C1 /* GoalFeasibility.swift */,
+				639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */,
 				6344EF7A213DA1C900D0B00D /* TimeTargetCreatingDeleting.swift */,
 				639D5076216B897900B1DEA2 /* NSViewControllerExtensions.swift */,
 			);
@@ -1014,7 +1014,7 @@
 				6334B49F20703EC000A5B796 /* ActivityViewController.swift in Sources */,
 				63DC619A1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */,
 				63B1BBE71FBE2570001E9FBE /* ReportPeriodsProducer.swift in Sources */,
-				639F8B6520DE7CE800FDC8C1 /* GoalFeasibility.swift in Sources */,
+				639F8B6520DE7CE800FDC8C1 /* TargetFeasibility.swift in Sources */,
 				639F8B7120E6372B00FDC8C1 /* SupportDirectoryProvider.swift in Sources */,
 				637A324E1EE16FD600667FC3 /* ProjectsMasterDetailController.swift in Sources */,
 				635A25842052917B00EFCE90 /* ProjectCollectionViewHeader.swift in Sources */,
@@ -1100,7 +1100,7 @@
 				6355C5BD1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
 				63D4BBBA1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				63CE971120815B95006E7167 /* ActivitiesState.swift in Sources */,
-				639F8B6620DE7CE800FDC8C1 /* GoalFeasibility.swift in Sources */,
+				639F8B6620DE7CE800FDC8C1 /* TargetFeasibility.swift in Sources */,
 				63D4BBB41F7D821800B87298 /* ProgressToTimeTarget.swift in Sources */,
 				63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */,
 				637DA210202F7659000D7EB8 /* CollectionExtensions.swift in Sources */,
@@ -1139,7 +1139,7 @@
 			files = (
 				63A67F3D1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
 				639F8B6220DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */,
-				639F8B6720DE7CE800FDC8C1 /* GoalFeasibility.swift in Sources */,
+				639F8B6720DE7CE800FDC8C1 /* TargetFeasibility.swift in Sources */,
 				63A67F381FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				63A67F4C1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
 				63A67F331FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
@@ -1228,7 +1228,7 @@
 				63A67F391FCD9B16004BEFC6 /* RetrieveProjectsNetworkAction.swift in Sources */,
 				63A67F3E1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
 				637DA2232034760F000D7EB8 /* ValueLogger.swift in Sources */,
-				639F8B6820DE7CE800FDC8C1 /* GoalFeasibility.swift in Sources */,
+				639F8B6820DE7CE800FDC8C1 /* TargetFeasibility.swift in Sources */,
 				639F8B7920E641AE00FDC8C1 /* TogglAPIDataCache.swift in Sources */,
 				63AB08381FB77CB500565D87 /* DateTimeExtensions.swift in Sources */,
 				63AB082E1FB77CB500565D87 /* WeekdaySelection.swift in Sources */,
