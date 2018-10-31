@@ -1,6 +1,6 @@
 //
 //  TogglAPIDataRetrieverTest.swift
-//  TogglGoalsTests
+//  TogglTargetsTests
 //
 //  Created by David Dávila on 20.12.17.
 //  Copyright © 2017 davi. All rights reserved.

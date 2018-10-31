@@ -1,6 +1,6 @@
 //
 //  SQLiteTimeTargetPersistenceProviderTests.swift
-//  TogglGoalsTests
+//  TogglTargetsTests
 //
 //  Created by David Dávila on 15.05.18.
 //  Copyright © 2018 davi. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  FindClosestMatchingWeekdayTests.swift
-//  TogglGoalsTests
+//  TogglTargetsTests
 //
 //  Created by David Dávila on 01.11.17.
 //  Copyright © 2017 davi. All rights reserved.

@@ -1,6 +1,6 @@
 //
 //  GoalProgressTests.swift
-//  TogglGoalsTests
+//  TogglTargetsTests
 //
 //  Created by David Dávila on 30.09.17.
 //  Copyright © 2017 davi. All rights reserved.

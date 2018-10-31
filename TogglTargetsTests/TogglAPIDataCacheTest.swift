@@ -1,6 +1,6 @@
 //
 //  TogglAPIDataCacheTest.swift
-//  TogglGoalsTests
+//  TogglTargetsTests
 //
 //  Created by David Dávila on 30.06.18.
 //  Copyright © 2018 davi. All rights reserved.

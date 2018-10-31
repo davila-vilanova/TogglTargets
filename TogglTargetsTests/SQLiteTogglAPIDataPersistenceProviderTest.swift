@@ -1,6 +1,6 @@
 //
 //  SQLiteTogglAPIDataPersistenceProviderTest.swift
-//  TogglGoalsTests
+//  TogglTargetsTests
 //
 //  Created by David Dávila on 29.06.18.
 //  Copyright © 2018 davi. All rights reserved.

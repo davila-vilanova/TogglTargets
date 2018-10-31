@@ -1,6 +1,6 @@
 //
 //  MakeRetrieveReportsNetworkActionTest.swift
-//  TogglGoalsTests
+//  TogglTargetsTests
 //
 //  Created by David Dávila on 24.12.17.
 //  Copyright © 2017 davi. All rights reserved.
