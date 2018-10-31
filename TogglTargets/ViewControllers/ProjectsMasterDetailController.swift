@@ -55,7 +55,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private lazy var readTimeTarget = Property(initial: nil, then: lastBinding.producer.skipNil().map { $0.readTimeTarget })
 
-    private lazy var isProjectWithGoalCurrentlySelected =
+    private lazy var isProjectWithTimeTargetCurrentlySelected =
         Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readTimeTarget.producer)
             .map { p, r -> SignalProducer<TimeTarget?, NoError> in
                 guard let projectId = p,
@@ -115,7 +115,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
             SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.producer),
                                          lastBinding.producer.skipNil(),
                                          SignalProducer(value: modifyTimeTarget.deoptionalizedBindingTarget))
-                .map { selectedProjectIdProducer, binding, modifyGoal in
+                .map { selectedProjectIdProducer, binding, modifyTimeTarget in
                     (selectedProjectIdProducer,
                      binding.currentDate,
                      binding.calendar,
@@ -123,7 +123,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.runningEntry,
                      binding.readProject,
                      binding.readTimeTarget,
-                     modifyGoal,
+                     modifyTimeTarget,
                      binding.readReport)
         }
 
@@ -152,7 +152,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     }
 
     @IBAction public func createTimeTarget(_ sender: Any?) {
-        guard canCreateGoal,
+        guard canCreateTimeTarget,
             let projectId = selectedProjectId.value else {
                 return
         }
@@ -160,26 +160,26 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     }
 
     @IBAction public func deleteTimeTarget(_ sender: Any?) {
-        guard canDeleteGoal,
+        guard canDeleteTimeTarget,
             let projectId = selectedProjectId.value else {
                 return
         }
         deleteTimeTarget <~ SignalProducer(value: projectId)
     }
 
-    private var canCreateGoal: Bool {
-        return !isProjectWithGoalCurrentlySelected.value
+    private var canCreateTimeTarget: Bool {
+        return !isProjectWithTimeTargetCurrentlySelected.value
     }
 
-    private var canDeleteGoal: Bool {
-        return isProjectWithGoalCurrentlySelected.value
+    private var canDeleteTimeTarget: Bool {
+        return isProjectWithTimeTargetCurrentlySelected.value
     }
 
     public override func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
         if item.action == #selector(createTimeTarget(_:)) {
-            return canCreateGoal
+            return canCreateTimeTarget
         } else if item.action == #selector(deleteTimeTarget(_:)) {
-            return canDeleteGoal
+            return canDeleteTimeTarget
         } else {
             return true
         }
