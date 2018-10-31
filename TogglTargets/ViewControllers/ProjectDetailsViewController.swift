@@ -88,9 +88,9 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     }
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
-        if let goalController = segue.destinationController as? GoalViewController {
+        if let timeTargetController = segue.destinationController as? TimeTargetViewController {
             let validBindings = lastBinding.producer.skipNil()
-            goalController <~
+            timeTargetController <~
                 SignalProducer.combineLatest(
                     validBindings.map { ($0.calendar, $0.periodPreference, $0.writeTimeTarget) },
                     SignalProducer(value: timeTargetForCurrentProject.producer))

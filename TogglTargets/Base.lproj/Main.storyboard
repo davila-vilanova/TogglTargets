@@ -356,10 +356,10 @@
             </objects>
             <point key="canvasLocation" x="1064" y="1337"/>
         </scene>
-        <!--Goal View Controller-->
+        <!--Time Target View Controller-->
         <scene sceneID="VH6-GV-Mqt">
             <objects>
-                <viewController id="a81-xu-Ddi" customClass="GoalViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="a81-xu-Ddi" customClass="TimeTargetViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="rb9-j4-yIz">
                         <rect key="frame" x="0.0" y="0.0" width="522" height="52"/>
                         <autoresizingMask key="autoresizingMask"/>
