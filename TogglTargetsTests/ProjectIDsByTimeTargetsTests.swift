@@ -1,5 +1,5 @@
 //
-//  ProjectIDsByGoalsTests.swift
+//  ProjectIDsByTimeTargetsTests.swift
 //  TogglGoalsTests
 //
 //  Created by David Dávila on 07.12.17.
@@ -11,13 +11,13 @@ import XCTest
 fileprivate let withGoal = ProjectIDsByTimeTargets.Section.withGoal.rawValue
 fileprivate let withoutGoal = ProjectIDsByTimeTargets.Section.withoutGoal.rawValue
 
-class ProjectIDsByGoalsTests: XCTestCase {
+class ProjectIDsByTimeTargetsTests: XCTestCase {
 
-    let idsByGoals = ProjectIDsByTimeTargets(sortedProjectIDs: [897, 1243, 6103, 321407, 23, 0, 1432075, 12, 400],
-                                       countOfProjectsWithGoals: 4)
+    let idsByTimeTargets = ProjectIDsByTimeTargets(sortedProjectIDs: [897, 1243, 6103, 321407, 23, 0, 1432075, 12, 400],
+                                                   countOfProjectsWithGoals: 4)
 
-    func testCountOfProjectsWithoutGoals() {
-        XCTAssertEqual(idsByGoals.countOfProjectsWithoutGoals, 5)
+    func testCountOfProjectsWithoutTimeTargets() {
+        XCTAssertEqual(idsByTimeTargets.countOfProjectsWithoutGoals, 5)
     }
 
     func testEquality() {
@@ -42,17 +42,17 @@ class ProjectIDsByGoalsTests: XCTestCase {
     }
 
     func testIndexPathGeneration() {
-        XCTAssertEqual(idsByGoals.indexPath(forElementAt: 0), IndexPath(item: 0, section: withGoal))
-        XCTAssertEqual(idsByGoals.indexPath(forElementAt: 1), IndexPath(item: 1, section: withGoal))
-        XCTAssertEqual(idsByGoals.indexPath(forElementAt: 3), IndexPath(item: 3, section: withGoal))
-        XCTAssertEqual(idsByGoals.indexPath(forElementAt: 4), IndexPath(item: 0, section: withoutGoal))
-        XCTAssertEqual(idsByGoals.indexPath(forElementAt: 5), IndexPath(item: 1, section: withoutGoal))
-        XCTAssertEqual(idsByGoals.indexPath(forElementAt: 8), IndexPath(item: 4, section: withoutGoal))
+        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: 0), IndexPath(item: 0, section: withGoal))
+        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: 1), IndexPath(item: 1, section: withGoal))
+        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: 3), IndexPath(item: 3, section: withGoal))
+        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: 4), IndexPath(item: 0, section: withoutGoal))
+        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: 5), IndexPath(item: 1, section: withoutGoal))
+        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: 8), IndexPath(item: 4, section: withoutGoal))
     }
 
     func testIndexPathInterpretation() {
-        XCTAssertEqual(idsByGoals.projectId(for: IndexPath(item: 1, section: withGoal)), 1243)
-        XCTAssertEqual(idsByGoals.projectId(for: IndexPath(item: 2, section: withoutGoal)), 1432075)
+        XCTAssertEqual(idsByTimeTargets.projectId(for: IndexPath(item: 1, section: withGoal)), 1243)
+        XCTAssertEqual(idsByTimeTargets.projectId(for: IndexPath(item: 2, section: withoutGoal)), 1432075)
     }
 }
 

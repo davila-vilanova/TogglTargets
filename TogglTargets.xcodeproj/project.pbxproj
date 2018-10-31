@@ -88,7 +88,7 @@
 		6360175C2154E15A003B56F7 /* ProjectsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6360175B2154E15A003B56F7 /* ProjectsCollectionView.swift */; };
 		6360175D2154E15A003B56F7 /* ProjectsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6360175B2154E15A003B56F7 /* ProjectsCollectionView.swift */; };
 		636687171E6DD7DC0066849C /* CountWeekdaysTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */; };
-		637485611FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637485601FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift */; };
+		637485611FD9E0F600EC7E87 /* ProjectIDsByTimeTargetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637485601FD9E0F600EC7E87 /* ProjectIDsByTimeTargetsTests.swift */; };
 		63786D56211F34CA0034A994 /* LoginMethodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63786D55211F34CA0034A994 /* LoginMethodViewController.swift */; };
 		63786D57211F34CA0034A994 /* LoginMethodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63786D55211F34CA0034A994 /* LoginMethodViewController.swift */; };
 		63786D5F2121BB630034A994 /* PreferencesViewControllerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63786D5E2121BB630034A994 /* PreferencesViewControllerWrapper.swift */; };
@@ -375,7 +375,7 @@
 		635DCE191FD68F7D006FED93 /* ProjectIDsByTimeTargets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectIDsByTimeTargets.swift; sourceTree = "<group>"; };
 		6360175B2154E15A003B56F7 /* ProjectsCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectsCollectionView.swift; sourceTree = "<group>"; };
 		636687161E6DD7DC0066849C /* CountWeekdaysTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountWeekdaysTests.swift; sourceTree = "<group>"; };
-		637485601FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectIDsByGoalsTests.swift; sourceTree = "<group>"; };
+		637485601FD9E0F600EC7E87 /* ProjectIDsByTimeTargetsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectIDsByTimeTargetsTests.swift; sourceTree = "<group>"; };
 		63786D55211F34CA0034A994 /* LoginMethodViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginMethodViewController.swift; sourceTree = "<group>"; };
 		63786D5E2121BB630034A994 /* PreferencesViewControllerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesViewControllerWrapper.swift; sourceTree = "<group>"; };
 		637A32341EE16FD600667FC3 /* DayProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DayProgressViewController.swift; path = ViewControllers/DayProgressViewController.swift; sourceTree = "<group>"; };
@@ -548,7 +548,7 @@
 				63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */,
 				63ED27581FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift */,
 				634396891F80456200FDADE3 /* GoalProgressTests.swift */,
-				637485601FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift */,
+				637485601FD9E0F600EC7E87 /* ProjectIDsByTimeTargetsTests.swift */,
 				63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */,
 				632309991FEEE07E002F90E1 /* MakeRetrieveProjectsNetworkActionTest.swift */,
 				63C329321FEFBA63008AB9F2 /* MakeRetrieveReportsNetworkActionTest.swift */,
@@ -1094,7 +1094,7 @@
 				6310EFD01FAC6E8700B42C44 /* PeriodPreference.swift in Sources */,
 				637DA22520385096000D7EB8 /* ActivitiesStateTest.swift in Sources */,
 				63D4BBB81F7D821800B87298 /* ModelCoordinator.swift in Sources */,
-				637485611FD9E0F600EC7E87 /* ProjectIDsByGoalsTests.swift in Sources */,
+				637485611FD9E0F600EC7E87 /* ProjectIDsByTimeTargetsTests.swift in Sources */,
 				6310EFCC1FAC6D3700B42C44 /* Period.swift in Sources */,
 				6333B6DF1F974741002CF189 /* TimeReport.swift in Sources */,
 				6355C5BD1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,

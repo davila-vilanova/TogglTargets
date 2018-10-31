@@ -249,8 +249,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let itemsWhoseLastInSectionStatusMustUpdate = newIndexPaths.zip(with: updatedPids)
             .map { (newIndexPath, updatedPids) -> Dictionary<IndexPath, Bool> in
                 var possiblyAffectedItems: Set<IndexPath> = [newIndexPath,
-                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withGoal),
-                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withoutGoal)]
+                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withTimeTargets),
+                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withoutTimeTargets)]
 
                 if let section = ProjectIDsByTimeTargets.Section.init(rawValue: newIndexPath.section),
                     newIndexPath == updatedPids.indexPathOfLastItem(in: section),
@@ -356,9 +356,9 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                                                         withIdentifier: SectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
             switch ProjectIDsByTimeTargets.Section(rawValue: indexPath.section)! {
-            case .withGoal: header.title = NSLocalizedString("project-list.header.with-time-targets",
+            case .withTimeTargets: header.title = NSLocalizedString("project-list.header.with-time-targets",
                                                              comment: "header of the 'projects with time targets' section of the project list")
-            case .withoutGoal: header.title = NSLocalizedString("project-list.header.without-time-targets",
+            case .withoutTimeTargets: header.title = NSLocalizedString("project-list.header.without-time-targets",
                                                                 comment: "header of the 'projects without time targets' section of the project list")
             }
         }
@@ -387,7 +387,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectWithoutGoalSelected = SignalProducer.combineLatest(
             currentProjectIDs.producer,
             selectedProjectID.producer.skip(first: 1).skipNil())
-            .filter { $0.0.indexPath(for: $0.1)?.section == ProjectIDsByTimeTargets.Section.withoutGoal.rawValue }
+            .filter { $0.0.indexPath(for: $0.1)?.section == ProjectIDsByTimeTargets.Section.withoutTimeTargets.rawValue }
             .map { _ in () }
 
         let projectsListView = viewDidLoadProducer

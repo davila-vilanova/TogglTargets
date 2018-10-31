@@ -9,14 +9,14 @@
 import Foundation
 
 /// Encloses a sorted array of project IDs, ordered primarily by descending time target size
-/// and a count of projects that have goals associated with them.
+/// and a count of projects that have time targets associated with them.
 struct ProjectIDsByTimeTargets {
     /// The sorted collection of project IDs
     let sortedProjectIDs: [ProjectID]
 
     // Count of projects, from among those whose IDs are included in `sortedProjectIDs`,
-    /// that have goals associated with them.
-    let countOfProjectsWithGoals: Int
+    /// that have time targets associated with them.
+    let countOfProjectsWithTimeTargets: Int
 
     /// Represents a full or incremental update to a `ProjectIDsByTimeTargets` value.
     enum Update {
@@ -27,7 +27,7 @@ struct ProjectIDsByTimeTargets {
         case singleTimeTarget(TimeTargetUpdate)
 
         /// Represents an update that consists of a reorder operation for a single project ID
-        /// and possibly an increment or decrement of the count of projects associated with goals.
+        /// and possibly an increment or decrement of the count of projects associated with time targets.
         enum TimeTargetUpdate {
 
             /// Represents the effect of a reorder operation affecting a single project ID.
@@ -57,15 +57,15 @@ struct ProjectIDsByTimeTargets {
                 }
             }
 
-            /// Returns the new count of project IDs associated with goals after this update.
+            /// Returns the new count of project IDs associated with time targets after this update.
             ///
             /// - parameters:
-            ///   - idsByGoals: The `ProjectIDsByTimeTargets` value immediately previous to this update.
+            ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value immediately previous to this update.
             ///
-            /// - returns: The count of project IDs associated with goals resulting from applying
-            ///            this udpate to `idsByGoals`
-            func computeNewCount(from idsByGoals: ProjectIDsByTimeTargets) -> Int {
-                let oldCount = idsByGoals.countOfProjectsWithGoals
+            /// - returns: The count of project IDs associated with time targets resulting from applying
+            ///            this udpate to `idsByTimeTarget`
+            func computeNewCount(from idsByTimeTargets: ProjectIDsByTimeTargets) -> Int {
+                let oldCount = idsByTimeTargets.countOfProjectsWithTimeTargets
                 switch self {
                 case .create: return oldCount + 1
                 case .remove: return oldCount - 1
@@ -76,51 +76,51 @@ struct ProjectIDsByTimeTargets {
             /// Returns the result of applying this update to a `ProjectIDsByTimeTargets` value.
             ///
             /// - parameters:
-            ///   - idsByGoals: The `ProjectIDsByTimeTargets` value immediately previous to this update.
+            ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value immediately previous to this update.
             ///
-            ///   - returns: A `ProjectIDsByTimeTargets` value resulting of applying this update to `idsByGoals`
-            func apply(to idsByGoals: ProjectIDsByTimeTargets) -> ProjectIDsByTimeTargets {
-                var sortedIDs = idsByGoals.sortedProjectIDs
+            ///   - returns: A `ProjectIDsByTimeTargets` value resulting of applying this update to `idsByTimeTargets`
+            func apply(to idsByTimeTargets: ProjectIDsByTimeTargets) -> ProjectIDsByTimeTargets {
+                var sortedIDs = idsByTimeTargets.sortedProjectIDs
                 let item = sortedIDs.remove(at: indexChange.old)
                 sortedIDs.insert(item, at: indexChange.new)
                 return ProjectIDsByTimeTargets(sortedProjectIDs: sortedIDs,
-                                         countOfProjectsWithGoals: computeNewCount(from: idsByGoals))
+                                               countOfProjectsWithTimeTargets: computeNewCount(from: idsByTimeTargets))
             }
 
             /// Generates the update corresponding to creating, deleting or updating the time target associated
             /// with a project ID
             ///
             /// - parameters:
-            ///   - newGoal: The value of the affected time target after the update. Pass `nil` for a target deletion.
+            ///   - newTimeTarget: The value of the affected time target after the update. Pass `nil` for a target deletion.
             ///   - projectId: The project ID whose time target will be created, deleted or updated.
-            ///                This ID must be included in the project IDs associated with the `idsByGoals`
+            ///                This ID must be included in the project IDs associated with the `idsByTimeTargets`
             ///                argument. If it is not, this call will return nil.
-            ///   - goalsPreChange: The `ProjectIndexedGoals` value previous to updating the time target.
-            ///   - idsByGoals: The `ProjectIDsByTimeTargets` value that will be affected by this update.
+            ///   - timeTargetsPreChange: The `ProjectIdIndexedTimeTargets` value previous to updating the time target.
+            ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value that will be affected by this update.
             ///
-            ///   - note: The old time target value will be extracted from `goalsPreChange`
+            ///   - note: The old time target value will be extracted from `timeTargetsPreChange`
             ///
             ///   - returns: The update corresponding to the change in the time target associated with `projectId`,
-            ///              `nil` if `projectId` is not included in `idsByGoals`
-            static func forTimeTargetChange(involving newGoal: TimeTarget?,
+            ///              `nil` if `projectId` is not included in `idsByTimeTargets`
+            static func forTimeTargetChange(involving newTimeTarget: TimeTarget?,
                                             for projectId: ProjectID,
-                                            within goalsPreChange: ProjectIdIndexedTimeTargets,
-                                            affecting idsByGoals: ProjectIDsByTimeTargets) -> Update.TimeTargetUpdate?  {
-                let currentSortedIDs = idsByGoals.sortedProjectIDs
+                                            within timeTargetPreChange: ProjectIdIndexedTimeTargets,
+                                            affecting idsByTimeTargets: ProjectIDsByTimeTargets) -> Update.TimeTargetUpdate?  {
+                let currentSortedIDs = idsByTimeTargets.sortedProjectIDs
                 let newlySortedIDs = currentSortedIDs
                     .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
-                        for: goalsPreChange.updatingValue(newGoal, forKey: projectId)))
+                        for: timeTargetPreChange.updatingValue(newTimeTarget, forKey: projectId)))
 
                 guard let oldIndex = currentSortedIDs.index(of: projectId),
                     let newIndex = newlySortedIDs.index(of: projectId) else {
                         return nil
                 }
 
-                let oldGoal = goalsPreChange[projectId]
+                let oldTimeTarget = timeTargetPreChange[projectId]
                 let indexChange = IndexChange(old: oldIndex, new: newIndex)
-                if (oldGoal == nil) && (newGoal != nil) {
+                if (oldTimeTarget == nil) && (newTimeTarget != nil) {
                     return .create(indexChange)
-                } else if (oldGoal != nil) && (newGoal == nil) {
+                } else if (oldTimeTarget != nil) && (newTimeTarget == nil) {
                     return .remove(indexChange)
                 } else {
                     return .update(indexChange)
@@ -130,46 +130,46 @@ struct ProjectIDsByTimeTargets {
     }
 
     /// Represents an empty `ProjectIDsByTimeTargets` value
-    static let empty = ProjectIDsByTimeTargets(sortedProjectIDs: [ProjectID](), countOfProjectsWithGoals: 0)
+    static let empty = ProjectIDsByTimeTargets(sortedProjectIDs: [ProjectID](), countOfProjectsWithTimeTargets: 0)
 }
 
 extension ProjectIDsByTimeTargets {
     /// Initializes a `ProjectIDsByTimeTargets` value with the provided projectIDs sorted by the descending size
-    /// of the provided goals. To guarantee stable order as long as the provided project IDs are unique,
-    /// if two goals are considered of equivalent size the order will be determined by project ID descending.
+    /// of the provided time targets. To guarantee stable order as long as the provided project IDs are unique,
+    /// if two time targets are considered of equivalent size the order will be determined by project ID descending.
     ///
     /// - parameters:
-    ///   - projectIDs: The IDs to sort by the provided goals. All IDs must be unique.
-    ///   - goals: The goals upon which to base the primary ordering of the IDs.
-    init(projectIDs: [ProjectID], goals: ProjectIdIndexedTimeTargets) {
-        let sortedIDs = projectIDs.sorted(by: makeAreProjectIDsInIncreasingOrderFunction(for: goals))
-        let countWithGoals = sortedIDs.prefix { goals[$0] != nil }.count
-        self.init(sortedProjectIDs: sortedIDs, countOfProjectsWithGoals: countWithGoals)
+    ///   - projectIDs: The IDs to sort by the provided time targets. All IDs must be unique.
+    ///   - timeTargets: The time targets upon which to base the primary ordering of the IDs.
+    init(projectIDs: [ProjectID], timeTargets: ProjectIdIndexedTimeTargets) {
+        let sortedIDs = projectIDs.sorted(by: makeAreProjectIDsInIncreasingOrderFunction(for: timeTargets))
+        let countWithTimeTargets = sortedIDs.prefix { timeTargets[$0] != nil }.count
+        self.init(sortedProjectIDs: sortedIDs, countOfProjectsWithTimeTargets: countWithTimeTargets)
     }
 
     /// Initializes a `ProjectIDsByTimeTargets` value with the provided projectIDs sorted by the descending size
-    /// of the provided goals. To guarantee stable order, if two goals are considered of equivalent size the
+    /// of the provided time targets. To guarantee stable order, if two time targets are considered of equivalent size the
     /// order will be determined by project ID descending.
     ///
     /// - parameters:
-    ///   - projectIDs: The IDs to sort by the provided goals.
-    ///   - goals: The goals upon which to base the primary ordering of the IDs.
-    init(projectIDs: Set<ProjectID>, goals: ProjectIdIndexedTimeTargets) {
-        self.init(projectIDs: [ProjectID](projectIDs), goals: goals)
+    ///   - projectIDs: The IDs to sort by the provided time targets.
+    ///   - timeTargets: The time targets upon which to base the primary ordering of the IDs.
+    init(projectIDs: Set<ProjectID>, timeTargets: ProjectIdIndexedTimeTargets) {
+        self.init(projectIDs: [ProjectID](projectIDs), timeTargets: timeTargets)
     }
 }
 
 extension ProjectIDsByTimeTargets: Equatable {
     public static func ==(lhs: ProjectIDsByTimeTargets, rhs: ProjectIDsByTimeTargets) -> Bool {
         return (lhs.sortedProjectIDs == rhs.sortedProjectIDs) &&
-            (lhs.countOfProjectsWithGoals == rhs.countOfProjectsWithGoals)
+            (lhs.countOfProjectsWithTimeTargets == rhs.countOfProjectsWithTimeTargets)
     }
 }
 
 extension ProjectIDsByTimeTargets {
     /// The count of project IDs without a time target associated to them.
-    var countOfProjectsWithoutGoals: Int {
-        let count = sortedProjectIDs.count - countOfProjectsWithGoals
+    var countOfProjectsWithoutTimeTargets: Int {
+        let count = sortedProjectIDs.count - countOfProjectsWithTimeTargets
         assert(count >= 0)
         return count
     }
@@ -199,12 +199,12 @@ extension ProjectIDsByTimeTargets.Update {
 }
 
 extension ProjectIDsByTimeTargets {
-    /// Denotes a plausible set of sections in which a list of projects ordered by goals could be organized
+    /// Denotes a plausible set of sections in which a list of projects ordered by time targets could be organized
     enum Section: Int {
-        /// The section for projects that have goals associated to them.
-        case withGoal = 0
-        /// The section for projects that have no goals associated to them.
-        case withoutGoal = 1
+        /// The section for projects that have time targets associated to them.
+        case withTimeTargets = 0
+        /// The section for projects that have no time targets associated to them.
+        case withoutTimeTargets = 1
 
         /// The count of sections in this enum.
         static var count = 2
@@ -227,13 +227,13 @@ extension ProjectIDsByTimeTargets {
         let index: Int
 
         switch section {
-        case .withGoal:
+        case .withTimeTargets:
             index = indexPath.item
-            guard index <= countOfProjectsWithGoals else {
+            guard index <= countOfProjectsWithTimeTargets else {
                 return nil
             }
-        case .withoutGoal:
-            index = indexPath.item + countOfProjectsWithGoals
+        case .withoutTimeTargets:
+            index = indexPath.item + countOfProjectsWithTimeTargets
         }
         guard index < sortedProjectIDs.count else {
             return nil
@@ -254,12 +254,12 @@ extension ProjectIDsByTimeTargets {
             return nil
         }
         let section: Section, item: Int
-        if index < countOfProjectsWithGoals {
-            section = .withGoal
+        if index < countOfProjectsWithTimeTargets {
+            section = .withTimeTargets
             item = index
         } else {
-            section = .withoutGoal
-            item = index - countOfProjectsWithGoals
+            section = .withoutTimeTargets
+            item = index - countOfProjectsWithTimeTargets
         }
         return IndexPath(item: item, section: section.rawValue)
     }
@@ -273,8 +273,8 @@ extension ProjectIDsByTimeTargets {
 
     func numberOfItems(in section: Section) -> Int {
         switch section {
-        case .withGoal: return countOfProjectsWithGoals
-        case .withoutGoal: return countOfProjectsWithoutGoals
+        case .withTimeTargets: return countOfProjectsWithTimeTargets
+        case .withoutTimeTargets: return countOfProjectsWithoutTimeTargets
         }
     }
 
@@ -298,14 +298,14 @@ extension ProjectIDsByTimeTargets {
 /// determined by project ID descending.
 ///
 /// - parameters:
-///   - goals: The `ProjectIndexedGoals` that the returned function will use as context.
+///   - timeTargets: The `ProjectIndexedTimeTargets` that the returned function will use as context.
 ///
 /// - returns: A function that determines the relative order of two project IDs.
-fileprivate func makeAreProjectIDsInIncreasingOrderFunction(for goals: ProjectIdIndexedTimeTargets)
+fileprivate func makeAreProjectIDsInIncreasingOrderFunction(for timeTargets: ProjectIdIndexedTimeTargets)
     -> (ProjectID, ProjectID) -> Bool {
         return { (idL, idR) -> Bool in
-            let left = goals[idL]
-            let right = goals[idR]
+            let left = timeTargets[idL]
+            let right = timeTargets[idR]
             if let left = left, let right = right {
                 // the larger time target comes first
                 return left > right
