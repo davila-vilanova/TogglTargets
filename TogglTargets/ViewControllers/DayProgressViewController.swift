@@ -73,8 +73,8 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
 
         // Show or hide time remaining and progress indicator
         let isTimeRemainingMissing = remainingTimeToDayBaseline.map { $0 == nil }
-        let isGoalImpossible = lastBinding.latestOutput { $0.feasibility }.map { $0?.isImpossible ?? true }
-        let hide = isTimeRemainingMissing.or(isGoalImpossible)
+        let isMeetingTargetImpossible = lastBinding.latestOutput { $0.feasibility }.map { $0?.isImpossible ?? true }
+        let hide = isTimeRemainingMissing.or(isMeetingTargetImpossible)
         timeRemainingToWorkTodayLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ hide
         todayProgressIndicator.reactive.makeBindingTarget { $0.isIndeterminate = $1 } <~ hide
     }

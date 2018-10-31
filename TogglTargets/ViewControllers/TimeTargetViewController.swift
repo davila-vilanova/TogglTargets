@@ -44,7 +44,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
     @IBOutlet weak var hoursTargetFormatter: NumberFormatter!
     @IBOutlet weak var activeWeekdaysLabel: NSTextField!
     @IBOutlet weak var activeWeekdaysControl: NSSegmentedControl!
-    @IBOutlet weak var deleteGoalButton: NSButton!
+    @IBOutlet weak var deleteTimeTargetButton: NSButton!
 
 
     // MARK: - Wiring
@@ -70,7 +70,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        deleteGoalButton.image!.isTemplate = true
+        deleteTimeTargetButton.image!.isTemplate = true
 
         // Connect interface
         let calendar = lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
@@ -81,23 +81,23 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
         weekdaySegments <~ calendar
 
         // Emits non nil timeTarget values coming through the interface
-        let nonNilGoal = timeTarget.producer.skipNil()
+        let nonNilTimeTarget = timeTarget.producer.skipNil()
 
         // Bind timeTarget values to the values displayed in the controls
-        hoursTargetField.reactive.text <~ nonNilGoal.map { $0.hoursTarget }
+        hoursTargetField.reactive.text <~ nonNilTimeTarget.map { $0.hoursTarget }
             .map(NSNumber.init)
             .map(hoursTargetFormatter.string(from:))
             .map { $0 ?? "" }
 
-        hoursTargetStepper.reactive.integerValue <~ nonNilGoal.map { $0.hoursTarget }
+        hoursTargetStepper.reactive.integerValue <~ nonNilTimeTarget.map { $0.hoursTarget }
 
         activeWeekdaysControl.reactive
             .makeBindingTarget(on: UIScheduler()) { $0.setSelected($1.0, forSegment: $1.1) }
             <~ Property(value: Weekday.allDaysOrdered).producer
-                .sample(on: nonNilGoal.map { _ in () })
+                .sample(on: nonNilTimeTarget.map { _ in () })
                 .map(SignalProducer<Weekday, NoError>.init)
                 .flatten(.latest)
-                .withLatest(from: nonNilGoal.map { $0.workWeekdays })
+                .withLatest(from: nonNilTimeTarget.map { $0.workWeekdays })
                 .map { ($1.isSelected($0), $0.indexInGregorianCalendarSymbolsArray) }
 
         // Bind period preference to period description
@@ -121,13 +121,13 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
         }
         let stepperValues = hoursTargetStepper.reactive.integerValues
 
-        let goalFromEditedHours = Signal.merge(textFieldValues, stepperValues)
+        let timeTargetFromEditedHours = Signal.merge(textFieldValues, stepperValues)
             .producer
-            .withLatest(from: nonNilGoal)
+            .withLatest(from: nonNilTimeTarget)
             .map { TimeTarget(for: $1.projectId, hoursTarget: $0, workWeekdays: $1.workWeekdays) }
 
         
-        let goalFromEditedActiveWeekdays = activeWeekdaysControl.reactive.selectedSegmentIndexes
+        let timeTargetFromEditedActiveWeekdays = activeWeekdaysControl.reactive.selectedSegmentIndexes
             .map { [weak activeWeekdaysControl] (_) -> WeekdaySelection? in
                 guard let control = activeWeekdaysControl else {
                     return nil
@@ -143,28 +143,28 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
                 return newSelection
             }.skipNil()
             .producer
-            .withLatest(from: nonNilGoal)
+            .withLatest(from: nonNilTimeTarget)
             .map { TimeTarget(for: $1.projectId, hoursTarget: $1.hoursTarget, workWeekdays: $0) }
 
-        let editedGoal = SignalProducer.merge(goalFromEditedHours,
-                                              goalFromEditedActiveWeekdays)
+        let editedTimeTarget = SignalProducer.merge(timeTargetFromEditedHours,
+                                              timeTargetFromEditedActiveWeekdays)
 
-        userUpdates <~ editedGoal.map { Optional($0) }
+        userUpdates <~ editedTimeTarget.map { Optional($0) }
 
         // Enable controls only if time target exists
-        let goalExists = timeTarget.producer.map { $0 != nil }.skipRepeats()
-        for control in [hoursTargetLabel, hoursTargetField, activeWeekdaysLabel, activeWeekdaysControl, deleteGoalButton] as [NSControl] {
-            control.reactive.isEnabled <~ goalExists
+        let timeTargetExists = timeTarget.producer.map { $0 != nil }.skipRepeats()
+        for control in [hoursTargetLabel, hoursTargetField, activeWeekdaysLabel, activeWeekdaysControl, deleteTimeTargetButton] as [NSControl] {
+            control.reactive.isEnabled <~ timeTargetExists
         }
 
-        reactive.makeBindingTarget { (goalVC, _: Void) in
-            goalVC.try(toPerform: #selector(TimeTargetCreatingDeleting.deleteTimeTarget(_:)), with: goalVC)
+        reactive.makeBindingTarget { (timeTargetVC, _: Void) in
+            timeTargetVC.try(toPerform: #selector(TimeTargetCreatingDeleting.deleteTimeTarget(_:)), with: timeTargetVC)
         } <~ deleteConfirmed.signal
     }
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
-        if let deleteGoalController = segue.destinationController as? DeleteGoalPopup {
-            deleteGoalController <~ SignalProducer(value: deleteConfirmed.bindingTarget)
+        if let deleteTimeTargetController = segue.destinationController as? DeleteTimeTargetPopup {
+            deleteTimeTargetController <~ SignalProducer(value: deleteConfirmed.bindingTarget)
         }
     }
     
@@ -200,7 +200,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
 
 // MARK: -
 
-class DeleteGoalPopup: NSViewController, BindingTargetProvider {
+class DeleteTimeTargetPopup: NSViewController, BindingTargetProvider {
     internal typealias Interface = BindingTarget<Void>
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -236,23 +236,23 @@ class DeleteGoalPopup: NSViewController, BindingTargetProvider {
 // MARK: -
 
 class NoTimeTargetViewController: NSViewController, OnboardingTargetViewsProvider {
-    @IBOutlet weak var createGoalButton: NSButton!
+    @IBOutlet weak var createTimeTargetButton: NSButton!
 
     var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
-        let createGoalButtonPressed = Action<Void, Void, NoError> {
+        let createTimeTargetButtonPressed = Action<Void, Void, NoError> {
             SignalProducer(value: ())
         }
 
         let viewDidAppearProducer = reactive.trigger(for: #selector(viewDidAppear)).producer.take(first: 1)
 
-        let goalCreationViewProducer = viewDidAppearProducer
+        let timeTargetCreationViewProducer = viewDidAppearProducer
             .on(value: { [unowned self] in
-                self.createGoalButton.reactive.pressed = CocoaAction(createGoalButtonPressed)
+                self.createTimeTargetButton.reactive.pressed = CocoaAction(createTimeTargetButtonPressed)
             })
-            .map { [unowned self] in self.createGoalButton as NSView }
+            .map { [unowned self] in self.createTimeTargetButton as NSView }
 
-        let goalCreationView = goalCreationViewProducer.concat(SignalProducer.never).take(until: createGoalButtonPressed.values)
+        let timeTargetCreationView = timeTargetCreationViewProducer.concat(SignalProducer.never).take(until: createTimeTargetButtonPressed.values)
         
-        return [.createGoal : goalCreationView]
+        return [.createTimeTarget : timeTargetCreationView]
     }
 }

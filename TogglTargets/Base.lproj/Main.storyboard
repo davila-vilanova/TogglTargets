@@ -470,7 +470,7 @@
                     <connections>
                         <outlet property="activeWeekdaysControl" destination="xET-i9-eZV" id="PTn-vG-Jd5"/>
                         <outlet property="activeWeekdaysLabel" destination="0IY-al-1Yv" id="gcl-Bh-ojb"/>
-                        <outlet property="deleteGoalButton" destination="z4E-Sz-bgD" id="UjX-Dm-OqH"/>
+                        <outlet property="deleteTimeTargetButton" destination="z4E-Sz-bgD" id="UjX-Dm-OqH"/>
                         <outlet property="hoursTargetField" destination="CBy-PQ-RVY" id="aH3-g3-aNr"/>
                         <outlet property="hoursTargetFormatter" destination="Mc7-ow-3HZ" id="LlJ-68-FpM"/>
                         <outlet property="hoursTargetLabel" destination="vdS-WN-Sq2" id="87N-qS-eox"/>
@@ -482,10 +482,10 @@
             </objects>
             <point key="canvasLocation" x="1757" y="938"/>
         </scene>
-        <!--Delete Goal Popup-->
+        <!--Delete Time Target Popup-->
         <scene sceneID="nwh-bh-Z7X">
             <objects>
-                <viewController id="UAE-bD-MnG" customClass="DeleteGoalPopup" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="UAE-bD-MnG" customClass="DeleteTimeTargetPopup" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="qvY-FJ-u9C">
                         <rect key="frame" x="0.0" y="0.0" width="181" height="94"/>
                         <autoresizingMask key="autoresizingMask"/>

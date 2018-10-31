@@ -62,12 +62,12 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     var timeProgressViewController: TimeProgressViewController! {
         didSet {
             timeProgressViewController <~
-                SignalProducer(value: (timeGoal: progress.targetTime,
+                SignalProducer(value: (targetTime: progress.targetTime,
                                        totalWorkDays: progress.totalWorkDays,
                                        remainingWorkDays: progress.remainingWorkDays,
                                        reportAvailable: progress.reportAvailable.producer,
                                        workedTime: progress.workedTime,
-                                       remainingTimeToGoal: progress.remainingTimeToTarget,
+                                       remainingTimeToTarget: progress.remainingTimeToTarget,
                                        strategyStartsToday: progress.strategyStartsToday))
         }
     }
@@ -75,7 +75,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     private lazy var strategyViewController: StrategyViewController = {
         let strategy = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("StrategyViewController")) as! StrategyViewController
         strategy <~
-            SignalProducer(value: (timeGoal: progress.targetTime,
+            SignalProducer(value: (targetTime: progress.targetTime,
                                    dayBaseline: progress.dayBaseline,
                                    dayBaselineAdjustedToProgress: progress.dayBaselineAdjustedToProgress,
                                    dayBaselineDifferential: progress.dayBaselineDifferential,

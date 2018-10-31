@@ -12,7 +12,7 @@ enum OnboardingStepIdentifier: String {
     case login
     case closeLogin
     case selectProject
-    case createGoal
+    case createTimeTarget
     case setTargetHours
     case setWorkWeekdays
     case selectComputeStrategyFrom
@@ -27,7 +27,7 @@ fileprivate let OnboardingSteps: [OnboardingStep] = [
     OnboardingStep(identifier: .login, text: NSLocalizedString("onboarding.step.login", tableName: StringsTableName, comment: "onboarding step: login")),
     OnboardingStep(identifier: .closeLogin, text: NSLocalizedString("onboarding.step.close-login", tableName: StringsTableName, comment: "onboarding step: close login")),
     OnboardingStep(identifier: .selectProject, text: NSLocalizedString("onboarding.step.select-project", tableName: StringsTableName, comment: "onboarding step: select project")),
-    OnboardingStep(identifier: .createGoal, text: NSLocalizedString("onboarding.step.create-time-target", tableName: StringsTableName, comment: "onboarding step: create time target")),
+    OnboardingStep(identifier: .createTimeTarget, text: NSLocalizedString("onboarding.step.create-time-target", tableName: StringsTableName, comment: "onboarding step: create time target")),
     OnboardingStep(identifier: .setTargetHours, text: NSLocalizedString("onboarding.step.set-target-hours", tableName: StringsTableName, comment: "onboarding step: set target hours"), allowContinue: true, preferredEdge: .maxY),
     OnboardingStep(identifier: .setWorkWeekdays, text: NSLocalizedString("onboarding.step.set-work-weekdays", tableName: StringsTableName, comment: "onboarding step: set work weekdays"), allowContinue: true),
     OnboardingStep(identifier: .selectComputeStrategyFrom, text: NSLocalizedString("onboarding.step.select-compute-from",  tableName: StringsTableName, comment: "onboarding step: select from which day to compute the target strategy"), allowContinue: true),

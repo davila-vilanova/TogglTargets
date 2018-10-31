@@ -73,18 +73,18 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var noTimeTargetViewController: NoTimeTargetViewController = {
-        let noGoal = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("NoTimeTargetViewController")) as! NoTimeTargetViewController
-        addChildViewController(noGoal)
-        return noGoal
+        let noTarget = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("NoTimeTargetViewController")) as! NoTimeTargetViewController
+        addChildViewController(noTarget)
+        return noTarget
     }()
 
     private func setupConditionalVisibilityOfContainedViews() {
-        let selectedGoalController = timeTargetForCurrentProject
+        let selectedTimeTargetController = timeTargetForCurrentProject
             .observe(on: UIScheduler())
             .map { [unowned self] in
             $0 == nil ? self.noTimeTargetViewController : self.timeReportViewController
         }
-        timeReportView.uniqueSubview <~ selectedGoalController.map { $0.view }.skipRepeats()
+        timeReportView.uniqueSubview <~ selectedTimeTargetController.map { $0.view }.skipRepeats()
     }
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {

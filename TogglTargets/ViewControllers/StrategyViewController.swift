@@ -16,7 +16,7 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
     // MARK: Interface
 
     internal typealias Interface = (
-        timeGoal: SignalProducer<TimeInterval, NoError>,
+        targetTime: SignalProducer<TimeInterval, NoError>,
         dayBaseline: SignalProducer<TimeInterval?, NoError>,
         dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError>,
         dayBaselineDifferential: SignalProducer<Double?, NoError>,
@@ -55,14 +55,14 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let timeGoal = lastBinding.latestOutput { $0.timeGoal }
+        let targetTime = lastBinding.latestOutput { $0.targetTime }
         let dayBaseline = lastBinding.latestOutput { $0.dayBaseline }
         let dayBaselineAdjustedToProgress = lastBinding.latestOutput { $0.dayBaselineAdjustedToProgress }
         let dayBaselineDifferential = lastBinding.latestOutput { $0.dayBaselineDifferential }
         let feasibility = lastBinding.latestOutput { $0.feasibility }
 
         // Update total hours and hours per day with the values of the corresponding signals
-        totalHoursStrategyField.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
+        totalHoursStrategyField.reactive.text <~ targetTime.mapToString(timeFormatter: timeFormatter)
             .map {
                 String.localizedStringWithFormat(
                     NSLocalizedString("target-strategy.header",
@@ -161,8 +161,8 @@ class TargetReachedViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let timeGoal = lastBinding.latestOutput { $0 }
-        targetReachedField.reactive.text <~ timeGoal.mapToString(timeFormatter: timeFormatter)
+        let targetTime = lastBinding.latestOutput { $0 }
+        targetReachedField.reactive.text <~ targetTime.mapToString(timeFormatter: timeFormatter)
             .map {
                 String.localizedStringWithFormat(
                     NSLocalizedString("target-time-reached", comment: "the target time has been reached"),

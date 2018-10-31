@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 
 
-/// Combines data from the Toggl API, the user's goals and the system's time and date.
+/// Combines data from the Toggl API, the user's time targets and the system's time and date.
 /// Determines the dates of the reports to retrieve based on the user's period
 /// preference and the current date.
 /// Keeps the running entry up to date and triggers updates to the current date generator.
@@ -22,7 +22,7 @@ internal class ModelCoordinator: NSObject {
     /// The `TogglAPIDataRetriever` used to access data from the Toggl API.
     private let togglDataRetriever: TogglAPIDataRetriever
 
-    /// The store for the user's goals.
+    /// The store for the user's time targets.
     private let timeTargetsStore: ProjectIDsProducingTimeTargetsStore
 
     /// The current date generator used to access and trigger updates to the
@@ -54,7 +54,7 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Projects
 
-    /// Combines the project IDs from the Toggl API and the user's goals.
+    /// Combines the project IDs from the Toggl API and the user's time targets.
     var projectIDsByTimeTargets: ProjectIDsByTimeTargetsProducer {
         return self.timeTargetsStore.projectIDsByTimeTargetsProducer
     }
@@ -108,7 +108,7 @@ internal class ModelCoordinator: NSObject {
     private let currentDateUpdateTimer: CurrentDateUpdateTimer
 
 
-    // MARK: - Goals
+    // MARK: - Time targets
 
     /// Function which takes a project ID as input and returns a producer that
     /// emits values over time corresponding to the time target associated with that
@@ -145,7 +145,7 @@ internal class ModelCoordinator: NSObject {
     /// - parameters:
     ///   - togglDataRetriever: The `TogglAPIDataRetriever` used to access data
     ///     from the Toggl API.
-    ///   - timeTargetsStore: The store for the user's goals.
+    ///   - timeTargetsStore: The store for the user's time targets.
     ///   - currentDateGenerator: The current date generator used to access and
     ///     trigger updates to the current date.
     ///   - reportPeriodsProducer: The `ReportPeriodsProducer` used to determine

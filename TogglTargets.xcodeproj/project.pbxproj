@@ -27,7 +27,7 @@
 		632957461DBA99F000E11A10 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957451DBA99F000E11A10 /* AppDelegate.swift */; };
 		6329574A1DBA99F000E11A10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 632957491DBA99F000E11A10 /* Assets.xcassets */; };
 		6329574D1DBA99F000E11A10 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6329574B1DBA99F000E11A10 /* Main.storyboard */; };
-		632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */; };
+		632957631DBA99F000E11A10 /* TogglTargetsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632957621DBA99F000E11A10 /* TogglTargetsUITests.swift */; };
 		632A5FB42165621F00E61BBB /* OnboardingStepViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */; };
 		632A5FB52165621F00E61BBB /* OnboardingStepViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */; };
 		6333B6CE1F974690002CF189 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6333B6CD1F974690002CF189 /* Profile.swift */; };
@@ -339,7 +339,7 @@
 		632957531DBA99F000E11A10 /* TogglTargetsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglTargetsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		632957591DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6329575E1DBA99F000E11A10 /* TogglTargetsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TogglTargetsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglGoalsUITests.swift; sourceTree = "<group>"; };
+		632957621DBA99F000E11A10 /* TogglTargetsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglTargetsUITests.swift; sourceTree = "<group>"; };
 		632957641DBA99F000E11A10 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		632A5FB22165621F00E61BBB /* OnboardingStepViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepViewController.swift; sourceTree = "<group>"; };
 		6333B6CD1F974690002CF189 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
@@ -563,7 +563,7 @@
 		632957611DBA99F000E11A10 /* TogglTargetsUITests */ = {
 			isa = PBXGroup;
 			children = (
-				632957621DBA99F000E11A10 /* TogglGoalsUITests.swift */,
+				632957621DBA99F000E11A10 /* TogglTargetsUITests.swift */,
 				632957641DBA99F000E11A10 /* Info.plist */,
 				63F76B9920F6212D0024939B /* InfoPlist.strings */,
 			);
@@ -1164,7 +1164,7 @@
 				63D4BBBF1F7D821900B87298 /* DateTimeExtensions.swift in Sources */,
 				63D4BBC41F7D821900B87298 /* ModelCoordinator.swift in Sources */,
 				637DA2222034760F000D7EB8 /* ValueLogger.swift in Sources */,
-				632957631DBA99F000E11A10 /* TogglGoalsUITests.swift in Sources */,
+				632957631DBA99F000E11A10 /* TogglTargetsUITests.swift in Sources */,
 				637A32411EE16FD600667FC3 /* EmptySelectionViewController.swift in Sources */,
 				632A5FB52165621F00E61BBB /* OnboardingStepViewController.swift in Sources */,
 				63E798B7211DE49B00386BF5 /* UniqueSubview.swift in Sources */,

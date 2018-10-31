@@ -16,12 +16,12 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
     // MARK: Interface
 
     internal typealias Interface = (
-        timeGoal: SignalProducer<TimeInterval, NoError>,
+        targetTime: SignalProducer<TimeInterval, NoError>,
         totalWorkDays: SignalProducer<Int?, NoError>,
         remainingWorkDays: SignalProducer<Int?, NoError>,
         reportAvailable: SignalProducer<Bool, NoError>,
         workedTime: SignalProducer<TimeInterval, NoError>,
-        remainingTimeToGoal: SignalProducer<TimeInterval, NoError>,
+        remainingTimeToTarget: SignalProducer<TimeInterval, NoError>,
         strategyStartsToday: SignalProducer<Bool, NoError>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -30,12 +30,12 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
     // MARK: - Backing properties
 
-    private let timeGoal = MutableProperty<TimeInterval>(0)
+    private let targetTime = MutableProperty<TimeInterval>(0)
     private let totalWorkDays = MutableProperty<Int?>(nil)
     private let remainingWorkDays = MutableProperty<Int?>(nil)
     private let reportAvailable = MutableProperty<Bool>(false)
     private let workedTime = MutableProperty<TimeInterval>(0)
-    private let remainingTimeToGoal = MutableProperty<TimeInterval>(0)
+    private let remainingTimeToTarget = MutableProperty<TimeInterval>(0)
     private let strategyStartsToday = MutableProperty<Bool>(false)
 
 
@@ -113,7 +113,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
     @IBOutlet weak var remainingHoursField: NSTextField! {
         didSet {
-            remainingHoursField.reactive.text <~ remainingTimeToGoal.producer.mapToString(timeFormatter: timeFormatter)
+            remainingHoursField.reactive.text <~ remainingTimeToTarget.producer.mapToString(timeFormatter: timeFormatter)
                 .map {
                     String.localizedStringWithFormat(
                         NSLocalizedString("time-progress.report.target-time.remaining", comment: "amount of time remaining to achieve the target time"),
@@ -140,11 +140,11 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
     @IBOutlet weak var workHoursProgressIndicator: NSProgressIndicator! {
         didSet {
-            SignalProducer.combineLatest(timeGoal.producer, workedTime.producer)
+            SignalProducer.combineLatest(targetTime.producer, workedTime.producer)
                 .skipRepeats { $0 == $1 }
                 .observe(on: UIScheduler())
-                .startWithValues { [indicator = workHoursProgressIndicator] (timeGoal, workedTime) in
-                    indicator!.maxValue = timeGoal
+                .startWithValues { [indicator = workHoursProgressIndicator] (targetTime, workedTime) in
+                    indicator!.maxValue = targetTime
                     // No hard limit (nothing prevents one from exceeding their time target)
                     indicator!.doubleValue = workedTime
             }
@@ -155,12 +155,12 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
     // MARK: -
 
     override func viewDidLoad() {
-        timeGoal <~ lastBinding.latestOutput { $0.timeGoal }
+        targetTime <~ lastBinding.latestOutput { $0.targetTime }
         totalWorkDays <~ lastBinding.latestOutput { $0.totalWorkDays }
         remainingWorkDays <~ lastBinding.latestOutput { $0.remainingWorkDays }
         reportAvailable <~ lastBinding.latestOutput { $0.reportAvailable }
         workedTime <~ lastBinding.latestOutput { $0.workedTime }
-        remainingTimeToGoal <~ lastBinding.latestOutput { $0.remainingTimeToGoal }
+        remainingTimeToTarget <~ lastBinding.latestOutput { $0.remainingTimeToTarget }
         strategyStartsToday <~ lastBinding.latestOutput { $0.strategyStartsToday }
     }
     

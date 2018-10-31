@@ -104,14 +104,14 @@ class ProgressToTimeTarget {
     public lazy var dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError> = {
         return SignalProducer.combineLatest(remainingWorkDays.skipRepeats(),
                                             remainingTimeToTarget.skipRepeats())
-            .map { (remainingWorkDays, remainingTimeToGoal) -> TimeInterval? in
+            .map { (remainingWorkDays, remainingTimeToTarget) -> TimeInterval? in
                 guard let remainingWorkDays = remainingWorkDays else {
                     return nil
                 }
                 guard remainingWorkDays > 0 else {
                     return 0
                 }
-                return remainingTimeToGoal / Double(remainingWorkDays)
+                return remainingTimeToTarget / Double(remainingWorkDays)
         }
     }()
 

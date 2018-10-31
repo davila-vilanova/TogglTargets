@@ -1,6 +1,6 @@
 //
-//  TogglGoalsUITests.swift
-//  TogglGoalsUITests
+//  TogglTargetsUITests.swift
+//  TogglTargetsUITests
 //
 //  Created by David Davila on 21/10/2016.
 //  Copyright © 2016 davi. All rights reserved.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-class TogglGoalsUITests: XCTestCase {
+class TogglTargetsUITests: XCTestCase {
         
     override func setUp() {
         super.setUp()
