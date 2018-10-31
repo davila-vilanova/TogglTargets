@@ -849,7 +849,7 @@
         <!--Time Report View Controller-->
         <scene sceneID="ymg-Za-fLN">
             <objects>
-                <viewController storyboardIdentifier="GoalReportViewController" id="xQT-IJ-aTE" customClass="TimeReportViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TimeReportViewController" id="xQT-IJ-aTE" customClass="TimeReportViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="AwW-7C-Ykd">
                         <rect key="frame" x="0.0" y="0.0" width="477" height="366"/>
                         <autoresizingMask key="autoresizingMask"/>
