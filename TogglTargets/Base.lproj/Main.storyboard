@@ -796,7 +796,7 @@
         <!--No Time Target View Controller-->
         <scene sceneID="PGj-gw-9GS">
             <objects>
-                <viewController storyboardIdentifier="NoTimeTarget" id="uCS-Tc-pwg" customClass="NoTimeTargetViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NoTimeTargetViewController" id="uCS-Tc-pwg" customClass="NoTimeTargetViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="1mY-6H-Sas">
                         <rect key="frame" x="0.0" y="0.0" width="477" height="350"/>
                         <autoresizingMask key="autoresizingMask"/>
