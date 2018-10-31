@@ -72,8 +72,8 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         return timeReport
     }()
 
-    private lazy var noGoalViewController: NoGoalViewController = {
-        let noGoal = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("NoGoalViewController")) as! NoGoalViewController
+    private lazy var noTimeTargetViewController: NoTimeTargetViewController = {
+        let noGoal = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("NoTimeTargetViewController")) as! NoTimeTargetViewController
         addChildViewController(noGoal)
         return noGoal
     }()
@@ -82,7 +82,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         let selectedGoalController = timeTargetForCurrentProject
             .observe(on: UIScheduler())
             .map { [unowned self] in
-            $0 == nil ? self.noGoalViewController : self.timeReportViewController
+            $0 == nil ? self.noTimeTargetViewController : self.timeReportViewController
         }
         timeReportView.uniqueSubview <~ selectedGoalController.map { $0.view }.skipRepeats()
     }

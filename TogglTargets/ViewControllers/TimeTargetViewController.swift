@@ -235,7 +235,7 @@ class DeleteGoalPopup: NSViewController, BindingTargetProvider {
 
 // MARK: -
 
-class NoGoalViewController: NSViewController, OnboardingTargetViewsProvider {
+class NoTimeTargetViewController: NSViewController, OnboardingTargetViewsProvider {
     @IBOutlet weak var createGoalButton: NSButton!
 
     var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {

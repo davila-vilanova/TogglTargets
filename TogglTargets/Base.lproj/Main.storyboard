@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -64,7 +65,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
                                 <clipView key="contentView" wantsLayer="YES" id="V9W-AF-Ttj">
                                     <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb" customClass="ProjectsCollectionView" customModule="TogglTargets" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
@@ -792,10 +793,10 @@
             </objects>
             <point key="canvasLocation" x="2682" y="1359"/>
         </scene>
-        <!--No Goal View Controller-->
+        <!--No Time Target View Controller-->
         <scene sceneID="PGj-gw-9GS">
             <objects>
-                <viewController storyboardIdentifier="NoGoalViewController" id="uCS-Tc-pwg" customClass="NoGoalViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NoTimeTarget" id="uCS-Tc-pwg" customClass="NoTimeTargetViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="1mY-6H-Sas">
                         <rect key="frame" x="0.0" y="0.0" width="477" height="350"/>
                         <autoresizingMask key="autoresizingMask"/>
