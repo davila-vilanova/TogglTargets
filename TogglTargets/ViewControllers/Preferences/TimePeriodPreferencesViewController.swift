@@ -1,5 +1,5 @@
 //
-//  GoalPeriodsPreferencesViewController.swift
+//  TimePeriodPreferencesViewController.swift
 //  TogglTargets
 //
 //  Created by David Dávila on 03.11.17.
@@ -13,7 +13,7 @@ import ReactiveCocoa
 
 internal let DefaultPeriodPreference = PeriodPreference.monthly
 
-class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvider {
+class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
@@ -39,10 +39,10 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
 
     // MARK: - Outlets and action
 
-    @IBOutlet weak var preferMonthlyGoalPeriodsButton: NSButton!
-    @IBOutlet weak var preferWeeklyGoalPeriodsButton: NSButton!
-    @IBOutlet weak var weeklyGoalStartDayLabel: NSTextField!
-    @IBOutlet weak var weeklyGoalStartDayPopUp: NSPopUpButton!
+    @IBOutlet weak var preferMonthlyPeriodButton: NSButton!
+    @IBOutlet weak var preferWeeklyPeriodButton: NSButton!
+    @IBOutlet weak var weeklyStartDayLabel: NSTextField!
+    @IBOutlet weak var weeklyStartDayPopUp: NSPopUpButton!
     @IBOutlet weak var currentPeriodDescription: NSTextField!
 
     // MARK: - State
@@ -62,7 +62,7 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
         p <~ existingPreference.map(selectedWeekday).producer.skipNil()
 
         // value from user input
-        p <~ weeklyGoalStartDayPopUp.reactive.selectedIndexes
+        p <~ weeklyStartDayPopUp.reactive.selectedIndexes
             .map(Weekday.fromIndexInGregorianCalendarSymbolsArray)
             .skipNil()
         return p
@@ -98,16 +98,16 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
     }
     
     private func makeRadioButtonSelectionMutuallyExclusive() {
-        preferMonthlyGoalPeriodsButton.reactive.state <~ preferWeeklyGoalPeriodsButton
+        preferMonthlyPeriodButton.reactive.state <~ preferWeeklyPeriodButton
             .reactive.states.map { $0 == .off ? .on : .off }
         
-        preferWeeklyGoalPeriodsButton.reactive.state <~ preferMonthlyGoalPeriodsButton
+        preferWeeklyPeriodButton.reactive.state <~ preferMonthlyPeriodButton
             .reactive.states.map { $0 == .off ? .on : .off }
     }
 
     private func populateWeekdaysPopUpButton() {
         let populateDaysTarget =
-            weeklyGoalStartDayPopUp.reactive.makeBindingTarget { (button, weekdaySymbols: [String]) in
+            weeklyStartDayPopUp.reactive.makeBindingTarget { (button, weekdaySymbols: [String]) in
                 button.removeAllItems()
                 for dayName in weekdaySymbols {
                     button.addItem(withTitle: dayName)
@@ -118,24 +118,24 @@ class GoalPeriodsPreferencesViewController: NSViewController, BindingTargetProvi
     }
 
     private func reflectExistingPreference() {
-        preferMonthlyGoalPeriodsButton.reactive.state <~ existingPreference
+        preferMonthlyPeriodButton.reactive.state <~ existingPreference
             .map(isMonthly)
             .map(boolToControlStateValue)
 
-        preferWeeklyGoalPeriodsButton.reactive.state <~ existingPreference
+        preferWeeklyPeriodButton.reactive.state <~ existingPreference
             .map(isWeekly)
             .map(boolToControlStateValue)
 
-        weeklyGoalStartDayPopUp.reactive.selectedIndex <~ existingPreference
+        weeklyStartDayPopUp.reactive.selectedIndex <~ existingPreference
             .map(selectedWeekday)
             .producer.skipNil()
             .map { $0.rawValue }
     }
 
     private func assignActions() {
-        preferMonthlyGoalPeriodsButton.reactive.pressed = CocoaAction(generateMonthlyPeriodPreference)
-        preferWeeklyGoalPeriodsButton.reactive.pressed = CocoaAction(weeklyButtonPress)
-        weeklyGoalStartDayPopUp.reactive.pressed = CocoaAction(generateWeeklyPeriodPreference, weekdayFromSelection)
+        preferMonthlyPeriodButton.reactive.pressed = CocoaAction(generateMonthlyPeriodPreference)
+        preferWeeklyPeriodButton.reactive.pressed = CocoaAction(weeklyButtonPress)
+        weeklyStartDayPopUp.reactive.pressed = CocoaAction(generateWeeklyPeriodPreference, weekdayFromSelection)
 
         // Take the value of selectedWeekdayProperty at the time weeklyButtonPress fires
         // and forward it to the generateWeeklyPeriodPreference Action

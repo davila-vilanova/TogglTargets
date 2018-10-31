@@ -42,7 +42,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
 
     private let progress = ProgressToTimeTarget()
 
-    private lazy var goalPeriod: SignalProducer<Period, NoError> =
+    private lazy var timePeriod: SignalProducer<Period, NoError> =
         SignalProducer.combineLatest(periodPreference.producer.skipNil(),
                                      calendar.producer.skipNil(), currentDate.producer.skipNil())
             .map { $0.currentPeriod(in: $1, for: $2) }
@@ -173,7 +173,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     // MARK: -
 
     private func wirePeriodDescription() {
-        periodDescriptionLabel.reactive.text <~ SignalProducer.combineLatest(goalPeriod.producer,
+        periodDescriptionLabel.reactive.text <~ SignalProducer.combineLatest(timePeriod.producer,
                                                                              periodDescriptionFormatter,
                                                                              calendar.producer.skipNil())
             .map { (period, formatter, calendar) in
@@ -221,8 +221,8 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }
     
     private func connectPropertiesToGoalProgress() {
-        progress.startGoalDay <~ goalPeriod.map { $0.start }
-        progress.endGoalDay <~ goalPeriod.map { $0.end }
+        progress.startGoalDay <~ timePeriod.map { $0.start }
+        progress.endGoalDay <~ timePeriod.map { $0.end }
         progress.startStrategyDay <~ computeStrategyFrom.producer.skipNil()
         progress.currentDate <~ currentDate.producer.skipNil()
         progress.calendar <~ calendar.producer.skipNil()

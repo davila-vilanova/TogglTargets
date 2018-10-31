@@ -260,7 +260,7 @@
 		63F76BD720F672940024939B /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63F76BDA20F672940024939B /* Preferences.storyboard */; };
 		63F76BD820F672940024939B /* Preferences.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63F76BDA20F672940024939B /* Preferences.storyboard */; };
 		63F76BE320F6756A0024939B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6329574B1DBA99F000E11A10 /* Main.storyboard */; };
-		63FF9EEE208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */; };
+		63FF9EEE208FA3BC0087DD1C /* TimePeriodPreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEB208FA3BC0087DD1C /* TimePeriodPreferencesViewController.swift */; };
 		63FF9EEF208FA3BC0087DD1C /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */; };
 		63FF9EF0208FA3BC0087DD1C /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */; };
 /* End PBXBuildFile section */
@@ -453,7 +453,7 @@
 		63F76BDE20F673330024939B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Preferences.strings; sourceTree = "<group>"; };
 		63F76BE020F675170024939B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Preferences.strings; sourceTree = "<group>"; };
 		63F76BE220F675690024939B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
-		63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalPeriodsPreferencesViewController.swift; sourceTree = "<group>"; };
+		63FF9EEB208FA3BC0087DD1C /* TimePeriodPreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimePeriodPreferencesViewController.swift; sourceTree = "<group>"; };
 		63FF9EEC208FA3BC0087DD1C /* AccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		63FF9EED208FA3BC0087DD1C /* PreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -783,7 +783,7 @@
 				63F15018209869EC0044288F /* APITokenViewController.swift */,
 				63F1501A20986A150044288F /* EmailPasswordViewController.swift */,
 				63F1501C20986A3A0044288F /* LoggedInViewController.swift */,
-				63FF9EEB208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift */,
+				63FF9EEB208FA3BC0087DD1C /* TimePeriodPreferencesViewController.swift */,
 				63786D55211F34CA0034A994 /* LoginMethodViewController.swift */,
 			);
 			name = Preferences;
@@ -1007,7 +1007,7 @@
 				63A67F4A1FCD9D42004BEFC6 /* APIAccessError.swift in Sources */,
 				635A25862052917B00EFCE90 /* ProjectCollectionViewItem.swift in Sources */,
 				63A67F311FCD9A97004BEFC6 /* RetrieveProfileNetworkAction.swift in Sources */,
-				63FF9EEE208FA3BC0087DD1C /* GoalPeriodsPreferencesViewController.swift in Sources */,
+				63FF9EEE208FA3BC0087DD1C /* TimePeriodPreferencesViewController.swift in Sources */,
 				639F8B6020DE660F00FDC8C1 /* LocalizedErrors.swift in Sources */,
 				635DCE1A1FD68F7D006FED93 /* ProjectIDsByTimeTargets.swift in Sources */,
 				6333B6CE1F974690002CF189 /* Profile.swift in Sources */,

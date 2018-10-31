@@ -13,7 +13,7 @@ import Result
 class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     internal enum Section {
         case account
-        case goalPeriods
+        case timePeriods
     }
     // MARK: - Interface
 
@@ -37,13 +37,13 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
 
     private enum ContainedControllerType: Int {
         case account = 0
-        case goalPeriods = 1
+        case timePeriods = 1
 
         static func from(_ controller: NSViewController) -> ContainedControllerType? {
             if controller as? AccountViewController != nil {
                 return .account
-            } else if controller as? GoalPeriodsPreferencesViewController != nil {
-                return .goalPeriods
+            } else if controller as? TimePeriodPreferencesViewController != nil {
+                return .timePeriods
             } else {
                 return nil
             }
@@ -66,8 +66,8 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
         let validBindings = lastBinding.producer.skipNil()
         if let account = controller as? AccountViewController {
             account <~ validBindings.map { ($0.existingCredential, $0.profile, $0.apiAccessError, $0.resolvedCredential, $0.testURLSessionAction) }
-        } else if let goalPeriods = controller as? GoalPeriodsPreferencesViewController {
-            goalPeriods <~ validBindings.map { ($0.calendar, $0.currentDate, $0.existingTimeTargetPeriodPreference, $0.updatedTimeTargetPeriodPreference) }
+        } else if let timePeriods = controller as? TimePeriodPreferencesViewController {
+            timePeriods <~ validBindings.map { ($0.calendar, $0.currentDate, $0.existingTimeTargetPeriodPreference, $0.updatedTimeTargetPeriodPreference) }
         }
     }
 
@@ -80,7 +80,7 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
             .skipNil().map { section -> ContainedControllerType in
                 switch section {
                 case .account: return .account
-                case .goalPeriods: return .goalPeriods
+                case .timePeriods: return .timePeriods
                 }
             }.map { $0.rawValue }
     }

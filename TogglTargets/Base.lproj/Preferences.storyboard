@@ -485,7 +485,7 @@
         <!--Time Periods-->
         <scene sceneID="moW-Kh-FCL">
             <objects>
-                <viewController title="Time Periods" id="DPU-zp-q1w" customClass="GoalPeriodsPreferencesViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Time Periods" id="DPU-zp-q1w" customClass="TimePeriodPreferencesViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kQJ-7X-Tb0">
                         <rect key="frame" x="0.0" y="0.0" width="351" height="120"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -591,10 +591,10 @@
                     </view>
                     <connections>
                         <outlet property="currentPeriodDescription" destination="WiD-hF-rqh" id="T2v-8e-E5u"/>
-                        <outlet property="preferMonthlyGoalPeriodsButton" destination="6U9-Og-MS6" id="azr-dF-CS7"/>
-                        <outlet property="preferWeeklyGoalPeriodsButton" destination="H9z-u0-oBU" id="FEp-mr-yxo"/>
-                        <outlet property="weeklyGoalStartDayLabel" destination="mUX-SE-Fka" id="8E2-8H-omA"/>
-                        <outlet property="weeklyGoalStartDayPopUp" destination="ufd-f2-Rcb" id="aJP-Ws-29c"/>
+                        <outlet property="preferMonthlyPeriodButton" destination="6U9-Og-MS6" id="azr-dF-CS7"/>
+                        <outlet property="preferWeeklyPeriodButton" destination="H9z-u0-oBU" id="FEp-mr-yxo"/>
+                        <outlet property="weeklyStartDayLabel" destination="mUX-SE-Fka" id="8E2-8H-omA"/>
+                        <outlet property="weeklyStartDayPopUp" destination="ufd-f2-Rcb" id="aJP-Ws-29c"/>
                     </connections>
                 </viewController>
                 <customObject id="pl0-vh-U51" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
