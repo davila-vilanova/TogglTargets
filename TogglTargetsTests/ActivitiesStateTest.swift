@@ -10,7 +10,7 @@ import XCTest
 import Result
 import ReactiveSwift
 
-fileprivate let OutputTimeout = TimeInterval(3)
+fileprivate let OutputTimeout = TimeInterval(7)
 
 class ActivitiesStateTest: XCTestCase {
     let scheduler = QueueScheduler()
