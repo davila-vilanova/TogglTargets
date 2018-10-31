@@ -40,7 +40,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
 
     // MARK: - Computation
 
-    private let goalProgress = GoalProgress()
+    private let progress = ProgressToTimeTarget()
 
     private lazy var goalPeriod: SignalProducer<Period, NoError> =
         SignalProducer.combineLatest(periodPreference.producer.skipNil(),
@@ -62,31 +62,31 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     var timeProgressViewController: TimeProgressViewController! {
         didSet {
             timeProgressViewController <~
-                SignalProducer(value: (timeGoal: goalProgress.timeGoal,
-                                       totalWorkDays: goalProgress.totalWorkDays,
-                                       remainingWorkDays: goalProgress.remainingWorkDays,
-                                       reportAvailable: goalProgress.reportAvailable.producer,
-                                       workedTime: goalProgress.workedTime,
-                                       remainingTimeToGoal: goalProgress.remainingTimeToGoal,
-                                       strategyStartsToday: goalProgress.strategyStartsToday))
+                SignalProducer(value: (timeGoal: progress.timeGoal,
+                                       totalWorkDays: progress.totalWorkDays,
+                                       remainingWorkDays: progress.remainingWorkDays,
+                                       reportAvailable: progress.reportAvailable.producer,
+                                       workedTime: progress.workedTime,
+                                       remainingTimeToGoal: progress.remainingTimeToGoal,
+                                       strategyStartsToday: progress.strategyStartsToday))
         }
     }
 
     private lazy var strategyViewController: StrategyViewController = {
         let strategy = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("StrategyViewController")) as! StrategyViewController
         strategy <~
-            SignalProducer(value: (timeGoal: goalProgress.timeGoal,
-                                   dayBaseline: goalProgress.dayBaseline,
-                                   dayBaselineAdjustedToProgress: goalProgress.dayBaselineAdjustedToProgress,
-                                   dayBaselineDifferential: goalProgress.dayBaselineDifferential,
-                                   feasibility: goalProgress.feasibility))
+            SignalProducer(value: (timeGoal: progress.timeGoal,
+                                   dayBaseline: progress.dayBaseline,
+                                   dayBaselineAdjustedToProgress: progress.dayBaselineAdjustedToProgress,
+                                   dayBaselineDifferential: progress.dayBaselineDifferential,
+                                   feasibility: progress.feasibility))
         addChildViewController(strategy)
         return strategy
     }()
 
     private lazy var goalReachedViewController: TargetReachedViewController = {
         let goalReached = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("TargetReachedViewController")) as! TargetReachedViewController
-        goalReached <~ SignalProducer(value: goalProgress.timeGoal)
+        goalReached <~ SignalProducer(value: progress.timeGoal)
         addChildViewController(goalReached)
         return goalReached
     }()
@@ -94,9 +94,9 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     var dayProgressViewController: DayProgressViewController! {
         didSet {
             dayProgressViewController <~
-                SignalProducer(value: (timeWorkedToday: goalProgress.timeWorkedToday.producer,
-                                       remainingTimeToDayBaseline: goalProgress.remainingTimeToDayBaseline.producer,
-                                       feasibility: goalProgress.feasibility))
+                SignalProducer(value: (timeWorkedToday: progress.timeWorkedToday.producer,
+                                       remainingTimeToDayBaseline: progress.remainingTimeToDayBaseline.producer,
+                                       feasibility: progress.feasibility))
         }
     }
 
@@ -109,7 +109,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }
 
     private func setupConditionalVisibilityOfContainedViews() {
-        let isGoalReached = goalProgress.remainingTimeToGoal
+        let isGoalReached = progress.remainingTimeToGoal
             .map { (remainingTime: TimeInterval) -> Bool in
                 remainingTime == 0
         }
@@ -155,10 +155,10 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        goalProgress.projectId <~ lastBinding.latestOutput { $0.projectId }
-        goalProgress.timeTarget <~ lastBinding.latestOutput { $0.timeTarget }
-        goalProgress.report <~ lastBinding.latestOutput {$0.report }
-        goalProgress.runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
+        progress.projectId <~ lastBinding.latestOutput { $0.projectId }
+        progress.timeTarget <~ lastBinding.latestOutput { $0.timeTarget }
+        progress.report <~ lastBinding.latestOutput {$0.report }
+        progress.runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
         calendar <~ lastBinding.latestOutput { $0.calendar }
         currentDate <~ lastBinding.latestOutput { $0.currentDate }
         periodPreference <~ lastBinding.latestOutput { $0.periodPreference }
@@ -221,11 +221,11 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }
     
     private func connectPropertiesToGoalProgress() {
-        goalProgress.startGoalDay <~ goalPeriod.map { $0.start }
-        goalProgress.endGoalDay <~ goalPeriod.map { $0.end }
-        goalProgress.startStrategyDay <~ computeStrategyFrom.producer.skipNil()
-        goalProgress.currentDate <~ currentDate.producer.skipNil()
-        goalProgress.calendar <~ calendar.producer.skipNil()
+        progress.startGoalDay <~ goalPeriod.map { $0.start }
+        progress.endGoalDay <~ goalPeriod.map { $0.end }
+        progress.startStrategyDay <~ computeStrategyFrom.producer.skipNil()
+        progress.currentDate <~ currentDate.producer.skipNil()
+        progress.calendar <~ calendar.producer.skipNil()
     }
     
     

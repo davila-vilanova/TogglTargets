@@ -1,5 +1,5 @@
 //
-//  GoalProgress.swift
+//  ProgressToTimeTarget.swift
 //  TogglTargets
 //
 //  Created by David Dávila on 13.09.17.
@@ -10,8 +10,8 @@ import Foundation
 import ReactiveSwift
 import Result
 
-/// GoalProgress 
-class GoalProgress {
+/// ProgressToTimeTarget 
+class ProgressToTimeTarget {
     // MARK: - Interface
 
     public var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
