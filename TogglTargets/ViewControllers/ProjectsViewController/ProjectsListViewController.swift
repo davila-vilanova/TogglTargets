@@ -40,7 +40,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     ///     This is useful to calculate the elapsed running time of the active time entry provided by `runningEntry`.
     ///   - readProject: A function this controller will use to read projects corresponding
     ///     to its input project IDs.
-    ///   - readTimeTarget: A function this controller will use to read goals corresponding
+    ///   - readTimeTarget: A function this controller will use to read time targets corresponding
     ///     to its input project IDs.
     ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s corresponding
     ///     to its input project IDs.
@@ -75,7 +75,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     /// The function used to read projects by project ID.
     private let readProject = MutableProperty<ReadProject?>(nil)
 
-    /// The function used to read goals by project ID.
+    /// The function used to read time targets by project ID.
     private let readTimeTarget = MutableProperty<ReadTimeTarget?>(nil)
 
     /// The action used to read reports by project ID.
@@ -83,15 +83,15 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Private properties
 
-    /// The current value of `ProjectsIDsByGoals`.
+    /// The current value of `ProjectsIDsByTimeTargets`.
     private var currentProjectIDs = MutableProperty(ProjectIDsByTimeTargets.empty)
 
-    private var lastProjectIDsByGoalsUpdate = MutableProperty<ProjectIDsByTimeTargets.Update?>(nil)
+    private var lastProjectIDsByTimeTargetsUpdate = MutableProperty<ProjectIDsByTimeTargets.Update?>(nil)
 
 
     // MARK: - Outlets
 
-    /// The collection view in charge of displaying the projects organized by goals following the
+    /// The collection view in charge of displaying the projects organized by time targets following the
     /// project ID order and the structure of the current `ProjectIDsByTimeTargets` value.
     @IBOutlet weak var projectsCollectionView: NSCollectionView!
 
@@ -151,7 +151,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         wireSingleTimeTargetUpdatesToCollectionView()
 
         // Connect interface to private properties
-        lastProjectIDsByGoalsUpdate <~ lastBinding.latestOutput { $0.projectIDsByTimeTargets }
+        lastProjectIDsByTimeTargetsUpdate <~ lastBinding.latestOutput { $0.projectIDsByTimeTargets }
         runningEntry <~ lastBinding.latestOutput { $0.runningEntry }
         currentDate <~ lastBinding.latestOutput { $0.currentDate }
         periodPreference <~ lastBinding.latestOutput { $0.periodPreference }
@@ -219,7 +219,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     func wireFullUpdatesToCollectionView() {
         // set the current value of `currentProjectIDs` and trigger a full refresh of the collection view
-        let fullUpdates = lastProjectIDsByGoalsUpdate.producer.skipNil().filterMap { $0.fullyUpdated }
+        let fullUpdates = lastProjectIDsByTimeTargetsUpdate.producer.skipNil().filterMap { $0.fullyUpdated }
 
         currentProjectIDs <~ fullUpdates
 
@@ -233,7 +233,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         // reflect the provided update in the value of `currentProjectIDs`, reorder the affected item in the
         // collection view and update the "last item in section" visual state
         let singlePidsUpdates: Signal<(ProjectIDsByTimeTargets.Update.TimeTargetUpdate, ProjectIDsByTimeTargets, ProjectIDsByTimeTargets), NoError> =
-            lastProjectIDsByGoalsUpdate.signal.skipNil().filterMap { $0.timeTargetUpdate }
+            lastProjectIDsByTimeTargetsUpdate.signal.skipNil().filterMap { $0.timeTargetUpdate }
                 .withLatest(from: currentProjectIDs.producer)
                 .map { ($0.0, $0.1, $0.0.apply(to: $0.1)) }
         let indexPathUpdates = singlePidsUpdates.map { update, pidsBefore, pidsAfter -> (IndexPath, IndexPath) in
@@ -296,11 +296,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
 
         let delayScheduler = QueueScheduler()
-        selectInCollectionView <~ lastBinding.latestOutput { $0.selectionDownstream }.withLatest(from: currentProjectIDs).map { (projectId, idsByGoals) -> IndexPath? in
+        selectInCollectionView <~ lastBinding.latestOutput { $0.selectionDownstream }.withLatest(from: currentProjectIDs).map { (projectId, idsByTimeTargets) -> IndexPath? in
             guard let projectId = projectId else {
                 return nil
             }
-            return idsByGoals.indexPath(for: projectId)
+            return idsByTimeTargets.indexPath(for: projectId)
             }
             .skipNil()
             .delay(0, on: delayScheduler) // ensure selection will happen last when it's combined with a partial collection update
@@ -384,7 +384,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     // MARK: - Onboarding
 
     var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
-        let projectWithoutGoalSelected = SignalProducer.combineLatest(
+        let projectWithoutTimeTargetSelected = SignalProducer.combineLatest(
             currentProjectIDs.producer,
             selectedProjectID.producer.skip(first: 1).skipNil())
             .filter { $0.0.indexPath(for: $0.1)?.section == ProjectIDsByTimeTargets.Section.withoutTimeTargets.rawValue }
@@ -393,7 +393,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectsListView = viewDidLoadProducer
             .map { [unowned self] _ in self.projectsCollectionView as NSView }
             .concat(SignalProducer.never)
-            .take(until: projectWithoutGoalSelected)
+            .take(until: projectWithoutTimeTargetSelected)
         return [.selectProject : projectsListView]
     }
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -12,9 +11,9 @@
         <collectionViewItem id="xT6-c0-85Y" customClass="ProjectCollectionViewItem" customModule="TogglTargets" customModuleProvider="target">
             <connections>
                 <outlet property="bottomLining" destination="Wsi-lo-unf" id="uLe-f5-Wpr"/>
-                <outlet property="goalField" destination="pcZ-U4-eHq" id="8f4-J9-CRf"/>
                 <outlet property="projectNameField" destination="484-m5-m2m" id="Wnc-OK-DKc"/>
                 <outlet property="reportField" destination="Oej-8K-uOr" id="Bir-Wb-u11"/>
+                <outlet property="timeTargetField" destination="pcZ-U4-eHq" id="8f4-J9-CRf"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="dv5-AE-MPs"/>
                 <outlet property="visualEffectView" destination="2kA-EB-IKw" id="ikz-Bo-SEk"/>
             </connections>

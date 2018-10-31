@@ -36,7 +36,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
     @IBOutlet weak var visualEffectView: NSVisualEffectView!
     @IBOutlet weak var projectNameField: NSTextField!
-    @IBOutlet weak var goalField: NSTextField!
+    @IBOutlet weak var timeTargetField: NSTextField!
     @IBOutlet weak var reportField: NSTextField!
     @IBOutlet weak var bottomLining: NSBox!
 
@@ -85,12 +85,12 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
                 NSLocalizedString("project-list.item.target.time.weekly", comment: "target amount of time per week as it appears in each of the project list items")
         })
 
-        goalField.reactive.text <~ timeTarget.skipNil().map{ $0.hoursTarget }
+        timeTargetField.reactive.text <~ timeTarget.skipNil().map{ $0.hoursTarget }
             .map { TimeInterval.from(hours: $0) }
             .mapToString(timeFormatter: timeFormatter)
             .combineLatest(with: targetPeriodFormat)
             .map { String.localizedStringWithFormat($1, $0) }
-        goalField.reactive.text <~ timeTarget.filter { $0 == nil }
+        timeTargetField.reactive.text <~ timeTarget.filter { $0 == nil }
             .map { _ in () }
             .map { NSLocalizedString("project-list.item.target.no-time-target", comment: "message to show in each of the project list items when there is no associated time target") }
 

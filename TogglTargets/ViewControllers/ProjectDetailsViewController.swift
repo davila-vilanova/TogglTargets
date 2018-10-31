@@ -42,7 +42,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     private lazy var projectId: SignalProducer<Int64, NoError> = project.producer.skipNil().map { $0.id }
 
     /// TimeTarget corresponding to the selected project.
-    private lazy var goalForCurrentProject: SignalProducer<TimeTarget?, NoError> = projectId
+    private lazy var timeTargetForCurrentProject: SignalProducer<TimeTarget?, NoError> = projectId
         .throttle(while: readTimeTarget.map { $0 == nil }, on: UIScheduler())
         .combineLatest(with: readTimeTarget.producer.skipNil())
         .map { projectId, readTimeTarget in readTimeTarget(projectId) }
@@ -62,7 +62,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         let goalReport = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("GoalReportViewController")) as! GoalReportViewController
         goalReport <~ SignalProducer(
             value: (projectId: projectId,
-                    timeTarget: goalForCurrentProject.skipNil(),
+                    timeTarget: timeTargetForCurrentProject.skipNil(),
                     report: reportForCurrentProject,
                     runningEntry: lastBinding.latestOutput { $0.runningEntry },
                     calendar: lastBinding.latestOutput { $0.calendar },
@@ -79,7 +79,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     }()
 
     private func setupConditionalVisibilityOfContainedViews() {
-        let selectedGoalController = goalForCurrentProject
+        let selectedGoalController = timeTargetForCurrentProject
             .observe(on: UIScheduler())
             .map { [unowned self] in
             $0 == nil ? self.noGoalViewController : self.goalReportViewController
@@ -93,7 +93,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
             goalController <~
                 SignalProducer.combineLatest(
                     validBindings.map { ($0.calendar, $0.periodPreference, $0.writeTimeTarget) },
-                    SignalProducer(value: goalForCurrentProject.producer))
+                    SignalProducer(value: timeTargetForCurrentProject.producer))
                     .map {
                         (calendar: $0.0,
                          timeTarget: $1,
