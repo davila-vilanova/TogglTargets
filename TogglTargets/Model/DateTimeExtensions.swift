@@ -63,11 +63,11 @@ extension Calendar {
     }
 
     // TODO: apples to apples
-    func nextDay(for originalDate: Date, notAfter: DayComponents) -> DayComponents? {
+    func nextDay(after originalDate: Date, notLaterThan: DayComponents) -> DayComponents? {
         // TODO: could use date(bySetting component: Calendar.Component, value: Int, of date: Date) -> Date?
         let oneDayIncrement = DateComponents(day: 1)
         let adjustedDate = date(byAdding: oneDayIncrement, to: originalDate)!
-        guard let notAfterDate = try? date(from: notAfter),
+        guard let notAfterDate = try? date(from: notLaterThan),
             !isDate(adjustedDate, inLaterDayThan: notAfterDate) else {
                 return nil
         }
@@ -80,10 +80,10 @@ extension Calendar {
         return dayComponents(from: adjustedDate)
     }
     
-    func previousDay(for originalDate: Date, notBefore: DayComponents) -> DayComponents? {
+    func previousDay(before originalDate: Date, notEarlierThan: DayComponents) -> DayComponents? {
         let oneDayDecrement = DateComponents(day: -1)
         let adjustedDate = date(byAdding: oneDayDecrement, to: originalDate)!
-        guard let notBeforeDate = try? date(from: notBefore),
+        guard let notBeforeDate = try? date(from: notEarlierThan),
             !isDate(adjustedDate, inEarlierDayThan: notBeforeDate) else {
                 return nil
         }
