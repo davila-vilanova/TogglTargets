@@ -187,7 +187,6 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }
     
     private func setupComputeStrategyFromButton() {
-        // TODO: save and restore state of computeStrategyFromButton / decide on whether state is global or project specific
         computeStrategyFromButton.select(fromTodayItem)
 
         selectedComputeStrategyFrom.value = computeStrategyFromButton.selectedItem
