@@ -197,7 +197,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             let updateColor: BindingTarget<Void> = background.reactive.makeBindingTarget { view, _ in
                 view.layer!.backgroundColor = NSColor.underPageBackgroundColor.cgColor
             }
-            updateColor <~ clipView.reactive.trigger(for: #selector(NSView.layout)).logValues("updateColor")
+            updateColor <~ clipView.reactive.trigger(for: #selector(NSView.layout))
         }
     }
 
