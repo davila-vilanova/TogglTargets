@@ -207,17 +207,12 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
                 default: return nil
                 }
         }
-
-        let enabledTarget = fromNextWorkDayItem.reactive.makeBindingTarget(on: UIScheduler()) { (menuItem, isLastDayOfMonth) in
-            menuItem.isEnabled = !isLastDayOfMonth
-        }
         
-        let isLastDayOfMonth = SignalProducer.combineLatest(currentDate.producer.skipNil(), calendar.producer.skipNil())
-            .map { (currentDate, calendar) -> Bool in
-                return calendar.dayComponents(from: currentDate) == calendar.lastDayOfMonth(for: currentDate)
-        }
-
-        enabledTarget <~ isLastDayOfMonth
+        let enableFromNextWorkDayMenuItem = fromNextWorkDayItem.reactive.makeBindingTarget { $0.isEnabled = $1 }
+        let currentDayOfPeriod = calendar.producer.skipNil().combineLatest(with: currentDate.producer.skipNil())
+            .map { $0.dayComponents(from: $1) }
+        let isLastDayOfPeriod = timePeriod.map { $0.end }.combineLatest(with: currentDayOfPeriod).map { $0 == $1 }
+        enableFromNextWorkDayMenuItem <~ isLastDayOfPeriod.negate().logEvents()
     }
     
     private func connectPropertiesToProgressToTimeTarget() {

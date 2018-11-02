@@ -809,10 +809,10 @@
                             </textField>
                             <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mFI-rM-DT6">
                                 <rect key="frame" x="269" y="334" width="211" height="25"/>
-                                <popUpButtonCell key="cell" type="push" title="compute from today" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="CSh-kF-rVJ" id="sdJ-bf-5uw" userLabel="Compute Strategy From Button Cell">
+                                <popUpButtonCell key="cell" type="push" title="compute from today" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" autoenablesItems="NO" selectedItem="CSh-kF-rVJ" id="sdJ-bf-5uw" userLabel="Compute Strategy From Button Cell">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
-                                    <menu key="menu" id="YRW-dN-Bbs">
+                                    <menu key="menu" autoenablesItems="NO" id="YRW-dN-Bbs">
                                         <items>
                                             <menuItem title="compute from today" state="on" id="CSh-kF-rVJ"/>
                                             <menuItem title="compute from next work day" id="UN6-Eu-Zua"/>
