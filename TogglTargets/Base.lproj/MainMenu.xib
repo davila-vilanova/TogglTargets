@@ -133,13 +133,11 @@
                     <menu key="submenu" title="Targets" id="g5x-3p-Tzt">
                         <items>
                             <menuItem title="Create Time Target" keyEquivalent="+" id="Mi4-ht-vZX">
-                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="createTimeTarget:" target="-1" id="V2I-7S-Uy0"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Delete Time Target" keyEquivalent="-" id="Ah4-MX-Odc">
-                                <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="deleteTimeTarget:" target="-1" id="vFM-6S-yEZ"/>
                                 </connections>
