@@ -208,10 +208,15 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         }
         
         let enableFromNextWorkDayMenuItem = fromNextWorkDayItem.reactive.makeBindingTarget { $0.isEnabled = $1 }
-        let currentDayOfPeriod = calendar.producer.skipNil().combineLatest(with: currentDate.producer.skipNil())
-            .map { $0.dayComponents(from: $1) }
-        let isLastDayOfPeriod = timePeriod.map { $0.end }.combineLatest(with: currentDayOfPeriod).map { $0 == $1 }
-        enableFromNextWorkDayMenuItem <~ isLastDayOfPeriod.negate().logEvents()
+        let nextDay = calendar.producer.skipNil().combineLatest(with: currentDate.producer.skipNil())
+            .map { $0.nextDay(after: $1) }
+        let remainingWorkdaysInPeriod = SignalProducer.combineLatest(
+            calendar.producer.skipNil(),
+            lastBinding.latestOutput { $0.timeTarget },
+            nextDay,
+            timePeriod.map { $0.end })
+            .map { try? $0.countWeekdaysMatching($1.workWeekdays, from: $2, to: $3) }
+        enableFromNextWorkDayMenuItem <~ remainingWorkdaysInPeriod.map { ($0 ?? 0) > 0 }
     }
     
     private func connectPropertiesToProgressToTimeTarget() {

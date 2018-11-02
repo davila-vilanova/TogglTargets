@@ -74,6 +74,12 @@ extension Calendar {
         return dayComponents(from: adjustedDate)
     }
 
+    func nextDay(after originalDate: Date) -> DayComponents {
+        let oneDayIncrement = DateComponents(day: 1)
+        let adjustedDate = date(byAdding: oneDayIncrement, to: originalDate)!
+        return dayComponents(from: adjustedDate)
+    }
+    
     func previousDay(for originalDate: Date, notBefore: DayComponents) -> DayComponents? {
         let oneDayDecrement = DateComponents(day: -1)
         let adjustedDate = date(byAdding: oneDayDecrement, to: originalDate)!
