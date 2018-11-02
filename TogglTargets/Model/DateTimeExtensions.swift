@@ -62,28 +62,24 @@ extension Calendar {
         return dayComps
     }
 
-    enum DayCalculationError: Error {
-        case resultExceedsProvidedBoundary
-    }
-
     // TODO: apples to apples
-    func nextDay(for originalDate: Date, notAfter: DayComponents) throws -> DayComponents {
+    func nextDay(for originalDate: Date, notAfter: DayComponents) -> DayComponents? {
         // TODO: could use date(bySetting component: Calendar.Component, value: Int, of date: Date) -> Date?
         let oneDayIncrement = DateComponents(day: 1)
         let adjustedDate = date(byAdding: oneDayIncrement, to: originalDate)!
-        let notAfterDate = try date(from: notAfter)
-        if isDate(adjustedDate, inLaterDayThan: notAfterDate) {
-            throw DayCalculationError.resultExceedsProvidedBoundary
+        guard let notAfterDate = try? date(from: notAfter),
+            !isDate(adjustedDate, inLaterDayThan: notAfterDate) else {
+                return nil
         }
         return dayComponents(from: adjustedDate)
     }
 
-    func previousDay(for originalDate: Date, notBefore: DayComponents) throws -> DayComponents {
+    func previousDay(for originalDate: Date, notBefore: DayComponents) -> DayComponents? {
         let oneDayDecrement = DateComponents(day: -1)
         let adjustedDate = date(byAdding: oneDayDecrement, to: originalDate)!
-        let notBeforeDate = try date(from: notBefore)
-        if isDate(adjustedDate, inEarlierDayThan: notBeforeDate) {
-            throw DayCalculationError.resultExceedsProvidedBoundary
+        guard let notBeforeDate = try? date(from: notBefore),
+            !isDate(adjustedDate, inEarlierDayThan: notBeforeDate) else {
+                return nil
         }
         return dayComponents(from: adjustedDate)
     }

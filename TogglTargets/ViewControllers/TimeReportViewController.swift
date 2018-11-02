@@ -202,8 +202,8 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
                 }
                 switch menuItem {
                 case fromTodayItem: return calendar.dayComponents(from: currentDate)
-                case fromNextWorkDayItem: return try! calendar.nextDay(for: currentDate,
-                                                                       notAfter: calendar.lastDayOfMonth(for: currentDate))
+                case fromNextWorkDayItem: return calendar.nextDay(for: currentDate,
+                                                                  notAfter: calendar.lastDayOfMonth(for: currentDate))
                 default: return nil
                 }
         }
