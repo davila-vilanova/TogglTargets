@@ -404,9 +404,6 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <accessibility description="Delete time target"/>
-                                <connections>
-                                    <segue destination="UAE-bD-MnG" kind="popover" popoverAnchorView="z4E-Sz-bgD" popoverBehavior="t" preferredEdge="maxY" id="FKU-3e-21a"/>
-                                </connections>
                             </button>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xET-i9-eZV">
                                 <rect key="frame" x="112" y="-1" width="172" height="23"/>
@@ -481,58 +478,6 @@
                 <customObject id="2PQ-kn-80x" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1757" y="938"/>
-        </scene>
-        <!--Delete Time Target Popup-->
-        <scene sceneID="nwh-bh-Z7X">
-            <objects>
-                <viewController id="UAE-bD-MnG" customClass="DeleteTimeTargetPopup" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="qvY-FJ-u9C">
-                        <rect key="frame" x="0.0" y="0.0" width="181" height="94"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <visualEffectView appearanceType="inheritedVibrantLight" blendingMode="behindWindow" material="popover" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="3Qd-mI-D9T">
-                                <rect key="frame" x="0.0" y="0.0" width="181" height="94"/>
-                                <subviews>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WTT-ou-k01">
-                                        <rect key="frame" x="14" y="46" width="153" height="32"/>
-                                        <buttonCell key="cell" type="push" title="delete time target" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="v26-FD-5np">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="systemSemibold" size="13"/>
-                                        </buttonCell>
-                                    </button>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jg5-zA-F6y">
-                                        <rect key="frame" x="14" y="13" width="153" height="32"/>
-                                        <buttonCell key="cell" type="push" title="keep time target" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="P9m-mq-vQD">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                    </button>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="WTT-ou-k01" secondAttribute="trailing" constant="20" symbolic="YES" id="909-WZ-xAK"/>
-                                    <constraint firstItem="jg5-zA-F6y" firstAttribute="trailing" secondItem="WTT-ou-k01" secondAttribute="trailing" id="I4B-VV-PbQ"/>
-                                    <constraint firstItem="WTT-ou-k01" firstAttribute="leading" secondItem="3Qd-mI-D9T" secondAttribute="leading" constant="20" symbolic="YES" id="KwW-hY-cDS"/>
-                                    <constraint firstItem="WTT-ou-k01" firstAttribute="top" secondItem="3Qd-mI-D9T" secondAttribute="top" constant="20" symbolic="YES" id="Lgf-3E-Ndd"/>
-                                    <constraint firstItem="jg5-zA-F6y" firstAttribute="leading" secondItem="WTT-ou-k01" secondAttribute="leading" id="ORi-Hz-4N1"/>
-                                    <constraint firstAttribute="bottom" secondItem="jg5-zA-F6y" secondAttribute="bottom" constant="20" symbolic="YES" id="vFf-ew-Ht6"/>
-                                </constraints>
-                            </visualEffectView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="3Qd-mI-D9T" secondAttribute="trailing" id="5Ia-F6-cj6"/>
-                            <constraint firstAttribute="bottom" secondItem="3Qd-mI-D9T" secondAttribute="bottom" id="5kz-6F-tKX"/>
-                            <constraint firstItem="3Qd-mI-D9T" firstAttribute="top" secondItem="qvY-FJ-u9C" secondAttribute="top" id="bmi-xx-e5Q"/>
-                            <constraint firstItem="3Qd-mI-D9T" firstAttribute="leading" secondItem="qvY-FJ-u9C" secondAttribute="leading" id="uo5-k4-wcF"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="confirmDeletionButton" destination="WTT-ou-k01" id="xN8-Xb-zXi"/>
-                        <outlet property="dismissControllerButton" destination="jg5-zA-F6y" id="KAR-QM-7Ku"/>
-                    </connections>
-                </viewController>
-                <customObject id="xe1-9V-FZs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2218" y="938"/>
         </scene>
         <!--Time Progress View Controller-->
         <scene sceneID="j3N-S5-RVt">

@@ -36,6 +36,27 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private let selectedProjectId = MutableProperty<ProjectID?>(nil)
 
+    private lazy var selectedProject: Property<Project?> = {
+        func isNil(_ val: Any?) -> Bool {
+            return val == nil
+        }
+        func toVoid(_ val: Any) -> () {
+            return ()
+        }
+        let projectIdPlusReadProject =
+            SignalProducer.combineLatest(selectedProjectId.producer.skipNil(),
+                                         lastBinding.producer.skipNil().map { $0.readProject })
+        let missingProjectIdOrReadProject =
+            SignalProducer.combineLatest(selectedProjectId.producer.filter(isNil),
+                                         lastBinding.producer.filter(isNil)).map(toVoid)
+        let projects = projectIdPlusReadProject.map { $0.1($0.0) }.flatten(.latest)
+        let missingProjects = projects.filter(isNil).map(toVoid)
+        let nilValues = SignalProducer.merge(missingProjectIdOrReadProject, missingProjects).map { nil as Project? }
+        let projectValues = SignalProducer.merge(projects.skipNil().map { $0 as Project? }, nilValues)
+        return Property(initial: nil, then: projectValues)
+    }()
+    
+    
     private let focusOnUndoProjectId = MutableProperty<ProjectID?>(nil)
 
     private let createTimeTarget = MutableProperty<TimeTarget?>(nil)
@@ -127,6 +148,12 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      binding.readReport)
         }
 
+        deleteTimeTarget <~ showConfirmDeleteSheet.values.filterMap { $0.projectIdToDelete }
+        
+        reactive.lifetime += showConfirmDeleteSheet.disabledErrors.observeValues {
+            print("Cannot show 'confirm delete' sheet - action is disabled")
+        }
+        
         registerSelectionInUndoManager <~ SignalProducer.merge(createTimeTarget.producer.skipNil().map { $0.projectId },
                                                                modifyTimeTarget.producer.skipNil().map { $0.projectId },
                                                                deleteTimeTarget.producer.skipNil())
@@ -147,7 +174,6 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         setUndoActionName <~ deleteTimeTarget.producer.skipNil()
             .map { _ in NSLocalizedString("undo.delete-time-target", comment: "undo action name: delete time target") }
 
-
         registerSelectionInUndoManager <~ focusOnUndoProjectId.producer.skipNil()
     }
 
@@ -160,11 +186,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     }
 
     @IBAction public func deleteTimeTarget(_ sender: Any?) {
-        guard canDeleteTimeTarget,
-            let projectId = selectedProjectId.value else {
-                return
-        }
-        deleteTimeTarget <~ SignalProducer(value: projectId)
+        showConfirmDeleteSheet <~ SignalProducer(value: ())
     }
 
     private var canCreateTimeTarget: Bool {
@@ -183,5 +205,46 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
         } else {
             return true
         }
+    }
+    
+    // MARK: - Confirm delete
+    private enum ConfirmDeleteResolution {
+        case delete(projectId: ProjectID)
+        case doNotDelete
+        var projectIdToDelete: ProjectID? {
+            switch self {
+            case .delete(let projectId): return projectId
+            default: return nil
+            }
+        }
+    }
+    
+    private lazy var showConfirmDeleteSheet =
+        Action<Void, ConfirmDeleteResolution, NoError>(state: selectedProject.combineLatest(with: isProjectWithTimeTargetCurrentlySelected),
+                                                       enabledIf: { $0.0 != nil && $0.1 }) { [unowned self] state, _ in
+            guard let window = self.view.window else {
+                return SignalProducer.empty
+            }
+            
+            let project = state.0!
+                                                        
+            return SignalProducer { (observer: Signal<ConfirmDeleteResolution, NoError>.Observer, lifetime: Lifetime) in
+                let alert = NSAlert()
+                alert.alertStyle = .warning
+                alert.messageText = String.localizedStringWithFormat(NSLocalizedString("confirm-delete.title", comment: "title of 'confirm delete' alert sheet"), project.name ?? "")
+                alert.informativeText = NSLocalizedString("confirm-delete.informative", comment: "informative text in 'confirm delete' alert sheet")
+                
+                alert.addButton(withTitle: NSLocalizedString("confirm-delete.do-delete", comment: "title of 'confirm delete' button in 'confirm delete' alert sheet"))
+                alert.addButton(withTitle: NSLocalizedString("confirm-delete.do-not-delete", comment: "title of 'don't delete' button in 'confirm delete' alert sheet"))
+                
+                alert.beginSheetModal(for: window) { response in
+                    switch response {
+                    case .alertFirstButtonReturn: observer.send(value: .delete(projectId: project.id))
+                    case .alertSecondButtonReturn: fallthrough
+                    default: observer.send(value: .doNotDelete)
+                    }
+                    observer.sendCompleted()
+                }
+            }
     }
 }

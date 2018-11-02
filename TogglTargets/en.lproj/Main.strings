@@ -22,12 +22,6 @@
 /* Class = "NSButtonCell"; title = "create a time target"; ObjectID = "sHt-AE-o6F"; */
 "sHt-AE-o6F.title" = "create a time target";
 
-/* Class = "NSButtonCell"; title = "delete time target"; ObjectID = "v26-FD-5np"; */
-"v26-FD-5np.title" = "delete time target";
-
-/* Class = "NSButtonCell"; title = "don't delete"; ObjectID = "P9m-mq-vQD"; */
-"P9m-mq-vQD.title" = "keep time target";
-
 /* Class = "NSButton";  ObjectID = "z4E-Sz-bgD"; */
 "z4E-Sz-bgD.ibExternalAccessibilityDescription" = "Delete time target";
 

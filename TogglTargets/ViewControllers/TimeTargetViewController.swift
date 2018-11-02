@@ -30,11 +30,6 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
     private var userUpdates = MutableProperty<TimeTarget?>(nil)
 
 
-    // MARK: - Internal
-
-    private var deleteConfirmed = MutableProperty(())
-
-
     // MARK: - Outlets
 
     @IBOutlet weak var hoursTargetLabel: NSTextField!
@@ -157,15 +152,12 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
             control.reactive.isEnabled <~ timeTargetExists
         }
 
-        reactive.makeBindingTarget { (timeTargetVC, _: Void) in
+        let deleteButtonPressed = Action<Void, Void, NoError> { SignalProducer(value: ()) }
+        deleteTimeTargetButton.reactive.pressed = CocoaAction(deleteButtonPressed)
+        let deleteTimeTarget = reactive.makeBindingTarget { (timeTargetVC, _: Void) in
             timeTargetVC.try(toPerform: #selector(TimeTargetCreatingDeleting.deleteTimeTarget(_:)), with: timeTargetVC)
-        } <~ deleteConfirmed.signal
-    }
-
-    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
-        if let deleteTimeTargetController = segue.destinationController as? DeleteTimeTargetPopup {
-            deleteTimeTargetController <~ SignalProducer(value: deleteConfirmed.bindingTarget)
         }
+        deleteTimeTarget <~ deleteButtonPressed.values
     }
     
     
@@ -195,41 +187,6 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
 
         return [.setTargetHours : targetHoursView,
                 .setWorkWeekdays : workWeekdaysView]
-    }
-}
-
-// MARK: -
-
-class DeleteTimeTargetPopup: NSViewController, BindingTargetProvider {
-    internal typealias Interface = BindingTarget<Void>
-
-    private var lastBinding = MutableProperty<Interface?>(nil)
-    internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
-
-    @IBOutlet weak var confirmDeletionButton: NSButton!
-    @IBOutlet weak var dismissControllerButton: NSButton!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let confirmDeletionAction = Action<Void, Void, NoError> {
-            SignalProducer(value: ())
-        }
-
-        let dismissAction = Action<Void, Void, NoError> {
-            SignalProducer(value: ())
-        }
-
-        let dismiss = reactive.makeBindingTarget { (popUpController, _: Void) in
-            popUpController.dismiss(popUpController)
-        }
-        dismiss <~ confirmDeletionAction.values
-        dismiss <~ dismissAction.values
-
-        confirmDeletionAction.values.bindOnlyToLatest(lastBinding.producer.skipNil())
-
-        confirmDeletionButton.reactive.pressed = CocoaAction(confirmDeletionAction)
-        dismissControllerButton.reactive.pressed = CocoaAction(dismissAction)
     }
 }
 

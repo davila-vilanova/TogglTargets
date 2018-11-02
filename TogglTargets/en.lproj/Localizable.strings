@@ -201,3 +201,15 @@
 
 /* week period description as it appears next to the target hours field in the time target VC */
 "time-target-controller.target-hours-period.week" = "per week";
+
+/* title of 'confirm delete' alert sheet */
+"confirm-delete.title" = "Are you sure you want to delete the time target for project \"%@\"?";
+
+/* informative text in 'confirm delete' alert sheet */
+"confirm-delete.informative" = "The deletion can be reversed by undoing it from the Edit menu";
+
+/* title of 'confirm delete' button in 'confirm delete' alert sheet */
+"confirm-delete.do-delete" = "Delete";
+
+/* title of 'don't delete' button in 'confirm delete' alert sheet */
+"confirm-delete.do-not-delete" = "Don't Delete";
