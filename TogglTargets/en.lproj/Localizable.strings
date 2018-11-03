@@ -213,3 +213,9 @@
 
 /* title of 'don't delete' button in 'confirm delete' alert sheet */
 "confirm-delete.do-not-delete" = "Don't Delete";
+
+/* description of the current period in the time report view */
+"time-report.period-description" = "From %@ to %@";
+
+/* message to display in the time report view when an error occurs while computing the current period */
+"time-report.error-computing-period" = "The current time period could not be computed";

@@ -16,8 +16,7 @@ class DateTimeExtensionsTests: XCTestCase {
         func testCase(original: DayComponents, expected: DayComponents) {
             let upperLimitComponents = DayComponents(year: 2020, month: 3, day: 31)
 
-            let date = try! calendar.date(from: original)
-            let calculated = calendar.nextDay(after: date, notLaterThan: upperLimitComponents)
+            let calculated = calendar.nextDay(after: original, notLaterThan: upperLimitComponents)
             XCTAssertEqual(calculated, expected)
         }
 
@@ -51,8 +50,7 @@ class DateTimeExtensionsTests: XCTestCase {
         func testCase(original: DayComponents, expected: DayComponents) {
             let lowerLimitComponents = DayComponents(year: 2015, month: 3, day: 31)
 
-            let date = try! calendar.date(from: original)
-            let calculated = calendar.previousDay(before: date, notEarlierThan: lowerLimitComponents)
+            let calculated = calendar.previousDay(before: original, notEarlierThan: lowerLimitComponents)
             XCTAssertEqual(calculated, expected)
         }
 

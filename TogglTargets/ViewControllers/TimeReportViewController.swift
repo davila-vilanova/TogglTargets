@@ -177,12 +177,13 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
                                                                              periodDescriptionFormatter,
                                                                              calendar.producer.skipNil())
             .map { (period, formatter, calendar) in
-                // Assuming that period has been automatically generated and thus the day components are valid and the calls won't throw
-                let startDate = try! calendar.date(from: period.start)
-                let endDate = try! calendar.date(from: period.end)
+                guard let startDate = calendar.date(from: period.start),
+                    let endDate = calendar.date(from: period.end) else {
+                        return NSLocalizedString("time-report.error-computing-period", comment: "message to display in the time report view when an error occurs while computing the current period")
+                }
                 let formattedStart = formatter.string(from: startDate)
                 let formattedEnd = formatter.string(from: endDate)
-                return "\(formattedStart) - \(formattedEnd)" // TODO: Localizable
+                return String.localizedStringWithFormat(NSLocalizedString("time-report.period-description", comment: "description of the current period in the time report view"), formattedStart, formattedEnd)
         }
     }
     
@@ -199,23 +200,24 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
                 guard let fromTodayItem = fromTodayItem, let fromNextWorkDayItem = fromNextWorkDayItem else {
                     return nil
                 }
+
                 switch menuItem {
                 case fromTodayItem: return calendar.dayComponents(from: currentDate)
-                case fromNextWorkDayItem: return calendar.nextDay(after: currentDate,
+                case fromNextWorkDayItem: return calendar.nextDay(after: calendar.dayComponents(from: currentDate),
                                                                   notLaterThan: calendar.lastDayOfMonth(for: currentDate))
                 default: return nil
                 }
         }
         
         let enableFromNextWorkDayMenuItem = fromNextWorkDayItem.reactive.makeBindingTarget { $0.isEnabled = $1 }
-        let nextDay = calendar.producer.skipNil().combineLatest(with: currentDate.producer.skipNil())
-            .map { $0.nextDay(after: $1) }
+        let nextDay = SignalProducer.combineLatest(calendar.producer.skipNil(), currentDate.producer.skipNil(), timePeriod.map { $0.end })
+            .map { $0.nextDay(after: $0.dayComponents(from: $1), notLaterThan: $2) }
         let remainingWorkdaysInPeriod = SignalProducer.combineLatest(
             calendar.producer.skipNil(),
             lastBinding.latestOutput { $0.timeTarget },
             nextDay,
             timePeriod.map { $0.end })
-            .map { try? $0.countWeekdaysMatching($1.workWeekdays, from: $2, to: $3) }
+            .map { $2 == nil ? nil : $0.countWeekdaysMatching($1.workWeekdays, from: $2!, to: $3) }
         enableFromNextWorkDayMenuItem <~ remainingWorkdaysInPeriod.map { ($0 ?? 0) > 0 }
     }
     

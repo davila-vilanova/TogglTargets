@@ -38,7 +38,7 @@ fileprivate let testReports: IndexedTwoPartTimeReports =
       300 : TwoPartTimeReport(projectId: 300, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 0, workedTimeOnDayOfRequest: 1800)]
 
 fileprivate let testRunningEntry: RunningEntry = {
-    let todayDate = try! Calendar.iso8601.date(from: today)
+    let todayDate = Calendar.iso8601.date(from: today)!
     let hour: TimeInterval = 3600
     return RunningEntry(id: 8110, projectId: 200, start: todayDate + (8 * hour), retrieved: todayDate + (9 * hour))
 }()

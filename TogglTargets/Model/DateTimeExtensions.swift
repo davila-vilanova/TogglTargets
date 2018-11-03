@@ -13,10 +13,6 @@ struct DayComponents: Equatable {
     var month: Int
     var day: Int
 
-    enum InvalidComponentsError: Error {
-        case invalidComponents // TODO: naming
-    }
-
     func toDateComponents() -> DateComponents {
         return DateComponents(year: year, month: month, day: day)
     }
@@ -40,10 +36,10 @@ extension Calendar {
         return DayComponents(year: dateComps.year!, month: dateComps.month!, day: dateComps.day!)
     }
 
-    func date(from dayComponents: DayComponents) throws -> Date {
+    func date(from dayComponents: DayComponents) -> Date? {
         let dateComponents = dayComponents.toDateComponents()
         guard let date = date(from: dateComponents) else {
-            throw DayComponents.InvalidComponentsError.invalidComponents
+            return nil
         }
         return date
     }
@@ -62,29 +58,23 @@ extension Calendar {
         return dayComps
     }
 
-    // TODO: apples to apples
-    func nextDay(after originalDate: Date, notLaterThan: DayComponents) -> DayComponents? {
-        // TODO: could use date(bySetting component: Calendar.Component, value: Int, of date: Date) -> Date?
+    func nextDay(after originalDay: DayComponents, notLaterThan upperLimitDay: DayComponents) -> DayComponents? {
         let oneDayIncrement = DateComponents(day: 1)
-        let adjustedDate = date(byAdding: oneDayIncrement, to: originalDate)!
-        guard let notAfterDate = try? date(from: notLaterThan),
-            !isDate(adjustedDate, inLaterDayThan: notAfterDate) else {
+        guard let originalDate = date(from: originalDay),
+            let adjustedDate = date(byAdding: oneDayIncrement, to: originalDate),
+            let upperLimitDate = date(from: upperLimitDay),
+            !isDate(adjustedDate, inLaterDayThan: upperLimitDate) else {
                 return nil
         }
         return dayComponents(from: adjustedDate)
     }
-
-    func nextDay(after originalDate: Date) -> DayComponents {
-        let oneDayIncrement = DateComponents(day: 1)
-        let adjustedDate = date(byAdding: oneDayIncrement, to: originalDate)!
-        return dayComponents(from: adjustedDate)
-    }
     
-    func previousDay(before originalDate: Date, notEarlierThan: DayComponents) -> DayComponents? {
+    func previousDay(before originalDay: DayComponents, notEarlierThan lowerLimitDay: DayComponents) -> DayComponents? {
         let oneDayDecrement = DateComponents(day: -1)
-        let adjustedDate = date(byAdding: oneDayDecrement, to: originalDate)!
-        guard let notBeforeDate = try? date(from: notEarlierThan),
-            !isDate(adjustedDate, inEarlierDayThan: notBeforeDate) else {
+        guard let originalDate = date(from: originalDay),
+            let adjustedDate = date(byAdding: oneDayDecrement, to: originalDate),
+            let lowerLimitDate = date(from: lowerLimitDay),
+            !isDate(adjustedDate, inEarlierDayThan: lowerLimitDate) else {
                 return nil
         }
         return dayComponents(from: adjustedDate)

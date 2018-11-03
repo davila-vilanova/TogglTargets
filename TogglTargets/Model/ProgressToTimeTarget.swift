@@ -37,7 +37,7 @@ class ProgressToTimeTarget {
                                             _endDay.producer.skipNil().skipRepeats(),
                                             _calendar.producer.skipNil().skipRepeats())
             .map { (timeTarget, startDay, endDay, calendar) in
-                return try? calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startDay, to: endDay)
+                return calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startDay, to: endDay)
         }
     }()
 
@@ -48,7 +48,7 @@ class ProgressToTimeTarget {
                                             _endDay.producer.skipNil().skipRepeats(),
                                             _calendar.producer.skipNil().skipRepeats())
             .map { (timeTarget, startStrategyDay, endDay, calendar) in
-                return try? calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startStrategyDay, to: endDay)
+                return calendar.countWeekdaysMatching(timeTarget.workWeekdays, from: startStrategyDay, to: endDay)
         }
     }()
 
@@ -199,12 +199,17 @@ class ProgressToTimeTarget {
 }
 
 extension Calendar {
-    func countWeekdaysMatching(_ weekday: Weekday, from: DayComponents, until: DayComponents) throws -> Int {
-        return try countWeekdaysMatching([weekday], from: from, to: until)
+    func countWeekdaysMatching(_ weekday: Weekday, from: DayComponents, until: DayComponents) -> Int {
+        return countWeekdaysMatching([weekday], from: from, to: until)
     }
 
-    func countWeekdaysMatching(_ weekdays: [Weekday], from start: DayComponents, to end: DayComponents) throws -> Int {
+    func countWeekdaysMatching(_ weekdays: [Weekday], from start: DayComponents, to end: DayComponents) -> Int {
         var count = 0
+
+        guard var testeeDate = date(from: start),
+            let endDate = date(from: end) else {
+                return count
+        }
 
         var matchComponents = Set<DateComponents>()
         for weekday in weekdays {
@@ -212,8 +217,6 @@ extension Calendar {
         }
 
         let oneDayIncrement = DateComponents(day: 1)
-        var testeeDate = try date(from: start)
-        let endDate = try date(from: end)
 
         while testeeDate < endDate || isDate(testeeDate, inSameDayAs: endDate) { // TODO !isLaterDay
             for comps in matchComponents {
@@ -248,7 +251,7 @@ extension WeekdaySelection {
 }
 
 extension Calendar {
-    func countWeekdaysMatching(_ selection: WeekdaySelection, from: DayComponents, to: DayComponents) throws -> Int {
-        return try countWeekdaysMatching(selection.selectedWeekdays, from: from, to: to)
+    func countWeekdaysMatching(_ selection: WeekdaySelection, from: DayComponents, to: DayComponents) -> Int {
+        return countWeekdaysMatching(selection.selectedWeekdays, from: from, to: to)
     }
 }

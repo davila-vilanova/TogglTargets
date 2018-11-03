@@ -103,7 +103,8 @@ class ReportPeriodsProducer {
                                        _currentDate.producer.skipNil(),
                                        fullPeriod)
             .map { (calendar, currentDate, fullPeriod) in
-                guard let yesterday = calendar.previousDay(before: currentDate, notEarlierThan: fullPeriod.start) else {
+                let today = calendar.dayComponents(from: currentDate)
+                guard let yesterday = calendar.previousDay(before: today, notEarlierThan: fullPeriod.start) else {
                     return nil
                 }
                 return Period(start: fullPeriod.start, end: yesterday)
