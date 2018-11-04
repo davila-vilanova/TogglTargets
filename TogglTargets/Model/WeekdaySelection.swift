@@ -187,3 +187,13 @@ extension WeekdaySelection {
     }
 }
 
+extension WeekdaySelection {
+    func includesDay(in date: Date, accordingTo calendar: Calendar) -> Bool {
+        let dateComponents = calendar.dateComponents([.weekday], from: date)
+        guard let weekdayIndex = dateComponents.weekday,
+            let weekday = Weekday.fromIndexInGregorianCalendar(weekdayIndex) else {
+            return false
+        }
+        return isSelected(weekday)
+    }
+}
