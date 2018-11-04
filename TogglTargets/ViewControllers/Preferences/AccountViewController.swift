@@ -30,15 +30,15 @@ class AccountViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var loginViewController: LoginViewController = {
-        let loginController = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("LoginViewController")) as! LoginViewController
+        let loginController = self.storyboard!.instantiateController(withIdentifier: "LoginViewController") as! LoginViewController
         loginController <~ lastBinding.producer.skipNil().map { (credentialUpstream: $0.resolvedCredential,
                                                                  testURLSessionAction: $0.testURLSessionAction) }
-        addChildViewController(loginController)
+        addChild(loginController)
         return loginController
     }()
 
     private lazy var loggedInViewController: LoggedInViewController = {
-        let loggedInController = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("LoggedInViewController")) as! LoggedInViewController
+        let loggedInController = self.storyboard!.instantiateController(withIdentifier: "LoggedInViewController") as! LoggedInViewController
         let validBindings = lastBinding.producer.skipNil()
         let logOutRequested = MutableProperty<Void>(())
         logOutRequested.signal.map { nil as TogglAPITokenCredential? }.bindOnlyToLatest(validBindings.map { $0.resolvedCredential })

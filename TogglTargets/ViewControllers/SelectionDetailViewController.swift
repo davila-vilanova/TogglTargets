@@ -52,7 +52,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var projectDetailsViewController: ProjectDetailsViewController = {
-        let details = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("ProjectDetailsViewController")) as! ProjectDetailsViewController
+        let details = self.storyboard!.instantiateController(withIdentifier: "ProjectDetailsViewController") as! ProjectDetailsViewController
 
         details <~ SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
                                                 lastBinding.producer.skipNil())
@@ -68,14 +68,14 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
                  binding.readReport)
         }
 
-        addChildViewController(details)
+        addChild(details)
 
         return details
     }()
 
     private lazy var emptySelectionViewController: EmptySelectionViewController = {
-        let empty = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("EmptySelectionViewController")) as! EmptySelectionViewController
-        addChildViewController(empty)
+        let empty = self.storyboard!.instantiateController(withIdentifier: "EmptySelectionViewController") as! EmptySelectionViewController
+        addChild(empty)
         return empty
     }()
 

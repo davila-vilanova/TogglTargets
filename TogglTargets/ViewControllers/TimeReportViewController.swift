@@ -73,21 +73,21 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }
 
     private lazy var strategyViewController: StrategyViewController = {
-        let strategy = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("StrategyViewController")) as! StrategyViewController
+        let strategy = self.storyboard!.instantiateController(withIdentifier: "StrategyViewController") as! StrategyViewController
         strategy <~
             SignalProducer(value: (targetTime: progress.targetTime,
                                    dayBaseline: progress.dayBaseline,
                                    dayBaselineAdjustedToProgress: progress.dayBaselineAdjustedToProgress,
                                    dayBaselineDifferential: progress.dayBaselineDifferential,
                                    feasibility: progress.feasibility))
-        addChildViewController(strategy)
+        addChild(strategy)
         return strategy
     }()
 
     private lazy var targetReachedViewController: TargetReachedViewController = {
-        let targetReached = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("TargetReachedViewController")) as! TargetReachedViewController
+        let targetReached = self.storyboard!.instantiateController(withIdentifier: "TargetReachedViewController") as! TargetReachedViewController
         targetReached <~ SignalProducer(value: progress.targetTime)
-        addChildViewController(targetReached)
+        addChild(targetReached)
         return targetReached
     }()
 

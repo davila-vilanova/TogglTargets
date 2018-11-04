@@ -202,12 +202,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     }
 
     private func initializeProjectsCollectionView() {
-        let itemNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewItem"), bundle: nil)!
+        let itemNib = NSNib(nibNamed: "ProjectCollectionViewItem", bundle: nil)!
         projectsCollectionView.register(itemNib, forItemWithIdentifier: ProjectItemIdentifier)
 
-        let headerNib = NSNib(nibNamed: NSNib.Name(rawValue: "ProjectCollectionViewHeader"), bundle: nil)!
+        let headerNib = NSNib(nibNamed: "ProjectCollectionViewHeader", bundle: nil)!
         projectsCollectionView.register(headerNib,
-                                        forSupplementaryViewOfKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
+                                        forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader,
                                         withIdentifier: SectionHeaderIdentifier)
 
         let layout = projectsCollectionView.collectionViewLayout as! VerticalListLayout
@@ -352,7 +352,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func collectionView(_ collectionView: NSCollectionView,
                         viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind,
                         at indexPath: IndexPath) -> NSView {
-        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.SupplementaryElementKind.sectionHeader,
+        let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.elementKindSectionHeader,
                                                         withIdentifier: SectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
             switch ProjectIDsByTimeTargets.Section(rawValue: indexPath.section)! {

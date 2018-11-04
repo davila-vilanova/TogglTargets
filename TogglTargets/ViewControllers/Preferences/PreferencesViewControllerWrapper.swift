@@ -31,7 +31,7 @@ class PreferencesViewControllerWrapper: NSViewController, BindingTargetProvider,
             let parent = window.sheetParent {
             parent.endSheet(window)
         } else {
-            _ = `try`(toPerform: #selector(NSWindow.close), with: sender)
+            _ = tryToPerform(#selector(NSWindow.close), with: sender)
         }
     }
 

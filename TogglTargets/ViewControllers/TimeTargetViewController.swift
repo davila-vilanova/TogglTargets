@@ -155,7 +155,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
         let deleteButtonPressed = Action<Void, Void, NoError> { SignalProducer(value: ()) }
         deleteTimeTargetButton.reactive.pressed = CocoaAction(deleteButtonPressed)
         let deleteTimeTarget = reactive.makeBindingTarget { (timeTargetVC, _: Void) in
-            timeTargetVC.try(toPerform: #selector(TimeTargetCreatingDeleting.deleteTimeTarget(_:)), with: timeTargetVC)
+            timeTargetVC.tryToPerform(#selector(TimeTargetCreatingDeleting.deleteTimeTarget(_:)), with: timeTargetVC)
         }
         deleteTimeTarget <~ deleteButtonPressed.values
     }

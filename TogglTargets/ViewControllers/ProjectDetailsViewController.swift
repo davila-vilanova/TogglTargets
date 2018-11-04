@@ -59,7 +59,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var timeReportViewController: TimeReportViewController = {
-        let timeReport = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("TimeReportViewController")) as! TimeReportViewController
+        let timeReport = self.storyboard!.instantiateController(withIdentifier: "TimeReportViewController") as! TimeReportViewController
         timeReport <~ SignalProducer(
             value: (projectId: projectId,
                     timeTarget: timeTargetForCurrentProject.skipNil(),
@@ -68,13 +68,13 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
                     calendar: lastBinding.latestOutput { $0.calendar },
                     currentDate: lastBinding.latestOutput { $0.currentDate },
                     periodPreference: lastBinding.latestOutput { $0.periodPreference }))
-        addChildViewController(timeReport)
+        addChild(timeReport)
         return timeReport
     }()
 
     private lazy var noTimeTargetViewController: NoTimeTargetViewController = {
-        let noTarget = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("NoTimeTargetViewController")) as! NoTimeTargetViewController
-        addChildViewController(noTarget)
+        let noTarget = self.storyboard!.instantiateController(withIdentifier: "NoTimeTargetViewController") as! NoTimeTargetViewController
+        addChild(noTarget)
         return noTarget
     }()
 

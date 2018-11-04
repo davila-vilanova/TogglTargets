@@ -36,8 +36,8 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
 
     private var projectsListViewController: ProjectsListViewController?
     lazy private var activityViewController: ActivityViewController = {
-        let activity = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("ActivityViewController")) as! ActivityViewController
-        addChildViewController(activity)
+        let activity = self.storyboard!.instantiateController(withIdentifier: "ActivityViewController") as! ActivityViewController
+        addChild(activity)
         stackView.addView(activity.view, in: .bottom)
         activity.view.leadingAnchor.constraint(equalTo: stackView.leadingAnchor).isActive = true
         activity.view.trailingAnchor.constraint(equalTo: stackView.trailingAnchor).isActive = true

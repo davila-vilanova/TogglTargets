@@ -15,7 +15,7 @@ fileprivate let defaults = UserDefaults.standard
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInterfaceValidations {
     
-    private lazy var mainStoryboard = NSStoryboard(name: .init("Main"), bundle: nil)
+    private lazy var mainStoryboard = NSStoryboard(name: "Main", bundle: nil)
     private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
     private lazy var mainViewController: ProjectsMasterDetailController = mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
     private lazy var mainWindow: NSWindow = {
@@ -124,7 +124,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         }
 
         if shouldStartOnboarding {
-            let welcomeStoryboard = NSStoryboard(name: .init("Welcome"), bundle: nil)
+            let welcomeStoryboard = NSStoryboard(name: "Welcome", bundle: nil)
             let welcomeWindowController = welcomeStoryboard.instantiateInitialController() as! NSWindowController
             let welcomeWindow = welcomeWindowController.window!
             let welcomeController = welcomeWindow.contentViewController as! WelcomeViewController
@@ -169,7 +169,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             return
         }
 
-        let preferencesStoryboard = NSStoryboard(name: .init("Preferences"), bundle: nil)
+        let preferencesStoryboard = NSStoryboard(name: "Preferences", bundle: nil)
         let preferencesWindowController = preferencesStoryboard.instantiateInitialController() as! NSWindowController
         let preferencesWindow = preferencesWindowController.window!
         let preferencesController = (preferencesWindow.contentViewController as! PreferencesViewControllerWrapper)

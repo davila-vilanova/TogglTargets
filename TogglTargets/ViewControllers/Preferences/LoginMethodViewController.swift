@@ -24,27 +24,27 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var tokenViewController: APITokenViewController = {
-        let tokenController = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("APITokenViewController")) as! APITokenViewController
+        let tokenController = self.storyboard!.instantiateController(withIdentifier: "APITokenViewController") as! APITokenViewController
 
         tokenController <~ SignalProducer
             .combineLatest(lastBinding.producer.skipNil().map { ($0.credentialUpstream, $0.attemptLogin) },
                            SignalProducer(value: switchToEmailPasswordController.bindingTarget))
             .map { (credentialUpstream: $0.0.0, attemptLogin: $0.0.1, switchToEmailPasswordEntry: $0.1) }
 
-        addChildViewController(tokenController)
+        addChild(tokenController)
 
         return tokenController
     }()
 
     private lazy var emailPasswordViewController: EmailPasswordViewController = {
-        let emailPasswordController = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("EmailPasswordViewController")) as! EmailPasswordViewController
+        let emailPasswordController = self.storyboard!.instantiateController(withIdentifier: "EmailPasswordViewController") as! EmailPasswordViewController
 
         emailPasswordController <~ SignalProducer
             .combineLatest(lastBinding.producer.skipNil().map { ($0.credentialUpstream, $0.attemptLogin) },
                            SignalProducer(value: switchToTokenController.bindingTarget))
             .map { (credentialUpstream: $0.0.0, attemptLogin: $0.0.1, switchToDirectTokenEntry: $0.1) }
 
-        addChildViewController(emailPasswordController)
+        addChild(emailPasswordController)
 
         return emailPasswordController
     }()

@@ -149,7 +149,7 @@ class OnboardingGuide {
         _onboardingEnded <~ onboardingEnded
     }
     
-    private lazy var stepViewController = OnboardingStepViewController(nibName: NSNib.Name(rawValue: "OnboardingStepViewController"), bundle: nil)
+    private lazy var stepViewController = OnboardingStepViewController(nibName: "OnboardingStepViewController", bundle: nil)
 
     private lazy var stepPopover: NSPopover = {
         let popover = NSPopover()

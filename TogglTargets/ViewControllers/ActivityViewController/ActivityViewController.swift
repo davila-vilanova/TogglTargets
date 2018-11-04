@@ -27,7 +27,7 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var rootStackView: NSStackView!
 
     private lazy var condensedActivityViewController: CondensedActivityViewController = {
-        let condensed = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("CondensedActivityViewController")) as! CondensedActivityViewController
+        let condensed = self.storyboard!.instantiateController(withIdentifier: "CondensedActivityViewController") as! CondensedActivityViewController
         condensed <~
             SignalProducer<CondensedActivityViewController.Interface, NoError>(
                 value: (activitiesState.output.producer, wantsExtendedDisplay.bindingTarget))
@@ -35,7 +35,7 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var detailedActivityViewController: DetailedActivityViewController = {
-        let detailed = self.storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("DetailedActivityViewController")) as! DetailedActivityViewController
+        let detailed = self.storyboard!.instantiateController(withIdentifier: "DetailedActivityViewController") as! DetailedActivityViewController
 
         let heldStatuses = Property(initial: [ActivityStatus](), then: activitiesState.output.producer)
         let statuses =
@@ -56,9 +56,9 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
         super.viewDidLoad()
 
         rootStackView.addArrangedSubview(condensedActivityViewController.view)
-        addChildViewController(condensedActivityViewController)
+        addChild(condensedActivityViewController)
         rootStackView.addArrangedSubview(detailedActivityViewController.view)
-        addChildViewController(detailedActivityViewController)
+        addChild(detailedActivityViewController)
 
         activitiesState.input <~ lastBinding.latestOutput { $0.modelRetrievalStatus }
     }
