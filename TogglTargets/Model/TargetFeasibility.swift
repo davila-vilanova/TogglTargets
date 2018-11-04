@@ -8,8 +8,8 @@
 
 import Foundation
 
-fileprivate let fullDay = TimeInterval(24 * 60 * 60)
-fileprivate let fullWorkDay = fullDay * (2 / 3) // Admittedly subjective
+private let fullDay = TimeInterval(24 * 60 * 60)
+private let fullWorkDay = fullDay * (2 / 3) // Admittedly subjective
 
 enum TargetFeasibility {
     case feasible(relativeFeasibility: Double)

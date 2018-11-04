@@ -9,7 +9,7 @@
 import Foundation
 import ReactiveSwift
 
-fileprivate let dateFormatter: DateFormatter = {
+private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .none
     formatter.timeStyle = .medium

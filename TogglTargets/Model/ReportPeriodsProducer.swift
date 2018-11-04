@@ -70,13 +70,11 @@ class ReportPeriodsProducer {
     /// Binding target for the application-wide `currentDate` values.
     var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
 
-
     // MARK: - Backing properties
 
     private let _periodPreference = MutableProperty<PeriodPreference?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
     private let _currentDate = MutableProperty<Date?>(nil)
-
 
     // MARK: - Intermediate signals
 
@@ -86,7 +84,6 @@ class ReportPeriodsProducer {
                                      _calendar.producer.skipNil(),
                                      _currentDate.producer.skipNil())
             .map { $0.currentPeriod(in: $1, for: $2) }
-
 
     /// Produces `DayComponents` values representing the day corresponding to `currentDate`
     private lazy var today: SignalProducer<DayComponents, NoError>
@@ -109,7 +106,6 @@ class ReportPeriodsProducer {
                 }
                 return Period(start: fullPeriod.start, end: yesterday)
     }
-
 
     // MARK: - Exposed output
 

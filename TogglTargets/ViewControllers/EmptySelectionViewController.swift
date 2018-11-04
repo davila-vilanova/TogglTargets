@@ -9,5 +9,5 @@
 import Cocoa
 
 class EmptySelectionViewController: NSViewController {
-    
+
 }

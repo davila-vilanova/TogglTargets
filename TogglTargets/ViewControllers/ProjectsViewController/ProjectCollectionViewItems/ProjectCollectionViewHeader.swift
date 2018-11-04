@@ -8,7 +8,7 @@
 
 import Cocoa
 
-fileprivate let TitleLabelTag = 1080
+private let TitleLabelTag = 1080
 
 class ProjectCollectionViewHeader: NSView, NSCollectionViewElement {
 

@@ -48,7 +48,7 @@ class ErrorViewController: NSViewController {
     }
 }
 
-fileprivate func recovery(for error: APIAccessError) -> RecoveryAction? {
+private func recovery(for error: APIAccessError) -> RecoveryAction? {
     switch error {
     case .noCredentials, .authenticationError:
         return RecoveryAction {
@@ -59,7 +59,7 @@ fileprivate func recovery(for error: APIAccessError) -> RecoveryAction? {
     }
 }
 
-fileprivate func recoveryDescription(for error: APIAccessError) -> String {
+private func recoveryDescription(for error: APIAccessError) -> String {
     switch error {
     case .noCredentials, .authenticationError:
         return NSLocalizedString("status.activity.error.recovery.open-preferences",
@@ -69,5 +69,3 @@ fileprivate func recoveryDescription(for error: APIAccessError) -> String {
                                  comment: "error recovery description: retry operation")
     }
 }
-
-

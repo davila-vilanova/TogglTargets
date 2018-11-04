@@ -11,7 +11,7 @@ import SQLite
 import Result
 import ReactiveSwift
 
-typealias ProjectIdIndexedTimeTargets = [ProjectID : TimeTarget]
+typealias ProjectIdIndexedTimeTargets = [ProjectID: TimeTarget]
 
 /// Producer of `ProjectIDsByTimeTargets.Update` values that when started emits a
 // `full(ProjectIDsByTimeTargets)` value which can be followed by full or
@@ -69,7 +69,6 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     private let projectIdExpression = Expression<ProjectID>("project_id")
     private let hoursTargetExpression = Expression<Int>("hours")
     private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
-
 
     // MARK: -
 
@@ -159,12 +158,10 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     }
 }
 
-
 // MARK: -
 
 /// Represents an entity that conforms to both the `TimeTargetsStore` and `ProjectIDsByTimeTargetsProducing` protocols.
 protocol ProjectIDsProducingTimeTargetsStore: TimeTargetsStore, ProjectIDsByTimeTargetsProducing { }
-
 
 // MARK: -
 
@@ -219,7 +216,6 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
         persistenceProvider.deleteTimeTarget <~ deleteTimeTargetProducer
     }
 
-
     // MARK: - TimeTarget interface
 
     /// Function which takes a project ID as input and returns a producer that
@@ -237,7 +233,6 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
 
     var deleteTimeTarget: BindingTarget<ProjectID> { return _deleteTimeTarget.deoptionalizedBindingTarget }
     private let _deleteTimeTarget = MutableProperty<ProjectID?>(nil)
-
 
     // MARK: - Generation of ProjectIDsByTimeTargets
 
@@ -262,7 +257,6 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
     /// Used to connect the output of the current `SingleTimeTargetUpdateComputer`
     /// to `projectIDsByTimeTargetsProducer`.
     private let projectIDsByTimeTargetsLastSingleUpdate = MutableProperty<ProjectIDsByTimeTargets.Update.TimeTargetUpdate?>(nil)
-
 
     /// Producer of `ProjectIDsByTimeTargets.Update` values that when started emits a
     // `full(ProjectIDsByTimeTargets)` value which can be followed by by full or
@@ -298,9 +292,9 @@ extension WeekdaySelection: Value {
     }
 }
 
-// MARK : -
+// MARK: -
 
-fileprivate class SingleTimeTargetUpdateComputer {
+private class SingleTimeTargetUpdateComputer {
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
 
@@ -361,4 +355,4 @@ fileprivate class SingleTimeTargetUpdateComputer {
 
 // MARK: -
 
-fileprivate let timeTargetWriteScheduler = UIScheduler()
+private let timeTargetWriteScheduler = UIScheduler()

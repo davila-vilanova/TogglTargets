@@ -20,7 +20,6 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Contained view controllers
 
     private lazy var tokenViewController: APITokenViewController = {
@@ -59,7 +58,6 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
     private let selectedEntryMethod = MutableProperty(SelectedEntryMethod.token)
 
     @IBOutlet weak var containerView: NSView!
-
 
     // MARK: -
 

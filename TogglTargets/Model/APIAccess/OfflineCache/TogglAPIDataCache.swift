@@ -49,7 +49,7 @@ internal class TogglAPIDataCache {
                         return nil
                     }
                     return projects.reduce(IndexedProjects(), { (indexed, project) -> IndexedProjects in
-                        return indexed.merging([project.id : project], uniquingKeysWith: { (_, new) -> Project in new })
+                        return indexed.merging([project.id: project], uniquingKeysWith: { (_, new) -> Project in new })
                     })
             }
         }

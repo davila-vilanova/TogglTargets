@@ -11,7 +11,6 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-
 class AccountViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
@@ -25,7 +24,6 @@ class AccountViewController: NSViewController, BindingTargetProvider {
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
-
 
     // MARK: - Contained view controllers
 
@@ -49,7 +47,6 @@ class AccountViewController: NSViewController, BindingTargetProvider {
     }()
 
     @IBOutlet weak var containerView: NSView!
-
 
     // MARK: - Wiring
 

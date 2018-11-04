@@ -27,7 +27,6 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Properties
 
     private let calendar = MutableProperty<Calendar?>(nil)
@@ -36,7 +35,6 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
 
     private let computeStrategyFrom = MutableProperty<DayComponents?>(nil)
     private let selectedComputeStrategyFrom = MutableProperty<NSMenuItem?>(nil)
-
 
     // MARK: - Computation
 
@@ -47,18 +45,16 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
                                      calendar.producer.skipNil(), currentDate.producer.skipNil())
             .map { $0.currentPeriod(in: $1, for: $2) }
 
-
     // MARK: - Outlets
-    
+
     @IBOutlet weak var periodDescriptionLabel: NSTextField!
     @IBOutlet weak var strategyView: NSView!
     @IBOutlet weak var computeStrategyFromButton: NSPopUpButton!
     @IBOutlet weak var fromTodayItem: NSMenuItem!
     @IBOutlet weak var fromNextWorkDayItem: NSMenuItem!
 
-
     // MARK: - Contained view controllers
-    
+
     var timeProgressViewController: TimeProgressViewController! {
         didSet {
             timeProgressViewController <~
@@ -124,9 +120,8 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         strategyView.uniqueSubview <~ selectedStrategyController.map { $0.view }.skipRepeats()
     }
 
-    
     // MARK: - Value formatters
-    
+
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()
         f.allowedUnits = [.hour, .minute]
@@ -134,7 +129,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         f.unitsStyle = .full
         return f
     }()
-    
+
     private lazy var percentFormatter: NumberFormatter = {
         var f = NumberFormatter()
         f.numberStyle = .percent
@@ -149,9 +144,8 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         return f
     }
 
-
     // MARK: -
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -169,7 +163,6 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         setupConditionalVisibilityOfContainedViews()
     }
 
-    
     // MARK: -
 
     private func wirePeriodDescription() {
@@ -186,7 +179,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
                 return String.localizedStringWithFormat(NSLocalizedString("time-report.period-description", comment: "description of the current period in the time report view"), formattedStart, formattedEnd)
         }
     }
-    
+
     private func setupComputeStrategyFromButton() {
         computeStrategyFromButton.select(fromTodayItem)
 
@@ -208,7 +201,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
                 default: return nil
                 }
         }
-        
+
         let enableFromNextWorkDayMenuItem = fromNextWorkDayItem.reactive.makeBindingTarget { $0.isEnabled = $1 }
         let nextDay = SignalProducer.combineLatest(calendar.producer.skipNil(), currentDate.producer.skipNil(), timePeriod.map { $0.end })
             .map { $0.nextDay(after: $0.dayComponents(from: $1), notLaterThan: $2) }
@@ -220,7 +213,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
             .map { $2 == nil ? nil : $0.countWeekdaysMatching($1.workWeekdays, from: $2!, to: $3) }
         enableFromNextWorkDayMenuItem <~ remainingWorkdaysInPeriod.map { ($0 ?? 0) > 0 }
     }
-    
+
     private func connectPropertiesToProgressToTimeTarget() {
         progress.startDay <~ timePeriod.map { $0.start }
         progress.endDay <~ timePeriod.map { $0.end }
@@ -228,15 +221,14 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
         progress.currentDate <~ currentDate.producer.skipNil()
         progress.calendar <~ calendar.producer.skipNil()
     }
-    
-    
+
     // MARK: - Onboarding
-    
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
+
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
         let computeStrategyFromButton = viewDidLoadProducer
             .map { [unowned self] _ in self.computeStrategyFromButton }
             .skipNil()
-        
+
         let computeStrategyFromSelectionChanged = computeStrategyFromButton.map { $0.reactive.selectedItems.map { _ in () } }.flatten(.concat)
 
         let computeStrategyFromSelectionView = computeStrategyFromButton
@@ -249,7 +241,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
             .skipNil()
             .concat(SignalProducer.never)
 
-        return [.selectComputeStrategyFrom : computeStrategyFromSelectionView,
-                .seeStrategy : strategyView]
+        return [.selectComputeStrategyFrom: computeStrategyFromSelectionView,
+                .seeStrategy: strategyView]
     }
 }

@@ -26,7 +26,6 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Backing properties and signals
 
     private let calendar = MutableProperty<Calendar?>(nil)
@@ -35,7 +34,6 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
 
     private lazy var updatedPreference: Signal<PeriodPreference, NoError> =
         Signal.merge(generateMonthlyPeriodPreference.values, generateWeeklyPeriodPreference.values)
-
 
     // MARK: - Outlets and action
 
@@ -68,15 +66,13 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
         return p
     }()
 
-
     // MARK: - Actions
 
-    private let weeklyButtonPress = Action() { SignalProducer(value: ()) }
-    private let generateMonthlyPeriodPreference = Action() { SignalProducer(value: PeriodPreference.monthly) }
+    private let weeklyButtonPress = Action { SignalProducer(value: ()) }
+    private let generateMonthlyPeriodPreference = Action { SignalProducer(value: PeriodPreference.monthly) }
     private lazy var generateWeeklyPeriodPreference =
         Action<Weekday, PeriodPreference, NoError> (enabledIf: isWeeklyPreferenceSelectedProperty,
                                                     execute: weekdayToWeeklyPeriodPreferenceProducer)
-
 
     // MARK: - Wiring
 
@@ -96,11 +92,11 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
         assignActions()
         reflectCurrentPeriod()
     }
-    
+
     private func makeRadioButtonSelectionMutuallyExclusive() {
         preferMonthlyPeriodButton.reactive.state <~ preferWeeklyPeriodButton
             .reactive.states.map { $0 == .off ? .on : .off }
-        
+
         preferWeeklyPeriodButton.reactive.state <~ preferMonthlyPeriodButton
             .reactive.states.map { $0 == .off ? .on : .off }
     }
@@ -188,21 +184,20 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
     }
 }
 
-
 // MARK: -
 
-fileprivate func weekdayToWeeklyPeriodPreferenceProducer(_ weekday: Weekday)
+private func weekdayToWeeklyPeriodPreferenceProducer(_ weekday: Weekday)
     -> SignalProducer<PeriodPreference, NoError> {
         return SignalProducer(value: PeriodPreference.weekly(startDay: weekday))
 }
 
-fileprivate func boolToControlStateValue(_ bool: Bool) -> NSControl.StateValue {
+private func boolToControlStateValue(_ bool: Bool) -> NSControl.StateValue {
     switch bool {
     case true: return .on
     case false: return .off
     }
 }
 
-fileprivate func weekdayFromSelection(in popup: NSPopUpButton) -> Weekday {
+private func weekdayFromSelection(in popup: NSPopUpButton) -> Weekday {
     return Weekday.fromIndexInGregorianCalendarSymbolsArray(popup.indexOfSelectedItem)!
 }

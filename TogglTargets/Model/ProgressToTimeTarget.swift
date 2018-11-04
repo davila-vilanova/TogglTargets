@@ -15,14 +15,14 @@ class ProgressToTimeTarget {
     // MARK: - Interface
 
     public var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
-    public var timeTarget: BindingTarget<TimeTarget>{ return _timeTarget.deoptionalizedBindingTarget }
-    public var report: BindingTarget<TwoPartTimeReport?>{ return _report.bindingTarget }
-    public var runningEntry: BindingTarget<RunningEntry?>{ return _runningEntry.bindingTarget }
-    public var startDay: BindingTarget<DayComponents>{ return _startDay.deoptionalizedBindingTarget }
-    public var endDay: BindingTarget<DayComponents>{ return _endDay.deoptionalizedBindingTarget }
-    public var startStrategyDay: BindingTarget<DayComponents>{ return _startStrategyDay.deoptionalizedBindingTarget }
-    public var currentDate: BindingTarget<Date>{ return _currentDate.deoptionalizedBindingTarget }
-    public var calendar: BindingTarget<Calendar>{ return _calendar.deoptionalizedBindingTarget }
+    public var timeTarget: BindingTarget<TimeTarget> { return _timeTarget.deoptionalizedBindingTarget }
+    public var report: BindingTarget<TwoPartTimeReport?> { return _report.bindingTarget }
+    public var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
+    public var startDay: BindingTarget<DayComponents> { return _startDay.deoptionalizedBindingTarget }
+    public var endDay: BindingTarget<DayComponents> { return _endDay.deoptionalizedBindingTarget }
+    public var startStrategyDay: BindingTarget<DayComponents> { return _startStrategyDay.deoptionalizedBindingTarget }
+    public var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
+    public var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
 
     // MARK: - Outputs
 
@@ -99,7 +99,6 @@ class ProgressToTimeTarget {
         }
     }()
 
-
     // dayBaselineAdjustedToProgress will publish nil values when remainingWorkDays itself returns nil
     public lazy var dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError> = {
         return SignalProducer.combineLatest(remainingWorkDays.skipRepeats(),
@@ -166,7 +165,6 @@ class ProgressToTimeTarget {
         }
     }()
 
-
     // MARK: - Backing input properties
 
     private let _projectId = MutableProperty<Int64?>(nil)
@@ -178,7 +176,6 @@ class ProgressToTimeTarget {
     private let _startStrategyDay = MutableProperty<DayComponents?>(nil)
     private let _currentDate = MutableProperty<Date?>(nil)
     private let _calendar = MutableProperty<Calendar?>(nil)
-
 
     // MARK: - Intermediates
 
@@ -226,7 +223,7 @@ extension Calendar {
                 }
             }
 
-            var nextDate: Date;
+            var nextDate: Date
             repeat {
                 nextDate = date(byAdding: oneDayIncrement, to: testeeDate)!
             } while isDate(nextDate, inSameDayAs: testeeDate)

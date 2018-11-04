@@ -27,7 +27,6 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Backing properties
 
     private let targetTime = MutableProperty<TimeInterval>(0)
@@ -38,7 +37,6 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
     private let remainingTimeToTarget = MutableProperty<TimeInterval>(0)
     private let strategyStartsToday = MutableProperty<Bool>(false)
 
-
     // MARK: - Formatter
 
     private lazy var timeFormatter: DateComponentsFormatter = {
@@ -48,7 +46,6 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
         f.unitsStyle = .full
         return f
     }()
-
 
     // MARK: - Outlets
 
@@ -163,20 +160,19 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
         remainingTimeToTarget <~ lastBinding.latestOutput { $0.remainingTimeToTarget }
         strategyStartsToday <~ lastBinding.latestOutput { $0.strategyStartsToday }
     }
-    
-    
+
     // MARK: - Onboarding
-    
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
+
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
         let timeProgressView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)
-        
-        return [.seeTimeProgress : timeProgressView]
+
+        return [.seeTimeProgress: timeProgressView]
     }
 }
 
-fileprivate let intToDouble = { (integerOrNil: Int?) -> Double? in
+private let intToDouble = { (integerOrNil: Int?) -> Double? in
     guard let integer = integerOrNil else {
         return nil
     }

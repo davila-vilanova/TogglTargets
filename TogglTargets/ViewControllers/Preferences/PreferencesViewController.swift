@@ -32,7 +32,6 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Contained view controllers
 
     private enum ContainedControllerType: Int {

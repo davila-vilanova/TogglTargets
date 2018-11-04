@@ -23,7 +23,6 @@ class EmailPasswordViewController: NSViewController, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Outlets and Actions
 
     @IBOutlet weak var emailField: NSTextField!
@@ -36,7 +35,6 @@ class EmailPasswordViewController: NSViewController, BindingTargetProvider {
     @IBAction func enterPressed(_ sender: Any) {
         attemptLogin <~ SignalProducer(value: ())
     }
-
 
     // MARK: -
 

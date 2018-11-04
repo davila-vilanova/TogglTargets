@@ -11,12 +11,12 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-fileprivate let NonSelectedBackgroundColor = NSColor.white
-fileprivate let NonSelectedTextColor = NSColor.black
-fileprivate let FocusedSelectedBackgroundColor = NSColor.init(red: 60.0/255.0, green: 126.0/255.0, blue: 242.0/255.0, alpha: 1)
-fileprivate let FocusedSelectedTextColor = NSColor.white
-fileprivate let NonFocusedSelectedBackgroundColor = NSColor.darkGray
-fileprivate let NonFocusedSelectedTextColor = NSColor.white
+private let NonSelectedBackgroundColor = NSColor.white
+private let NonSelectedTextColor = NSColor.black
+private let FocusedSelectedBackgroundColor = NSColor.init(red: 60.0/255.0, green: 126.0/255.0, blue: 242.0/255.0, alpha: 1)
+private let FocusedSelectedTextColor = NSColor.white
+private let NonFocusedSelectedBackgroundColor = NSColor.darkGray
+private let NonFocusedSelectedTextColor = NSColor.white
 
 class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
@@ -31,7 +31,6 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Outlets
 
     @IBOutlet weak var visualEffectView: NSVisualEffectView!
@@ -39,7 +38,6 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     @IBOutlet weak var timeTargetField: NSTextField!
     @IBOutlet weak var reportField: NSTextField!
     @IBOutlet weak var bottomLining: NSBox!
-
 
     // MARK: -
 
@@ -49,7 +47,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     }
     private let _isSelected = MutableProperty(false)
 
-    @objc var isLastItemInSection: Bool{
+    @objc var isLastItemInSection: Bool {
         set { _isLastItemInSection.value = newValue }
         get { return _isLastItemInSection.value }
     }
@@ -85,7 +83,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
                 NSLocalizedString("project-list.item.target.time.weekly", comment: "target amount of time per week as it appears in each of the project list items")
         })
 
-        timeTargetField.reactive.text <~ timeTarget.skipNil().map{ $0.hoursTarget }
+        timeTargetField.reactive.text <~ timeTarget.skipNil().map { $0.hoursTarget }
             .map { TimeInterval.from(hours: $0) }
             .mapToString(timeFormatter: timeFormatter)
             .combineLatest(with: targetPeriodFormat)

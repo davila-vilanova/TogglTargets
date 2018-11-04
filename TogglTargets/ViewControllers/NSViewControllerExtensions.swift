@@ -16,7 +16,7 @@ extension NSViewController {
     /// become available.
     func setOnboardingGuide(_ guide: OnboardingGuide) {
         guide.register(self)
-        
+
         guide.lifetime += reactive.producer(forKeyPath: "childViewControllers")
             .skipNil().filterMap { $0 as? [NSViewController] }
             .map { SignalProducer($0) }
@@ -35,7 +35,7 @@ extension NSViewController {
     var viewDidLoadTrigger: Signal<Void, NoError> {
         return reactive.trigger(for: #selector(NSViewController.viewDidLoad)).take(first: 1)
     }
-    
+
     var isViewLoadedProducer: SignalProducer<Bool, NoError> {
         return SignalProducer<Bool, NoError> { [weak self] observer, lifetime in
             guard let viewController = self else {
@@ -50,11 +50,11 @@ extension NSViewController {
             }
             }.start(on: UIScheduler())
     }
-    
+
     var viewDidLoadProducer: SignalProducer<Void, NoError> {
         return isViewLoadedProducer.filter { $0 }.map { _ in () }
     }
-    
+
     //    var heldViewDidLoadProducer: SignalProducer<Void, NoError> {
     //        return viewDidLoadProducer.concat(SignalProducer.never)
     //    }

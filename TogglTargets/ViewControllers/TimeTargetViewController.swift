@@ -24,11 +24,9 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Output
 
     private var userUpdates = MutableProperty<TimeTarget?>(nil)
-
 
     // MARK: - Outlets
 
@@ -40,7 +38,6 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
     @IBOutlet weak var activeWeekdaysLabel: NSTextField!
     @IBOutlet weak var activeWeekdaysControl: NSSegmentedControl!
     @IBOutlet weak var deleteTimeTargetButton: NSButton!
-
 
     // MARK: - Wiring
 
@@ -121,7 +118,6 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
             .withLatest(from: nonNilTimeTarget)
             .map { TimeTarget(for: $1.projectId, hoursTarget: $0, workWeekdays: $1.workWeekdays) }
 
-        
         let timeTargetFromEditedActiveWeekdays = activeWeekdaysControl.reactive.selectedSegmentIndexes
             .map { [weak activeWeekdaysControl] (_) -> WeekdaySelection? in
                 guard let control = activeWeekdaysControl else {
@@ -159,25 +155,24 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
         }
         deleteTimeTarget <~ deleteButtonPressed.values
     }
-    
-    
+
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
         let hoursTargetField = viewDidLoadProducer
             .map { [unowned self] _ in self.hoursTargetField }
             .skipNil()
-        
+
         let targetHoursEdited = hoursTargetField.map { $0.reactive.stringValues.map { _ in () } }.flatten(.concat)
         let targetHoursView = hoursTargetField
             .map { $0 as NSView }
             .concat(SignalProducer.never)
             .take(until: targetHoursEdited)
-        
+
         let activeWeekdaysControl = viewDidLoadProducer
             .map { [unowned self] _ in self.activeWeekdaysControl }
             .skipNil()
-        
+
         let activeWeekdaysEdited = activeWeekdaysControl.map { $0.reactive.selectedSegmentIndexes.map { _ in () } }.flatten(.concat)
 
         let workWeekdaysView = activeWeekdaysControl
@@ -185,8 +180,8 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
             .concat(SignalProducer.never)
             .take(until: activeWeekdaysEdited)
 
-        return [.setTargetHours : targetHoursView,
-                .setWorkWeekdays : workWeekdaysView]
+        return [.setTargetHours: targetHoursView,
+                .setWorkWeekdays: workWeekdaysView]
     }
 }
 
@@ -195,7 +190,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
 class NoTimeTargetViewController: NSViewController, OnboardingTargetViewsProvider {
     @IBOutlet weak var createTimeTargetButton: NSButton!
 
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
         let createTimeTargetButtonPressed = Action<Void, Void, NoError> {
             SignalProducer(value: ())
         }
@@ -209,7 +204,7 @@ class NoTimeTargetViewController: NSViewController, OnboardingTargetViewsProvide
             .map { [unowned self] in self.createTimeTargetButton as NSView }
 
         let timeTargetCreationView = timeTargetCreationViewProducer.concat(SignalProducer.never).take(until: createTimeTargetButtonPressed.values)
-        
-        return [.createTimeTarget : timeTargetCreationView]
+
+        return [.createTimeTarget: timeTargetCreationView]
     }
 }

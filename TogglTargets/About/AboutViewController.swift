@@ -9,9 +9,9 @@
 import Cocoa
 
 class AboutViewController: NSViewController {
-    
+
     @IBOutlet weak var versionLabel: NSTextField!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         let empty = ""
@@ -19,5 +19,5 @@ class AboutViewController: NSViewController {
         let versionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? empty
         versionLabel.stringValue = "\(shortVersionString) (\(versionString))"
     }
-    
+
 }

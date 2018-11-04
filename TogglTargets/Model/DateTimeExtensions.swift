@@ -26,7 +26,7 @@ struct DayComponents: Equatable {
 
 extension DayComponents {
     var iso8601String: String {
-        return String(format:"%04d-%02d-%02d", year, month, day)
+        return String(format: "%04d-%02d-%02d", year, month, day)
     }
 }
 
@@ -68,7 +68,7 @@ extension Calendar {
         }
         return dayComponents(from: adjustedDate)
     }
-    
+
     func previousDay(before originalDay: DayComponents, notEarlierThan lowerLimitDay: DayComponents) -> DayComponents? {
         let oneDayDecrement = DateComponents(day: -1)
         guard let originalDate = date(from: originalDay),
@@ -84,7 +84,7 @@ extension Calendar {
         let daysRange = range(of: .day, in: .month, for: date)!
         return daysRange.upperBound
     }
-    
+
     private func lastDayInMonth(for date: Date) -> Int {
         return countOfDaysInMonth(for: date)  - 1
     }

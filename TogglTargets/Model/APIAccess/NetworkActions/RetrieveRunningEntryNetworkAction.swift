@@ -19,7 +19,7 @@ func makeRetrieveRunningEntryNetworkAction(_ urlSession: Property<URLSession?>) 
     }
 }
 
-fileprivate struct RunningEntryService: Decodable {
+private struct RunningEntryService: Decodable {
     static let endpoint = "/api/v8/time_entries/current"
 
     let runningEntry: RunningEntry?
@@ -34,4 +34,3 @@ fileprivate struct RunningEntryService: Decodable {
         return try decoder.decode(RunningEntryService.self, from: data).runningEntry
     }
 }
-

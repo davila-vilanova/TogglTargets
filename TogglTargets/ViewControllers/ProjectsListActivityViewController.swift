@@ -29,7 +29,6 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     private let displayActivity = MutableProperty(false)
 
     // MARK: - Contained view controllers
@@ -91,7 +90,7 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
             }, completionHandler: nil)
         }
 
-        showActivity <~ displayActivity.signal.skipRepeats().filter{ $0 }.map { _ in () }
-        hideActivity <~ displayActivity.signal.skipRepeats().filter{ !$0 }.map { _ in () }
+        showActivity <~ displayActivity.signal.skipRepeats().filter { $0 }.map { _ in () }
+        hideActivity <~ displayActivity.signal.skipRepeats().filter { !$0 }.map { _ in () }
     }
 }

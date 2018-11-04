@@ -19,7 +19,7 @@ func makeRetrieveProfileNetworkAction() -> RetrieveProfileNetworkAction {
     }
 }
 
-fileprivate struct MeService: Decodable {
+private struct MeService: Decodable {
     static let endpoint = "/api/v8/me"
     let profile: Profile
 

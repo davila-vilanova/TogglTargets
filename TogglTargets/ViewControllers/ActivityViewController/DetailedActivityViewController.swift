@@ -17,7 +17,6 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     private weak var profileContainer: NSView!
     private weak var projectsContainer: NSView!
     private weak var reportsContainer: NSView!
@@ -90,8 +89,8 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
 
     private func updateActivitiesState(from previousStatus: [ActivityStatus],
                                        to newStatus: [ActivityStatus]) {
-        let previousStatusByActivity = Dictionary(uniqueKeysWithValues: previousStatus.map { ($0.activity, $0) } )
-        let newStatusByActivity = Dictionary(uniqueKeysWithValues: newStatus.map { ($0.activity, $0) } )
+        let previousStatusByActivity = Dictionary(uniqueKeysWithValues: previousStatus.map { ($0.activity, $0) })
+        let newStatusByActivity = Dictionary(uniqueKeysWithValues: newStatus.map { ($0.activity, $0) })
 
         let previousActivities = Set(previousStatusByActivity.keys)
         let newActivities = Set(newStatusByActivity.keys)
@@ -149,7 +148,7 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
             return
         }
 
-        NSAnimationContext.runAnimationGroup({ context in
+        NSAnimationContext.runAnimationGroup({ _ in
             containerView.isHidden = true
             view.findRoot().layoutSubtreeIfNeeded()
         }, completionHandler: {
@@ -171,7 +170,7 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
         newView.trailingAnchor.constraint(equalTo: superview.trailingAnchor).isActive = true
         newView.layoutSubtreeIfNeeded()
 
-        NSAnimationContext.runAnimationGroup({ context in
+        NSAnimationContext.runAnimationGroup({ _ in
             newView.isHidden = false
             previousView.isHidden = true
             view.findRoot().layoutSubtreeIfNeeded()
@@ -181,7 +180,7 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
     }
 }
 
-fileprivate func makeContainerView(identifier: String) -> NSView {
+private func makeContainerView(identifier: String) -> NSView {
     let view = NSView()
     view.wantsLayer = true
     view.identifier = NSUserInterfaceItemIdentifier(rawValue: identifier)
@@ -189,11 +188,11 @@ fileprivate func makeContainerView(identifier: String) -> NSView {
     return view
 }
 
-fileprivate func makeActivityController(for status: ActivityStatus) -> NSViewController {
+private func makeActivityController(for status: ActivityStatus) -> NSViewController {
     switch status {
-    case .executing(_): return SyncingActivityViewController()
-    case .succeeded(_): return ActivitySuccessViewController()
-    case .error(_, _, _): return ActivityErrorViewController()
+    case .executing: return SyncingActivityViewController()
+    case .succeeded: return ActivitySuccessViewController()
+    case .error: return ActivityErrorViewController()
     }
 }
 

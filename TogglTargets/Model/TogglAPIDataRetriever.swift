@@ -38,7 +38,6 @@ protocol TogglAPIDataRetriever: class {
     /// reports will be fetched from the Toggl API.
     var twoPartReportPeriod: BindingTarget<TwoPartTimeReportPeriod> { get }
 
-
     // MARK: - Retrieved data
 
     /// Holds and publishes `Profile` values as they become available.
@@ -54,7 +53,6 @@ protocol TogglAPIDataRetriever: class {
 
     /// Holds and publishes the last retrieved current time entry or `nil` for no time entry..
     var runningEntry: Property<RunningEntry?> { get }
-
 
     // MARK: - Refresh actions
 
@@ -73,7 +71,6 @@ protocol TogglAPIDataRetriever: class {
     // Publishes updates to the status of this data retriever.
     var status: SignalProducer<ActivityStatus, NoError> { get }
 }
-
 
 typealias RetryAction = Action<Void, Void, NoError>
 
@@ -120,7 +117,7 @@ enum ActivityStatus {
     /// Returns whether this is the `.executing` case.
     var isExecuting: Bool {
         switch self {
-        case .executing(_): return true
+        case .executing: return true
         default: return false
         }
     }
@@ -136,7 +133,7 @@ enum ActivityStatus {
     /// Returns whether this is the `.error` case.
     var isError: Bool {
         switch self {
-        case .error(_, _, _): return true
+        case .error: return true
         default: return false
         }
     }
@@ -165,9 +162,9 @@ extension ActivityStatus: Hashable {
         }
 
         switch lhs {
-        case .executing(_): return rhs.isExecuting
-        case .succeeded(_): return rhs.isSuccessful
-        case .error(_, _, _): return rhs.isError // Error itself and retryAction don't contribute to equality
+        case .executing: return rhs.isExecuting
+        case .succeeded: return rhs.isSuccessful
+        case .error: return rhs.isError // Error itself and retryAction don't contribute to equality
         }
     }
 
@@ -179,7 +176,6 @@ extension ActivityStatus: Hashable {
         }
     }
 }
-
 
 /// `CachedTogglAPIDataRetriever` is a `TogglAPIDataRetriever` that relies on locally stored data to
 /// return cached results when running on a device that happens to be offline, or to return preliminary
@@ -195,7 +191,6 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// The scheduler used internally by this instance.
     private let scheduler = QueueScheduler.init(name: "TogglAPIDataRetriever-scheduler")
-
 
     // MARK: - API credential and URL session
 
@@ -230,10 +225,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         Property<Profile?>(initial: nil, then: Signal.merge(retrieveProfileNetworkAction.values,
                                                             retrieveProfileFromCache.values.skipNil()))
 
-
     /// Publishes an array of `WorkspaceID` values derived from the latest `Profile`.
     private lazy var workspaceIDs: SignalProducer<[WorkspaceID], NoError> = profile.producer.skipNil().map { $0.workspaces.map { $0.id } }
-
 
     // MARK: - Projects
 
@@ -254,7 +247,6 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         let emptyOnNoCredentials = noCredentialsEvents.map { IndexedProjects() }
         return Property(initial: nil, then: Signal.merge(retrievedFromNetwork, retrievedFromCache, emptyOnNoCredentials))
     }()
-
 
     // MARK: - Reports
 
@@ -278,7 +270,6 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         return Property(initial: nil, then: Signal.merge(retrievedFromNetwork, emptyOnNoCredentials))
     }()
 
-
     // MARK: - RunningEntry
 
     /// The `Action` used to retrieve the currently running time entry from the Toggl API.
@@ -286,7 +277,6 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// Holds and publishes the last retrieved current time entry or `nil` for no time entry.
     internal lazy var runningEntry = Property<RunningEntry?>(initial: nil, then: retrieveRunningEntryNetworkAction.values)
-
 
     // MARK: - Refresh actions
 
@@ -305,12 +295,10 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         return action
     }()
 
-
     /// Triggers an attempt to retrieve the user profile, projects, reports and
     /// currently running entry.
     lazy var refreshAllData = RefreshAction(state: urlSession.combineLatest(with: retrieveProfileNetworkAction.isEnabled),
-                                            enabledIf: { $0.0 != nil && $0.1 } )
-    { [weak self] (state, _) in
+                                            enabledIf: { $0.0 != nil && $0.1 }) { [weak self] (state, _) in
         guard let retriever = self else {
             return SignalProducer.empty
         }
@@ -346,7 +334,6 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         }
     }()
 
-
     // MARK: - Activity and Errors
 
     lazy var status: SignalProducer<ActivityStatus, NoError> = {
@@ -379,7 +366,6 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
                                     extractStatus(from: retrieveReportsNetworkAction, for: .syncReports, retryErrorsWith: SignalProducer.combineLatest(workspaceIDs, _twoPartReportPeriod.producer.skipNil())),
                                     extractStatus(from: retrieveRunningEntryNetworkAction, for: .syncRunningEntry))
     }()
-
 
     /// Initializes a `CachedTogglAPIDataRetriever` that will use the provided actions to fetch data from
     /// the Toggl API and from the local cache, and to store data into the local cache.
@@ -429,7 +415,6 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         _ = reports
         _ = runningEntry
 
-
         storeProfileInCache <~ Signal.merge(retrieveProfileNetworkAction.values.map { Optional($0) },
                                             noCredentialsEvents.map { nil })
 
@@ -454,7 +439,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     }
 }
 
-fileprivate func isNoCredentialsError(_ error: APIAccessError) -> Bool {
+private func isNoCredentialsError(_ error: APIAccessError) -> Bool {
     switch error {
     case .noCredentials:
         return true

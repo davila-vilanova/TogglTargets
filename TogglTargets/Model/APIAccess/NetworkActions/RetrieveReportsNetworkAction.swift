@@ -15,7 +15,6 @@ import ReactiveSwift
 typealias RetrieveReportsNetworkAction =
     Action<([WorkspaceID], TwoPartTimeReportPeriod), IndexedTwoPartTimeReports, APIAccessError>
 
-
 /// A function or closure that takes a `Property` that holds and tracks changes
 /// to a `URLSession` optional value and generates a `RetrieveReportsNetworkAction`
 /// that is enabled whenever the the provided `Property` holds a non-`nil` value.
@@ -59,11 +58,11 @@ func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>, _ net
     }
 }
 
-fileprivate let UserAgent = "david@davi.la"
+private let UserAgent = "david@davi.la"
 
-fileprivate typealias IndexedWorkedTimes = [ProjectID : WorkedTime]
+private typealias IndexedWorkedTimes = [ProjectID: WorkedTime]
 
-fileprivate func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period?, reportEntriesRetriever: @escaping (String) -> SignalProducer<[ReportEntry], APIAccessError>) -> SignalProducer<IndexedWorkedTimes, APIAccessError> {
+private func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period?, reportEntriesRetriever: @escaping (String) -> SignalProducer<[ReportEntry], APIAccessError>) -> SignalProducer<IndexedWorkedTimes, APIAccessError> {
         guard let period = period else {
             return SignalProducer(value: IndexedWorkedTimes()) // empty
         }
@@ -91,11 +90,11 @@ fileprivate func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period
 
 /// Returns a producer that, on success, emits a single IndexedWorkedTimes value
 /// corresponding to the aggregate of all the provided workspace IDs, then completes.
-fileprivate func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorkedTimes,
+private func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorkedTimes,
                                            today: IndexedWorkedTimes,
                                            fullPeriod: Period)
-    -> [ProjectID : TwoPartTimeReport] {
-        var reports = [ProjectID : TwoPartTimeReport]()
+    -> [ProjectID: TwoPartTimeReport] {
+        var reports = [ProjectID: TwoPartTimeReport]()
         let ids: Set<ProjectID> = Set<ProjectID>(untilYesterday.keys).union(today.keys)
         for id in ids {
             let timeWorkedPreviousToToday: TimeInterval = untilYesterday[id] ?? 0.0
@@ -108,7 +107,7 @@ fileprivate func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWo
         return reports
 }
 
-fileprivate struct ReportsService: Decodable {
+private struct ReportsService: Decodable {
     static func endpoint(workspaceId: WorkspaceID, since: String, until: String, userAgent: String) -> String {
         return "/reports/api/v2/summary?workspace_id=\(workspaceId)&since=\(since)&until=\(until)&grouping=projects&subgrouping=users&user_agent=\(userAgent)"
     }

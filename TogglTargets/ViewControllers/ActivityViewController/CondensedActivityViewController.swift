@@ -23,7 +23,6 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     @IBOutlet weak var statusDescriptionLabel: NSTextField!
     @IBOutlet weak var statusDetailLabel: NSTextField!
     @IBOutlet weak var horizontalLine: NSBox!
@@ -33,7 +32,7 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
         super.viewDidLoad()
 
         let activityStatuses = lastBinding.latestOutput { $0.activityStatuses }
-        requestExpandDetails.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.expandDetails } )
+        requestExpandDetails.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.expandDetails })
 
         horizontalLine.reactive.makeBindingTarget { $0.animator().isHidden = !$1 } <~ requestExpandDetails
 
@@ -93,7 +92,7 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
     }
 }
 
-fileprivate enum State {
+private enum State {
     case syncing(count: Int)
     case errors(count: Int, first: APIAccessError)
     case success(count: Int)
@@ -105,21 +104,21 @@ fileprivate enum State {
 
     static func isSyncing(_ state: State) -> Bool {
         switch state {
-        case .syncing(_): return true
+        case .syncing: return true
         default: return false
         }
     }
 
     static func isErrors(_ state: State) -> Bool {
         switch state {
-        case .errors(_): return true
+        case .errors: return true
         default: return false
         }
     }
 
     static func isSuccess(_ state: State) -> Bool {
         switch state {
-        case .success(_): return true
+        case .success: return true
         default: return false
         }
     }
@@ -156,7 +155,7 @@ fileprivate enum State {
     }
 }
 
-fileprivate func makeStateProducer(from statusesProducer: SignalProducer<[ActivityStatus], NoError>)
+private func makeStateProducer(from statusesProducer: SignalProducer<[ActivityStatus], NoError>)
     -> SignalProducer<State, NoError> {
         let countsProducer = statusesProducer.map { statuses -> (Int, Int, Int, APIAccessError?) in
             let syncingCount = statuses.filter { $0.isExecuting }.count

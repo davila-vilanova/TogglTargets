@@ -38,7 +38,7 @@ struct TwoPartTimeReport {
 extension TwoPartTimeReport: CustomDebugStringConvertible {
     var debugDescription: String {
         return "TwoPartTimeReport(workedTimeUntilDayBeforeRequest: \(workedTimeUntilDayBeforeRequest), "
-            + "workedTimeOnDayOfRequest: \(workedTimeOnDayOfRequest))";
+            + "workedTimeOnDayOfRequest: \(workedTimeOnDayOfRequest))"
     }
 }
 
@@ -51,7 +51,6 @@ extension TwoPartTimeReport: Equatable {
     }
 }
 
-
 func makeZeroReport(for projectId: ProjectID, period: Period) -> TwoPartTimeReport {
     return TwoPartTimeReport(projectId: projectId, period: period, workedTimeUntilDayBeforeRequest: 0, workedTimeOnDayOfRequest: 0)
 }
@@ -63,4 +62,4 @@ struct ReportEntry: Decodable {
 
 /// A dictionary of `TwoPartTimeReport` values indexed by their corresponding
 /// project ID.
-typealias IndexedTwoPartTimeReports = [ProjectID : TwoPartTimeReport]
+typealias IndexedTwoPartTimeReports = [ProjectID: TwoPartTimeReport]

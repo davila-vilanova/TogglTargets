@@ -17,7 +17,7 @@ extension URLSession {
         let config = URLSessionConfiguration.ephemeral
         config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         if let credential = togglAPICredential {
-            let authHeaders: [String: String] = [ credential.authHeaderKey : credential.authHeaderValue ]
+            let authHeaders: [String: String] = [ credential.authHeaderKey: credential.authHeaderValue ]
             config.httpAdditionalHeaders = authHeaders
         }
         self.init(configuration: config)
@@ -61,17 +61,17 @@ extension URLSession {
     }
 }
 
-fileprivate func mapErrors(from producer: SignalProducer<(Data, URLResponse), AnyError>)
+private func mapErrors(from producer: SignalProducer<(Data, URLResponse), AnyError>)
     -> SignalProducer<(Data, URLResponse), APIAccessError> {
         return producer.mapError(wrapAnyErrorInLoadingSubsystemError)
             .attemptMap(catchHTTPErrors)
 }
 
-fileprivate func wrapAnyErrorInLoadingSubsystemError(_ err: AnyError) -> APIAccessError {
+private func wrapAnyErrorInLoadingSubsystemError(_ err: AnyError) -> APIAccessError {
     return APIAccessError.loadingSubsystemError(underlyingError: err)
 }
 
-fileprivate func catchHTTPErrors(data: Data, response: URLResponse) -> Result<(Data, URLResponse), APIAccessError> {
+private func catchHTTPErrors(data: Data, response: URLResponse) -> Result<(Data, URLResponse), APIAccessError> {
     guard let httpResponse = response as? HTTPURLResponse else {
         return .failure(APIAccessError.nonHTTPResponseReceived(response: response))
     }

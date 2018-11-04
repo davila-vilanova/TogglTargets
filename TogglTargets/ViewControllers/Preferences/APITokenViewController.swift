@@ -23,7 +23,6 @@ class APITokenViewController: NSViewController, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Outlet and Actions
 
     @IBOutlet weak var apiTokenField: NSTextField!
@@ -35,7 +34,6 @@ class APITokenViewController: NSViewController, BindingTargetProvider {
     @IBAction func enterPressed(_ sender: Any) {
         attemptLogin <~ SignalProducer(value: ())
     }
-
 
     // MARK: - Wiring
 

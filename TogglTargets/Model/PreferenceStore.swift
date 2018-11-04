@@ -52,7 +52,6 @@ class PreferenceStore<PreferenceType: StorableInUserDefaults> {
         outputBacker <~ inputValues
     }
 
-
     // MARK: - Private
 
     private let userDefaults: Property<UserDefaults>

@@ -41,10 +41,9 @@ class PreferencesViewControllerWrapper: NSViewController, BindingTargetProvider,
         closePreferences(sender)
     }
 
-
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
         let closeButtonPressedAction = Action<Void, Void, NoError> { SignalProducer(value: ()) }
         let closePreferencesButtonProducer = viewDidLoadProducer
             .on(value: { [unowned self] in
@@ -53,6 +52,6 @@ class PreferencesViewControllerWrapper: NSViewController, BindingTargetProvider,
             .map { [unowned self] in self.closePreferencesButton as NSView }
         let closeLoginView = closePreferencesButtonProducer.concat(SignalProducer.never)
             .take(until: closeButtonPressedAction.values)
-        return [.closeLogin : closeLoginView]
+        return [.closeLogin: closeLoginView]
     }
 }

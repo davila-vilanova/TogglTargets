@@ -10,11 +10,11 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-fileprivate let defaults = UserDefaults.standard
+private let defaults = UserDefaults.standard
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInterfaceValidations {
-    
+
     private lazy var mainStoryboard = NSStoryboard(name: "Main", bundle: nil)
     private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
     private lazy var mainViewController: ProjectsMasterDetailController = mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
@@ -206,7 +206,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         lifetime += periodPreferenceStore.input <~ updatedPeriodPreference.signal
 
         if presentAsSheet {
-            mainWindow.beginSheet(preferencesWindow) { [unowned self] response in
+            mainWindow.beginSheet(preferencesWindow) { [unowned self] _ in
                 self.presentedPreferencesWindow = nil
             }
         } else {
@@ -229,7 +229,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         aboutWindow.delegate = self
         aboutWindow.makeKeyAndOrderFront(sender)
     }
-    
+
     func windowWillClose(_ notification: Notification) {
         if let closing = notification.object as? NSWindow,
             let prefsWindow = presentedPreferencesWindow,
@@ -289,6 +289,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
     }
 }
 
-fileprivate func resetOnboardingState() {
+private func resetOnboardingState() {
     defaults.removeObject(forKey: "OnboardingNotPending")
 }

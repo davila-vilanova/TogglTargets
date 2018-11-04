@@ -73,7 +73,6 @@ class SyncingActivityViewController: SingleActivityViewController {
 
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
         progressIndicator.startAnimation(nil)
@@ -137,13 +136,13 @@ class ActivityErrorViewController: SingleActivityViewController, NSPopoverDelega
     }
 }
 
-fileprivate func isNoCredentialsError(_ status: ActivityStatus) -> Bool {
+private func isNoCredentialsError(_ status: ActivityStatus) -> Bool {
     switch status.error {
     case .some(.noCredentials): return true
     default: return false
     }
 }
 
-fileprivate func isOtherError(_ status: ActivityStatus) -> Bool {
+private func isOtherError(_ status: ActivityStatus) -> Bool {
     return !isNoCredentialsError(status)
 }

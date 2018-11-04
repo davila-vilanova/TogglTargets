@@ -10,8 +10,8 @@ import Cocoa
 import ReactiveSwift
 import Result
 
-fileprivate let ProjectDetailsVCContainment = "ProjectDetailsVCContainment"
-fileprivate let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
+private let ProjectDetailsVCContainment = "ProjectDetailsVCContainment"
+private let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
 
 class SelectionDetailViewController: NSViewController, BindingTargetProvider {
 
@@ -31,7 +31,6 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Local use of project
 
     private let readProject = MutableProperty<((ProjectID) -> SignalProducer<Project?, NoError>)?>(nil)
@@ -47,7 +46,6 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
             }
         }
         .flatten(.latest)
-
 
     // MARK: - Contained view controllers
 

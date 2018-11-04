@@ -16,7 +16,7 @@ class OnboardingStepViewController: NSViewController {
     @IBOutlet weak var stepDescriptionField: NSTextField!
     @IBOutlet weak var moveOnToNextStepButton: NSButton!
     @IBOutlet weak var stopOnboardingButton: NSButton!
-    
+
     var representedStep: BindingTarget<OnboardingStep> {
         return currentStep.deoptionalizedBindingTarget
     }
@@ -32,7 +32,7 @@ class OnboardingStepViewController: NSViewController {
     var configureForLastStep: BindingTarget<Void> {
         return lastStepTrigger.deoptionalizedBindingTarget
     }
-    
+
     private let currentStep = MutableProperty<OnboardingStep?>(nil)
     private let moveOnPressed = Action<Void, Void, NoError> { SignalProducer(value: ()) }
     private let stopPressed = Action<Void, Void, NoError> { SignalProducer(value: ()) }

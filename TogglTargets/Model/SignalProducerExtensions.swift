@@ -12,7 +12,7 @@ import Result
 
 extension SignalProducer {
     func mapToNoError() -> SignalProducer<Value, NoError> {
-        return flatMapError { error in
+        return flatMapError { _ in
             // log message
 
             return SignalProducer<Value, NoError>.empty
@@ -20,11 +20,11 @@ extension SignalProducer {
     }
 }
 
-fileprivate let DefaultPlaceholderForNil = "--"
+private let DefaultPlaceholderForNil = "--"
 
 extension SignalProducer where Value == Int? {
     func mapToString(placeholderForNil: String = DefaultPlaceholderForNil) -> SignalProducer<String, Error> {
-        return map { (valueOrNil : Int?) -> String in
+        return map { (valueOrNil: Int?) -> String in
             if let value = valueOrNil {
                 return "\(value)"
             } else {

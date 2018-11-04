@@ -33,7 +33,7 @@ class WelcomeViewController: NSViewController {
         super.viewWillAppear()
         view.window!.initialFirstResponder = continueButton
     }
-    
+
     @IBAction func openTogglDotCom(_ sender: Any) {
         NSWorkspace.shared.open(URL(string: "https://toggl.com")!)
     }

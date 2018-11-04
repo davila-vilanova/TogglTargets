@@ -8,23 +8,23 @@
 
 import Foundation
 
-fileprivate let APITokenPassword = "api_token"
-fileprivate let AuthHeaderKey = "Authorization"
-fileprivate let BasicAuthHeaderPrefix = "Basic " // <-- end space built into the prefix
-fileprivate let UsernamePasswordSeparator: Character = ":"
+private let APITokenPassword = "api_token"
+private let AuthHeaderKey = "Authorization"
+private let BasicAuthHeaderPrefix = "Basic " // <-- end space built into the prefix
+private let UsernamePasswordSeparator: Character = ":"
 
 enum CredentialType: String {
     case email
     case apiToken
 }
 
-fileprivate func computeAuthHeaderValue(username: String, password: String) -> String {
+private func computeAuthHeaderValue(username: String, password: String) -> String {
     let data = "\(username)\(UsernamePasswordSeparator)\(password)".data(using: .utf8)!
     let credential = data.base64EncodedString(options: [])
     return "\(BasicAuthHeaderPrefix)\(credential)"
 }
 
-fileprivate func extractLoginDataFromAuthHeaderValue(_ authHeaderValue: String) -> (username: String, password: String)? {
+private func extractLoginDataFromAuthHeaderValue(_ authHeaderValue: String) -> (username: String, password: String)? {
     let prefixEndIndex = BasicAuthHeaderPrefix.endIndex
     let headerEndIndex = authHeaderValue.endIndex
 
@@ -44,7 +44,6 @@ fileprivate func extractLoginDataFromAuthHeaderValue(_ authHeaderValue: String) 
         return nil
     }
 }
-
 
 protocol TogglAPICredential {
     var type: CredentialType { get }
@@ -93,7 +92,7 @@ struct TogglAPITokenCredential: TogglAPICredential {
     var authHeaderKey: String = AuthHeaderKey
     private(set) var authHeaderValue: String
 
-    static func headersIncludeTokenAuthenticationEntry(_ headers: [AnyHashable : Any]) -> Bool {
+    static func headersIncludeTokenAuthenticationEntry(_ headers: [AnyHashable: Any]) -> Bool {
         guard let headerValue = headers[AuthHeaderKey] as? String else {
             return false
         }

@@ -38,15 +38,15 @@ extension PeriodPreference: StorableInUserDefaults {
         case typeWeekly = "WeeklyPeriodPreference"
         case startWeekday = "StartWeekDay"
     }
-    
+
     func write(to defaults: UserDefaults) {
         switch self {
         case .monthly:
-            defaults.set(true,  forKey: UserDefaultsKey.typeMonthly.rawValue)
+            defaults.set(true, forKey: UserDefaultsKey.typeMonthly.rawValue)
             defaults.removeObject(forKey: UserDefaultsKey.typeWeekly.rawValue)
             defaults.removeObject(forKey: UserDefaultsKey.startWeekday.rawValue)
         case .weekly(let startDay):
-            defaults.set(true,  forKey: UserDefaultsKey.typeWeekly.rawValue)
+            defaults.set(true, forKey: UserDefaultsKey.typeWeekly.rawValue)
             defaults.removeObject(forKey: UserDefaultsKey.typeMonthly.rawValue)
             defaults.set(startDay.rawValue, forKey: UserDefaultsKey.startWeekday.rawValue)
         }
@@ -69,7 +69,6 @@ extension PeriodPreference: StorableInUserDefaults {
         }
     }
 }
-
 
 extension PeriodPreference {
     var isMonthly: Bool {

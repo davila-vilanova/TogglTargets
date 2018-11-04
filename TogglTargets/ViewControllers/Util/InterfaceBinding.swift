@@ -10,7 +10,7 @@ import Foundation
 import Result
 import ReactiveSwift
 
-extension SignalProducerConvertible where Value: OptionalProtocol, Error == NoError  {
+extension SignalProducerConvertible where Value: OptionalProtocol, Error == NoError {
     func latestOutput<T>(_ selector: @escaping (Value.Wrapped) -> SignalProducer<T, NoError>) -> SignalProducer<T, NoError> {
         return producer.skipNil().map(selector).flatten(.latest)
     }

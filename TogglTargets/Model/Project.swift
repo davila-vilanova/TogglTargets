@@ -24,7 +24,7 @@ struct Project: Decodable {
     }
 }
 
-typealias IndexedProjects = [ProjectID : Project]
+typealias IndexedProjects = [ProjectID: Project]
 
 extension Project: Equatable {
     static func ==(lhs: Project, rhs: Project) -> Bool {
@@ -41,4 +41,3 @@ extension Project: Hashable {
             ^ (workspaceId?.hashValue ?? 0) &* 16779163
     }
 }
-

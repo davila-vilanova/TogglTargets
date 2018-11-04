@@ -41,7 +41,7 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
         let statuses =
             SignalProducer.merge(heldStatuses.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
                                  heldStatuses.producer.sample(on: wantsExtendedDisplay.producer.filter { $0 }.map { _ in () }),
-                                 wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() } )
+                                 wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() })
         let wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
         reactive.lifetime += wantsDisplay.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.requestDisplay })
 

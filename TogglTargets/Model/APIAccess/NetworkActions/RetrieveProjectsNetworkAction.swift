@@ -62,7 +62,7 @@ func makeRetrieveProjectsNetworkAction(_ urlSession: Property<URLSession?>, _ ne
     }
 }
 
-fileprivate struct ProjectsService {
+private struct ProjectsService {
 
     static func endpoint(for workspaceId: WorkspaceID) -> String {
         return "/api/v8/workspaces/\(workspaceId)/projects"

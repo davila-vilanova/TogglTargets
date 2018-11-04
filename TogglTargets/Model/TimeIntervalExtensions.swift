@@ -8,9 +8,9 @@
 
 import Foundation
 
-fileprivate let secondsInHour: Double = 3600
-fileprivate let secondsInMinute: Double = 60
-fileprivate let millisecondsInSecond: Double = 1000
+private let secondsInHour: Double = 3600
+private let secondsInMinute: Double = 60
+private let millisecondsInSecond: Double = 1000
 
 extension TimeInterval {
     var toHours: Double {
@@ -28,7 +28,7 @@ extension TimeInterval {
     static func from(minutes: Double) -> TimeInterval {
         return TimeInterval(minutes * secondsInMinute)
     }
-    
+
     static func from(milliseconds: Double) -> TimeInterval {
         return milliseconds / millisecondsInSecond
     }

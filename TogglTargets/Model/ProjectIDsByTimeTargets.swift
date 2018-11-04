@@ -105,7 +105,7 @@ struct ProjectIDsByTimeTargets {
             static func forTimeTargetChange(involving newTimeTarget: TimeTarget?,
                                             for projectId: ProjectID,
                                             within timeTargetPreChange: ProjectIdIndexedTimeTargets,
-                                            affecting idsByTimeTargets: ProjectIDsByTimeTargets) -> Update.TimeTargetUpdate?  {
+                                            affecting idsByTimeTargets: ProjectIDsByTimeTargets) -> Update.TimeTargetUpdate? {
                 let currentSortedIDs = idsByTimeTargets.sortedProjectIDs
                 let newlySortedIDs = currentSortedIDs
                     .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
@@ -301,7 +301,7 @@ extension ProjectIDsByTimeTargets {
 ///   - timeTargets: The `ProjectIndexedTimeTargets` that the returned function will use as context.
 ///
 /// - returns: A function that determines the relative order of two project IDs.
-fileprivate func makeAreProjectIDsInIncreasingOrderFunction(for timeTargets: ProjectIdIndexedTimeTargets)
+private func makeAreProjectIDsInIncreasingOrderFunction(for timeTargets: ProjectIdIndexedTimeTargets)
     -> (ProjectID, ProjectID) -> Bool {
         return { (idL, idR) -> Bool in
             let left = timeTargets[idL]

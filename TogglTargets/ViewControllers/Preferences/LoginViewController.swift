@@ -11,8 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-
-fileprivate enum CredentialValidationResult {
+private enum CredentialValidationResult {
     case valid(TogglAPITokenCredential, Profile)
     case invalid
     /// Error other than authentication error
@@ -27,7 +26,7 @@ fileprivate enum CredentialValidationResult {
         default: return false
         }
     }
-    
+
     var isValid: Bool {
         switch self {
         case .valid: return true
@@ -47,7 +46,6 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Contained view controllers
 
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
@@ -59,13 +57,11 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
         }
     }
 
-
     // MARK: - Outlets
 
     @IBOutlet weak var loginButton: NSButton!
     @IBOutlet weak var progressIndicator: NSProgressIndicator!
     @IBOutlet weak var errorField: NSTextField!
-
 
     // MARK: - Credential validation
 
@@ -125,7 +121,6 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
             NSLocalizedString("login.loginButton.retry", comment: "login button's title inviting to retry after login fails")
         }
 
-
         // Take validated / resolved token credential from action's output
         // and connect it to credential output
 
@@ -138,7 +133,6 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
             }
 
         resolvedCredential.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.resolvedCredential })
-
 
         // Show activity while validating credential
 
@@ -153,12 +147,11 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
 
         displaySpinner <~ validateCredential.isExecuting
 
-
         // Provide feedback after credential validated
 
         errorField.reactive.stringValue <~ validateCredential.values.map { (result) -> String in
             switch result {
-            case .valid(_, _):
+            case .valid:
                 return ""
             case .invalid:
                 return NSLocalizedString("login.error.invalid-credential", comment: "login error: invalid credential")
@@ -176,12 +169,12 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
 
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
         let credentialSuccessfullyValidated = validateCredential.values.filter { $0.isValid }.map { _ in () }
         let loginView = viewDidLoadProducer
             .map { [unowned self] in self.view }
             .concat(SignalProducer.never)
             .take(until: credentialSuccessfullyValidated)
-        return [.login : loginView]
+        return [.login: loginView]
     }
 }

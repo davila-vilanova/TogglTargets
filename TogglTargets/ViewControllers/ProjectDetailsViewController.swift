@@ -36,7 +36,6 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     private let readTimeTarget = MutableProperty<ReadTimeTarget?>(nil)
     private let readReport = MutableProperty<ReadReport?>(nil)
 
-
     // MARK: - Derived input
 
     private lazy var projectId: SignalProducer<Int64, NoError> = project.producer.skipNil().map { $0.id }
@@ -47,7 +46,6 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
         .combineLatest(with: readTimeTarget.producer.skipNil())
         .map { projectId, readTimeTarget in readTimeTarget(projectId) }
         .flatten(.latest)
-
 
     /// Report corresponding to the selected project.
     private lazy var reportForCurrentProject: SignalProducer<TwoPartTimeReport?, NoError> = projectId
@@ -108,9 +106,8 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var projectName: NSTextField!
     @IBOutlet weak var timeReportView: NSView!
 
+    // MARK: -
 
-    //  MARK: -
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 

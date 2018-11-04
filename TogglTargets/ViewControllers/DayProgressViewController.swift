@@ -22,7 +22,6 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Private
 
     private lazy var timeFormatter: DateComponentsFormatter = {
@@ -33,14 +32,12 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
         return f
     }()
 
-
     // MARK: - Outlets
 
     @IBOutlet weak var dayProgressBox: NSBox!
     @IBOutlet weak var todayProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var timeWorkedTodayLabel: NSTextField!
     @IBOutlet weak var timeRemainingToWorkTodayLabel: NSTextField!
-
 
     // MARK: - Wiring
 
@@ -78,14 +75,13 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
         timeRemainingToWorkTodayLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ hide
         todayProgressIndicator.reactive.makeBindingTarget { $0.isIndeterminate = $1 } <~ hide
     }
-    
-    
+
     // MARK: - Onboarding
-    
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
+
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
         let dayProgressView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)
-        return [.seeDayProgress : dayProgressView]
+        return [.seeDayProgress: dayProgressView]
     }
 }

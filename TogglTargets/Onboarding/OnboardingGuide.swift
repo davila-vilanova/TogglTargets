@@ -10,15 +10,15 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-fileprivate let OnboardingNotPendingKey = "OnboardingNotPending"
-fileprivate let ShowStepDelay: TimeInterval = 0.25
+private let OnboardingNotPendingKey = "OnboardingNotPending"
+private let ShowStepDelay: TimeInterval = 0.25
 
 struct OnboardingStep {
     let identifier: OnboardingStepIdentifier
     let text: String
     let allowContinue: Bool
     let preferredEdge: NSRectEdge
-    
+
     init(identifier: OnboardingStepIdentifier, text: String, allowContinue: Bool = false, preferredEdge: NSRectEdge = .maxX) {
         self.identifier = identifier
         self.text = text
@@ -38,15 +38,15 @@ class OnboardingGuide {
     }
 
     private let steps: [OnboardingStep]
-    
-    private lazy var targetViewEventHolders: [OnboardingStepIdentifier : MutableProperty<Signal<NSView, NoError>.Event?>] = {
-        var holders = [OnboardingStepIdentifier : MutableProperty<Signal<NSView, NoError>.Event?>](minimumCapacity: steps.count)
+
+    private lazy var targetViewEventHolders: [OnboardingStepIdentifier: MutableProperty<Signal<NSView, NoError>.Event?>] = {
+        var holders = [OnboardingStepIdentifier: MutableProperty<Signal<NSView, NoError>.Event?>](minimumCapacity: steps.count)
         for step in steps {
             holders[step.identifier] = MutableProperty<Signal<NSView, NoError>.Event?>(nil)
         }
         return holders
     }()
-    
+
     private lazy var sortedTargetViewEventHolders: [MutableProperty<Signal<NSView, NoError>.Event?>] = {
        var sorted = [MutableProperty<Signal<NSView, NoError>.Event?>]()
         for step in steps {
@@ -58,7 +58,7 @@ class OnboardingGuide {
         }
         return sorted
     }()
-    
+
     func register(_ registree: AnyObject) {
         func connect(_ viewProducer: SignalProducer<NSView, NoError>, toViewHolderFor stepIdentifier: OnboardingStepIdentifier) {
             func take(from viewProducer: SignalProducer<NSView, NoError>, stepIdentifier: OnboardingStepIdentifier)
@@ -77,20 +77,20 @@ class OnboardingGuide {
             }
             holder <~ take(from: viewProducer, stepIdentifier: stepIdentifier)
         }
-        
+
         if let r = registree as? OnboardingTargetViewsProvider {
             for (stepIdentifier, targetView) in r.onboardingTargetViews {
                 connect(targetView, toViewHolderFor: stepIdentifier)
             }
         }
     }
-    
+
     private let delayScheduler = QueueScheduler()
-    
+
     init(steps: [OnboardingStep], defaults: UserDefaults) {
         assert(!steps.isEmpty)
         self.steps = steps
-        
+
         (lifetime, token) = Lifetime.make()
 
         func extractViewProducer(_ prop: MutableProperty<Signal<NSView, NoError>.Event?>) -> SignalProducer<NSView, NoError> {
@@ -148,7 +148,7 @@ class OnboardingGuide {
         markOnboardingAsNotPending <~ onboardingEnded
         _onboardingEnded <~ onboardingEnded
     }
-    
+
     private lazy var stepViewController = OnboardingStepViewController(nibName: "OnboardingStepViewController", bundle: nil)
 
     private lazy var stepPopover: NSPopover = {
@@ -167,10 +167,10 @@ class OnboardingGuide {
 }
 
 protocol OnboardingTargetViewsProvider {
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] { get }
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] { get }
 }
 
-fileprivate class PopoverDelegate: NSObject, NSPopoverDelegate {
+private class PopoverDelegate: NSObject, NSPopoverDelegate {
     private let _popoverDidShowTrigger = MutableProperty<Void?>(nil)
 
     private let _popoverDidCloseTrigger = MutableProperty<Void?>(nil)

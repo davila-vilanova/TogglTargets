@@ -10,7 +10,6 @@ import Foundation
 import Result
 import ReactiveSwift
 
-
 /// Combines data from the Toggl API, the user's time targets and the system's time and date.
 /// Determines the dates of the reports to retrieve based on the user's period
 /// preference and the current date.
@@ -33,7 +32,6 @@ internal class ModelCoordinator: NSObject {
     /// requests for reports.
     private let reportPeriodsProducer: ReportPeriodsProducer
 
-
     // MARK: - Dependency inputs
 
     /// The API credential used to access the Toggl API. Some resources, such as
@@ -45,12 +43,10 @@ internal class ModelCoordinator: NSObject {
     /// requested time reports.
     internal var periodPreference: BindingTarget<PeriodPreference> { return reportPeriodsProducer.periodPreference }
 
-
     // MARK: - Profile
 
     /// The value of the last retrieved user profile.
     var profile: Property<Profile?> { return togglDataRetriever.profile }
-
 
     // MARK: - Projects
 
@@ -65,7 +61,6 @@ internal class ModelCoordinator: NSObject {
     internal lazy var readProject: ReadProject = { projectID in
         self.togglDataRetriever.projects.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
     }
-
 
     // MARK: - Reports
 
@@ -89,7 +84,6 @@ internal class ModelCoordinator: NSObject {
         return SignalProducer.merge(noReportData, reportData)
     }
 
-
     // MARK: - RunningEntry
 
     /// The value of the last retrieved running entry. Periodically updated.
@@ -102,11 +96,9 @@ internal class ModelCoordinator: NSObject {
     /// Used to schedule the next automatic refresh of the currently running entry.
     private let runningEntryUpdateTimer: RunningEntryUpdateTimer
 
-
     // MARK: - Updating time
 
     private let currentDateUpdateTimer: CurrentDateUpdateTimer
-
 
     // MARK: - Time targets
 
@@ -126,17 +118,14 @@ internal class ModelCoordinator: NSObject {
     /// Target which for each received project ID deletes the time target associated with that project ID.
     internal var deleteTimeTarget: BindingTarget<ProjectID> { return timeTargetsStore.deleteTimeTarget }
 
-
     // MARK: - Forcing a refresh of all data
 
     /// Triggers an attempt to refresh the user profile, projects and reports.
     internal var refreshAllData: RefreshAction { return togglDataRetriever.refreshAllData }
 
-
     // MARK: - Activity and Errors
 
     var retrievalStatus: SignalProducer<ActivityStatus, NoError> { return togglDataRetriever.status }
-
 
     // MARK: -
 
@@ -186,15 +175,14 @@ internal class ModelCoordinator: NSObject {
     }
 }
 
-
 // MARK: -
 
-fileprivate let oneMinute = TimeInterval.from(minutes: 1)
-fileprivate let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
+private let oneMinute = TimeInterval.from(minutes: 1)
+private let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
 
 /// Emits empty values that act as triggers to update the currently running entry
 /// based on whether a running entry is currently running and its start date.
-fileprivate class RunningEntryUpdateTimer {
+private class RunningEntryUpdateTimer {
     /// Emits empty values that act as triggers to update the currently running entry
     var trigger: Signal<(), NoError> { return triggerPipe.output }
 
@@ -224,7 +212,6 @@ fileprivate class RunningEntryUpdateTimer {
                 return findClosestDate(after: now, matching: secondsOffset, using: calendar)
         }
 
-
         lifetime += dates.startWithValues { [unowned self] in
             self.scheduledTickDisposable?.dispose()
             self.scheduledTickDisposable =
@@ -233,7 +220,7 @@ fileprivate class RunningEntryUpdateTimer {
     }
 }
 
-fileprivate class CurrentDateUpdateTimer {
+private class CurrentDateUpdateTimer {
     /// Emits empty values that act as triggers to update the current date
     var trigger: Signal<(), NoError> { return triggerPipe.output }
 
@@ -264,7 +251,7 @@ fileprivate class CurrentDateUpdateTimer {
     }
 }
 
-fileprivate func findClosestDate(after date: Date, matching secondsComponent: Int, using calendar: Calendar) -> Date {
+private func findClosestDate(after date: Date, matching secondsComponent: Int, using calendar: Calendar) -> Date {
     let seconds = calendar.component(.second, from: date)
     let offset = (seconds < secondsComponent ? 0 : 60) + secondsComponent - seconds
     return Date(timeIntervalSinceReferenceDate: date.timeIntervalSinceReferenceDate + TimeInterval(offset))

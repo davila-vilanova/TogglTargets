@@ -10,15 +10,14 @@ import Cocoa
 import ReactiveSwift
 import Result
 
-fileprivate let ProjectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
-fileprivate let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
+private let ProjectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
+private let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
 
-fileprivate let HeaderHeight: CGFloat = 30
-fileprivate let ProjectItemHeight: CGFloat = 62
+private let HeaderHeight: CGFloat = 30
+private let ProjectItemHeight: CGFloat = 62
 
-fileprivate let SelectedProjectIdRestorationKey = "SelectedProjectId"
-fileprivate let NoSelectedProjectIdRestorationValue: Int64 = 0
-
+private let SelectedProjectIdRestorationKey = "SelectedProjectId"
+private let NoSelectedProjectIdRestorationValue: Int64 = 0
 
 /// Manages a collection view that displays `Project` items organized by whether they have an associated time target.
 /// Produces a stream of selected `Project` values via the `selectedProject` property.
@@ -58,7 +57,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Backing properties
 
     /// Holds the input `RunningEntry` values.
@@ -87,7 +85,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     private var currentProjectIDs = MutableProperty(ProjectIDsByTimeTargets.empty)
 
     private var lastProjectIDsByTimeTargetsUpdate = MutableProperty<ProjectIDsByTimeTargets.Update?>(nil)
-
 
     // MARK: - Outlets
 
@@ -138,7 +135,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         reactive.lifetime += selectIndexPath <~ indexPathFromPersistedProjectId
     }
 
-
     // MARK: - Setup
 
     override func viewDidLoad() {
@@ -175,7 +171,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let attachedLength: CGFloat = 1000
 
         func attachBackgroundView(_ createAdjacentConstraint: (NSView, NSClipView) -> NSLayoutConstraint ) -> NSView {
-            let backgroundView = NSView(frame: NSZeroRect)
+            let backgroundView = NSView(frame: NSRect.zero)
             backgroundView.translatesAutoresizingMaskIntoConstraints = false
             clipView.addSubview(backgroundView)
 
@@ -314,7 +310,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                            scrollPosition: .nearestHorizontalEdge)
     }
 
-
     // MARK: - NSCollectionViewDataSource
 
     func numberOfSections(in collectionView: NSCollectionView) -> Int {
@@ -365,7 +360,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         return view
     }
 
-
     // MARK: - NSCollectionViewDelegate
 
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
@@ -380,10 +374,9 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         selectedProjectID.value = nil
     }
 
-
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier : SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
         let projectWithoutTimeTargetSelected = SignalProducer.combineLatest(
             currentProjectIDs.producer,
             selectedProjectID.producer.skip(first: 1).skipNil())
@@ -394,6 +387,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             .map { [unowned self] _ in self.projectsCollectionView as NSView }
             .concat(SignalProducer.never)
             .take(until: projectWithoutTimeTargetSelected)
-        return [.selectProject : projectsListView]
+        return [.selectProject: projectsListView]
     }
 }

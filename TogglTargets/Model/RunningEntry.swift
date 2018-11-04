@@ -31,5 +31,4 @@ extension RunningEntry: Equatable {
         return lhs.id == rhs.id && lhs.projectId == rhs.projectId && lhs.start == rhs.start
     }
 
-
 }

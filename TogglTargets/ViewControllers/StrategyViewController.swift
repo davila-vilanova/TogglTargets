@@ -25,7 +25,6 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Formatters
 
     private lazy var timeFormatter: DateComponentsFormatter = {
@@ -42,13 +41,11 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
         return f
     }()
 
-
     // MARK: - Outlets
 
     @IBOutlet weak var totalHoursStrategyField: NSTextField!
     @IBOutlet weak var baselineField: NSTextField!
     @IBOutlet weak var baselineDifferentialField: NSTextField!
-
 
     // MARK: - Wiring
 
@@ -100,7 +97,7 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
                                          dayBaseline.mapToString(timeFormatter: timeFormatter))
                 .filter { (feasibility, _, _, _, _) in
                     return feasibility.isFeasible
-                }.map { (_, differential, formattedDifferential, baseline, formattedBaseline) -> String in
+                }.map { (_, differential, formattedDifferential, _, formattedBaseline) -> String in
                     if abs(differential) < 0.01 {
                         return String.localizedStringWithFormat(
                             NSLocalizedString("target-strategy.adusted-baseline-matches",
@@ -146,7 +143,6 @@ class TargetReachedViewController: NSViewController, BindingTargetProvider {
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
-
 
     private lazy var timeFormatter: DateComponentsFormatter = {
         let f = DateComponentsFormatter()

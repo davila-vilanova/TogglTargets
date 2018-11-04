@@ -71,4 +71,3 @@ class CurrentDateGenerator: CurrentDateGeneratorProtocol {
         currentDatePipe.input.send(value: scheduler.currentDate)
     }
 }
-

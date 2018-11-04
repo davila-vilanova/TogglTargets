@@ -10,12 +10,12 @@ import Foundation
 import Result
 import ReactiveSwift
 
-fileprivate typealias StateTransformation = [ActivityStatus]
-fileprivate typealias StateTransformer = ([ActivityStatus]) -> StateTransformation?
-fileprivate typealias CollapsePreventer = ([ActivityStatus], [ActivityStatus]) -> Bool
+private typealias StateTransformation = [ActivityStatus]
+private typealias StateTransformer = ([ActivityStatus]) -> StateTransformation?
+private typealias CollapsePreventer = ([ActivityStatus], [ActivityStatus]) -> Bool
 
-fileprivate let IdleProcessingDelay = TimeInterval(2.0)
-fileprivate let ThrottleDelay = TimeInterval(0.5)
+private let IdleProcessingDelay = TimeInterval(2.0)
+private let ThrottleDelay = TimeInterval(0.5)
 
 class ActivitiesState {
     // MARK: - State
@@ -65,7 +65,7 @@ class ActivitiesState {
     }
 }
 
-fileprivate func apply(stateTransformers: [StateTransformer], initialState: [ActivityStatus]) -> StateTransformation? {
+private func apply(stateTransformers: [StateTransformer], initialState: [ActivityStatus]) -> StateTransformation? {
         var state = initialState
         var didTransform = false
         for transformer in stateTransformers {
@@ -78,7 +78,7 @@ fileprivate func apply(stateTransformers: [StateTransformer], initialState: [Act
         return didTransform ? state : nil
 }
 
-fileprivate func collect(_ status: ActivityStatus, _ state: [ActivityStatus]) -> StateTransformation {
+private func collect(_ status: ActivityStatus, _ state: [ActivityStatus]) -> StateTransformation {
     var updatedState = state
     if let index = state.index(where: { $0.activity == status.activity }) {
         updatedState[index] = status
@@ -89,7 +89,7 @@ fileprivate func collect(_ status: ActivityStatus, _ state: [ActivityStatus]) ->
     return updatedState
 }
 
-fileprivate func cleanUpSuccessful(state: [ActivityStatus]) -> StateTransformation? {
+private func cleanUpSuccessful(state: [ActivityStatus]) -> StateTransformation? {
     func anythingToCleanUp() -> Bool {
         return state.contains(where: { $0.isSuccessful })
     }

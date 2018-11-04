@@ -23,7 +23,6 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-
     // MARK: - Outlets and action
 
     @IBOutlet weak var loggedInAsLabel: NSTextField!
@@ -35,13 +34,11 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var timezoneField: NSTextField!
     @IBOutlet weak var logOutButton: NSButton!
 
-
     // MARK: -
 
     private lazy var retrieveProfilePictureImageData = Action<URL, (Data, URLResponse), AnyError> { imageURL in
         URLSession.shared.reactive.data(with: URLRequest(url: imageURL))
     }
-
 
     // MARK: - Wiring
 
@@ -74,7 +71,6 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
                                          showCredentialsErrorAlert.values.filter { $0.isReenter }
                                             .map { _ in () })
 
-
         requestLogOut.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.logOut })
     }
 
@@ -95,7 +91,7 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
             return SignalProducer.empty
         }
 
-        return SignalProducer { (observer: Signal<CredentialsErrorResolution, NoError>.Observer, lifetime: Lifetime) in
+        return SignalProducer { (observer: Signal<CredentialsErrorResolution, NoError>.Observer, _: Lifetime) in
             let alert = NSAlert()
             alert.alertStyle = .warning
             alert.messageText = NSLocalizedString("logged-in.invalid-credentials.title", comment: "credential seems no longer valid: title")
