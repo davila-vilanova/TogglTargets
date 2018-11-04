@@ -35,6 +35,7 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
 
     private var projectsListViewController: ProjectsListViewController?
     lazy private var activityViewController: ActivityViewController = {
+        // swiftlint:disable:next force_cast
         let activity = self.storyboard!.instantiateController(withIdentifier: "ActivityViewController") as! ActivityViewController
         addChild(activity)
         stackView.addView(activity.view, in: .bottom)

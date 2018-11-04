@@ -58,6 +58,7 @@ class VerticalListLayout: NSCollectionViewFlowLayout {
         guard let original = layoutAttributes else {
             return nil
         }
+        // swiftlint:disable:next force_cast
         let copied = original.copy() as! NSCollectionViewLayoutAttributes
         copied.frame.origin.x = sectionInset.left
 

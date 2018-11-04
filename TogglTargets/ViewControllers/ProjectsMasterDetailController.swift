@@ -97,10 +97,12 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     }
 
     private var projectsListActivityViewController: ProjectsListActivityViewController {
+        // swiftlint:disable:next force_cast
         return splitViewItem(.projectsList).viewController as! ProjectsListActivityViewController
     }
 
     private var selectionDetailViewController: SelectionDetailViewController {
+        // swiftlint:disable:next force_cast
         return splitViewItem(.selectionDetail).viewController as! SelectionDetailViewController
     }
 

@@ -123,7 +123,7 @@ private struct ReportsService: Decodable {
     }
 }
 
-fileprivate extension ReportsService {
+private extension ReportsService {
     static func endpoint(with userAgent: String) -> (WorkspaceID, DayComponents, DayComponents) -> String {
         return { (workspaceId, since, until) in
             ReportsService.endpoint(workspaceId: workspaceId, since: since.iso8601String, until: until.iso8601String, userAgent: userAgent)

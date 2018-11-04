@@ -50,6 +50,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var projectDetailsViewController: ProjectDetailsViewController = {
+        // swiftlint:disable:next force_cast
         let details = self.storyboard!.instantiateController(withIdentifier: "ProjectDetailsViewController") as! ProjectDetailsViewController
 
         details <~ SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
@@ -72,6 +73,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var emptySelectionViewController: EmptySelectionViewController = {
+        // swiftlint:disable:next force_cast
         let empty = self.storyboard!.instantiateController(withIdentifier: "EmptySelectionViewController") as! EmptySelectionViewController
         addChild(empty)
         return empty

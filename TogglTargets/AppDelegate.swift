@@ -16,7 +16,9 @@ private let defaults = UserDefaults.standard
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInterfaceValidations {
 
     private lazy var mainStoryboard = NSStoryboard(name: "Main", bundle: nil)
+    // swiftlint:disable:next force_cast
     private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
+    // swiftlint:disable:next force_cast
     private lazy var mainViewController: ProjectsMasterDetailController = mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
     private lazy var mainWindow: NSWindow = {
         let window = mainWindowController.window!
@@ -125,8 +127,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
         if shouldStartOnboarding {
             let welcomeStoryboard = NSStoryboard(name: "Welcome", bundle: nil)
+            // swiftlint:disable:next force_cast
             let welcomeWindowController = welcomeStoryboard.instantiateInitialController() as! NSWindowController
             let welcomeWindow = welcomeWindowController.window!
+            // swiftlint:disable:next force_cast
             let welcomeController = welcomeWindow.contentViewController as! WelcomeViewController
 
             BindingTarget(on: UIScheduler(), lifetime: welcomeWindow.reactive.lifetime) {
@@ -170,8 +174,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         }
 
         let preferencesStoryboard = NSStoryboard(name: "Preferences", bundle: nil)
+        // swiftlint:disable:next force_cast
         let preferencesWindowController = preferencesStoryboard.instantiateInitialController() as! NSWindowController
         let preferencesWindow = preferencesWindowController.window!
+        // swiftlint:disable:next force_cast
         let preferencesController = (preferencesWindow.contentViewController as! PreferencesViewControllerWrapper)
         let lifetime = preferencesController.reactive.lifetime
 
@@ -224,6 +230,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
     @IBAction func orderFrontAboutPanel(_ sender: Any) {
         let aboutStoryboard = NSStoryboard(name: "About", bundle: nil)
+        // swiftlint:disable:next force_cast
         let aboutWindowController = aboutStoryboard.instantiateInitialController() as! NSWindowController
         let aboutWindow = aboutWindowController.window!
         aboutWindow.delegate = self

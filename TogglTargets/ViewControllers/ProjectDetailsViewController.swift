@@ -57,6 +57,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var timeReportViewController: TimeReportViewController = {
+        // swiftlint:disable:next force_cast
         let timeReport = self.storyboard!.instantiateController(withIdentifier: "TimeReportViewController") as! TimeReportViewController
         timeReport <~ SignalProducer(
             value: (projectId: projectId,
@@ -71,6 +72,7 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var noTimeTargetViewController: NoTimeTargetViewController = {
+        // swiftlint:disable:next force_cast
         let noTarget = self.storyboard!.instantiateController(withIdentifier: "NoTimeTargetViewController") as! NoTimeTargetViewController
         addChild(noTarget)
         return noTarget

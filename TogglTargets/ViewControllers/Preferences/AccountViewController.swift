@@ -28,6 +28,7 @@ class AccountViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var loginViewController: LoginViewController = {
+        // swiftlint:disable:next force_cast
         let loginController = self.storyboard!.instantiateController(withIdentifier: "LoginViewController") as! LoginViewController
         loginController <~ lastBinding.producer.skipNil().map { (credentialUpstream: $0.resolvedCredential,
                                                                  testURLSessionAction: $0.testURLSessionAction) }
@@ -36,6 +37,7 @@ class AccountViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var loggedInViewController: LoggedInViewController = {
+        // swiftlint:disable:next force_cast
         let loggedInController = self.storyboard!.instantiateController(withIdentifier: "LoggedInViewController") as! LoggedInViewController
         let validBindings = lastBinding.producer.skipNil()
         let logOutRequested = MutableProperty<Void>(())

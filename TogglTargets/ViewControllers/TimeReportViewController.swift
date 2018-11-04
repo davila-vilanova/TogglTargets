@@ -69,6 +69,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }
 
     private lazy var strategyViewController: StrategyViewController = {
+        // swiftlint:disable:next force_cast
         let strategy = self.storyboard!.instantiateController(withIdentifier: "StrategyViewController") as! StrategyViewController
         strategy <~
             SignalProducer(value: (targetTime: progress.targetTime,
@@ -81,6 +82,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }()
 
     private lazy var targetReachedViewController: TargetReachedViewController = {
+        // swiftlint:disable:next force_cast
         let targetReached = self.storyboard!.instantiateController(withIdentifier: "TargetReachedViewController") as! TargetReachedViewController
         targetReached <~ SignalProducer(value: progress.targetTime)
         addChild(targetReached)

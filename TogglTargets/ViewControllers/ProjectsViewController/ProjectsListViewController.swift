@@ -206,6 +206,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                                         forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader,
                                         withIdentifier: SectionHeaderIdentifier)
 
+        // swiftlint:disable:next force_cast
         let layout = projectsCollectionView.collectionViewLayout as! VerticalListLayout
         layout.headerReferenceSize = CGSize(width: projectsCollectionView.bounds.width, height: HeaderHeight)
         layout.sectionHeadersPinToVisibleBounds = true
@@ -327,6 +328,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func collectionView(_ collectionView: NSCollectionView,
                         itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let item = collectionView.makeItem(withIdentifier: ProjectItemIdentifier, for: indexPath)
+        // swiftlint:disable:next force_cast
         let projectItem = item as! ProjectCollectionViewItem
 
         let projectId: ProjectID = currentProjectIDs.value.projectId(for: indexPath)!

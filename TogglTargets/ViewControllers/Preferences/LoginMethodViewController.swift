@@ -23,6 +23,7 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var tokenViewController: APITokenViewController = {
+        // swiftlint:disable:next force_cast
         let tokenController = self.storyboard!.instantiateController(withIdentifier: "APITokenViewController") as! APITokenViewController
 
         tokenController <~ SignalProducer
@@ -36,6 +37,7 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var emailPasswordViewController: EmailPasswordViewController = {
+        // swiftlint:disable:next force_cast
         let emailPasswordController = self.storyboard!.instantiateController(withIdentifier: "EmailPasswordViewController") as! EmailPasswordViewController
 
         emailPasswordController <~ SignalProducer

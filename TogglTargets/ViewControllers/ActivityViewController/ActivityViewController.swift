@@ -27,6 +27,7 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var rootStackView: NSStackView!
 
     private lazy var condensedActivityViewController: CondensedActivityViewController = {
+        // swiftlint:disable:next force_cast
         let condensed = self.storyboard!.instantiateController(withIdentifier: "CondensedActivityViewController") as! CondensedActivityViewController
         condensed <~
             SignalProducer<CondensedActivityViewController.Interface, NoError>(
@@ -35,6 +36,7 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var detailedActivityViewController: DetailedActivityViewController = {
+        // swiftlint:disable:next force_cast
         let detailed = self.storyboard!.instantiateController(withIdentifier: "DetailedActivityViewController") as! DetailedActivityViewController
 
         let heldStatuses = Property(initial: [ActivityStatus](), then: activitiesState.output.producer)
