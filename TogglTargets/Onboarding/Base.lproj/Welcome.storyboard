@@ -32,7 +32,7 @@
         <scene sceneID="e0x-wk-4lA">
             <objects>
                 <viewController id="7Vr-Nc-dGW" customClass="WelcomeViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="NiY-k9-5tL">
+                    <view key="view" id="NiY-k9-5tL">
                         <rect key="frame" x="0.0" y="0.0" width="758" height="190"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
@@ -118,7 +118,7 @@
                 </viewController>
                 <customObject id="J7o-1x-wrF" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="669.5" y="-429"/>
+            <point key="canvasLocation" x="746" y="-414"/>
         </scene>
     </scenes>
     <resources>

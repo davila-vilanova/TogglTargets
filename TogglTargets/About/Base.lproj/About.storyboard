@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="Unq-0A-KdW">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Window Controller-->
+        <scene sceneID="MAy-Xo-ZOJ">
+            <objects>
+                <windowController id="Unq-0A-KdW" sceneMemberID="viewController">
+                    <window key="window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" id="vQz-Tx-QIS">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" fullSizeContentView="YES"/>
+                        <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="196" y="240" width="413" height="109"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+                        <connections>
+                            <outlet property="delegate" destination="Unq-0A-KdW" id="XoI-AB-GG8"/>
+                        </connections>
+                    </window>
+                    <connections>
+                        <segue destination="v8p-18-qMd" kind="relationship" relationship="window.shadowedContentViewController" id="HDt-Tu-4sD"/>
+                    </connections>
+                </windowController>
+                <customObject id="Hb3-Z8-B8O" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-121.5" y="1157.5"/>
+        </scene>
+        <!--About View Controller-->
+        <scene sceneID="mfH-yY-2Ka">
+            <objects>
+                <viewController id="v8p-18-qMd" customClass="AboutViewController" customModule="TogglTargets" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="qEe-u3-V6T">
+                        <rect key="frame" x="0.0" y="0.0" width="510" height="190"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BsG-WK-96w">
+                                <rect key="frame" x="188" y="110" width="258" height="60"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="TogglTargets" id="iiY-WK-vG2">
+                                    <font key="font" metaFont="systemUltraLight" size="50"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vGI-LB-g3W">
+                                <rect key="frame" x="188" y="85" width="49" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Version" id="Idk-hW-LV2">
+                                    <font key="font" metaFont="systemUltraLight" size="13"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="rnm-tB-e7x">
+                                <rect key="frame" x="188" y="21" width="304" height="56"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="XHK-Z9-Z52"/>
+                                </constraints>
+                                <textFieldCell key="cell" selectable="YES" id="jNg-gY-EJ5">
+                                    <font key="font" metaFont="systemThin" size="11"/>
+                                    <string key="title">David Dávila, 2016-2018 (david@davi.la)
+Delete icon by Anastasia Kuznetsova
+(https://www.deviantart.com/zapolzun)
+</string>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="oXe-Oy-oBt">
+                                <rect key="frame" x="20" y="20" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="fgw-lV-kpA"/>
+                                    <constraint firstAttribute="height" constant="150" id="rp7-LE-yex"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="logo" id="TJk-cF-aJe"/>
+                            </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FAf-wU-dYG">
+                                <rect key="frame" x="237" y="85" width="4" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" id="egR-eH-wVd">
+                                    <font key="font" metaFont="systemUltraLight" size="13"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="FAf-wU-dYG" secondAttribute="trailing" constant="20" symbolic="YES" id="3Zo-Om-p3f"/>
+                            <constraint firstItem="rnm-tB-e7x" firstAttribute="top" secondItem="vGI-LB-g3W" secondAttribute="bottom" constant="8" symbolic="YES" id="7Dn-IB-u77"/>
+                            <constraint firstItem="BsG-WK-96w" firstAttribute="leading" secondItem="oXe-Oy-oBt" secondAttribute="trailing" constant="20" id="DA7-ZW-dW7"/>
+                            <constraint firstItem="FAf-wU-dYG" firstAttribute="leading" secondItem="vGI-LB-g3W" secondAttribute="trailing" constant="4" id="Eqd-3b-g6W"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="BsG-WK-96w" secondAttribute="trailing" constant="20" symbolic="YES" id="FWv-aR-9X0"/>
+                            <constraint firstItem="oXe-Oy-oBt" firstAttribute="leading" secondItem="qEe-u3-V6T" secondAttribute="leading" constant="20" symbolic="YES" id="Mdo-XV-DOr"/>
+                            <constraint firstAttribute="trailing" secondItem="rnm-tB-e7x" secondAttribute="trailing" constant="20" symbolic="YES" id="Rzk-GX-gzm"/>
+                            <constraint firstAttribute="bottom" secondItem="oXe-Oy-oBt" secondAttribute="bottom" constant="20" symbolic="YES" id="TSA-qh-nVU"/>
+                            <constraint firstItem="FAf-wU-dYG" firstAttribute="firstBaseline" secondItem="vGI-LB-g3W" secondAttribute="firstBaseline" id="TvI-IF-JKH"/>
+                            <constraint firstItem="rnm-tB-e7x" firstAttribute="leading" secondItem="BsG-WK-96w" secondAttribute="leading" id="bHj-FK-JnG"/>
+                            <constraint firstItem="oXe-Oy-oBt" firstAttribute="top" secondItem="qEe-u3-V6T" secondAttribute="top" constant="20" symbolic="YES" id="bjq-pB-Gbe"/>
+                            <constraint firstItem="BsG-WK-96w" firstAttribute="top" secondItem="qEe-u3-V6T" secondAttribute="top" constant="20" symbolic="YES" id="dJU-8S-AVB"/>
+                            <constraint firstItem="vGI-LB-g3W" firstAttribute="top" secondItem="BsG-WK-96w" secondAttribute="bottom" constant="8" symbolic="YES" id="jIb-1k-FGu"/>
+                            <constraint firstItem="vGI-LB-g3W" firstAttribute="leading" secondItem="BsG-WK-96w" secondAttribute="leading" id="lM1-ND-d9m"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="versionLabel" destination="FAf-wU-dYG" id="fJU-0q-zbb"/>
+                    </connections>
+                </viewController>
+                <customObject id="Axk-uo-pog" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-122" y="1458"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="logo" width="500" height="500"/>
+    </resources>
+</document>

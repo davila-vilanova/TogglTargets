@@ -23,7 +23,7 @@
                             <menuItem title="About TogglTargets" id="3BC-FC-Gqa">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="orderFrontStandardAboutPanel:" target="-1" id="KeF-Zm-DpL"/>
+                                    <action selector="orderFrontAboutPanel:" target="-1" id="Yeq-71-a8J"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="qfa-1e-Xtf"/>

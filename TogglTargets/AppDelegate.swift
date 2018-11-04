@@ -222,6 +222,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         presentedPreferencesWindow = preferencesWindow
     }
 
+    @IBAction func orderFrontAboutPanel(_ sender: Any) {
+        let aboutStoryboard = NSStoryboard(name: "About", bundle: nil)
+        let aboutWindowController = aboutStoryboard.instantiateInitialController() as! NSWindowController
+        let aboutWindow = aboutWindowController.window!
+        aboutWindow.delegate = self
+        aboutWindow.makeKeyAndOrderFront(sender)
+    }
+    
     func windowWillClose(_ notification: Notification) {
         if let closing = notification.object as? NSWindow,
             let prefsWindow = presentedPreferencesWindow,
