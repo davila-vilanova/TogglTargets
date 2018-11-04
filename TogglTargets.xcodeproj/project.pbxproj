@@ -664,6 +664,7 @@
 				632957401DBA99F000E11A10 /* Resources */,
 				632EEBF01E4278CD00608D01 /* CopyFiles */,
 				6368FDB320F217920059AE2F /* Embed Frameworks */,
+				63EBF3A9218F91DA00BD2C3C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -773,6 +774,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		63EBF3A9218F91DA00BD2C3C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint lint TogglTargets\nelse\n    echo \"warning: swiftlint not installed\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6329573E1DBA99F000E11A10 /* Sources */ = {
