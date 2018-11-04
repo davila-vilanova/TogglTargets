@@ -29,7 +29,9 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private let lastBinding = MutableProperty<Interface?>(nil)
 
-    internal var bindingTarget: BindingTarget<ProjectsMasterDetailController.Interface?> { return lastBinding.bindingTarget }
+    internal var bindingTarget: BindingTarget<ProjectsMasterDetailController.Interface?> {
+        return lastBinding.bindingTarget
+    }
 
     // MARK: - Private
 

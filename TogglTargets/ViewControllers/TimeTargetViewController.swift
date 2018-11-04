@@ -93,11 +93,20 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
                 .map { ($1.isSelected($0), $0.indexInGregorianCalendarSymbolsArray) }
 
         // Bind period preference to period description
-        periodDescriptionLabel.reactive.stringValue <~ lastBinding.producer.skipNil().map { $0.periodPreference }.flatten(.latest)
+        periodDescriptionLabel.reactive.stringValue <~ lastBinding.producer.skipNil()
+            .map { $0.periodPreference }.flatten(.latest)
             .map {
                 switch $0 {
-                case .monthly: return NSLocalizedString("time-target-controller.target-hours-period.month", comment: "month period description as it appears next to the target hours field in the time target VC")
-                case .weekly: return NSLocalizedString("time-target-controller.target-hours-period.week", comment: "week period description as it appears next to the target hours field in the time target VC")
+                case .monthly: return NSLocalizedString("time-target-controller.target-hours-period.month",
+                                                        comment: """
+                                                                 month period description as it appears next to the
+                                                                 target hours field in the time target VC
+                                                                 """)
+                case .weekly: return NSLocalizedString("time-target-controller.target-hours-period.week",
+                                                       comment: """
+                                                                week period description as it appears next to the
+                                                                target hours field in the time target VC
+                                                                """)
                 }
         }
 

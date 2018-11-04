@@ -34,24 +34,34 @@ class VerticalListLayout: NSCollectionViewFlowLayout {
         return tweak(super.layoutAttributesForItem(at: indexPath))
     }
 
-    override func layoutAttributesForSupplementaryView(ofKind elementKind: NSCollectionView.SupplementaryElementKind, at indexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
+    override func layoutAttributesForSupplementaryView(ofKind elementKind: NSCollectionView.SupplementaryElementKind,
+                                                       at indexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
         return tweak(super.layoutAttributesForSupplementaryView(ofKind: elementKind, at: indexPath))
     }
 
-    override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
-        return tweak(super.initialLayoutAttributesForAppearingItem(at: itemIndexPath))
+    override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath)
+        -> NSCollectionViewLayoutAttributes? {
+            return tweak(super.initialLayoutAttributesForAppearingItem(at: itemIndexPath))
     }
 
-    override func initialLayoutAttributesForAppearingSupplementaryElement(ofKind elementKind: NSCollectionView.SupplementaryElementKind, at elementIndexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
-        return tweak(super.initialLayoutAttributesForAppearingSupplementaryElement(ofKind: elementKind, at: elementIndexPath))
+    override func initialLayoutAttributesForAppearingSupplementaryElement(
+        ofKind elementKind: NSCollectionView.SupplementaryElementKind,
+        at elementIndexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
+        return tweak(
+            super.initialLayoutAttributesForAppearingSupplementaryElement(ofKind: elementKind, at: elementIndexPath))
     }
 
-    override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
-        return tweak(super.finalLayoutAttributesForDisappearingItem(at: itemIndexPath))
+    override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath)
+        -> NSCollectionViewLayoutAttributes? {
+            return tweak(
+                super.finalLayoutAttributesForDisappearingItem(at: itemIndexPath))
     }
 
-    override func finalLayoutAttributesForDisappearingSupplementaryElement(ofKind elementKind: NSCollectionView.SupplementaryElementKind, at elementIndexPath: IndexPath) -> NSCollectionViewLayoutAttributes? {
-        return tweak(super.finalLayoutAttributesForDisappearingSupplementaryElement(ofKind: elementKind, at: elementIndexPath))
+    override func finalLayoutAttributesForDisappearingSupplementaryElement(
+        ofKind elementKind: NSCollectionView.SupplementaryElementKind, at elementIndexPath: IndexPath)
+        -> NSCollectionViewLayoutAttributes? {
+            return tweak(super.finalLayoutAttributesForDisappearingSupplementaryElement(ofKind: elementKind,
+                                                                                        at: elementIndexPath))
     }
 
     private func tweak(_ layoutAttributes: NSCollectionViewLayoutAttributes?) -> NSCollectionViewLayoutAttributes? {

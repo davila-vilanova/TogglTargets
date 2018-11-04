@@ -108,8 +108,15 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             .map { (t0, t1) in return t0 + t1 }
 
         let formattedTime = totalWorkedTime.mapToString(timeFormatter: timeFormatter)
-        reportField.reactive.text <~ SignalProducer.merge(noReport.map { NSLocalizedString("project-list.item.report.no-data", comment: "message to show in each of the project list items when there is no report data") },
-                                                          formattedTime.map { String.localizedStringWithFormat(NSLocalizedString("project-list.item.report.worked-time", comment: "formatted worked time for the project represented by a project list item"), $0) })
+        reportField.reactive.text <~ SignalProducer.merge(
+            noReport.map { NSLocalizedString("project-list.item.report.no-data",
+                                             comment: """
+                                                      message to show in each of the project list items when there is no report data
+                                                      """) },
+            formattedTime.map { String.localizedStringWithFormat(
+                NSLocalizedString("project-list.item.report.worked-time",
+                                  comment: "formatted worked time for the project represented by a project list item")
+                , $0) })
 
         bottomLining.reactive.makeBindingTarget { (lining, state) in
             let (isSelected, isLastItemInSection) = state

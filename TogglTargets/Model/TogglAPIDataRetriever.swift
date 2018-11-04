@@ -361,9 +361,13 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
                 return extractStatus(from: action, for: activity, retryErrorsWith: SignalProducer(value: ()))
         }
 
-        return SignalProducer.merge(extractStatus(from: retrieveProfileNetworkAction, for: .syncProfile, retryErrorsWith: urlSession.producer.skipNil()),
-                                    extractStatus(from: retrieveProjectsNetworkAction, for: .syncProjects, retryErrorsWith: workspaceIDs),
-                                    extractStatus(from: retrieveReportsNetworkAction, for: .syncReports, retryErrorsWith: SignalProducer.combineLatest(workspaceIDs, _twoPartReportPeriod.producer.skipNil())),
+        return SignalProducer.merge(extractStatus(from: retrieveProfileNetworkAction, for: .syncProfile,
+                                                  retryErrorsWith: urlSession.producer.skipNil()),
+                                    extractStatus(from: retrieveProjectsNetworkAction, for: .syncProjects,
+                                                  retryErrorsWith: workspaceIDs),
+                                    extractStatus(from: retrieveReportsNetworkAction, for: .syncReports,
+                                                  retryErrorsWith: SignalProducer.combineLatest(
+                                                    workspaceIDs, _twoPartReportPeriod.producer.skipNil())),
                                     extractStatus(from: retrieveRunningEntryNetworkAction, for: .syncRunningEntry))
     }()
 

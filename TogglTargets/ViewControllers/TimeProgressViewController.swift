@@ -70,32 +70,41 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
                         $0)
 
             }
-            let formattedExcludingToday = formattedRemainingWorkdays.throttle(while: strategyStartsToday, on: UIScheduler())
+            let formattedExcludingToday = formattedRemainingWorkdays
+                .throttle(while: strategyStartsToday, on: UIScheduler())
                 .map {
                     String.localizedStringWithFormat(
                         NSLocalizedString("time-progress.workdays.left.excluding-today", comment: "remaining workdays in current period, not including today"),
                         $0)
             }
 
-            remainingWorkdaysField.reactive.stringValue <~ SignalProducer.merge(formattedIncludingToday, formattedExcludingToday)
+            remainingWorkdaysField.reactive.stringValue <~ SignalProducer.merge(formattedIncludingToday,
+                                                                                formattedExcludingToday)
         }
     }
 
     @IBOutlet weak var workedHoursField: NSTextField! {
         didSet {
             let formattedTime = workedTime.producer.mapToString(timeFormatter: timeFormatter)
-            let noReportAvailableText = SignalProducer(value: NSLocalizedString("time-progress.report.no-data", comment: "message to show in the time progress view controller when there is no report data yet"))
+            let noReportAvailableText = SignalProducer(value:
+                NSLocalizedString("time-progress.report.no-data",
+                                  comment: """
+                                           message to show in the time progress view controller when there is
+                                           no report data yet
+                                           """))
 
             let formattedIncludingToday = formattedTime.throttle(while: strategyStartsToday.negate(), on: UIScheduler())
                 .map {
                     String.localizedStringWithFormat(
-                        NSLocalizedString("time-progress.report.worked-time.including-today", comment: "worked time including today"),
+                        NSLocalizedString("time-progress.report.worked-time.including-today",
+                                          comment: "worked time including today"),
                         $0)
             }
             let formattedExcludingToday = formattedTime.throttle(while: strategyStartsToday, on: UIScheduler())
                 .map {
                     String.localizedStringWithFormat(
-                        NSLocalizedString("time-progress.report.worked-time.excluding-today", comment: "worked time not including today"),
+                        NSLocalizedString("time-progress.report.worked-time.excluding-today",
+                                          comment: "worked time not including today"),
                         $0)
 
             }
@@ -104,16 +113,19 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
             workedHoursField.reactive.text <~
                 SignalProducer.merge(formattedText.throttle(while: reportAvailable.negate(), on: UIScheduler()),
-                                     noReportAvailableText.sample(on: reportAvailable.producer.negate().filter { $0 }.map { _ in () }))
+                                     noReportAvailableText.sample(on: reportAvailable.producer.negate().filter { $0 }
+                                        .map { _ in () }))
         }
     }
 
     @IBOutlet weak var remainingHoursField: NSTextField! {
         didSet {
-            remainingHoursField.reactive.text <~ remainingTimeToTarget.producer.mapToString(timeFormatter: timeFormatter)
+            remainingHoursField.reactive.text <~ remainingTimeToTarget.producer
+                .mapToString(timeFormatter: timeFormatter)
                 .map {
                     String.localizedStringWithFormat(
-                        NSLocalizedString("time-progress.report.target-time.remaining", comment: "amount of time remaining to achieve the target time"),
+                        NSLocalizedString("time-progress.report.target-time.remaining",
+                                          comment: "amount of time remaining to achieve the target time"),
                         $0)
             }
             remainingHoursField.reactive.makeBindingTarget { $0.isHidden = $1 } <~ reportAvailable.negate()
@@ -145,7 +157,8 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
                     // No hard limit (nothing prevents one from exceeding their time target)
                     indicator!.doubleValue = workedTime
             }
-            workHoursProgressIndicator.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ reportAvailable.negate()
+            workHoursProgressIndicator.reactive.makeBindingTarget { $0.animator().isHidden = $1 }
+                <~ reportAvailable.negate()
         }
     }
 

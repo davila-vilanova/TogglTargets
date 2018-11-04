@@ -184,15 +184,20 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
                 $0 <~ SignalProducer(value: timeTargetBeforeEditing).start(on: UIScheduler())
             }
         }
-        let undoCreateTimeTarget = BindingTarget<ProjectID>(on: timeTargetWriteScheduler, lifetime: lifetime) { [unowned _deleteTimeTarget] projectId in
-            undoManager.registerUndo(withTarget: _deleteTimeTarget, handler: { $0 <~ SignalProducer(value: projectId).start(on: UIScheduler()) })
+        let undoCreateTimeTarget = BindingTarget<ProjectID>(on: timeTargetWriteScheduler, lifetime: lifetime) { [unowned _deleteTimeTarget] projectId in // swiftlint:disable:this line_length
+            undoManager.registerUndo(withTarget: _deleteTimeTarget,
+                                     handler: { $0 <~ SignalProducer(value: projectId).start(on: UIScheduler()) })
         }
-        let timeTargetsPreModification = writeTimeTargetProducer.map { $0.projectId }.withLatest(from: persistenceProvider.allTimeTargets).map { $0.1[$0.0] }.skipNil()
-        let timeTargetsPreDeletion = deleteTimeTargetProducer.withLatest(from: persistenceProvider.allTimeTargets).map { $0.1[$0.0] }.skipNil()
+        let timeTargetsPreModification = writeTimeTargetProducer.map { $0.projectId }
+            .withLatest(from: persistenceProvider.allTimeTargets).map { $0.1[$0.0] }.skipNil()
+        let timeTargetsPreDeletion = deleteTimeTargetProducer.withLatest(from: persistenceProvider.allTimeTargets)
+            .map { $0.1[$0.0] }.skipNil()
 
         undoModifyOrDeleteTimeTarget <~ SignalProducer.merge(timeTargetsPreModification, timeTargetsPreDeletion)
 
-        let projectIdsOfCreatedTimeTargets = writeTimeTargetProducer.map { $0.projectId }.withLatest(from: persistenceProvider.allTimeTargets).map { ($0.1[$0.0], $0.0) }.filter { $0.0 == nil }.map { $0.1 }
+        let projectIdsOfCreatedTimeTargets = writeTimeTargetProducer.map { $0.projectId }
+            .withLatest(from: persistenceProvider.allTimeTargets)
+            .map { ($0.1[$0.0], $0.0) }.filter { $0.0 == nil }.map { $0.1 }
 
         undoCreateTimeTarget <~ projectIdsOfCreatedTimeTargets
 
@@ -204,7 +209,8 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
                                                    initialStateProjectIDsByTimeTargets: projectIDsByTimeTargetsState,
                                                    inputWriteTimeTarget: writeTimeTargetProducer,
                                                    inputDeleteTimeTarget: deleteTimeTargetProducer,
-                                                   outputProjectIDsByTimeTargetsUpdate: self.projectIDsByTimeTargetsLastSingleUpdate.deoptionalizedBindingTarget)
+                                                   outputProjectIDsByTimeTargetsUpdate:
+                        self.projectIDsByTimeTargetsLastSingleUpdate.deoptionalizedBindingTarget)
             }
         )
 
