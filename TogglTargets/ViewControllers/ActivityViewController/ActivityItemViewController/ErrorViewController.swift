@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-let ConfigureUserAccountRequestedNotificationName =
+let configureUserAccountRequested =
     NSNotification.Name(rawValue: "ConfigureUserAccountRequestedNotification")
 
 private typealias RecoveryAction = Action<Void, Void, NoError>
@@ -53,7 +53,7 @@ private func recovery(for error: APIAccessError) -> RecoveryAction? {
     switch error {
     case .noCredentials, .authenticationError:
         return RecoveryAction {
-            NotificationCenter.default.post(name: ConfigureUserAccountRequestedNotificationName, object: nil)
+            NotificationCenter.default.post(name: configureUserAccountRequested, object: nil)
             return SignalProducer<Void, NoError>.empty
         }
     default: return nil

@@ -11,13 +11,13 @@ import Foundation
 typealias ProjectID = Int64
 
 struct Project: Decodable {
-    let id: ProjectID
+    let id: ProjectID // swiftlint:disable:this identifier_name
     let name: String?
     let active: Bool?
     let workspaceId: WorkspaceID?
 
     private enum CodingKeys: String, CodingKey {
-        case id
+        case id // swiftlint:disable:this identifier_name
         case name
         case active
         case workspaceId = "wid"

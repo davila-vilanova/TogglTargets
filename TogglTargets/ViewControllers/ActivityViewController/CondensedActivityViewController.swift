@@ -26,7 +26,7 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var statusDescriptionLabel: NSTextField!
     @IBOutlet weak var statusDetailLabel: NSTextField!
     @IBOutlet weak var horizontalLine: NSBox!
-    @IBOutlet weak var toggleRequestExpandedDetailsGestureRecognizer: NSClickGestureRecognizer!
+    @IBOutlet weak var toggleExpandedDetailsGestureRecognizer: NSClickGestureRecognizer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,7 +74,7 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
 
         statusDetailLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ shouldShowStatusDetail.negate()
 
-        toggleRequestExpandedDetailsGestureRecognizer.reactive
+        toggleExpandedDetailsGestureRecognizer.reactive
             .makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
 
         let showStatusDetail: BindingTarget<Bool> = statusDetailLabel.reactive

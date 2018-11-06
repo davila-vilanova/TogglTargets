@@ -10,8 +10,8 @@ import Cocoa
 import ReactiveSwift
 import Result
 
-private let ProjectDetailsVCContainment = "ProjectDetailsVCContainment"
-private let EmtpySelectionVCContainment = "EmtpySelectionVCContainment"
+private let projectDetailsVCContainment = "ProjectDetailsVCContainment"
+private let emtpySelectionVCContainment = "EmtpySelectionVCContainment"
 
 class SelectionDetailViewController: NSViewController, BindingTargetProvider {
 

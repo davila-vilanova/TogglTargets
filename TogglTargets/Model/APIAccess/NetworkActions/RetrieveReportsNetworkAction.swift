@@ -66,7 +66,7 @@ func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>,
     }
 }
 
-private let UserAgent = "david@davi.la"
+private let userAgent = "david@davi.la"
 
 private typealias IndexedWorkedTimes = [ProjectID: WorkedTime]
 
@@ -81,7 +81,7 @@ private func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period?,
             let endpoint =
                 ReportsService.endpoint(workspaceId: workspaceID,
                                         since: period.start.iso8601String, until: period.end.iso8601String,
-                                        userAgent: UserAgent)
+                                        userAgent: userAgent)
             return reportEntriesRetriever(endpoint)
                 .reduce(into: IndexedWorkedTimes()) { (indexedWorkedTimeEntries, reportEntries) in
                     for entry in reportEntries {
@@ -109,10 +109,10 @@ private func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorked
     -> [ProjectID: TwoPartTimeReport] {
         var reports = [ProjectID: TwoPartTimeReport]()
         let ids: Set<ProjectID> = Set<ProjectID>(untilYesterday.keys).union(today.keys)
-        for id in ids {
-            let timeWorkedPreviousToToday: TimeInterval = untilYesterday[id] ?? 0.0
-            let timeWorkedToday: TimeInterval = today[id] ?? 0.0
-            reports[id] = TwoPartTimeReport(projectId: id,
+        for projectId in ids {
+            let timeWorkedPreviousToToday: TimeInterval = untilYesterday[projectId] ?? 0.0
+            let timeWorkedToday: TimeInterval = today[projectId] ?? 0.0
+            reports[projectId] = TwoPartTimeReport(projectId: projectId,
                                             period: fullPeriod,
                                             workedTimeUntilDayBeforeRequest: timeWorkedPreviousToToday,
                                             workedTimeOnDayOfRequest: timeWorkedToday)

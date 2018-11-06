@@ -14,8 +14,8 @@ private typealias StateTransformation = [ActivityStatus]
 private typealias StateTransformer = ([ActivityStatus]) -> StateTransformation?
 private typealias CollapsePreventer = ([ActivityStatus], [ActivityStatus]) -> Bool
 
-private let IdleProcessingDelay = TimeInterval(2.0)
-private let ThrottleDelay = TimeInterval(0.5)
+private let idleProcessingDelay = TimeInterval(2.0)
+private let throttleDelay = TimeInterval(0.5)
 
 class ActivitiesState {
     // MARK: - State
@@ -28,7 +28,7 @@ class ActivitiesState {
 
     // MARK: - Output
     lazy var output: Signal<([ActivityStatus]), NoError> =
-        state.signal.throttle(ThrottleDelay, on: scheduler)
+        state.signal.throttle(throttleDelay, on: scheduler)
 
     // MARK: - Infrastucture
     private let (lifetime, token) = Lifetime.make()
@@ -61,7 +61,7 @@ class ActivitiesState {
         let idleDelayTarget = BindingTarget<Void>(on: scheduler, lifetime: lifetime) { [weak self] _ in
             self?.applyIdleDelayedProcessors()
         }
-        self.lifetime += idleDelayTarget <~ inputReceivedPipe.output.debounce(IdleProcessingDelay, on: scheduler)
+        self.lifetime += idleDelayTarget <~ inputReceivedPipe.output.debounce(idleProcessingDelay, on: scheduler)
     }
 }
 

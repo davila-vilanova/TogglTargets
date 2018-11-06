@@ -11,7 +11,7 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-internal let DefaultPeriodPreference = PeriodPreference.monthly
+internal let defaultPeriodPreference = PeriodPreference.monthly
 
 class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvider {
 
@@ -30,7 +30,7 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
 
     private let calendar = MutableProperty<Calendar?>(nil)
     private let currentDate = MutableProperty<Date?>(nil)
-    private let existingPreference = MutableProperty<PeriodPreference>(DefaultPeriodPreference)
+    private let existingPreference = MutableProperty<PeriodPreference>(defaultPeriodPreference)
 
     private lazy var updatedPreference: Signal<PeriodPreference, NoError> =
         Signal.merge(generateMonthlyPeriodPreference.values, generateWeeklyPeriodPreference.values)
@@ -46,24 +46,24 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
     // MARK: - State
 
     private lazy var isWeeklyPreferenceSelectedProperty =
-        Property<Bool>(initial: DefaultPeriodPreference.isWeekly,                 // default value
+        Property<Bool>(initial: defaultPeriodPreference.isWeekly,                 // default value
             then: SignalProducer.merge(existingPreference.producer.map(isWeekly), // value from upstream
                        weeklyButtonPress.values.producer.map { _ in true },       // value from user input
                        generateMonthlyPeriodPreference.values.producer.map { _ in false }))
 
     private lazy var selectedWeekdayProperty: MutableProperty<Weekday> = {
         // default value
-        let p = MutableProperty(
-            DefaultPeriodPreference.selectedWeekday ?? (Weekday.fromIndexInGregorianCalendarSymbolsArray(0)!))
+        let selected = MutableProperty(
+            defaultPeriodPreference.selectedWeekday ?? (Weekday.fromIndexInGregorianCalendarSymbolsArray(0)!))
 
         // value from upstream
-        p <~ existingPreference.map(selectedWeekday).producer.skipNil()
+        selected <~ existingPreference.map(selectedWeekday).producer.skipNil()
 
         // value from user input
-        p <~ weeklyStartDayPopUp.reactive.selectedIndexes
+        selected <~ weeklyStartDayPopUp.reactive.selectedIndexes
             .map(Weekday.fromIndexInGregorianCalendarSymbolsArray)
             .skipNil()
-        return p
+        return selected
     }()
 
     // MARK: - Actions
@@ -151,10 +151,10 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
         }
 
         let formatter: SignalProducer<DateFormatter, NoError> = {
-            let f = DateFormatter()
-            f.dateStyle = .full
-            f.timeStyle = .none
-            return SignalProducer(value: f)
+            let formatter = DateFormatter()
+            formatter.dateStyle = .full
+            formatter.timeStyle = .none
+            return SignalProducer(value: formatter)
         }()
 
         func formattedDayComponents(_ dayComponents: SignalProducer<DayComponents, NoError>)

@@ -60,7 +60,7 @@ protocol TimeTargetPersistenceProvider {
 
 class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     /// The database connection used to store and retrieve time targets.
-    private let db: Connection
+    private let dbConnection: Connection
 
     // MARK: - Table and expression entities
 
@@ -91,7 +91,7 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     /// Retrieves all time targets from the database
     private func retrieveAllTimeTargets() -> ProjectIdIndexedTimeTargets {
         var retrievedTimeTargets = ProjectIdIndexedTimeTargets()
-        let retrievedRows = try! db.prepare(timeTargetsTable)
+        let retrievedRows = try! dbConnection.prepare(timeTargetsTable)
         for retrievedRow in retrievedRows {
             let projectIdValue = retrievedRow[projectIdExpression]
             let hoursTargetValue = retrievedRow[hoursTargetExpression]
@@ -118,7 +118,7 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     init?(baseDirectory: URL?) {
         do {
             let databaseURL = URL(fileURLWithPath: "timetargetsdb.sqlite3", relativeTo: baseDirectory)
-            db = try Connection(databaseURL.absoluteString)
+            dbConnection = try Connection(databaseURL.absoluteString)
         } catch {
             return nil
         }
@@ -126,16 +126,17 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
         ensureSchemaCreated()
 
         let persistProducer = _persistTimeTarget.producer.skipNil().on(value: { [unowned self] timeTarget in
-            try! self.db.run(self.timeTargetsTable.insert(or: .replace,
-                                                    self.projectIdExpression <- timeTarget.projectId,
-                                                    self.hoursTargetExpression <- timeTarget.hoursTarget,
-                                                    self.workWeekdaysExpression <- timeTarget.workWeekdays))
+            try! self.dbConnection
+                .run(self.timeTargetsTable.insert(or: .replace,
+                                                  self.projectIdExpression <- timeTarget.projectId,
+                                                  self.hoursTargetExpression <- timeTarget.hoursTarget,
+                                                  self.workWeekdaysExpression <- timeTarget.workWeekdays))
             // TODO: synchronize periodically instead of writing immediately
         }).start(on: timeTargetWriteScheduler)
 
         let deleteProducer = _deleteTimeTarget.producer.skipNil().on(value: { [unowned self] projectId in
-            let q = self.timeTargetsTable.filter(self.projectIdExpression == projectId)
-            try! self.db.run(q.delete())
+            let query = self.timeTargetsTable.filter(self.projectIdExpression == projectId)
+            try! self.dbConnection.run(query.delete())
         }).start(on: timeTargetWriteScheduler)
 
         allTimeTargets <~ persistProducer.withLatest(from: allTimeTargets).map {
@@ -149,11 +150,11 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
 
     /// Creates the underlying database schema if not already created.
     private func ensureSchemaCreated() {
-        try! db.run(timeTargetsTable.create(ifNotExists: true) { t in
-            t.column(idExpression, primaryKey: .autoincrement)
-            t.column(projectIdExpression, unique: true)
-            t.column(hoursTargetExpression)
-            t.column(workWeekdaysExpression)
+        try! dbConnection.run(timeTargetsTable.create(ifNotExists: true) { tableBuilder in
+            tableBuilder.column(idExpression, primaryKey: .autoincrement)
+            tableBuilder.column(projectIdExpression, unique: true)
+            tableBuilder.column(hoursTargetExpression)
+            tableBuilder.column(workWeekdaysExpression)
         })
     }
 }
@@ -165,7 +166,7 @@ protocol ProjectIDsProducingTimeTargetsStore: TimeTargetsStore, ProjectIDsByTime
 
 // MARK: -
 
-class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
+class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
 
     private let (lifetime, token) = Lifetime.make()
 
@@ -181,16 +182,22 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
 
         let undoModifyOrDeleteTimeTarget =
             BindingTarget<TimeTarget>(on: timeTargetWriteScheduler,
-                                      lifetime: lifetime) { [unowned _writeTimeTarget] timeTargetBeforeEditing in
-                                        undoManager.registerUndo(withTarget: _writeTimeTarget) {
+                                      lifetime: lifetime,
+                                      action: { [unowned write = _writeTimeTarget] timeTargetBeforeEditing in
+                                        undoManager.registerUndo(withTarget: write) {
                                             $0 <~ SignalProducer(value: timeTargetBeforeEditing)
                                                 .start(on: UIScheduler())
                                         }
-        }
-        let undoCreateTimeTarget = BindingTarget<ProjectID>(on: timeTargetWriteScheduler, lifetime: lifetime) { [unowned _deleteTimeTarget] projectId in // swiftlint:disable:this line_length
-            undoManager.registerUndo(withTarget: _deleteTimeTarget,
-                                     handler: { $0 <~ SignalProducer(value: projectId).start(on: UIScheduler()) })
-        }
+            })
+        let undoCreateTimeTarget =
+            BindingTarget<ProjectID>(on: timeTargetWriteScheduler,
+                                     lifetime: lifetime,
+                                     action: { [unowned delete = _deleteTimeTarget] projectId in
+                                        undoManager.registerUndo(withTarget: delete,
+                                                                 handler: {
+                                                                    $0 <~ SignalProducer(value: projectId)
+                                                                        .start(on: UIScheduler()) })
+            })
         let timeTargetsPreModification = writeTimeTargetProducer.map { $0.projectId }
             .withLatest(from: persistenceProvider.allTimeTargets).map { $0.1[$0.0] }.skipNil()
         let timeTargetsPreDeletion = deleteTimeTargetProducer.withLatest(from: persistenceProvider.allTimeTargets)

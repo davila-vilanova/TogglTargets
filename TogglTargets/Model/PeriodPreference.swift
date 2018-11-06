@@ -93,14 +93,14 @@ extension PeriodPreference {
     }
 }
 
-func isMonthly(_ p: PeriodPreference) -> Bool {
-    return p.isMonthly
+func isMonthly(_ pref: PeriodPreference) -> Bool {
+    return pref.isMonthly
 }
 
-func isWeekly(_ p: PeriodPreference) -> Bool {
-    return p.isWeekly
+func isWeekly(_ pref: PeriodPreference) -> Bool {
+    return pref.isWeekly
 }
 
-func selectedWeekday(_ p: PeriodPreference) -> Weekday? {
-    return p.selectedWeekday
+func selectedWeekday(_ pref: PeriodPreference) -> Weekday? {
+    return pref.selectedWeekday
 }

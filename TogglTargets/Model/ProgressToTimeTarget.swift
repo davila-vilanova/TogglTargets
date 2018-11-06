@@ -249,6 +249,7 @@ extension WeekdaySelection {
 }
 
 extension Calendar {
+    // swiftlint:disable:next identifier_name
     func countWeekdaysMatching(_ selection: WeekdaySelection, from: DayComponents, to: DayComponents) -> Int {
         return countWeekdaysMatching(selection.selectedWeekdays, from: from, to: to)
     }

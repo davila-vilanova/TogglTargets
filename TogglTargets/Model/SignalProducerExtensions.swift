@@ -20,10 +20,10 @@ extension SignalProducer {
     }
 }
 
-private let DefaultPlaceholderForNil = "--"
+private let defaultPlaceholderForNil = "--"
 
 extension SignalProducer where Value == Int? {
-    func mapToString(placeholderForNil: String = DefaultPlaceholderForNil) -> SignalProducer<String, Error> {
+    func mapToString(placeholderForNil: String = defaultPlaceholderForNil) -> SignalProducer<String, Error> {
         return map { (valueOrNil: Int?) -> String in
             if let value = valueOrNil {
                 return "\(value)"
@@ -47,7 +47,7 @@ extension SignalProducer where Value == Int? {
 // TODO: Extension on DateComponentsFormatter?
 extension SignalProducer where Value == TimeInterval? {
     func mapToString(timeFormatter: DateComponentsFormatter,
-                     placeholderForNil: String = DefaultPlaceholderForNil) -> SignalProducer<String, Error> {
+                     placeholderForNil: String = defaultPlaceholderForNil) -> SignalProducer<String, Error> {
         return map { (timeOrNil: TimeInterval?) -> String in
             guard let time = timeOrNil else {
                 return placeholderForNil
@@ -59,7 +59,7 @@ extension SignalProducer where Value == TimeInterval? {
 
 extension SignalProducer where Value == TimeInterval {
     func mapToString(timeFormatter: DateComponentsFormatter,
-                     placeholderForNil: String = DefaultPlaceholderForNil) -> SignalProducer<String, Error> {
+                     placeholderForNil: String = defaultPlaceholderForNil) -> SignalProducer<String, Error> {
         return map { (time: TimeInterval) -> String in
             return timeFormatter.string(from: time) ?? placeholderForNil
         }
@@ -69,7 +69,7 @@ extension SignalProducer where Value == TimeInterval {
 // TODO: Extension in NumberFormatter?
 extension SignalProducer where Value == NSNumber? {
     func mapToNumberFormattedString(numberFormatter: NumberFormatter,
-                                    placeholderForNil: String = DefaultPlaceholderForNil)
+                                    placeholderForNil: String = defaultPlaceholderForNil)
         -> SignalProducer<String, Error> {
             return map { (numberOrNil: NSNumber?) -> String in
                 guard let number = numberOrNil else {

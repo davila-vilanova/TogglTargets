@@ -11,16 +11,7 @@ import ReactiveSwift
 import ReactiveCocoa
 import Result
 
-private let NonSelectedBackgroundColor = NSColor.white
-private let NonSelectedTextColor = NSColor.black
-private let FocusedSelectedBackgroundColor =
-    NSColor.init(red: 60.0/255.0, green: 126.0/255.0, blue: 242.0/255.0, alpha: 1)
-private let FocusedSelectedTextColor = NSColor.white
-private let NonFocusedSelectedBackgroundColor = NSColor.darkGray
-private let NonFocusedSelectedTextColor = NSColor.white
-
 class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
-
     typealias Interface = (
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
@@ -55,11 +46,11 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     private let _isLastItemInSection = MutableProperty(false)
 
     private lazy var timeFormatter: DateComponentsFormatter = {
-        let f = DateComponentsFormatter()
-        f.allowedUnits = [.hour, .minute]
-        f.zeroFormattingBehavior = .dropAll
-        f.unitsStyle = .full
-        return f
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.zeroFormattingBehavior = .dropAll
+        formatter.unitsStyle = .full
+        return formatter
     }()
 
     override func viewDidLoad() {
@@ -118,7 +109,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
                 return runningEntry.runningTime(at: currentDate)
         }
         let totalWorkedTime = SignalProducer.combineLatest(workedTimeFromReport, workedTimeFromRunningEntry)
-            .map { (t0, t1) in return t0 + t1 }
+            .map { (time0, time1) in return time0 + time1 }
 
         let formattedTime = totalWorkedTime.mapToString(timeFormatter: timeFormatter)
         reportField.reactive.text <~ SignalProducer.merge(

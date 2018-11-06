@@ -59,7 +59,7 @@ func makeZeroReport(for projectId: ProjectID, period: Period) -> TwoPartTimeRepo
 }
 
 struct ReportEntry: Decodable {
-    let id: Int64
+    let id: Int64 // swiftlint:disable:this identifier_name
     let time: TimeInterval
 }
 

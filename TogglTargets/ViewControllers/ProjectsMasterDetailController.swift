@@ -80,9 +80,9 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private lazy var isProjectWithTimeTargetCurrentlySelected =
         Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readTimeTarget.producer)
-            .map { p, r -> SignalProducer<TimeTarget?, NoError> in
-                guard let projectId = p,
-                    let readTimeTarget = r
+            .map { projectId, readTimeTarget -> SignalProducer<TimeTarget?, NoError> in
+                guard let projectId = projectId,
+                    let readTimeTarget = readTimeTarget
                     else {
                         return SignalProducer<TimeTarget?, NoError>(value: nil)
                 }
@@ -240,8 +240,9 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                     alert.messageText = String.localizedStringWithFormat(
                         NSLocalizedString("confirm-delete.title", comment: "title of 'confirm delete' alert sheet"),
                         project.name ?? "")
-                    alert.informativeText = NSLocalizedString("confirm-delete.informative",
-                                                              comment: "informative text in 'confirm delete' alert sheet")
+                    alert.informativeText =
+                        NSLocalizedString("confirm-delete.informative",
+                                          comment: "informative text in 'confirm delete' alert sheet")
 
                     alert.addButton(withTitle:
                         NSLocalizedString("confirm-delete.do-delete",

@@ -8,7 +8,7 @@
 
 import Cocoa
 
-private let TitleLabelTag = 1080
+private let titleLabelTag = 1080
 
 class ProjectCollectionViewHeader: NSView, NSCollectionViewElement {
 
@@ -26,7 +26,7 @@ class ProjectCollectionViewHeader: NSView, NSCollectionViewElement {
         guard let title = title else {
             return
         }
-        if let label = viewWithTag(TitleLabelTag) as? NSTextField {
+        if let label = viewWithTag(titleLabelTag) as? NSTextField {
             label.stringValue = title
         }
     }

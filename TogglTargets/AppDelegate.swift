@@ -76,7 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             // swiftlint:disable:previous line_length
 
             let timeTargetsStore =
-                ConcreteProjectIDsProducingTimeTargetsStore(persistenceProvider: timeTargetsPersistenceProvider,
+                ConcreteTimeTargetsStore(persistenceProvider: timeTargetsPersistenceProvider,
                                                             undoManager: undoManager)
 
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
@@ -114,7 +114,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
         modelCoordinator.apiCredential <~ credentialStore.output.producer.map { $0 as TogglAPICredential? }
 
-        NotificationCenter.default.addObserver(forName: ConfigureUserAccountRequestedNotificationName,
+        NotificationCenter.default.addObserver(forName: configureUserAccountRequested,
                                                object: nil,
                                                queue: OperationQueue.main,
                                                using: { _ in self.presentPreferences(jumpingTo: .account) })

@@ -10,7 +10,7 @@ import Foundation
 
 // TODO: some properties don't need to be optional
 struct Profile: Decodable {
-    let id: Int64
+    let id: Int64 // swiftlint:disable:this identifier_name
     let name: String?
     let email: String
     let imageUrl: URL?
@@ -19,7 +19,7 @@ struct Profile: Decodable {
     let apiToken: String?
 
     private enum CodingKeys: String, CodingKey {
-        case id
+        case id // swiftlint:disable:this identifier_name
         case name = "fullname"
         case email
         case imageUrl = "image_url"
@@ -44,7 +44,7 @@ extension Profile: Equatable {
 typealias WorkspaceID = Int64
 
 struct Workspace: Decodable {
-    let id: WorkspaceID
+    let id: WorkspaceID // swiftlint:disable:this identifier_name
     let name: String?
 }
 

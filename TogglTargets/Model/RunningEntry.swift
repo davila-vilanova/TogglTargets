@@ -9,7 +9,7 @@
 import Foundation
 
 struct RunningEntry: Decodable {
-    let id: Int64
+    let id: Int64 // swiftlint:disable:this identifier_name
     let projectId: Int64
     let start: Date
     let retrieved: Date
@@ -19,7 +19,7 @@ struct RunningEntry: Decodable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id
+        case id // swiftlint:disable:this identifier_name
         case projectId = "pid"
         case start
         case retrieved = "at"

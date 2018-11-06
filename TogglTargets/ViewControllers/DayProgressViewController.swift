@@ -25,11 +25,11 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
     // MARK: - Private
 
     private lazy var timeFormatter: DateComponentsFormatter = {
-        let f = DateComponentsFormatter()
-        f.allowedUnits = [.hour, .minute]
-        f.zeroFormattingBehavior = .dropAll
-        f.unitsStyle = .full
-        return f
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.zeroFormattingBehavior = .dropAll
+        formatter.unitsStyle = .full
+        return formatter
     }()
 
     // MARK: - Outlets

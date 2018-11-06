@@ -125,25 +125,25 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     // MARK: - Value formatters
 
     private lazy var timeFormatter: DateComponentsFormatter = {
-        let f = DateComponentsFormatter()
-        f.allowedUnits = [.hour, .minute]
-        f.zeroFormattingBehavior = .dropAll
-        f.unitsStyle = .full
-        return f
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.zeroFormattingBehavior = .dropAll
+        formatter.unitsStyle = .full
+        return formatter
     }()
 
     private lazy var percentFormatter: NumberFormatter = {
-        var f = NumberFormatter()
-        f.numberStyle = .percent
-        return f
+        var formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        return formatter
     }()
 
     private lazy var periodDescriptionFormatter = calendar.producer.map { cal -> DateFormatter in
-        let f = DateFormatter()
-        f.calendar = cal
-        f.dateStyle = .medium
-        f.timeStyle = .none
-        return f
+        let formatter = DateFormatter()
+        formatter.calendar = cal
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
     }
 
     // MARK: -

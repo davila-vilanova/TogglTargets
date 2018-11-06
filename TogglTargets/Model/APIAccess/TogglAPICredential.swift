@@ -9,9 +9,9 @@
 import Foundation
 
 private let APITokenPassword = "api_token"
-private let AuthHeaderKey = "Authorization"
-private let BasicAuthHeaderPrefix = "Basic " // <-- end space built into the prefix
-private let UsernamePasswordSeparator: Character = ":"
+private let authorizationHeaderKey = "Authorization"
+private let basicAuthHeaderPrefix = "Basic " // <-- end space built into the prefix
+private let usernamePasswordSeparator: Character = ":"
 
 enum CredentialType: String {
     case email
@@ -19,13 +19,13 @@ enum CredentialType: String {
 }
 
 private func computeAuthHeaderValue(username: String, password: String) -> String {
-    let data = "\(username)\(UsernamePasswordSeparator)\(password)".data(using: .utf8)!
+    let data = "\(username)\(usernamePasswordSeparator)\(password)".data(using: .utf8)!
     let credential = data.base64EncodedString(options: [])
-    return "\(BasicAuthHeaderPrefix)\(credential)"
+    return "\(basicAuthHeaderPrefix)\(credential)"
 }
 
 private func extractLoginDataFromAuthHeaderValue(_ authHeaderValue: String) -> (username: String, password: String)? {
-    let prefixEndIndex = BasicAuthHeaderPrefix.endIndex
+    let prefixEndIndex = basicAuthHeaderPrefix.endIndex
     let headerEndIndex = authHeaderValue.endIndex
 
     guard headerEndIndex > prefixEndIndex else {
@@ -36,7 +36,7 @@ private func extractLoginDataFromAuthHeaderValue(_ authHeaderValue: String) -> (
     if let encodedData = deprefixed.data(using: .utf8),
         let decodedData = Data(base64Encoded: encodedData),
         let decodedString = String(data: decodedData, encoding: .utf8),
-        let separatorIndex = decodedString.index(of: UsernamePasswordSeparator) {
+        let separatorIndex = decodedString.index(of: usernamePasswordSeparator) {
         let username = decodedString[decodedString.startIndex..<separatorIndex]
         let password = decodedString[decodedString.index(after: separatorIndex)..<decodedString.endIndex]
         return (String(username), String(password))
@@ -66,7 +66,7 @@ struct TogglAPIEmailCredential: TogglAPICredential {
         self.authHeaderValue = computeAuthHeaderValue(username: email, password: password)
     }
 
-    var authHeaderKey = AuthHeaderKey
+    var authHeaderKey = authorizationHeaderKey
     private(set) var authHeaderValue: String
 }
 
@@ -89,11 +89,11 @@ struct TogglAPITokenCredential: TogglAPICredential {
         self.authHeaderValue = computeAuthHeaderValue(username: apiToken, password: APITokenPassword)
     }
 
-    var authHeaderKey: String = AuthHeaderKey
+    var authHeaderKey: String = authorizationHeaderKey
     private(set) var authHeaderValue: String
 
     static func headersIncludeTokenAuthenticationEntry(_ headers: [AnyHashable: Any]) -> Bool {
-        guard let headerValue = headers[AuthHeaderKey] as? String else {
+        guard let headerValue = headers[authorizationHeaderKey] as? String else {
             return false
         }
         return extractLoginDataFromAuthHeaderValue(headerValue)?.password == APITokenPassword

@@ -10,14 +10,14 @@ import Cocoa
 import ReactiveSwift
 import Result
 
-private let ProjectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
-private let SectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
+private let projectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
+private let sectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
 
-private let HeaderHeight: CGFloat = 30
-private let ProjectItemHeight: CGFloat = 62
+private let headerHeight: CGFloat = 30
+private let projectItemHeight: CGFloat = 62
 
-private let SelectedProjectIdRestorationKey = "SelectedProjectId"
-private let NoSelectedProjectIdRestorationValue: Int64 = 0
+private let selectedProjectIdRestorationKey = "SelectedProjectId"
+private let noSelectedProjectIdRestorationValue: Int64 = 0
 
 /// Manages a collection view that displays `Project` items organized by whether they have an associated time target.
 /// Produces a stream of selected `Project` values via the `selectedProject` property.
@@ -101,14 +101,14 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
-        coder.encode((selectedProjectID.value ?? NoSelectedProjectIdRestorationValue) as Int64,
-                     forKey: SelectedProjectIdRestorationKey)
+        coder.encode((selectedProjectID.value ?? noSelectedProjectIdRestorationValue) as Int64,
+                     forKey: selectedProjectIdRestorationKey)
     }
 
     override func restoreState(with coder: NSCoder) {
         super.restoreState(with: coder)
-        let restoredSelectedProjectId = coder.decodeInt64(forKey: SelectedProjectIdRestorationKey)
-        self.restoredSelectedProjectId.value = restoredSelectedProjectId == NoSelectedProjectIdRestorationValue ?
+        let restoredSelectedProjectId = coder.decodeInt64(forKey: selectedProjectIdRestorationKey)
+        self.restoredSelectedProjectId.value = restoredSelectedProjectId == noSelectedProjectIdRestorationValue ?
             nil : restoredSelectedProjectId
     }
 
@@ -206,19 +206,19 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     private func initializeProjectsCollectionView() {
         let itemNib = NSNib(nibNamed: "ProjectCollectionViewItem", bundle: nil)!
-        projectsCollectionView.register(itemNib, forItemWithIdentifier: ProjectItemIdentifier)
+        projectsCollectionView.register(itemNib, forItemWithIdentifier: projectItemIdentifier)
 
         let headerNib = NSNib(nibNamed: "ProjectCollectionViewHeader", bundle: nil)!
         projectsCollectionView.register(headerNib,
                                         forSupplementaryViewOfKind: NSCollectionView.elementKindSectionHeader,
-                                        withIdentifier: SectionHeaderIdentifier)
+                                        withIdentifier: sectionHeaderIdentifier)
 
         // swiftlint:disable:next force_cast
         let layout = projectsCollectionView.collectionViewLayout as! VerticalListLayout
-        layout.headerReferenceSize = CGSize(width: projectsCollectionView.bounds.width, height: HeaderHeight)
+        layout.headerReferenceSize = CGSize(width: projectsCollectionView.bounds.width, height: headerHeight)
         layout.sectionHeadersPinToVisibleBounds = true
         layout.minimumLineSpacing = 0 // avoid gap between items
-        layout.itemHeight = ProjectItemHeight
+        layout.itemHeight = projectItemHeight
     }
 
     func wireFullUpdatesToCollectionView() {
@@ -338,7 +338,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     func collectionView(_ collectionView: NSCollectionView,
                         itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        let item = collectionView.makeItem(withIdentifier: ProjectItemIdentifier, for: indexPath)
+        let item = collectionView.makeItem(withIdentifier: projectItemIdentifier, for: indexPath)
         // swiftlint:disable:next force_cast
         let projectItem = item as! ProjectCollectionViewItem
 
@@ -361,7 +361,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                         viewForSupplementaryElementOfKind kind: NSCollectionView.SupplementaryElementKind,
                         at indexPath: IndexPath) -> NSView {
         let view = collectionView.makeSupplementaryView(ofKind: NSCollectionView.elementKindSectionHeader,
-                                                        withIdentifier: SectionHeaderIdentifier, for: indexPath)
+                                                        withIdentifier: sectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
             switch ProjectIDsByTimeTargets.Section(rawValue: indexPath.section)! {
             case .withTimeTargets: header.title =

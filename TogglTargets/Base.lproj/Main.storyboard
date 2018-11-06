@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -65,7 +64,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
                                 <clipView key="contentView" wantsLayer="YES" id="V9W-AF-Ttj">
                                     <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <collectionView wantsLayer="YES" selectable="YES" id="UNJ-j2-pFb" customClass="ProjectsCollectionView" customModule="TogglTargets" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="220" height="300"/>
@@ -250,7 +249,7 @@
                         <outlet property="horizontalLine" destination="zUA-Li-pHF" id="uMI-Q1-W5z"/>
                         <outlet property="statusDescriptionLabel" destination="eD4-VC-Nnc" id="wzD-id-TZq"/>
                         <outlet property="statusDetailLabel" destination="fp8-gN-r27" id="tnd-Tf-APR"/>
-                        <outlet property="toggleRequestExpandedDetailsGestureRecognizer" destination="lh4-mF-EdT" id="V0r-PO-rRa"/>
+                        <outlet property="toggleExpandedDetailsGestureRecognizer" destination="lh4-mF-EdT" id="V0r-PO-rRa"/>
                     </connections>
                 </viewController>
                 <customObject id="mIm-2B-d87" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

@@ -10,8 +10,8 @@ import Cocoa
 import Result
 import ReactiveSwift
 
-private let OnboardingNotPendingKey = "OnboardingNotPending"
-private let ShowStepDelay: TimeInterval = 0.25
+private let onboardingNotPendingKey = "OnboardingNotPending"
+private let showStepDelay: TimeInterval = 0.25
 
 struct OnboardingStep {
     let identifier: OnboardingStepIdentifier
@@ -85,8 +85,8 @@ class OnboardingGuide {
             holder <~ take(from: viewProducer, stepIdentifier: stepIdentifier)
         }
 
-        if let r = registree as? OnboardingTargetViewsProvider {
-            for (stepIdentifier, targetView) in r.onboardingTargetViews {
+        if let reg = registree as? OnboardingTargetViewsProvider {
+            for (stepIdentifier, targetView) in reg.onboardingTargetViews {
                 connect(targetView, toViewHolderFor: stepIdentifier)
             }
         }
@@ -150,7 +150,7 @@ class OnboardingGuide {
         stepViewController.configureForLastStep <~ lastStepStarted
 
         let markOnboardingAsNotPending: BindingTarget<Void> = defaults.reactive.makeBindingTarget { defaults, _ in
-            defaults.set(true, forKey: OnboardingNotPendingKey)
+            defaults.set(true, forKey: onboardingNotPendingKey)
         }
 
         markOnboardingAsNotPending <~ onboardingEnded
@@ -171,7 +171,7 @@ class OnboardingGuide {
     private lazy var stepPopoverDelegate = PopoverDelegate()
 
     static func shouldOnboard(_ defaults: UserDefaults) -> Bool {
-        return !defaults.bool(forKey: OnboardingNotPendingKey)
+        return !defaults.bool(forKey: onboardingNotPendingKey)
     }
 }
 

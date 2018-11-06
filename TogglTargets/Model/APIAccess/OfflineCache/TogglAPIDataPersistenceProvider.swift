@@ -19,7 +19,7 @@ protocol TogglAPIDataPersistenceProvider {
 }
 
 class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
-    private let db: Connection
+    private let databaseConnection: Connection
 
     private let profileTable = Table("profile")
     private let profileIdExpression = Expression<Int64>("id")
@@ -35,7 +35,7 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
     init?(baseDirectory: URL?) {
         do {
             let databaseURL = URL(fileURLWithPath: "cached_toggl_data.sqlite3", relativeTo: baseDirectory)
-            db = try Connection(databaseURL.absoluteString)
+            databaseConnection = try Connection(databaseURL.absoluteString)
         } catch {
             return nil
         }
@@ -45,17 +45,17 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
 
     private func ensureSchemaCreated() {
         do {
-            try db.run(profileTable.create(ifNotExists: true) { t in
-                t.column(profileIdExpression, primaryKey: true)
-                t.column(userNameExpression)
-                t.column(emailExpression)
-                t.column(timezoneExpression)
+            try databaseConnection.run(profileTable.create(ifNotExists: true) { tableBuilder in
+                tableBuilder.column(profileIdExpression, primaryKey: true)
+                tableBuilder.column(userNameExpression)
+                tableBuilder.column(emailExpression)
+                tableBuilder.column(timezoneExpression)
             })
 
-            try db.run(projectTable.create(ifNotExists: true) { t in
-                t.column(projectIdExpression, primaryKey: true)
-                t.column(projectNameExpression)
-                t.column(workspaceIdExpression)
+            try databaseConnection.run(projectTable.create(ifNotExists: true) { tableBuilder in
+                tableBuilder.column(projectIdExpression, primaryKey: true)
+                tableBuilder.column(projectNameExpression)
+                tableBuilder.column(workspaceIdExpression)
             })
         } catch let error {
             print("Failed to ensure that schema is created - error=\(error)")
@@ -64,9 +64,9 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
 
     func persist(profile: Profile) {
         do {
-            try db.transaction {
-                try db.run(profileTable.delete())
-                try db.run(profileTable.insert(or: .replace,
+            try databaseConnection.transaction {
+                try databaseConnection.run(profileTable.delete())
+                try databaseConnection.run(profileTable.insert(or: .replace,
                                                profileIdExpression <- profile.id,
                                                userNameExpression <- profile.name,
                                                emailExpression <- profile.email,
@@ -78,7 +78,7 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
     }
 
     func retrieveProfile() -> Profile? {
-        let rows = try? db.prepare(profileTable.limit(1))
+        let rows = try? databaseConnection.prepare(profileTable.limit(1))
         guard let row = rows?.makeIterator().next() else {
             return nil
         }
@@ -93,7 +93,7 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
 
     func deleteProfile() {
         do {
-            try db.run(profileTable.delete())
+            try databaseConnection.run(profileTable.delete())
         } catch let error {
             print("Failed to delete profile - error=\(error)")
         }
@@ -101,10 +101,10 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
 
     func persist(projects: [Project]) {
         do {
-            try db.run(projectTable.delete())
-            try db.transaction {
+            try databaseConnection.run(projectTable.delete())
+            try databaseConnection.transaction {
                 for project in projects {
-                    try db.run(projectTable.insert(or: .replace,
+                    try databaseConnection.run(projectTable.insert(or: .replace,
                                                    projectIdExpression <- project.id,
                                                    projectNameExpression <- project.name,
                                                    workspaceIdExpression <- project.workspaceId))
@@ -116,7 +116,7 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
     }
 
     func retrieveProjects() -> [Project]? {
-        guard let rows = try? db.prepare(projectTable) else {
+        guard let rows = try? databaseConnection.prepare(projectTable) else {
             return nil
         }
 
@@ -137,7 +137,7 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
 
     func deleteProjects() {
         do {
-            try db.run(projectTable.delete())
+            try databaseConnection.run(projectTable.delete())
         } catch let error {
             print("Failed to delete projects - error=\(error)")
         }

@@ -28,17 +28,17 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
     // MARK: - Formatters
 
     private lazy var timeFormatter: DateComponentsFormatter = {
-        let f = DateComponentsFormatter()
-        f.allowedUnits = [.hour, .minute]
-        f.zeroFormattingBehavior = .dropAll
-        f.unitsStyle = .full
-        return f
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.zeroFormattingBehavior = .dropAll
+        formatter.unitsStyle = .full
+        return formatter
     }()
 
     private lazy var percentFormatter: NumberFormatter = {
-        var f = NumberFormatter()
-        f.numberStyle = .percent
-        return f
+        var formatter = NumberFormatter()
+        formatter.numberStyle = .percent
+        return formatter
     }()
 
     // MARK: - Outlets
@@ -152,11 +152,11 @@ class TargetReachedViewController: NSViewController, BindingTargetProvider {
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
     private lazy var timeFormatter: DateComponentsFormatter = {
-        let f = DateComponentsFormatter()
-        f.allowedUnits = [.hour, .minute]
-        f.zeroFormattingBehavior = .dropAll
-        f.unitsStyle = .full
-        return f
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.zeroFormattingBehavior = .dropAll
+        formatter.unitsStyle = .full
+        return formatter
     }()
 
     @IBOutlet weak var targetReachedField: NSTextField!
