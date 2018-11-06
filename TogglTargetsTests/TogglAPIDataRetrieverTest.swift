@@ -10,16 +10,15 @@ import XCTest
 import Result
 import ReactiveSwift
 
-fileprivate let dummyAPIToken = "8a7f2049ed"
-fileprivate let testCredential = TogglAPITokenCredential(apiToken: dummyAPIToken)!
-fileprivate let testReportPeriod = Period(start: DayComponents(year: 2017, month: 12, day: 1), end: DayComponents(year: 2017, month: 12, day: 31))
-fileprivate let firstDayOfPeriod = DayComponents(year: 2017, month: 12, day: 1)
-fileprivate let yesterday = DayComponents(year: 2017, month: 12, day: 14)
-fileprivate let today = DayComponents(year: 2017, month: 12, day: 15)
-fileprivate let twoPartReportPeriods = TwoPartTimeReportPeriod(scope: testReportPeriod, previousToDayOfRequest: Period(start: firstDayOfPeriod, end: yesterday), dayOfRequest: today)
+private let dummyAPIToken = "8a7f2049ed"
+private let testCredential = TogglAPITokenCredential(apiToken: dummyAPIToken)!
+private let testReportPeriod = Period(start: DayComponents(year: 2017, month: 12, day: 1), end: DayComponents(year: 2017, month: 12, day: 31))
+private let firstDayOfPeriod = DayComponents(year: 2017, month: 12, day: 1)
+private let yesterday = DayComponents(year: 2017, month: 12, day: 14)
+private let today = DayComponents(year: 2017, month: 12, day: 15)
+private let twoPartReportPeriods = TwoPartTimeReportPeriod(scope: testReportPeriod, previousToDayOfRequest: Period(start: firstDayOfPeriod, end: yesterday), dayOfRequest: today)
 
-
-fileprivate let testProfile = Profile(id: 118030,
+private let testProfile = Profile(id: 118030,
                                       name: "Ardilla Squirrel",
                                       email: "whatup@ardillita.me",
                                       imageUrl: nil,
@@ -28,24 +27,24 @@ fileprivate let testProfile = Profile(id: 118030,
                                                    Workspace(id: 2, name: "B")],
                                       apiToken: dummyAPIToken)
 
-fileprivate let testProjects: IndexedProjects = [100 : Project(id: 100, name: "first", active: true, workspaceId: 1),
-                                                 200 : Project(id: 200, name: "second", active: true, workspaceId: 1),
-                                                 300 : Project(id: 300, name: "third", active: true, workspaceId: 2)]
+private let testProjects: IndexedProjects = [100: Project(id: 100, name: "first", active: true, workspaceId: 1),
+                                                 200: Project(id: 200, name: "second", active: true, workspaceId: 1),
+                                                 300: Project(id: 300, name: "third", active: true, workspaceId: 2)]
 
-fileprivate let testReports: IndexedTwoPartTimeReports =
-    [ 100 : TwoPartTimeReport(projectId: 100, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 7200, workedTimeOnDayOfRequest: 2100),
-      200 : TwoPartTimeReport(projectId: 200, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 3812, workedTimeOnDayOfRequest: 0),
-      300 : TwoPartTimeReport(projectId: 300, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 0, workedTimeOnDayOfRequest: 1800)]
+private let testReports: IndexedTwoPartTimeReports =
+    [ 100: TwoPartTimeReport(projectId: 100, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 7200, workedTimeOnDayOfRequest: 2100),
+      200: TwoPartTimeReport(projectId: 200, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 3812, workedTimeOnDayOfRequest: 0),
+      300: TwoPartTimeReport(projectId: 300, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 0, workedTimeOnDayOfRequest: 1800)]
 
-fileprivate let testRunningEntry: RunningEntry = {
+private let testRunningEntry: RunningEntry = {
     let todayDate = Calendar.iso8601.date(from: today)!
     let hour: TimeInterval = 3600
     return RunningEntry(id: 8110, projectId: 200, start: todayDate + (8 * hour), retrieved: todayDate + (9 * hour))
 }()
 
-fileprivate let testUnderlyingError = NSError(domain: "TogglAPIDataRetrieverTest", code: -4, userInfo: nil)
-fileprivate let testError = APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError)
-fileprivate func equalsTestError(_ candidate: APIAccessError) -> Bool {
+private let testUnderlyingError = NSError(domain: "TogglAPIDataRetrieverTest", code: -4, userInfo: nil)
+private let testError = APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError)
+private func equalsTestError(_ candidate: APIAccessError) -> Bool {
     switch candidate {
     case .loadingSubsystemError(let underlying):
         let nsError = underlying as NSError
@@ -55,7 +54,7 @@ fileprivate func equalsTestError(_ candidate: APIAccessError) -> Bool {
     }
 }
 
-fileprivate let timeoutForExpectations = TimeInterval(1.0)
+private let timeoutForExpectations = TimeInterval(1.0)
 
 class TogglAPIDataRetrieverTest: XCTestCase {
 
@@ -76,7 +75,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
     var retrievedRunningEntry: Property<RunningEntry?>!
     var lastActivity: Property<ActivityStatus?>!
     var lastError: Property<APIAccessError?>!
-
 
     // MARK: - Set up
 
@@ -101,7 +99,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         retrieveProjectsCacheAction = RetrieveProjectsCacheAction { _ in SignalProducer(value: nil) }
         cachedProjects = MutableProperty(nil)
 
-        retrieveReportsNetworkAction = RetrieveReportsNetworkAction { (workspaceIDs, period) in
+        retrieveReportsNetworkAction = RetrieveReportsNetworkAction { (workspaceIDs, _) in
             // Return empty reports if the workspace IDs don't match the expected ones
             guard Set<Int64>(workspaceIDs) == Set<Int64>(testProfile.workspaces.map { $0.id }) else {
                 return SignalProducer(value: IndexedTwoPartTimeReports())
@@ -159,7 +157,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         self.dataRetriever.twoPartReportPeriod <~ SignalProducer(value: twoPartReportPeriods)
     }
 
-
     // MARK: - Test basic retrieval
 
     func testProfileIsRetrievedWhenAPICredentialBecomesAvailable() {
@@ -204,7 +201,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         wait(for: [onDemandRetrievalExpectation], timeout: timeoutForExpectations)
     }
 
-    private func testRetrieval<T>(of propertyProvider: @autoclosure () -> Property<T?>, satisfying test: @escaping (T) -> (), after trigger: () -> ()) {
+    private func testRetrieval<T>(of propertyProvider: @autoclosure () -> Property<T?>, satisfying test: @escaping (T) -> Void, after trigger: () -> Void) {
         makeDataRetriever()
         // Property is inside an autoclosure because it becomes non-nil only after `makeDataRetriever()` is invoked.
         let property = propertyProvider()
@@ -282,7 +279,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         XCTAssertNil(lastError.value)
     }
 
-
     // MARK: - Test error propagation
 
     func testErrorWhenRetrievingProfileIsMadeAvailable() {
@@ -290,7 +286,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
         }
 
-        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) } ) { [unowned self] in
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) }) { [unowned self] in
             self.feedAPICredentialIntoDataRetriever()
         }
     }
@@ -300,7 +296,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
         }
 
-        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) } ) { [unowned self] in
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) }) { [unowned self] in
             self.feedAPICredentialIntoDataRetriever()
         }
     }
@@ -310,13 +306,13 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
         }
 
-        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) } ) { [unowned self] in
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) }) { [unowned self] in
             self.feedAPICredentialIntoDataRetriever()
             self.feedTwoPartPeriodIntoDataRetriever()
         }
     }
 
-    private func testError(satisfies test: @escaping (APIAccessError) -> (), after trigger: () -> ()) {
+    private func testError(satisfies test: @escaping (APIAccessError) -> Void, after trigger: () -> Void) {
         makeDataRetriever()
         XCTAssertNil(lastError.value)
         let errorExpectation = expectation(description: "Expecting error value.")
@@ -329,7 +325,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
         wait(for: [errorExpectation], timeout: timeoutForExpectations)
     }
-
 
     // MARK: - Test currently running activity
 
@@ -395,7 +390,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
         feedTwoPartPeriodIntoDataRetriever()
 
-
         // First stage: feed API credentials, retrieve profile and running entry
 
         feedAPICredentialIntoDataRetriever()
@@ -408,7 +402,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         XCTAssertEqual(runningEntryActivityStatus.value?.isExecuting, true)
         XCTAssertNil(projectsActivityStatus.value)
         XCTAssertNil(reportsActivityStatus.value)
-
 
         // Second stage: profile retrieved, retrieve projects and reports
 
@@ -423,7 +416,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         XCTAssertNotNil(reportsActivityStatus.value)
         XCTAssertEqual(reportsActivityStatus.value?.isExecuting, true)
 
-
         // Feed running entry at this point and assess activity is successfully completed
 
         runningEntryPipe.input.send(value: testRunningEntry)
@@ -431,7 +423,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         wait(for: [runningEntryActionExecutionEndedExpectation], timeout: timeoutForExpectations)
         XCTAssertEqual(runningEntryActivityStatus.value?.isSuccessful, true)
 
-        
         // Third stage: project and reports retrieved
 
         projectsPipe.input.send(value: testProjects)
@@ -445,7 +436,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         XCTAssertNotNil(reportsActivityStatus.value)
         XCTAssertEqual(reportsActivityStatus.value?.isSuccessful, true)
     }
-
 
     // MARK: - Test cache
 
@@ -472,7 +462,6 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             XCTAssertEqual($0, testProfile)
             cacheStoreExpectation.fulfill()
         }
-
 
         makeDataRetriever()
 

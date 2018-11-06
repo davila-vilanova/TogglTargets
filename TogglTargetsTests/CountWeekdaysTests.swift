@@ -14,7 +14,7 @@ class CountWeekdaysTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
-    
+
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
@@ -25,13 +25,13 @@ class CountWeekdaysTests: XCTestCase {
         let endComps = DayComponents(year: 2017, month: 3, day: 31)//, hour: 23, minute: 59)
 
         let expectedCount: Dictionary<Weekday, Int> =
-            [ .monday : 4,
-              .tuesday : 4,
-              .wednesday : 5,
-              .thursday : 5,
-              .friday : 5,
-              .saturday : 4,
-              .sunday : 4 ]
+            [ .monday: 4,
+              .tuesday: 4,
+              .wednesday: 5,
+              .thursday: 5,
+              .friday: 5,
+              .saturday: 4,
+              .sunday: 4 ]
 
         var calendar = Calendar(identifier: .iso8601)
 
@@ -58,13 +58,13 @@ class CountWeekdaysTests: XCTestCase {
         let endComps = DayComponents(year: 2016, month: 10, day: 31)
 
         let expectedCount: Dictionary<Weekday, Int> =
-            [ .monday : 5,
-              .tuesday : 4,
-              .wednesday : 4,
-              .thursday : 4,
-              .friday : 4,
-              .saturday : 5,
-              .sunday : 5 ]
+            [ .monday: 5,
+              .tuesday: 4,
+              .wednesday: 4,
+              .thursday: 4,
+              .friday: 4,
+              .saturday: 5,
+              .sunday: 5 ]
 
         var calendar = Calendar(identifier: .iso8601)
 
@@ -82,7 +82,7 @@ class CountWeekdaysTests: XCTestCase {
                 iterations += 1
             }
         }
-        
+
         print("iterations=\(iterations)")
     }
 

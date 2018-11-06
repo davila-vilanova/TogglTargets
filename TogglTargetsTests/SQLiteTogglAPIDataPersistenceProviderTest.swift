@@ -8,7 +8,7 @@
 
 import XCTest
 
-fileprivate let testProfile = Profile(id: 118030,
+private let testProfile = Profile(id: 118030,
                                       name: "Ardilla Squirrel",
                                       email: "whatup@ardillita.me",
                                       imageUrl: nil,
@@ -16,10 +16,9 @@ fileprivate let testProfile = Profile(id: 118030,
                                       workspaces: [Workspace](),
                                       apiToken: nil)
 
-fileprivate let testProjects: [Project] = [Project(id: 100, name: "first", active: true, workspaceId: 1),
+private let testProjects: [Project] = [Project(id: 100, name: "first", active: true, workspaceId: 1),
                                            Project(id: 200, name: "second", active: true, workspaceId: 1),
                                            Project(id: 300, name: "third", active: true, workspaceId: 2)]
-
 
 class SQLiteTogglAPIDataPersistenceProviderTest: XCTestCase {
 
@@ -37,7 +36,7 @@ class SQLiteTogglAPIDataPersistenceProviderTest: XCTestCase {
         XCTAssertNil(persistenceProvider!.retrieveProfile())
         XCTAssertNil(persistenceProvider!.retrieveProjects())
     }
-    
+
     override func tearDown() {
         persistenceProvider?.deleteProfile()
         persistenceProvider?.deleteProjects()

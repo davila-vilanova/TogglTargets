@@ -43,7 +43,6 @@ class DateTimeExtensionsTests: XCTestCase {
                  expected: DayComponents(year: 2016, month: 10, day: 30))
     }
 
-
     func testCalculatePreviousDayInAllKnownTimezones() {
         var calendar = Calendar(identifier: .iso8601)
 

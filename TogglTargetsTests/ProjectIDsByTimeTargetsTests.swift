@@ -8,8 +8,8 @@
 
 import XCTest
 
-fileprivate let withTimeTargets = ProjectIDsByTimeTargets.Section.withTimeTargets.rawValue
-fileprivate let withoutTimeTargets = ProjectIDsByTimeTargets.Section.withoutTimeTargets.rawValue
+private let withTimeTargets = ProjectIDsByTimeTargets.Section.withTimeTargets.rawValue
+private let withoutTimeTargets = ProjectIDsByTimeTargets.Section.withoutTimeTargets.rawValue
 
 class ProjectIDsByTimeTargetsTests: XCTestCase {
 
@@ -56,11 +56,11 @@ class ProjectIDsByTimeTargetsTests: XCTestCase {
     }
 }
 
-fileprivate let SetupFailure = "Test setup failure: "
-fileprivate let SetupFailureNilIndexedTimeTargets = "\(SetupFailure)indexedTimeTargets and projectId must not be nil"
-fileprivate let SetupFailureNonMatchingProjectId = "\(SetupFailure)if a newTimeTarget is provided, newTimeTarget's projectId must match provided projectId"
-fileprivate let SetupFailureNilIdsByTimeTargets = "\(SetupFailure)idsByTimeTargets must not be nil"
-fileprivate let SetupFailureNilProjectId = "\(SetupFailure)after calling setupForProjectId(_, newTimeTarget:) projectId must not be nil"
+private let SetupFailure = "Test setup failure: "
+private let SetupFailureNilIndexedTimeTargets = "\(SetupFailure)indexedTimeTargets and projectId must not be nil"
+private let SetupFailureNonMatchingProjectId = "\(SetupFailure)if a newTimeTarget is provided, newTimeTarget's projectId must match provided projectId"
+private let SetupFailureNilIdsByTimeTargets = "\(SetupFailure)idsByTimeTargets must not be nil"
+private let SetupFailureNilProjectId = "\(SetupFailure)after calling setupForProjectId(_, newTimeTarget:) projectId must not be nil"
 
 class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
     var indexedTimeTargets: ProjectIdIndexedTimeTargets?
@@ -97,10 +97,10 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        indexedTimeTargets = [ 71 : TimeTarget(for: 71, hoursTarget: 10, workWeekdays: WeekdaySelection.exceptWeekend),
-                         25 : TimeTarget(for: 25, hoursTarget: 20, workWeekdays: WeekdaySelection.wholeWeek),
-                         90 : TimeTarget(for: 90, hoursTarget: 50, workWeekdays: WeekdaySelection.exceptWeekend),
-                         48 : TimeTarget(for: 48, hoursTarget: 30, workWeekdays: WeekdaySelection.exceptWeekend) ]
+        indexedTimeTargets = [ 71: TimeTarget(for: 71, hoursTarget: 10, workWeekdays: WeekdaySelection.exceptWeekend),
+                         25: TimeTarget(for: 25, hoursTarget: 20, workWeekdays: WeekdaySelection.wholeWeek),
+                         90: TimeTarget(for: 90, hoursTarget: 50, workWeekdays: WeekdaySelection.exceptWeekend),
+                         48: TimeTarget(for: 48, hoursTarget: 30, workWeekdays: WeekdaySelection.exceptWeekend) ]
         projectIDs = [30, 12, 25, 89, 22, 48, 71, 60]
 
         idsByTimeTargets = ProjectIDsByTimeTargets(projectIDs: projectIDs!, timeTargets: indexedTimeTargets!)
@@ -157,7 +157,6 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
         XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: indexChange.old), IndexPath(item: 0, section: withTimeTargets))
         XCTAssertEqual(newIdsByTimeTargets.indexPath(forElementAt: indexChange.new), IndexPath(item: 1, section: withTimeTargets))
     }
-
 
     func testDeleteTimeTarget() {
         guard let idsByTimeTargets = idsByTimeTargets else {

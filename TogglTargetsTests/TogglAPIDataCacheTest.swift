@@ -9,7 +9,7 @@
 import XCTest
 import ReactiveSwift
 
-fileprivate let testProfile = Profile(id: 118030,
+private let testProfile = Profile(id: 118030,
                                       name: "Ardilla Squirrel",
                                       email: "whatup@ardillita.me",
                                       imageUrl: nil,
@@ -17,11 +17,11 @@ fileprivate let testProfile = Profile(id: 118030,
                                       workspaces: [Workspace](),
                                       apiToken: nil)
 
-fileprivate let testProjects: IndexedProjects = [100 : Project(id: 100, name: "first", active: true, workspaceId: 1),
-                                                 200 : Project(id: 200, name: "second", active: true, workspaceId: 1),
-                                                 300 : Project(id: 300, name: "third", active: true, workspaceId: 2)]
+private let testProjects: IndexedProjects = [100: Project(id: 100, name: "first", active: true, workspaceId: 1),
+                                                 200: Project(id: 200, name: "second", active: true, workspaceId: 1),
+                                                 300: Project(id: 300, name: "third", active: true, workspaceId: 2)]
 
-fileprivate let timeoutForExpectations = TimeInterval(0.5)
+private let timeoutForExpectations = TimeInterval(0.5)
 
 class TogglAPIDataCacheTest: XCTestCase {
 
@@ -33,7 +33,7 @@ class TogglAPIDataCacheTest: XCTestCase {
         persistenceProvider = TogglAPIDataPersistenceProviderMock()
         cache = TogglAPIDataCache(persistenceProvider: persistenceProvider)
     }
-    
+
     override func tearDown() {
         cache = nil
         persistenceProvider = nil
@@ -85,13 +85,13 @@ class TogglAPIDataCacheTest: XCTestCase {
     }
 }
 
-fileprivate class TogglAPIDataPersistenceProviderMock: TogglAPIDataPersistenceProvider {
+private class TogglAPIDataPersistenceProviderMock: TogglAPIDataPersistenceProvider {
     fileprivate let persistProfileExpectation: XCTestExpectation
     fileprivate let retrieveProfileExpectation: XCTestExpectation
     fileprivate let deleteProfileExpectation: XCTestExpectation
     fileprivate let persistProjectsExpectation: XCTestExpectation
     fileprivate let retrieveProjectsExpectation: XCTestExpectation
-    fileprivate let deleteProjectsExpectation : XCTestExpectation
+    fileprivate let deleteProjectsExpectation: XCTestExpectation
 
     private var persistedProfile: Profile?
     private var persistedProjects: [Project]?

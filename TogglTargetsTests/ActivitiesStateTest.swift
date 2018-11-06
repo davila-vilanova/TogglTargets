@@ -10,7 +10,7 @@ import XCTest
 import Result
 import ReactiveSwift
 
-fileprivate let OutputTimeout = TimeInterval(7)
+private let OutputTimeout = TimeInterval(7)
 
 class ActivitiesStateTest: XCTestCase {
     let scheduler = QueueScheduler()
@@ -28,7 +28,7 @@ class ActivitiesStateTest: XCTestCase {
     }
 
     func testChangeFromSyncingProfileToSyncingProjectsAndReports() {
-        var outputValue: [ActivityStatus]? = nil
+        var outputValue: [ActivityStatus]?
 
         let firstOutputExpectation = expectation(description: "1st output value received")
         signalHolder = testee.output.take(first: 1).on(value: { _ in firstOutputExpectation.fulfill() })
@@ -60,7 +60,7 @@ class ActivitiesStateTest: XCTestCase {
     }
 
     func testChangeFromSyncingProjectsAndReportsIntoSyncingReports() {
-        var outputValue: [ActivityStatus]? = nil
+        var outputValue: [ActivityStatus]?
 
         let firstOutputsExpectation = expectation(description: "First 2 output values received")
         firstOutputsExpectation.expectedFulfillmentCount = 2
@@ -91,8 +91,7 @@ class ActivitiesStateTest: XCTestCase {
     }
 }
 
-
-fileprivate class RelativeTimestamperLogger {
+private class RelativeTimestamperLogger {
     private let startTime = Date()
 
     public func log(identifier: String, event: String, fileName: String, functionName: String, lineNumber: Int) {

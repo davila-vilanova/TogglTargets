@@ -9,7 +9,7 @@
 import XCTest
 import ReactiveSwift
 
-fileprivate let timeoutForExpectations: TimeInterval = 1
+private let timeoutForExpectations: TimeInterval = 1
 
 class SQLiteTimeTargetPersistenceProviderTests: XCTestCase {
 

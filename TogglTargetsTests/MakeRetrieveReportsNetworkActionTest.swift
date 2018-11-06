@@ -9,9 +9,9 @@
 import XCTest
 import ReactiveSwift
 
-fileprivate typealias ReportEntriesFixture = [WorkspaceID : [EndDay : [ReportEntry]]]
+private typealias ReportEntriesFixture = [WorkspaceID: [EndDay: [ReportEntry]]]
 
-fileprivate let timeoutForExpectations = TimeInterval(1.0)
+private let timeoutForExpectations = TimeInterval(1.0)
 
 class MakeRetrieveReportsNetworkActionTest: XCTestCase {
 
@@ -19,7 +19,7 @@ class MakeRetrieveReportsNetworkActionTest: XCTestCase {
 
     private var networkRetriever: TogglAPINetworkRetriever<[ReportEntry]>!
 
-    private var indexedNetworkRetrieverExpectations = [WorkspaceID : [EndDay : XCTestExpectation]]()
+    private var indexedNetworkRetrieverExpectations = [WorkspaceID: [EndDay: XCTestExpectation]]()
     private var networkRetrieverExpectations: [XCTestExpectation] {
         var collectedExpectations = [XCTestExpectation]()
         for (_, expectationsByEndDate) in indexedNetworkRetrieverExpectations {
@@ -34,12 +34,11 @@ class MakeRetrieveReportsNetworkActionTest: XCTestCase {
     // only whether it's a nil value or some URLSession value.
     private let urlSession = MutableProperty<URLSession?>(URLSession.shared)
 
-
     override func setUp() {
         super.setUp()
 
         for wid in workspaceIDs {
-            var expectationsByEndDate = [EndDay : XCTestExpectation]()
+            var expectationsByEndDate = [EndDay: XCTestExpectation]()
             for endDate in EndDay.allCases {
                 expectationsByEndDate[endDate] = expectation(description: "networkRetriever invocation expectation for workspace ID: \(wid), endDate: \(endDate)")
             }
@@ -71,9 +70,8 @@ class MakeRetrieveReportsNetworkActionTest: XCTestCase {
         retrieveReportsNetworkAction = makeRetrieveReportsNetworkAction(actionState, networkRetriever)
     }
 
-
     override func tearDown() {
-        indexedNetworkRetrieverExpectations = [WorkspaceID : [EndDay : XCTestExpectation]]()
+        indexedNetworkRetrieverExpectations = [WorkspaceID: [EndDay: XCTestExpectation]]()
         networkRetriever = nil
         super.tearDown()
     }
@@ -84,7 +82,7 @@ class MakeRetrieveReportsNetworkActionTest: XCTestCase {
     }
 
     func testReportsFromAllWorkspacesAndPeriodsAreCombinedInTwoPartTimeReportsAndIndexed() {
-        var reportEntriesByProjectID = [ProjectID : [EndDay : [ReportEntry]]]()
+        var reportEntriesByProjectID = [ProjectID: [EndDay: [ReportEntry]]]()
 
         let valueExpectation = expectation(description: "retrieveReportsNetworkAction value emitted")
 
@@ -123,19 +121,19 @@ class MakeRetrieveReportsNetworkActionTest: XCTestCase {
     }
 }
 
-fileprivate let workspaceIDs: [WorkspaceID] = [823, 172]
+private let workspaceIDs: [WorkspaceID] = [823, 172]
 
-fileprivate let startDay = DayComponents(year: 2017, month: 12, day: 1)
-fileprivate let endDay = DayComponents(year: 2017, month: 12, day: 31)
-fileprivate let yesterdayComps = DayComponents(year: 2017, month: 12, day: 23)
-fileprivate let todayComps = DayComponents(year: 2017, month: 12, day: 24)
+private let startDay = DayComponents(year: 2017, month: 12, day: 1)
+private let endDay = DayComponents(year: 2017, month: 12, day: 31)
+private let yesterdayComps = DayComponents(year: 2017, month: 12, day: 23)
+private let todayComps = DayComponents(year: 2017, month: 12, day: 24)
 
-fileprivate let fullReportPeriod = Period(start: startDay, end: endDay)
-fileprivate let twoPartTimePeriod = TwoPartTimeReportPeriod(scope: fullReportPeriod,
+private let fullReportPeriod = Period(start: startDay, end: endDay)
+private let twoPartTimePeriod = TwoPartTimeReportPeriod(scope: fullReportPeriod,
                                                             previousToDayOfRequest: Period(start: startDay, end: yesterdayComps),
                                                             dayOfRequest: todayComps)
 
-fileprivate enum EndDay {
+private enum EndDay {
     case yesterday
     case today
 
@@ -180,8 +178,7 @@ fileprivate extension String {
     }
 }
 
-
-fileprivate let jsonStringWid823UntilYesterday = """
+private let jsonStringWid823UntilYesterday = """
 [
 {
 "id": 13,
@@ -194,7 +191,7 @@ fileprivate let jsonStringWid823UntilYesterday = """
 ]
 """
 
-fileprivate let jsonStringWid823Today = """
+private let jsonStringWid823Today = """
 [
 {
 "id": 13,
@@ -207,8 +204,7 @@ fileprivate let jsonStringWid823Today = """
 ]
 """
 
-
-fileprivate let jsonStringWid172UntilYesterday = """
+private let jsonStringWid172UntilYesterday = """
 [
 {
 "id": 34,
@@ -221,7 +217,7 @@ fileprivate let jsonStringWid172UntilYesterday = """
 ]
 """
 
-fileprivate let jsonStringWid172Today = """
+private let jsonStringWid172Today = """
 [
 {
 "id": 34,
@@ -234,18 +230,17 @@ fileprivate let jsonStringWid172Today = """
 ]
 """
 
-
-fileprivate func makeReportEntriesFixture() -> ReportEntriesFixture {
-    let mappedJSONStrings: [WorkspaceID : [EndDay : String]] =
-        [823 : [.yesterday : jsonStringWid823UntilYesterday,
-                .today : jsonStringWid823Today],
-         172 : [.yesterday : jsonStringWid172UntilYesterday,
-                .today : jsonStringWid172Today]]
+private func makeReportEntriesFixture() -> ReportEntriesFixture {
+    let mappedJSONStrings: [WorkspaceID: [EndDay: String]] =
+        [823: [.yesterday: jsonStringWid823UntilYesterday,
+                .today: jsonStringWid823Today],
+         172: [.yesterday: jsonStringWid172UntilYesterday,
+                .today: jsonStringWid172Today]]
 
     var reportEntriesByWorkspaceIDEndDay = ReportEntriesFixture()
     let decoder = JSONDecoder()
     for wid in workspaceIDs {
-        var entriesForWorkspace = [EndDay : [ReportEntry]]()
+        var entriesForWorkspace = [EndDay: [ReportEntry]]()
         for endDate in EndDay.allCases {
             guard let jsonString = mappedJSONStrings[wid]?[endDate],
                 let jsonData = jsonString.data(using: .utf8),
@@ -260,4 +255,3 @@ fileprivate func makeReportEntriesFixture() -> ReportEntriesFixture {
 
     return reportEntriesByWorkspaceIDEndDay
 }
-

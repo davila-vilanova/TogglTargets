@@ -10,20 +10,20 @@ import XCTest
 import ReactiveSwift
 import Result
 
-fileprivate var currentDate = Date(timeIntervalSince1970: 1507731805) // 11. Oct 2017, 16:23 in Berlin
-fileprivate let projectIdA: Int64 = 310
-fileprivate let projectIdB: Int64 = 311
-fileprivate let timeRunningEntryA = TimeInterval.from(hours: 1.5)
-fileprivate let timeRunningEntryB = TimeInterval.from(hours: 2.5)
-fileprivate let runningEntryProjectA = makeRunningEntry(projectId: projectIdA, runningTime: timeRunningEntryA)
-fileprivate let runningEntryProjectB = makeRunningEntry(projectId: projectIdB, runningTime: timeRunningEntryB)
+private var currentDate = Date(timeIntervalSince1970: 1507731805) // 11. Oct 2017, 16:23 in Berlin
+private let projectIdA: Int64 = 310
+private let projectIdB: Int64 = 311
+private let timeRunningEntryA = TimeInterval.from(hours: 1.5)
+private let timeRunningEntryB = TimeInterval.from(hours: 2.5)
+private let runningEntryProjectA = makeRunningEntry(projectId: projectIdA, runningTime: timeRunningEntryA)
+private let runningEntryProjectB = makeRunningEntry(projectId: projectIdB, runningTime: timeRunningEntryB)
 
-fileprivate let hoursPerMonthTarget = 95
-fileprivate let timeTarget = TimeTarget(for: projectIdA, hoursTarget: hoursPerMonthTarget, workWeekdays: .exceptWeekend)
-fileprivate let todayComponents = DayComponents(year: 2017, month: 10, day: 11)
-fileprivate let tomorrowComponents = DayComponents(year: 2017, month: 10, day: 12)
-fileprivate let period = Period(start: DayComponents(year: 2017, month: 10, day: 1), end: todayComponents)
-fileprivate let report = TwoPartTimeReport(projectId: projectIdA,
+private let hoursPerMonthTarget = 95
+private let timeTarget = TimeTarget(for: projectIdA, hoursTarget: hoursPerMonthTarget, workWeekdays: .exceptWeekend)
+private let todayComponents = DayComponents(year: 2017, month: 10, day: 11)
+private let tomorrowComponents = DayComponents(year: 2017, month: 10, day: 12)
+private let period = Period(start: DayComponents(year: 2017, month: 10, day: 1), end: todayComponents)
+private let report = TwoPartTimeReport(projectId: projectIdA,
                                            period: period,
                                            workedTimeUntilDayBeforeRequest: .from(hours: 26),
                                            workedTimeOnDayOfRequest: .from(hours: 3))
@@ -31,7 +31,6 @@ fileprivate let report = TwoPartTimeReport(projectId: projectIdA,
 func makeRunningEntry(projectId: Int64, runningTime: TimeInterval) -> RunningEntry {
     return RunningEntry(id: 0, projectId: projectId, start: currentDate.addingTimeInterval(-runningTime), retrieved: currentDate)
 }
-
 
 /// This class just serves the purpose of doing all the common setup.
 /// The other XCTestCase derived classes in this file inherit from this.

@@ -9,15 +9,15 @@
 import XCTest
 import ReactiveSwift
 
-fileprivate let timeoutForExpectations = TimeInterval(1.0)
+private let timeoutForExpectations = TimeInterval(1.0)
 
 class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
 
     private let projectsFixture = makeProjectsFixture()
 
     private var networkRetriever: TogglAPINetworkRetriever<[Project]>!
-    
-    private var indexedNetworkRetrieverExpectations = [WorkspaceID : XCTestExpectation]()
+
+    private var indexedNetworkRetrieverExpectations = [WorkspaceID: XCTestExpectation]()
     private var networkRetrieverExpectations: [XCTestExpectation] {
         return indexedNetworkRetrieverExpectations.map { $1 }
     }
@@ -28,10 +28,9 @@ class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
     // only whether it's a nil value or some URLSession value.
     private let urlSession = MutableProperty<URLSession?>(URLSession.shared)
 
-
     override func setUp() {
         super.setUp()
-        
+
         for wid in workspaceIDs {
             indexedNetworkRetrieverExpectations[wid] = expectation(description: "networkRetriever invocation expectation for workspace ID: \(wid)")
         }
@@ -56,13 +55,13 @@ class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
         let actionState = Property(initial: nil, then: urlSession.producer)
         retrieveProjectsNetworkAction = makeRetrieveProjectsNetworkAction(actionState, networkRetriever)
     }
-    
+
     override func tearDown() {
-        indexedNetworkRetrieverExpectations = [WorkspaceID : XCTestExpectation]()
+        indexedNetworkRetrieverExpectations = [WorkspaceID: XCTestExpectation]()
         networkRetriever = nil
         super.tearDown()
     }
-    
+
     func testNetworkRetrieverIsInvokedForAllWorkspaceIDs() {
         retrieveProjectsNetworkAction.apply(workspaceIDs).start()
         wait(for: networkRetrieverExpectations, timeout: timeoutForExpectations)
@@ -103,7 +102,7 @@ class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
     }
 }
 
-fileprivate let workspaceIDs: [WorkspaceID] = [823, 172, 200]
+private let workspaceIDs: [WorkspaceID] = [823, 172, 200]
 fileprivate extension String {
     func containedWorkspaceID() -> WorkspaceID? {
         for wid in workspaceIDs {
@@ -115,7 +114,7 @@ fileprivate extension String {
     }
 }
 
-fileprivate let jsonStringWid823 = """
+private let jsonStringWid823 = """
 [
 {
 "id": 13,
@@ -138,7 +137,7 @@ fileprivate let jsonStringWid823 = """
 ]
 """
 
-fileprivate let jsonStringWid172 = """
+private let jsonStringWid172 = """
 [
 {
 "id": 34,
@@ -161,7 +160,7 @@ fileprivate let jsonStringWid172 = """
 ]
 """
 
-fileprivate let jsonStringWid200 = """
+private let jsonStringWid200 = """
 [
 {
 "id": 53,
@@ -184,11 +183,11 @@ fileprivate let jsonStringWid200 = """
 ]
 """
 
-fileprivate func makeProjectsFixture() -> [WorkspaceID : [Project]] {
-    let mappedJSONStrings: [WorkspaceID : String] = [823 : jsonStringWid823,
-                                                     172 : jsonStringWid172,
-                                                     200 : jsonStringWid200]
-    var constructedFixture = [WorkspaceID : [Project]]()
+private func makeProjectsFixture() -> [WorkspaceID: [Project]] {
+    let mappedJSONStrings: [WorkspaceID: String] = [823: jsonStringWid823,
+                                                     172: jsonStringWid172,
+                                                     200: jsonStringWid200]
+    var constructedFixture = [WorkspaceID: [Project]]()
     let decoder = JSONDecoder()
     for wid in workspaceIDs {
         guard let jsonString = mappedJSONStrings[wid],
@@ -204,4 +203,3 @@ fileprivate func makeProjectsFixture() -> [WorkspaceID : [Project]] {
     }
     return constructedFixture
 }
-
