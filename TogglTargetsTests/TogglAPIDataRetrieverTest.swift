@@ -242,7 +242,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         XCTAssertNil(lastError.value)
     }
 
-    func testRefreshAllData() {
+    func testRefreshAllData() { // swiftlint:disable:this function_body_length
         makeDataRetriever()
         XCTAssertNil(retrievedProfile.value)
         XCTAssertNil(retrievedProjects.value)
@@ -354,7 +354,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
     // MARK: - Test currently running activity
 
-    func testCurrentlyRunningActivity() {
+    func testCurrentlyRunningActivity() { // swiftlint:disable:this function_body_length
         let profilePipe = Signal<Profile, APIAccessError>.pipe()
         let projectsPipe = Signal<IndexedProjects, APIAccessError>.pipe()
         let reportsPipe = Signal<IndexedTwoPartTimeReports, APIAccessError>.pipe()

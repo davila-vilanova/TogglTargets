@@ -20,7 +20,7 @@ private let testProjects: [Project] = [Project(id: 100, name: "first", active: t
                                            Project(id: 200, name: "second", active: true, workspaceId: 1),
                                            Project(id: 300, name: "third", active: true, workspaceId: 2)]
 
-class SQLiteTogglAPIDataPersistenceProviderTest: XCTestCase {
+class SQLiteTogglAPIDataPersistenceProviderTest: XCTestCase { // swiftlint:disable:this type_name
 
     var persistenceProvider: TogglAPIDataPersistenceProvider?
 
