@@ -23,7 +23,7 @@ struct TimeTarget {
 }
 
 extension TimeTarget: Equatable {
-    static func ==(lhs: TimeTarget, rhs: TimeTarget) -> Bool {
+    static func == (lhs: TimeTarget, rhs: TimeTarget) -> Bool {
         return lhs.projectId == rhs.projectId
             && lhs.hoursTarget == rhs.hoursTarget
             && lhs.workWeekdays == rhs.workWeekdays
@@ -31,7 +31,7 @@ extension TimeTarget: Equatable {
 }
 
 extension TimeTarget: Comparable {
-    static func <(lhs: TimeTarget, rhs: TimeTarget) -> Bool {
+    static func < (lhs: TimeTarget, rhs: TimeTarget) -> Bool {
         return lhs.hoursTarget < rhs.hoursTarget
     }
 }

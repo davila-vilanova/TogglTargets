@@ -27,8 +27,8 @@ enum Weekday: Int {
         return days
     }()
 
-    static let allDaysOrdered: Array<Weekday> = {
-        var days = Array<Weekday>()
+    static let allDaysOrdered: [Weekday] = {
+        var days = [Weekday]()
         var dayIndex = 0
         while let day = Weekday(rawValue: dayIndex) {
             days.append(day)
@@ -63,7 +63,7 @@ extension Weekday {
 }
 
 struct WeekdaySelection {
-    private var selectionDict = Dictionary<Weekday, Bool>()
+    private var selectionDict = [Weekday: Bool]()
 
     mutating func select(_ day: Weekday) {
         selectionDict[day] = true
@@ -137,7 +137,7 @@ extension WeekdaySelection {
 }
 
 extension WeekdaySelection: Equatable {
-    static func ==(lhs: WeekdaySelection, rhs: WeekdaySelection) -> Bool {
+    static func == (lhs: WeekdaySelection, rhs: WeekdaySelection) -> Bool {
         for day in Weekday.allDays {
             if lhs.isSelected(day) != rhs.isSelected(day) {
                 return false
@@ -148,7 +148,7 @@ extension WeekdaySelection: Equatable {
 }
 
 extension WeekdaySelection: Comparable {
-    static func <(lhs: WeekdaySelection, rhs: WeekdaySelection) -> Bool {
+    static func < (lhs: WeekdaySelection, rhs: WeekdaySelection) -> Bool {
         return lhs.countOfSelectedDays < rhs.countOfSelectedDays
     }
 

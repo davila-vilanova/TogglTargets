@@ -156,7 +156,7 @@ enum ActivityStatus {
 }
 
 extension ActivityStatus: Hashable {
-    static func ==(lhs: ActivityStatus, rhs: ActivityStatus) -> Bool {
+    static func == (lhs: ActivityStatus, rhs: ActivityStatus) -> Bool {
         if lhs.activity != rhs.activity {
             return false
         }

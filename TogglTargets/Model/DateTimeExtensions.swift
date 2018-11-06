@@ -17,7 +17,7 @@ struct DayComponents: Equatable {
         return DateComponents(year: year, month: month, day: day)
     }
 
-    static func ==(lhs: DayComponents, rhs: DayComponents) -> Bool {
+    static func == (lhs: DayComponents, rhs: DayComponents) -> Bool {
         return lhs.day == rhs.day &&
             lhs.month == rhs.month &&
             lhs.year == rhs.year

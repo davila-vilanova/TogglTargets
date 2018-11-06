@@ -188,11 +188,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
 
         let backgroundViews = [
-            attachBackgroundView {
-                background, clip in background.bottomAnchor.constraint(equalTo: clip.documentView!.topAnchor)
+            attachBackgroundView { background, clip in
+                background.bottomAnchor.constraint(equalTo: clip.documentView!.topAnchor)
             },
-            attachBackgroundView {
-                background, clip in background.topAnchor.constraint(equalTo: clip.documentView!.bottomAnchor)
+            attachBackgroundView { background, clip in
+                background.topAnchor.constraint(equalTo: clip.documentView!.bottomAnchor)
             }
         ]
 

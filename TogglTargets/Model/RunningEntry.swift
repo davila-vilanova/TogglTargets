@@ -27,7 +27,7 @@ struct RunningEntry: Decodable {
 }
 
 extension RunningEntry: Equatable {
-    static func ==(lhs: RunningEntry, rhs: RunningEntry) -> Bool {
+    static func == (lhs: RunningEntry, rhs: RunningEntry) -> Bool {
         return lhs.id == rhs.id && lhs.projectId == rhs.projectId && lhs.start == rhs.start
     }
 

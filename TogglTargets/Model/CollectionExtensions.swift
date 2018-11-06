@@ -9,7 +9,7 @@
 import Foundation
 
 extension Dictionary {
-    func updatingValue(_ value: Dictionary.Value?, forKey key: Dictionary.Key) -> Dictionary<Key, Value> {
+    func updatingValue(_ value: Dictionary.Value?, forKey key: Dictionary.Key) -> [Key: Value] {
         var updated = self
         if let value = value {
             updated[key] = value

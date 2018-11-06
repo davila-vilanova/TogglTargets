@@ -14,7 +14,7 @@ struct Period {
 }
 
 extension Period: Equatable {
-    static func ==(lhs: Period, rhs: Period) -> Bool {
+    static func == (lhs: Period, rhs: Period) -> Bool {
         return lhs.start == rhs.start
             && lhs.end == rhs.end
     }

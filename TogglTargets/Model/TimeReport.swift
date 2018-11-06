@@ -43,7 +43,7 @@ extension TwoPartTimeReport: CustomDebugStringConvertible {
 }
 
 extension TwoPartTimeReport: Equatable {
-    static func ==(lhs: TwoPartTimeReport, rhs: TwoPartTimeReport) -> Bool {
+    static func == (lhs: TwoPartTimeReport, rhs: TwoPartTimeReport) -> Bool {
         return lhs.projectId == rhs.projectId
             && lhs.period == rhs.period
             && lhs.workedTimeUntilDayBeforeRequest == rhs.workedTimeUntilDayBeforeRequest

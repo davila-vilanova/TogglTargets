@@ -30,7 +30,7 @@ struct Profile: Decodable {
 }
 
 extension Profile: Equatable {
-    static func ==(lhs: Profile, rhs: Profile) -> Bool {
+    static func == (lhs: Profile, rhs: Profile) -> Bool {
         return lhs.id == rhs.id
             && lhs.name == rhs.name
             && lhs.email == rhs.email
@@ -49,7 +49,7 @@ struct Workspace: Decodable {
 }
 
 extension Workspace: Equatable {
-    static func ==(lhs: Workspace, rhs: Workspace) -> Bool {
+    static func == (lhs: Workspace, rhs: Workspace) -> Bool {
         return lhs.id == rhs.id && lhs.name == rhs.name
     }
 }

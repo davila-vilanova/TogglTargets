@@ -71,7 +71,7 @@ struct TogglAPIEmailCredential: TogglAPICredential {
 }
 
 extension TogglAPIEmailCredential: Equatable {
-    static func ==(lhs: TogglAPIEmailCredential, rhs: TogglAPIEmailCredential) -> Bool {
+    static func == (lhs: TogglAPIEmailCredential, rhs: TogglAPIEmailCredential) -> Bool {
         return lhs.email == rhs.email
             && lhs.password == rhs.password
     }
@@ -122,7 +122,7 @@ extension TogglAPITokenCredential: StorableInUserDefaults {
 }
 
 extension TogglAPITokenCredential: Equatable {
-    static func ==(lhs: TogglAPITokenCredential, rhs: TogglAPITokenCredential) -> Bool {
+    static func == (lhs: TogglAPITokenCredential, rhs: TogglAPITokenCredential) -> Bool {
         return lhs.apiToken == rhs.apiToken
     }
 }
