@@ -55,8 +55,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
 
         details <~ SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
                                                 lastBinding.producer.skipNil())
-            .map {
-                selectedProjectProducer, binding in
+            .map { selectedProjectProducer, binding in
                 (selectedProjectProducer,
                  binding.currentDate,
                  binding.calendar,
@@ -74,7 +73,7 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
 
     private lazy var emptySelectionViewController: EmptySelectionViewController = {
         let empty = self.storyboard!.instantiateController(withIdentifier: "EmptySelectionViewController")
-            as! EmptySelectionViewController // swiftlint:disable:next force_cast
+            as! EmptySelectionViewController // swiftlint:disable:this force_cast
         addChild(empty)
         return empty
     }()

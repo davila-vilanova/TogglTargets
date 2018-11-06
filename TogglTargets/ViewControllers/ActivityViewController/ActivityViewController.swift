@@ -37,7 +37,7 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
 
     private lazy var detailedActivityViewController: DetailedActivityViewController = {
         let detailed = self.storyboard!.instantiateController(withIdentifier: "DetailedActivityViewController")
-            as! DetailedActivityViewController // swiftlint:disable:next force_cast
+            as! DetailedActivityViewController // swiftlint:disable:this force_cast
 
         let heldStatuses = Property(initial: [ActivityStatus](), then: activitiesState.output.producer)
         let statuses =

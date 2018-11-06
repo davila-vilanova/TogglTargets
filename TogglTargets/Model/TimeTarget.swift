@@ -48,8 +48,6 @@ extension TimeTarget {
 
 extension TimeTarget: CustomDebugStringConvertible {
     var debugDescription: String {
-        get {
-            return "TimeTarget(for: \(projectId), hoursTarget: \(hoursTarget), workWeekdays: \(workWeekdays))"
-        }
+        return "TimeTarget(for: \(projectId), hoursTarget: \(hoursTarget), workWeekdays: \(workWeekdays))"
     }
 }

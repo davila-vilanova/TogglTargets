@@ -16,15 +16,13 @@ class SupportDirectoryProvider {
     private let defaultAppIdentifier = "la.davi.TogglTargets" // fallback if no bundle ID available
     private var _appIdentifier: String?
     private var appIdentifier: String {
-        get {
-            if let identifier = _appIdentifier {
-                return identifier
-            } else if let identifier = Bundle.main.bundleIdentifier {
-                _appIdentifier = identifier
-                return identifier
-            } else {
-                return defaultAppIdentifier
-            }
+        if let identifier = _appIdentifier {
+            return identifier
+        } else if let identifier = Bundle.main.bundleIdentifier {
+            _appIdentifier = identifier
+            return identifier
+        } else {
+            return defaultAppIdentifier
         }
     }
 

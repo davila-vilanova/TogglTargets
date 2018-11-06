@@ -112,12 +112,12 @@ struct ProjectIDsByTimeTargets {
                     let newlySortedIDs = currentSortedIDs
                         .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
                             for: timeTargetPreChange.updatingValue(newTimeTarget, forKey: projectId)))
-                    
+
                     guard let oldIndex = currentSortedIDs.index(of: projectId),
                         let newIndex = newlySortedIDs.index(of: projectId) else {
                             return nil
                     }
-                    
+
                     let oldTimeTarget = timeTargetPreChange[projectId]
                     let indexChange = IndexChange(old: oldIndex, new: newIndex)
                     if (oldTimeTarget == nil) && (newTimeTarget != nil) {

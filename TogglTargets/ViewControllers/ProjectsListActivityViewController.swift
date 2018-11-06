@@ -35,9 +35,8 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
 
     private var projectsListViewController: ProjectsListViewController?
     lazy private var activityViewController: ActivityViewController = {
-        // swiftlint:disable:next force_cast
         let activity = self.storyboard!.instantiateController(withIdentifier: "ActivityViewController")
-            as! ActivityViewController
+            as! ActivityViewController // swiftlint:disable:this force_cast
         addChild(activity)
         stackView.addView(activity.view, in: .bottom)
         activity.view.leadingAnchor.constraint(equalTo: stackView.leadingAnchor).isActive = true
@@ -84,7 +83,7 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
                     self.stackView.layoutSubtreeIfNeeded()
                 }, completionHandler: nil)
         }
-        
+
         let hideActivity: BindingTarget<Void> = activityViewController.view.reactive
             .makeBindingTarget { [unowned self] activityView, _ in
                 NSAnimationContext.runAnimationGroup({ context in

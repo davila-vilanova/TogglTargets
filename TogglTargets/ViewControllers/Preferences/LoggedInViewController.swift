@@ -109,7 +109,6 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
             alert.beginSheetModal(for: window) { response in
                 switch response {
                 case .alertFirstButtonReturn: observer.send(value: .ignore)
-                case .alertSecondButtonReturn: fallthrough
                 default: observer.send(value: .reenter)
                 }
                 observer.sendCompleted()

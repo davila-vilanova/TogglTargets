@@ -215,7 +215,7 @@ private class RunningEntryUpdateTimer {
                 }
                 return findClosestDate(after: now, matching: secondsOffset, using: calendar)
         }
-        
+
         lifetime += dates.startWithValues { [unowned self] in
             self.scheduledTickDisposable?.dispose()
             self.scheduledTickDisposable =

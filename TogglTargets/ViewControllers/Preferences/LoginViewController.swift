@@ -20,7 +20,7 @@ private enum CredentialValidationResult {
     case other
 
     var isError: Bool {
-        switch (self) {
+        switch self {
         case .error: return true
         case .other: return true
         default: return false

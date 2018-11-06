@@ -74,7 +74,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                                             retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
                                             retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
             // swiftlint:disable:previous line_length
-            
+
             let timeTargetsStore =
                 ConcreteProjectIDsProducingTimeTargetsStore(persistenceProvider: timeTargetsPersistenceProvider,
                                                             undoManager: undoManager)

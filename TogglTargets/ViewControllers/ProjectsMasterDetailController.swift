@@ -223,39 +223,41 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     }
 
     private lazy var showConfirmDeleteSheet =
-        Action<Void, ConfirmDeleteResolution, NoError>(state:
+        Action<Void, ConfirmDeleteResolution, NoError>(
+            state:
             selectedProject.combineLatest(with: isProjectWithTimeTargetCurrentlySelected),
-                                                       enabledIf: { $0.0 != nil && $0.1 }) { [unowned self] state, _ in
-            guard let window = self.view.window else {
-                return SignalProducer.empty
-            }
+            enabledIf: { $0.0 != nil && $0.1 },
+            execute: { [unowned self] state, _ in
+                guard let window = self.view.window else {
+                    return SignalProducer.empty
+                }
 
-            let project = state.0!
+                let project = state.0!
 
-            return SignalProducer { (observer: Signal<ConfirmDeleteResolution, NoError>.Observer, _: Lifetime) in
-                let alert = NSAlert()
-                alert.alertStyle = .warning
-                alert.messageText = String.localizedStringWithFormat(
-                    NSLocalizedString("confirm-delete.title", comment: "title of 'confirm delete' alert sheet"),
-                    project.name ?? "")
-                alert.informativeText = NSLocalizedString("confirm-delete.informative",
-                                                          comment: "informative text in 'confirm delete' alert sheet")
+                return SignalProducer { (observer: Signal<ConfirmDeleteResolution, NoError>.Observer, _: Lifetime) in
+                    let alert = NSAlert()
+                    alert.alertStyle = .warning
+                    alert.messageText = String.localizedStringWithFormat(
+                        NSLocalizedString("confirm-delete.title", comment: "title of 'confirm delete' alert sheet"),
+                        project.name ?? "")
+                    alert.informativeText = NSLocalizedString("confirm-delete.informative",
+                                                              comment: "informative text in 'confirm delete' alert sheet")
 
-                alert.addButton(withTitle:
-                    NSLocalizedString("confirm-delete.do-delete",
-                                      comment: "title of 'confirm delete' button in 'confirm delete' alert sheet"))
-                alert.addButton(withTitle:
-                    NSLocalizedString("confirm-delete.do-not-delete",
-                                      comment: "title of 'don't delete' button in 'confirm delete' alert sheet"))
+                    alert.addButton(withTitle:
+                        NSLocalizedString("confirm-delete.do-delete",
+                                          comment: "title of 'confirm delete' button in 'confirm delete' alert sheet"))
+                    alert.addButton(withTitle:
+                        NSLocalizedString("confirm-delete.do-not-delete",
+                                          comment: "title of 'don't delete' button in 'confirm delete' alert sheet"))
 
-                alert.beginSheetModal(for: window) { response in
-                    switch response {
-                    case .alertFirstButtonReturn: observer.send(value: .delete(projectId: project.id))
-                    case .alertSecondButtonReturn: fallthrough
-                    default: observer.send(value: .doNotDelete)
+                    alert.beginSheetModal(for: window) { response in
+                        switch response {
+                        case .alertFirstButtonReturn: observer.send(value: .delete(projectId: project.id))
+                        default: observer.send(value: .doNotDelete)
+                        }
+                        observer.sendCompleted()
                     }
-                    observer.sendCompleted()
                 }
             }
-    }
+    )
 }
