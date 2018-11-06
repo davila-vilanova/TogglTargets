@@ -58,9 +58,11 @@ class ProjectIDsByTimeTargetsTests: XCTestCase {
 
 private let SetupFailure = "Test setup failure: "
 private let SetupFailureNilIndexedTimeTargets = "\(SetupFailure)indexedTimeTargets and projectId must not be nil"
-private let SetupFailureNonMatchingProjectId = "\(SetupFailure)if a newTimeTarget is provided, newTimeTarget's projectId must match provided projectId"
+private let SetupFailureNonMatchingProjectId =
+    "\(SetupFailure)if a newTimeTarget is provided, newTimeTarget's projectId must match provided projectId"
 private let SetupFailureNilIdsByTimeTargets = "\(SetupFailure)idsByTimeTargets must not be nil"
-private let SetupFailureNilProjectId = "\(SetupFailure)after calling setupForProjectId(_, newTimeTarget:) projectId must not be nil"
+private let SetupFailureNilProjectId =
+    "\(SetupFailure)after calling setupForProjectId(_, newTimeTarget:) projectId must not be nil"
 
 class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
     var indexedTimeTargets: ProjectIdIndexedTimeTargets?
@@ -130,7 +132,10 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
             return
         }
 
-        setUpForProjectId(48, newTimeTarget: TimeTarget(for: 48, hoursTarget: 15, workWeekdays: WeekdaySelection.exceptWeekend))
+        setUpForProjectId(48,
+                          newTimeTarget: TimeTarget(for: 48,
+                                                    hoursTarget: 15,
+                                                    workWeekdays: WeekdaySelection.exceptWeekend))
         guard let projectId = projectId else {
             XCTFail(SetupFailureNilProjectId)
             return
@@ -154,8 +159,10 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
         XCTAssertEqual(newIdsByTimeTargets.sortedProjectIDs, [25, 48, 71, 89, 60, 30, 22, 12])
         XCTAssertEqual(newIdsByTimeTargets.countOfProjectsWithTimeTargets, 3)
 
-        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: indexChange.old), IndexPath(item: 0, section: withTimeTargets))
-        XCTAssertEqual(newIdsByTimeTargets.indexPath(forElementAt: indexChange.new), IndexPath(item: 1, section: withTimeTargets))
+        XCTAssertEqual(
+            idsByTimeTargets.indexPath(forElementAt: indexChange.old), IndexPath(item: 0, section: withTimeTargets))
+        XCTAssertEqual(
+            newIdsByTimeTargets.indexPath(forElementAt: indexChange.new), IndexPath(item: 1, section: withTimeTargets))
     }
 
     func testDeleteTimeTarget() {
@@ -192,8 +199,10 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
         XCTAssertEqual(newIdsByTimeTargets.sortedProjectIDs, [48, 71, 89, 60, 30, 25, 22, 12])
         XCTAssertEqual(newIdsByTimeTargets.countOfProjectsWithTimeTargets, 2)
 
-        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: indexChange.old), IndexPath(item: 1, section: withTimeTargets))
-        XCTAssertEqual(newIdsByTimeTargets.indexPath(forElementAt: indexChange.new), IndexPath(item: 3, section: withoutTimeTargets))
+        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: indexChange.old),
+                       IndexPath(item: 1, section: withTimeTargets))
+        XCTAssertEqual(newIdsByTimeTargets.indexPath(forElementAt: indexChange.new),
+                       IndexPath(item: 3, section: withoutTimeTargets))
     }
 
     func testCreateTimeTarget() {
@@ -206,7 +215,10 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
             return
         }
 
-        setUpForProjectId(22, newTimeTarget: TimeTarget(for: 22, hoursTarget: 16, workWeekdays: WeekdaySelection.exceptWeekend))
+        setUpForProjectId(22,
+                          newTimeTarget: TimeTarget(for: 22,
+                                                    hoursTarget: 16,
+                                                    workWeekdays: WeekdaySelection.exceptWeekend))
         guard let projectId = projectId else {
             XCTFail(SetupFailureNilProjectId)
             return
@@ -231,7 +243,9 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
         XCTAssertEqual(newIdsByTimeTargets.sortedProjectIDs, [48, 25, 22, 71, 89, 60, 30, 12])
         XCTAssertEqual(newIdsByTimeTargets.countOfProjectsWithTimeTargets, 4)
 
-        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: indexChange.old), IndexPath(item: 3, section: withoutTimeTargets))
-        XCTAssertEqual(newIdsByTimeTargets.indexPath(forElementAt: indexChange.new), IndexPath(item: 2, section: withTimeTargets))
+        XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: indexChange.old),
+                       IndexPath(item: 3, section: withoutTimeTargets))
+        XCTAssertEqual(newIdsByTimeTargets.indexPath(forElementAt: indexChange.new),
+                       IndexPath(item: 2, section: withTimeTargets))
     }
 }

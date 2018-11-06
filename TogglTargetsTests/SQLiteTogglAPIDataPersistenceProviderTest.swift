@@ -27,7 +27,8 @@ class SQLiteTogglAPIDataPersistenceProviderTest: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        persistenceProvider = SQLiteTogglAPIDataPersistenceProvider(baseDirectory: FileManager.default.temporaryDirectory)
+        persistenceProvider =
+            SQLiteTogglAPIDataPersistenceProvider(baseDirectory: FileManager.default.temporaryDirectory)
         guard persistenceProvider != nil else {
             XCTFail("The database file cannot be opened and cannot be created")
             return

@@ -29,7 +29,10 @@ private let report = TwoPartTimeReport(projectId: projectIdA,
                                            workedTimeOnDayOfRequest: .from(hours: 3))
 
 func makeRunningEntry(projectId: Int64, runningTime: TimeInterval) -> RunningEntry {
-    return RunningEntry(id: 0, projectId: projectId, start: currentDate.addingTimeInterval(-runningTime), retrieved: currentDate)
+    return RunningEntry(id: 0,
+                        projectId: projectId,
+                        start: currentDate.addingTimeInterval(-runningTime),
+                        retrieved: currentDate)
 }
 
 /// This class just serves the purpose of doing all the common setup.
@@ -115,8 +118,8 @@ class WorkedTimeTests: ProgressToTimeTargetTests {
     }
 
     func testWorkedTimeStartingStrategyToday() {
-        // Calculating strategy from same day as currentDate (that is, "today", which also is the end date for the report)
-        // should yield the time worked until yesterday according to the report ...
+        // Calculating strategy from same day as currentDate (that is, "today", which also is the end date for the
+        // report) should yield the time worked until yesterday according to the report ...
         progress.startStrategyDay <~ SignalProducer(value: todayComponents)
         XCTAssertEqual(workedTimeResult.value, report.workedTimeUntilDayBeforeRequest)
     }
@@ -165,17 +168,19 @@ class RemainingTimeTests: ProgressToTimeTargetTests {
     func testRemainingTimeStartingStrategyTomorrow() {
         // Calculating strategy from tomorrow should result in the target time minus the full time worked
         progress.startStrategyDay <~ SignalProducer(value: tomorrowComponents)
-        XCTAssertEqual(remainingTimeResult.value, TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTime - timeRunningEntryA)
+        XCTAssertEqual(remainingTimeResult.value,
+                       TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTime - timeRunningEntryA)
     }
 
     func testRemainingTimeStartingStrategyToday() {
-        // Calculating strategy from same day as currentDate (that is, "today", which also is the end date for the report)
-        // should result in the target time minus the time worked until yesterday according to the report
+        // Calculating strategy from same day as currentDate (that is, "today", which also is the end date for the
+        // report) should result in the target time minus the time worked until yesterday according to the report
         // because today's time is already part of the execution of the current strategy.
         // runningEntry should be ignored
         assert(todayComponents == report.period.end) // internal tests consistency
         progress.startStrategyDay <~ SignalProducer(value: todayComponents)
-        XCTAssertEqual(remainingTimeResult.value, TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTimeUntilDayBeforeRequest)
+        XCTAssertEqual(remainingTimeResult.value,
+                       TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTimeUntilDayBeforeRequest)
     }
 }
 
@@ -212,14 +217,16 @@ class AdjustedDayBaselineTests: ProgressToTimeTargetTests {
 
     func testAdjustedDayBaselineStartingStrategyTomorrow() {
         progress.startStrategyDay <~ SignalProducer(value: tomorrowComponents)
-        let expectedRemainingTime = TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTime - timeRunningEntryA
+        let expectedRemainingTime =
+            TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTime - timeRunningEntryA
         let remainingWorkDays = 14.0
         XCTAssertEqual(adjustedBaselineResult.value, expectedRemainingTime / remainingWorkDays)
     }
 
     func testAdjustedDayBaselineStartingStrategyToday() {
         progress.startStrategyDay <~ SignalProducer(value: todayComponents)
-        let expectedRemainingTime = TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTimeUntilDayBeforeRequest
+        let expectedRemainingTime =
+            TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTimeUntilDayBeforeRequest
         let remainingWorkDays = 15.0
         XCTAssertEqual(adjustedBaselineResult.value, expectedRemainingTime / remainingWorkDays)
     }
@@ -243,12 +250,16 @@ class BaselineDifferentialTests: ProgressToTimeTargetTests {
         XCTAssertNotNil(baselineDifferentialResult.value)
 
         let totalWorkDays = 22.0
-        let remainingTimeToTarget = TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTime - timeRunningEntryA
+        let remainingTimeToTarget =
+            TimeInterval.from(hours: hoursPerMonthTarget) - report.workedTime - timeRunningEntryA
         let remainingWorkDays = 14.0
         let baseline: TimeInterval = TimeInterval.from(hours: hoursPerMonthTarget) / totalWorkDays
         let adjustedBaseline: TimeInterval = remainingTimeToTarget / remainingWorkDays
-        let computedAdjustedBaseline = baseline + (baseline * baselineDifferentialResult.value!) // asserted earlier as non nil
-        XCTAssertEqual(computedAdjustedBaseline, adjustedBaseline, accuracy: pow(10, -12.0)) // this test's calculation seems not quite as precise as to satisfy Double's epsilon which approaches 2.22e-16
+        let computedAdjustedBaseline =
+            baseline + (baseline * baselineDifferentialResult.value!) // asserted earlier as non nil
+
+        // this test's calculation seems not quite as precise as to satisfy Double's epsilon which approaches 2.22e-16
+        XCTAssertEqual(computedAdjustedBaseline, adjustedBaseline, accuracy: pow(10, -12.0))
     }
 }
 

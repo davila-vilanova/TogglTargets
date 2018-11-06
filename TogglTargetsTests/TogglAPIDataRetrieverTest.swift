@@ -12,11 +12,15 @@ import ReactiveSwift
 
 private let dummyAPIToken = "8a7f2049ed"
 private let testCredential = TogglAPITokenCredential(apiToken: dummyAPIToken)!
-private let testReportPeriod = Period(start: DayComponents(year: 2017, month: 12, day: 1), end: DayComponents(year: 2017, month: 12, day: 31))
+private let testReportPeriod = Period(start: DayComponents(year: 2017, month: 12, day: 1),
+                                      end: DayComponents(year: 2017, month: 12, day: 31))
 private let firstDayOfPeriod = DayComponents(year: 2017, month: 12, day: 1)
 private let yesterday = DayComponents(year: 2017, month: 12, day: 14)
 private let today = DayComponents(year: 2017, month: 12, day: 15)
-private let twoPartReportPeriods = TwoPartTimeReportPeriod(scope: testReportPeriod, previousToDayOfRequest: Period(start: firstDayOfPeriod, end: yesterday), dayOfRequest: today)
+private let twoPartReportPeriods =
+    TwoPartTimeReportPeriod(scope: testReportPeriod,
+                            previousToDayOfRequest: Period(start: firstDayOfPeriod, end: yesterday),
+                            dayOfRequest: today)
 
 private let testProfile = Profile(id: 118030,
                                       name: "Ardilla Squirrel",
@@ -32,9 +36,18 @@ private let testProjects: IndexedProjects = [100: Project(id: 100, name: "first"
                                                  300: Project(id: 300, name: "third", active: true, workspaceId: 2)]
 
 private let testReports: IndexedTwoPartTimeReports =
-    [ 100: TwoPartTimeReport(projectId: 100, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 7200, workedTimeOnDayOfRequest: 2100),
-      200: TwoPartTimeReport(projectId: 200, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 3812, workedTimeOnDayOfRequest: 0),
-      300: TwoPartTimeReport(projectId: 300, period: testReportPeriod, workedTimeUntilDayBeforeRequest: 0, workedTimeOnDayOfRequest: 1800)]
+    [ 100: TwoPartTimeReport(projectId: 100,
+                             period: testReportPeriod,
+                             workedTimeUntilDayBeforeRequest: 7200,
+                             workedTimeOnDayOfRequest: 2100),
+      200: TwoPartTimeReport(projectId: 200,
+                             period: testReportPeriod,
+                             workedTimeUntilDayBeforeRequest: 3812,
+                             workedTimeOnDayOfRequest: 0),
+      300: TwoPartTimeReport(projectId: 300,
+                             period: testReportPeriod,
+                             workedTimeUntilDayBeforeRequest: 0,
+                             workedTimeOnDayOfRequest: 1800) ]
 
 private let testRunningEntry: RunningEntry = {
     let todayDate = Calendar.iso8601.date(from: today)!
@@ -133,14 +146,16 @@ class TogglAPIDataRetrieverTest: XCTestCase {
     }
 
     private func makeDataRetriever() {
-        dataRetriever = CachedTogglAPIDataRetriever(retrieveProfileNetworkActionMaker: { [action = retrieveProfileNetworkAction!] in action },
-                                                    retrieveProfileFromCache: retrieveProfileCacheAction,
-                                                    storeProfileInCache: cachedProfile.bindingTarget,
-                                                    retrieveProjectsNetworkActionMaker: { [action = retrieveProjectsNetworkAction!] _ in action },
-                                                    retrieveProjectsFromCache: retrieveProjectsCacheAction,
-                                                    storeProjectsInCache: cachedProjects.bindingTarget,
-                                                    retrieveReportsNetworkActionMaker: { [action = retrieveReportsNetworkAction!] _ in action },
-                                                    retrieveRunningEntryNetworkActionMaker: { [action = retrieveRunningEntryAction!] _ in action })
+        dataRetriever = CachedTogglAPIDataRetriever(
+            retrieveProfileNetworkActionMaker: { [action = retrieveProfileNetworkAction!] in action },
+            retrieveProfileFromCache: retrieveProfileCacheAction,
+            storeProfileInCache: cachedProfile.bindingTarget,
+            retrieveProjectsNetworkActionMaker: { [action = retrieveProjectsNetworkAction!] _ in action },
+            retrieveProjectsFromCache: retrieveProjectsCacheAction,
+            storeProjectsInCache: cachedProjects.bindingTarget,
+            retrieveReportsNetworkActionMaker: { [action = retrieveReportsNetworkAction!] _ in action },
+            retrieveRunningEntryNetworkActionMaker: { [action = retrieveRunningEntryAction!] _ in action })
+
         retrievedProfile = Property(initial: nil, then: dataRetriever.profile.producer)
         retrievedProjects = Property(initial: nil, then: dataRetriever.projects.producer)
         retrievedReports = Property(initial: nil, then: dataRetriever.reports.producer)
@@ -160,15 +175,18 @@ class TogglAPIDataRetrieverTest: XCTestCase {
     // MARK: - Test basic retrieval
 
     func testProfileIsRetrievedWhenAPICredentialBecomesAvailable() {
-        testRetrieval(of: retrievedProfile, satisfying: { XCTAssertEqual($0, testProfile) }, after: feedAPICredentialIntoDataRetriever)
+        testRetrieval(of: retrievedProfile, satisfying: { XCTAssertEqual($0, testProfile) },
+                      after: feedAPICredentialIntoDataRetriever)
     }
 
     func testRunningEntryIsRetrievedWhenAPICredentialBecomesAvailable() {
-        testRetrieval(of: retrievedRunningEntry, satisfying: { XCTAssertEqual($0, testRunningEntry) }, after: feedAPICredentialIntoDataRetriever)
+        testRetrieval(of: retrievedRunningEntry, satisfying: { XCTAssertEqual($0, testRunningEntry) },
+                      after: feedAPICredentialIntoDataRetriever)
     }
 
     func testProjectsAreRetrievedWhenWorkspaceIDsBecomeAvailable() {
-        testRetrieval(of: retrievedProjects, satisfying: { XCTAssertEqual($0, testProjects) }, after: feedAPICredentialIntoDataRetriever)
+        testRetrieval(of: retrievedProjects, satisfying: { XCTAssertEqual($0, testProjects) },
+                      after: feedAPICredentialIntoDataRetriever)
     }
 
     func testReportsAreRetrievedWhenWorkspaceIDsAndPeriodsBecomeAvailable() {
@@ -183,7 +201,9 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
         XCTAssertNil(retrievedRunningEntry.value)
         XCTAssertNil(lastError.value)
-        let automaticRetrievalExpectation = expectation(description: "Expecting automatically retrieved value for running entry")
+        let automaticRetrievalExpectation =
+            expectation(description: "Expecting automatically retrieved value for running entry")
+
         retrievedRunningEntry.producer.skip(first: 1).take(first: 1).startWithValues {
             XCTAssertNotNil($0)
             automaticRetrievalExpectation.fulfill()
@@ -192,7 +212,9 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         feedAPICredentialIntoDataRetriever()
         wait(for: [automaticRetrievalExpectation], timeout: timeoutForExpectations)
 
-        let onDemandRetrievalExpectation = expectation(description: "Expecting on demand retrieved value for running entry")
+        let onDemandRetrievalExpectation =
+            expectation(description: "Expecting on demand retrieved value for running entry")
+
         retrievedRunningEntry.producer.skip(first: 1).take(first: 1).startWithValues {
             XCTAssertNotNil($0)
             onDemandRetrievalExpectation.fulfill()
@@ -201,7 +223,8 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         wait(for: [onDemandRetrievalExpectation], timeout: timeoutForExpectations)
     }
 
-    private func testRetrieval<T>(of propertyProvider: @autoclosure () -> Property<T?>, satisfying test: @escaping (T) -> Void, after trigger: () -> Void) {
+    private func testRetrieval<T>(of propertyProvider: @autoclosure () -> Property<T?>,
+                                  satisfying test: @escaping (T) -> Void, after trigger: () -> Void) {
         makeDataRetriever()
         // Property is inside an autoclosure because it becomes non-nil only after `makeDataRetriever()` is invoked.
         let property = propertyProvider()
@@ -227,16 +250,17 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         XCTAssertNil(retrievedRunningEntry.value)
         XCTAssertNil(lastError.value)
 
-        func retrieveTwiceExpectations(for entityName: String) -> (first: XCTestExpectation, second: XCTestExpectation) {
-            let once = XCTestExpectation(description: "\(entityName) must be retrieved at least once.")
-            once.expectedFulfillmentCount = 1
-            once.assertForOverFulfill = false
+        func retrieveTwiceExpectations(for entityName: String)
+            -> (first: XCTestExpectation, second: XCTestExpectation) {
+                let once = XCTestExpectation(description: "\(entityName) must be retrieved at least once.")
+                once.expectedFulfillmentCount = 1
+                once.assertForOverFulfill = false
 
-            let twice = XCTestExpectation(description: "\(entityName) must be retrieved exactly twice.")
-            twice.expectedFulfillmentCount = 2
-            twice.assertForOverFulfill = true
+                let twice = XCTestExpectation(description: "\(entityName) must be retrieved exactly twice.")
+                twice.expectedFulfillmentCount = 2
+                twice.assertForOverFulfill = true
 
-            return (first: once, second: twice)
+                return (first: once, second: twice)
         }
 
         let profileExpectations = retrieveTwiceExpectations(for: "Profile")
@@ -271,11 +295,13 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         feedAPICredentialIntoDataRetriever()
         feedTwoPartPeriodIntoDataRetriever()
 
-        wait(for: [profileExpectations.first, projectsExpectations.first, reportsExpectations.first], timeout: timeoutForExpectations)
+        wait(for: [profileExpectations.first, projectsExpectations.first, reportsExpectations.first],
+             timeout: timeoutForExpectations)
 
         dataRetriever.refreshAllData <~ SignalProducer(value: ())
 
-        wait(for: [profileExpectations.second, projectsExpectations.second, reportsExpectations.second], timeout: timeoutForExpectations)
+        wait(for: [profileExpectations.second, projectsExpectations.second, reportsExpectations.second],
+             timeout: timeoutForExpectations)
         XCTAssertNil(lastError.value)
     }
 
@@ -352,35 +378,55 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
         makeDataRetriever()
 
-        let profileActionExecutionStartedExpectation = expectation(description: "retrieveProfileNetworkAction action execution started")
-        let projectsActionExecutionStartedExpectation = expectation(description: "retrieveProjectsNetworkAction action execution started")
-        let reportsActionExecutionStartedExpectation = expectation(description: "retrieveReportsNetworkAction action execution started")
-        let runningEntryActionExecutionStartedExpectation = expectation(description: "retrieveRunningEntryAction action execution started")
+        let profileActionExecutionStartedExpectation =
+            expectation(description: "retrieveProfileNetworkAction action execution started")
+        let projectsActionExecutionStartedExpectation =
+            expectation(description: "retrieveProjectsNetworkAction action execution started")
+        let reportsActionExecutionStartedExpectation =
+            expectation(description: "retrieveReportsNetworkAction action execution started")
+        let runningEntryActionExecutionStartedExpectation =
+            expectation(description: "retrieveRunningEntryAction action execution started")
 
-        let profileActionExecutionEndedExpectation = expectation(description: "retrieveProfileNetworkAction action execution ended")
-        let projectsActionExecutionEndedExpectation = expectation(description: "retrieveProjectsNetworkAction action execution ended")
-        let reportsActionExecutionEndedExpectation = expectation(description: "retrieveReportsNetworkAction action execution ended")
-        let runningEntryActionExecutionEndedExpectation = expectation(description: "retrieveRunningEntryAction action execution ended")
+        let profileActionExecutionEndedExpectation =
+            expectation(description: "retrieveProfileNetworkAction action execution ended")
+        let projectsActionExecutionEndedExpectation =
+            expectation(description: "retrieveProjectsNetworkAction action execution ended")
+        let reportsActionExecutionEndedExpectation =
+            expectation(description: "retrieveReportsNetworkAction action execution ended")
+        let runningEntryActionExecutionEndedExpectation =
+            expectation(description: "retrieveRunningEntryAction action execution ended")
 
         let (lifetime, token) = Lifetime.make()
 
         func setUpExpectationFulfillment<T, U>(for action: Action<T, U, APIAccessError>,
-                                         start: XCTestExpectation, end: XCTestExpectation) {
+                                               start: XCTestExpectation, end: XCTestExpectation) {
             let executionStartedProducer = action.isExecuting.producer.filter { $0 }.map { _ in () }
             lifetime += executionStartedProducer.startWithValues { start.fulfill() }
             let executionEndedProvider = action.isExecuting.producer.filter { !$0 }.map { _ in () }
             lifetime += executionEndedProvider.skip(until: executionStartedProducer).startWithValues { end.fulfill() }
         }
 
-        setUpExpectationFulfillment(for: retrieveProfileNetworkAction, start: profileActionExecutionStartedExpectation, end: profileActionExecutionEndedExpectation)
-        setUpExpectationFulfillment(for: retrieveProjectsNetworkAction, start: projectsActionExecutionStartedExpectation, end: projectsActionExecutionEndedExpectation)
-        setUpExpectationFulfillment(for: retrieveReportsNetworkAction, start: reportsActionExecutionStartedExpectation, end: reportsActionExecutionEndedExpectation)
-        setUpExpectationFulfillment(for: retrieveRunningEntryAction, start: runningEntryActionExecutionStartedExpectation, end: runningEntryActionExecutionEndedExpectation)
+        setUpExpectationFulfillment(for: retrieveProfileNetworkAction,
+                                    start: profileActionExecutionStartedExpectation,
+                                    end: profileActionExecutionEndedExpectation)
+        setUpExpectationFulfillment(for: retrieveProjectsNetworkAction,
+                                    start: projectsActionExecutionStartedExpectation,
+                                    end: projectsActionExecutionEndedExpectation)
+        setUpExpectationFulfillment(for: retrieveReportsNetworkAction,
+                                    start: reportsActionExecutionStartedExpectation,
+                                    end: reportsActionExecutionEndedExpectation)
+        setUpExpectationFulfillment(for: retrieveRunningEntryAction,
+                                    start: runningEntryActionExecutionStartedExpectation,
+                                    end: runningEntryActionExecutionEndedExpectation)
 
-        let profileActivityStatus = Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncProfile })
-        let projectsActivityStatus = Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncProjects })
-        let reportsActivityStatus = Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncReports })
-        let runningEntryActivityStatus = Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncRunningEntry })
+        let profileActivityStatus =
+            Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncProfile })
+        let projectsActivityStatus =
+            Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncProjects })
+        let reportsActivityStatus =
+            Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncReports })
+        let runningEntryActivityStatus =
+            Property(initial: nil, then: lastActivity.producer.filter { $0?.activity == .syncRunningEntry })
 
         XCTAssertNil(lastActivity.value)
         XCTAssertNil(profileActivityStatus.value)
@@ -407,10 +453,17 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
         profilePipe.input.send(value: testProfile)
         profilePipe.input.sendCompleted()
-        wait(for: [profileActionExecutionEndedExpectation, projectsActionExecutionStartedExpectation, reportsActionExecutionStartedExpectation], timeout: timeoutForExpectations)
+        wait(for: [profileActionExecutionEndedExpectation,
+                   projectsActionExecutionStartedExpectation,
+                   reportsActionExecutionStartedExpectation],
+             timeout: timeoutForExpectations)
 
-        XCTAssertEqual(profileActivityStatus.value?.isSuccessful, true) // profile value fed means profile retrieval successful
-        XCTAssertEqual(runningEntryActivityStatus.value?.isExecuting, true) // no running entry value fed means still executing
+         // profile value fed means profile retrieval successful
+        XCTAssertEqual(profileActivityStatus.value?.isSuccessful, true)
+
+         // no running entry value fed means still executing
+        XCTAssertEqual(runningEntryActivityStatus.value?.isExecuting, true)
+
         XCTAssertNotNil(projectsActivityStatus.value)
         XCTAssertEqual(projectsActivityStatus.value?.isExecuting, true)
         XCTAssertNotNil(reportsActivityStatus.value)
@@ -430,7 +483,8 @@ class TogglAPIDataRetrieverTest: XCTestCase {
         reportsPipe.input.send(value: testReports)
         reportsPipe.input.sendCompleted()
 
-        wait(for: [projectsActionExecutionEndedExpectation, reportsActionExecutionEndedExpectation], timeout: timeoutForExpectations)
+        wait(for: [projectsActionExecutionEndedExpectation, reportsActionExecutionEndedExpectation],
+             timeout: timeoutForExpectations)
         XCTAssertNotNil(projectsActivityStatus.value)
         XCTAssertEqual(projectsActivityStatus.value?.isSuccessful, true)
         XCTAssertNotNil(reportsActivityStatus.value)

@@ -45,7 +45,13 @@ class CountWeekdaysTests: XCTestCase {
             for day in Weekday.allDaysOrdered {
                 let count = calendar.countWeekdaysMatching(day, from: startComps, until: endComps)
                 let expected = expectedCount[day]!
-                XCTAssertEqual(count, expected, "(count (\(count)) does not match expected (\(expected)) for day: \(day) in timezone: \(tz.identifier) secondsFromGMT=\(tz.secondsFromGMT()))")
+                XCTAssertEqual(
+                    count,
+                    expected,
+                    """
+                    (count (\(count)) does not match expected (\(expected)) for day: \(day)
+                    in timezone: \(tz.identifier) secondsFromGMT=\(tz.secondsFromGMT()))
+                    """)
                 iterations += 1
             }
         }
@@ -78,7 +84,11 @@ class CountWeekdaysTests: XCTestCase {
             for day in Weekday.allDaysOrdered {
                 let count = calendar.countWeekdaysMatching(day, from: startComps, until: endComps)
                 let expected = expectedCount[day]!
-                XCTAssertEqual(count, expected, "(count (\(count)) does not match expected (\(expected)) for day: \(day) in timezone: \(tz.identifier) secondsFromGMT=\(tz.secondsFromGMT()))")
+                XCTAssertEqual(count, expected,
+                               """
+                               (count (\(count)) does not match expected (\(expected)) for day: \(day)
+                                in timezone: \(tz.identifier) secondsFromGMT=\(tz.secondsFromGMT()))
+                               """)
                 iterations += 1
             }
         }

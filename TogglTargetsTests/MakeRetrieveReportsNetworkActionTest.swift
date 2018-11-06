@@ -40,7 +40,10 @@ class MakeRetrieveReportsNetworkActionTest: XCTestCase {
         for wid in workspaceIDs {
             var expectationsByEndDate = [EndDay: XCTestExpectation]()
             for endDate in EndDay.allCases {
-                expectationsByEndDate[endDate] = expectation(description: "networkRetriever invocation expectation for workspace ID: \(wid), endDate: \(endDate)")
+                expectationsByEndDate[endDate] = expectation(
+                    description: """
+                    networkRetriever invocation expectation for workspace ID: \(wid), endDate: \(endDate)
+                    """)
             }
             indexedNetworkRetrieverExpectations[wid] = expectationsByEndDate
         }
@@ -100,7 +103,9 @@ class MakeRetrieveReportsNetworkActionTest: XCTestCase {
                     break
                 }
                 XCTAssertEqual(twoPartReport.projectId, projectID, "Output projects must be indexed by project ID")
-                XCTAssertEqual(twoPartReport.period, fullReportPeriod, "Output projects period must be the full report period")
+                XCTAssertEqual(twoPartReport.period,
+                               fullReportPeriod,
+                               "Output projects period must be the full report period")
             }
 
             XCTAssertEqual(indexedOutputReports[13]!.workedTimeUntilDayBeforeRequest, 84600)
@@ -129,9 +134,10 @@ private let yesterdayComps = DayComponents(year: 2017, month: 12, day: 23)
 private let todayComps = DayComponents(year: 2017, month: 12, day: 24)
 
 private let fullReportPeriod = Period(start: startDay, end: endDay)
-private let twoPartTimePeriod = TwoPartTimeReportPeriod(scope: fullReportPeriod,
-                                                            previousToDayOfRequest: Period(start: startDay, end: yesterdayComps),
-                                                            dayOfRequest: todayComps)
+private let twoPartTimePeriod =
+    TwoPartTimeReportPeriod(scope: fullReportPeriod,
+                            previousToDayOfRequest: Period(start: startDay, end: yesterdayComps),
+                            dayOfRequest: todayComps)
 
 private enum EndDay {
     case yesterday

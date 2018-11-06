@@ -32,7 +32,8 @@ class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
         super.setUp()
 
         for wid in workspaceIDs {
-            indexedNetworkRetrieverExpectations[wid] = expectation(description: "networkRetriever invocation expectation for workspace ID: \(wid)")
+            indexedNetworkRetrieverExpectations[wid] =
+                expectation(description: "networkRetriever invocation expectation for workspace ID: \(wid)")
         }
 
         networkRetriever = { [projectsFixture, expectations = indexedNetworkRetrieverExpectations] (endpoint, _) in
@@ -80,21 +81,22 @@ class MakeRetrieveProjectsNetworkActionTest: XCTestCase {
 
         let valueExpectation = expectation(description: "retrieveProjectsNetworkAction value emitted")
 
-        retrieveProjectsNetworkAction.values.producer.startWithValues { [projectsFixture, indexedCombinedFixtureProjects] (indexedOutputProjects) in
-            defer {
-                valueExpectation.fulfill()
-            }
-
-            XCTAssertEqual(indexedOutputProjects.count, indexedCombinedFixtureProjects.count)
-
-            for (outputProjectId, outputProject) in indexedOutputProjects {
-                XCTAssertEqual(outputProjectId, outputProject.id)
-                guard let fixtureProject = indexedCombinedFixtureProjects[outputProjectId] else {
-                    XCTFail("No corresponding fixture project found for output project ID \(outputProjectId)")
-                    break
+        retrieveProjectsNetworkAction.values.producer
+            .startWithValues { [projectsFixture, indexedCombinedFixtureProjects] (indexedOutputProjects) in
+                defer {
+                    valueExpectation.fulfill()
                 }
-                XCTAssertEqual(outputProject, fixtureProject)
-            }
+
+                XCTAssertEqual(indexedOutputProjects.count, indexedCombinedFixtureProjects.count)
+
+                for (outputProjectId, outputProject) in indexedOutputProjects {
+                    XCTAssertEqual(outputProjectId, outputProject.id)
+                    guard let fixtureProject = indexedCombinedFixtureProjects[outputProjectId] else {
+                        XCTFail("No corresponding fixture project found for output project ID \(outputProjectId)")
+                        break
+                    }
+                    XCTAssertEqual(outputProject, fixtureProject)
+                }
         }
 
         retrieveProjectsNetworkAction.apply(workspaceIDs).start()
