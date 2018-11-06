@@ -8,6 +8,7 @@
 
 import Foundation
 
+// TODO: some properties don't need to be optional
 struct Profile: Decodable {
     let id: Int64
     let name: String?

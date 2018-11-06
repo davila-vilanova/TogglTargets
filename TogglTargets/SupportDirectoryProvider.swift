@@ -34,7 +34,10 @@ class SupportDirectoryProvider {
             return supportDir
         }
 
-        let userAppSupportDir = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let userAppSupportDir = try fileManager.url(for: .applicationSupportDirectory,
+                                                    in: .userDomainMask,
+                                                    appropriateFor: nil,
+                                                    create: true)
 
         let supportDir = URL(fileURLWithPath: appIdentifier, relativeTo: userAppSupportDir)
 

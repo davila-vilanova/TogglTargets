@@ -206,7 +206,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     private lazy var urlSession = Property<URLSession?>(
         initial: nil, then: _apiCredential.signal.map(URLSession.init))
 
-    private lazy var noCredentialsEvents: Signal<(), NoError> = retrieveProfileNetworkAction.errors.filter(isNoCredentialsError).map { _ in () }
+    private lazy var noCredentialsEvents: Signal<(), NoError> =
+        retrieveProfileNetworkAction.errors.filter(isNoCredentialsError).map { _ in () }
 
     // MARK: - Profile
 
@@ -226,7 +227,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
                                                             retrieveProfileFromCache.values.skipNil()))
 
     /// Publishes an array of `WorkspaceID` values derived from the latest `Profile`.
-    private lazy var workspaceIDs: SignalProducer<[WorkspaceID], NoError> = profile.producer.skipNil().map { $0.workspaces.map { $0.id } }
+    private lazy var workspaceIDs: SignalProducer<[WorkspaceID], NoError> = profile.producer.skipNil()
+        .map { $0.workspaces.map { $0.id } }
 
     // MARK: - Projects
 
@@ -245,7 +247,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         let retrievedFromNetwork = retrieveProjectsNetworkAction.values
         let retrievedFromCache = retrieveProjectsFromCache.values.skipNil()
         let emptyOnNoCredentials = noCredentialsEvents.map { IndexedProjects() }
-        return Property(initial: nil, then: Signal.merge(retrievedFromNetwork, retrievedFromCache, emptyOnNoCredentials))
+        return Property(initial: nil,
+                        then: Signal.merge(retrievedFromNetwork, retrievedFromCache, emptyOnNoCredentials))
     }()
 
     // MARK: - Reports
@@ -276,7 +279,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     private var retrieveRunningEntryNetworkAction: RetrieveRunningEntryNetworkAction!
 
     /// Holds and publishes the last retrieved current time entry or `nil` for no time entry.
-    internal lazy var runningEntry = Property<RunningEntry?>(initial: nil, then: retrieveRunningEntryNetworkAction.values)
+    internal lazy var runningEntry = Property<RunningEntry?>(initial: nil,
+                                                             then: retrieveRunningEntryNetworkAction.values)
 
     // MARK: - Refresh actions
 
@@ -284,37 +288,41 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// by executing the underlying retrieveRunningEntryNetworkAction.
     /// This `Action` is enabled if an API credential is available and if the underlying action is enabled.
     lazy var updateRunningEntry: RefreshAction = {
-        let action = RefreshAction(enabledIf: urlSession.map { $0?.isCredentialSet == true }.and(retrieveRunningEntryNetworkAction.isEnabled)) { [weak self] _ in
-            guard let retriever = self else {
-                return SignalProducer.empty
-            }
+        let action = RefreshAction(enabledIf: urlSession
+            .map { $0?.isCredentialSet == true }.and(retrieveRunningEntryNetworkAction.isEnabled)) { [weak self] _ in
+                guard let retriever = self else {
+                    return SignalProducer.empty
+                }
 
-            retriever.retrieveRunningEntryNetworkAction <~ SignalProducer(value: ())
-            return SignalProducer.empty
+                retriever.retrieveRunningEntryNetworkAction <~ SignalProducer(value: ())
+                return SignalProducer.empty
         }
         return action
     }()
 
     /// Triggers an attempt to retrieve the user profile, projects, reports and
     /// currently running entry.
-    lazy var refreshAllData = RefreshAction(state: urlSession.combineLatest(with: retrieveProfileNetworkAction.isEnabled),
-                                            enabledIf: { $0.0 != nil && $0.1 }) { [weak self] (state, _) in
-        guard let retriever = self else {
-            return SignalProducer.empty
-        }
+    lazy var refreshAllData =
+        RefreshAction(state: urlSession.combineLatest(with: retrieveProfileNetworkAction.isEnabled),
+                      enabledIf: { $0.0 != nil && $0.1 },
+                      execute: { [weak self] (state, _) in
+                        guard let retriever = self else {
+                            return SignalProducer.empty
+                        }
 
-        retriever.retrieveProfileNetworkAction.apply(state.0!).start()
-        retriever.updateRunningEntry <~ SignalProducer(value: ())
+                        retriever.retrieveProfileNetworkAction.apply(state.0!).start()
+                        retriever.updateRunningEntry <~ SignalProducer(value: ())
 
-        return SignalProducer.empty
-    }
+                        return SignalProducer.empty
+        })
 
     /// Triggers an attempt to refresh the reports from the Toggl API.
     lazy var refreshReports: RefreshAction = {
         let state = Property.combineLatest(retrieveReportsNetworkAction.isEnabled,
                                            Property(initial: nil, then: workspaceIDs),
                                            _twoPartReportPeriod)
-            .map { (input: (Bool, [WorkspaceID]?, TwoPartTimeReportPeriod?)) -> ([WorkspaceID], TwoPartTimeReportPeriod)? in
+            .map { (input: (Bool, [WorkspaceID]?, TwoPartTimeReportPeriod?))
+                -> ([WorkspaceID], TwoPartTimeReportPeriod)? in
                 let (isUnderlyingEnabled, workspaceIDsOrNil, periodOrNil) = input
                 guard isUnderlyingEnabled,
                     let workspaceIDs = workspaceIDsOrNil,
@@ -343,7 +351,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
              retryErrorsWith inputForRetries: SignalProducer<ActionInput, NoError>)
             -> SignalProducer<ActivityStatus, NoError> {
 
-                let executing = action.isExecuting.producer.filter { $0 }.map { _ in ActivityStatus.executing(activity) }
+                let executing = action.isExecuting.producer.filter { $0 }
+                    .map { _ in ActivityStatus.executing(activity) }
                 let succeeded = action.values.producer.map { _ in ActivityStatus.succeeded(activity) }
                 let heldInputForRetries = Property<ActionInput?>(initial: nil, then: inputForRetries)
                 let retry = RetryAction(unwrapping: heldInputForRetries) { (inputValueForRetry, _) in

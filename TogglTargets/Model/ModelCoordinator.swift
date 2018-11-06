@@ -148,9 +148,10 @@ internal class ModelCoordinator: NSObject {
         self.timeTargetsStore = timeTargetsStore
         self.currentDateGenerator = currentDateGenerator
         self.reportPeriodsProducer = reportPeriodsProducer
-        self.runningEntryUpdateTimer = RunningEntryUpdateTimer(now: currentDateGenerator.producer,
-                                                               lastEntryStart: togglDataRetriever.runningEntry.producer.map { $0?.start},
-                                                               calendar: calendar)
+        self.runningEntryUpdateTimer =
+            RunningEntryUpdateTimer(now: currentDateGenerator.producer,
+                                    lastEntryStart: togglDataRetriever.runningEntry.producer.map { $0?.start},
+                                    calendar: calendar)
 
         self.currentDateUpdateTimer = CurrentDateUpdateTimer(now: currentDateGenerator.currentDate.producer,
                                                              runningEntry: togglDataRetriever.runningEntry.producer,
@@ -158,7 +159,8 @@ internal class ModelCoordinator: NSObject {
 
         super.init()
 
-        self.timeTargetsStore.projectIDs <~ self.togglDataRetriever.projects.producer.skipNil().map { [ProjectID]($0.keys) }
+        self.timeTargetsStore.projectIDs <~ self.togglDataRetriever.projects.producer.skipNil()
+            .map { [ProjectID]($0.keys) }
         reportPeriodsProducer.calendar <~ calendar
         reportPeriodsProducer.currentDate <~ currentDateGenerator.producer
         togglDataRetriever.twoPartReportPeriod <~ reportPeriodsProducer.twoPartPeriod.skipRepeats()
@@ -198,7 +200,9 @@ private class RunningEntryUpdateTimer {
     /// The associated lifetime and its token.
     private let (lifetime, token) = Lifetime.make()
 
-    init(now: SignalProducer<Date, NoError>, lastEntryStart: SignalProducer<Date?, NoError>, calendar: SignalProducer<Calendar, NoError>) {
+    init(now: SignalProducer<Date, NoError>,
+         lastEntryStart: SignalProducer<Date?, NoError>,
+         calendar: SignalProducer<Calendar, NoError>) {
         let dates = SignalProducer.combineLatest(calendar,
                                                  lastEntryStart.skipRepeats().withLatest(from: now))
             .map { (calendar, dates) -> Date in
@@ -211,11 +215,13 @@ private class RunningEntryUpdateTimer {
                 }
                 return findClosestDate(after: now, matching: secondsOffset, using: calendar)
         }
-
+        
         lifetime += dates.startWithValues { [unowned self] in
             self.scheduledTickDisposable?.dispose()
             self.scheduledTickDisposable =
-                self.scheduler.schedule(after: $0, interval: oneMinuteDispatch, action: { [update = self.triggerPipe.input] in update.send(value: ()) })
+                self.scheduler.schedule(after: $0,
+                                        interval: oneMinuteDispatch,
+                                        action: { [update = self.triggerPipe.input] in update.send(value: ()) })
         }
     }
 }
@@ -235,7 +241,9 @@ private class CurrentDateUpdateTimer {
     /// The associated lifetime and its token.
     private let (lifetime, token) = Lifetime.make()
 
-    init(now: SignalProducer<Date, NoError>, runningEntry: SignalProducer<RunningEntry?, NoError>, calendar: SignalProducer<Calendar, NoError>) {
+    init(now: SignalProducer<Date, NoError>,
+         runningEntry: SignalProducer<RunningEntry?, NoError>,
+         calendar: SignalProducer<Calendar, NoError>) {
         let trigger = { [unowned self] in self.triggerPipe.input.send(value: ()) }
 
         // Trigger updates each minute on the clock
@@ -243,7 +251,8 @@ private class CurrentDateUpdateTimer {
             .map { findClosestDate(after: $0, matching: 0, using: $1) }
             .startWithValues { [unowned self] in
             self.scheduledMinuteOnTheClockTickDisposable?.dispose()
-            self.scheduledMinuteOnTheClockTickDisposable = self.scheduler.schedule(after: $0, interval: oneMinuteDispatch, action: trigger)
+            self.scheduledMinuteOnTheClockTickDisposable =
+                self.scheduler.schedule(after: $0, interval: oneMinuteDispatch, action: trigger)
         }
 
         // Trigger updates each time a new running entry becomes available

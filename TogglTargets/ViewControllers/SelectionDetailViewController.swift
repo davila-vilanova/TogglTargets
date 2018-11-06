@@ -50,8 +50,8 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var projectDetailsViewController: ProjectDetailsViewController = {
-        // swiftlint:disable:next force_cast
-        let details = self.storyboard!.instantiateController(withIdentifier: "ProjectDetailsViewController") as! ProjectDetailsViewController
+        let details = self.storyboard!.instantiateController(withIdentifier: "ProjectDetailsViewController")
+            as! ProjectDetailsViewController // swiftlint:disable:this force_cast
 
         details <~ SignalProducer.combineLatest(SignalProducer(value: selectedProject.skipNil()),
                                                 lastBinding.producer.skipNil())
@@ -73,8 +73,8 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var emptySelectionViewController: EmptySelectionViewController = {
-        // swiftlint:disable:next force_cast
-        let empty = self.storyboard!.instantiateController(withIdentifier: "EmptySelectionViewController") as! EmptySelectionViewController
+        let empty = self.storyboard!.instantiateController(withIdentifier: "EmptySelectionViewController")
+            as! EmptySelectionViewController // swiftlint:disable:next force_cast
         addChild(empty)
         return empty
     }()
@@ -100,7 +100,8 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
             .skipRepeats()
             .debounce(0.1, on: debounceScheduler)
             .observe(on: UIScheduler())
-            .map { [unowned self] projectSelected in projectSelected ? self.projectDetailsViewController : self.emptySelectionViewController }
+            .map { [unowned self] projectSelected in projectSelected ?
+                self.projectDetailsViewController : self.emptySelectionViewController }
 
         containerView.uniqueSubview <~ selectedViewController.map { $0.view }
     }

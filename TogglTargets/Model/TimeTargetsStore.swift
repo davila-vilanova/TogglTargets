@@ -179,10 +179,13 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
         let writeTimeTargetProducer = _writeTimeTarget.producer.skipNil()
         let deleteTimeTargetProducer = _deleteTimeTarget.producer.skipNil()
 
-        let undoModifyOrDeleteTimeTarget = BindingTarget<TimeTarget>(on: timeTargetWriteScheduler, lifetime: lifetime) { [unowned _writeTimeTarget] timeTargetBeforeEditing in
-            undoManager.registerUndo(withTarget: _writeTimeTarget) {
-                $0 <~ SignalProducer(value: timeTargetBeforeEditing).start(on: UIScheduler())
-            }
+        let undoModifyOrDeleteTimeTarget =
+            BindingTarget<TimeTarget>(on: timeTargetWriteScheduler,
+                                      lifetime: lifetime) { [unowned _writeTimeTarget] timeTargetBeforeEditing in
+                                        undoManager.registerUndo(withTarget: _writeTimeTarget) {
+                                            $0 <~ SignalProducer(value: timeTargetBeforeEditing)
+                                                .start(on: UIScheduler())
+                                        }
         }
         let undoCreateTimeTarget = BindingTarget<ProjectID>(on: timeTargetWriteScheduler, lifetime: lifetime) { [unowned _deleteTimeTarget] projectId in // swiftlint:disable:this line_length
             undoManager.registerUndo(withTarget: _deleteTimeTarget,
@@ -262,7 +265,8 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
 
     /// Used to connect the output of the current `SingleTimeTargetUpdateComputer`
     /// to `projectIDsByTimeTargetsProducer`.
-    private let projectIDsByTimeTargetsLastSingleUpdate = MutableProperty<ProjectIDsByTimeTargets.Update.TimeTargetUpdate?>(nil)
+    private let projectIDsByTimeTargetsLastSingleUpdate =
+        MutableProperty<ProjectIDsByTimeTargets.Update.TimeTargetUpdate?>(nil)
 
     /// Producer of `ProjectIDsByTimeTargets.Update` values that when started emits a
     // `full(ProjectIDsByTimeTargets)` value which can be followed by by full or
@@ -274,7 +278,8 @@ class ConcreteProjectIDsProducingTimeTargetsStore: ProjectIDsProducingTimeTarget
             // Send a full value and any full value updates that happen from now on
             projectIDsByTimeTargetsFullRefresh.map (ProjectIDsByTimeTargets.Update.full),
             // Send any updates to a single time target that happen from now on
-            projectIDsByTimeTargetsLastSingleUpdate.producer.skipNil().map (ProjectIDsByTimeTargets.Update.singleTimeTarget)
+            projectIDsByTimeTargetsLastSingleUpdate.producer.skipNil()
+                .map (ProjectIDsByTimeTargets.Update.singleTimeTarget)
     )
 }
 
@@ -282,9 +287,7 @@ extension WeekdaySelection: Value {
     typealias Datatype = Int64
 
     static var declaredDatatype: String {
-        get {
-            return Int64.declaredDatatype
-        }
+        return Int64.declaredDatatype
     }
 
     static func fromDatatypeValue(_ datatypeValue: Datatype) -> WeekdaySelection {
@@ -292,9 +295,7 @@ extension WeekdaySelection: Value {
     }
 
     var datatypeValue: Datatype {
-        get {
-            return Datatype(integerRepresentation)
-        }
+        return Datatype(integerRepresentation)
     }
 }
 
@@ -336,12 +337,12 @@ private class SingleTimeTargetUpdateComputer {
 
     private func computeAndUpdate(timeTarget: TimeTarget?, projectID: ProjectID) {
         // Compute update
-        //        assert(projectIDsByTimeTargets.sortedProjectIDs.contains(projectID), "projectID must be included in projectIDsByTimeTargets")
         guard let update = ProjectIDsByTimeTargets.Update.TimeTargetUpdate
             .forTimeTargetChange(involving: timeTarget,
                                  for: projectID,
                                  within: indexedTimeTargets,
-                                 affecting: projectIDsByTimeTargets) // would return nil only if `projectID` were not included in `projectIDsByTimeTargets`
+                                 affecting: projectIDsByTimeTargets)
+            // would return nil only if `projectID` were not included in `projectIDsByTimeTargets`
             else {
                 return
         }
@@ -356,7 +357,8 @@ private class SingleTimeTargetUpdateComputer {
 
     // MARK: - Output
 
-    private let projectIDsByTimeTargetsUpdatePipe = Signal<ProjectIDsByTimeTargets.Update.TimeTargetUpdate, NoError>.pipe()
+    private let projectIDsByTimeTargetsUpdatePipe =
+        Signal<ProjectIDsByTimeTargets.Update.TimeTargetUpdate, NoError>.pipe()
 }
 
 // MARK: -

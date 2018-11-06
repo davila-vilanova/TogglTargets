@@ -65,16 +65,18 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private let deleteTimeTarget = MutableProperty<ProjectID?>(nil)
 
-    private lazy var registerSelectionInUndoManager: BindingTarget<ProjectID> = reactive.makeBindingTarget { controller, projectId in
-        controller.undoManager?.registerUndo(withTarget: controller.focusOnUndoProjectId) {
-            $0 <~ SignalProducer(value: projectId) }
+    private lazy var registerSelectionInUndoManager: BindingTarget<ProjectID> =
+        reactive.makeBindingTarget { controller, projectId in
+            controller.undoManager?.registerUndo(withTarget: controller.focusOnUndoProjectId) {
+                $0 <~ SignalProducer(value: projectId) }
     }
 
     private lazy var setUndoActionName = reactive.makeBindingTarget { controller, actionName in
         controller.undoManager?.setActionName(actionName)
     }
 
-    private lazy var readTimeTarget = Property(initial: nil, then: lastBinding.producer.skipNil().map { $0.readTimeTarget })
+    private lazy var readTimeTarget =
+        Property(initial: nil, then: lastBinding.producer.skipNil().map { $0.readTimeTarget })
 
     private lazy var isProjectWithTimeTargetCurrentlySelected =
         Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readTimeTarget.producer)
@@ -221,7 +223,8 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     }
 
     private lazy var showConfirmDeleteSheet =
-        Action<Void, ConfirmDeleteResolution, NoError>(state: selectedProject.combineLatest(with: isProjectWithTimeTargetCurrentlySelected),
+        Action<Void, ConfirmDeleteResolution, NoError>(state:
+            selectedProject.combineLatest(with: isProjectWithTimeTargetCurrentlySelected),
                                                        enabledIf: { $0.0 != nil && $0.1 }) { [unowned self] state, _ in
             guard let window = self.view.window else {
                 return SignalProducer.empty
@@ -232,11 +235,18 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
             return SignalProducer { (observer: Signal<ConfirmDeleteResolution, NoError>.Observer, _: Lifetime) in
                 let alert = NSAlert()
                 alert.alertStyle = .warning
-                alert.messageText = String.localizedStringWithFormat(NSLocalizedString("confirm-delete.title", comment: "title of 'confirm delete' alert sheet"), project.name ?? "")
-                alert.informativeText = NSLocalizedString("confirm-delete.informative", comment: "informative text in 'confirm delete' alert sheet")
+                alert.messageText = String.localizedStringWithFormat(
+                    NSLocalizedString("confirm-delete.title", comment: "title of 'confirm delete' alert sheet"),
+                    project.name ?? "")
+                alert.informativeText = NSLocalizedString("confirm-delete.informative",
+                                                          comment: "informative text in 'confirm delete' alert sheet")
 
-                alert.addButton(withTitle: NSLocalizedString("confirm-delete.do-delete", comment: "title of 'confirm delete' button in 'confirm delete' alert sheet"))
-                alert.addButton(withTitle: NSLocalizedString("confirm-delete.do-not-delete", comment: "title of 'don't delete' button in 'confirm delete' alert sheet"))
+                alert.addButton(withTitle:
+                    NSLocalizedString("confirm-delete.do-delete",
+                                      comment: "title of 'confirm delete' button in 'confirm delete' alert sheet"))
+                alert.addButton(withTitle:
+                    NSLocalizedString("confirm-delete.do-not-delete",
+                                      comment: "title of 'don't delete' button in 'confirm delete' alert sheet"))
 
                 alert.beginSheetModal(for: window) { response in
                     switch response {

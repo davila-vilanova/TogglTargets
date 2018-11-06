@@ -153,7 +153,8 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
 
         // Enable controls only if time target exists
         let timeTargetExists = timeTarget.producer.map { $0 != nil }.skipRepeats()
-        for control in [hoursTargetLabel, hoursTargetField, activeWeekdaysLabel, activeWeekdaysControl, deleteTimeTargetButton] as [NSControl] {
+        for control in [hoursTargetLabel, hoursTargetField, activeWeekdaysLabel,
+                        activeWeekdaysControl, deleteTimeTargetButton] as [NSControl] {
             control.reactive.isEnabled <~ timeTargetExists
         }
 
@@ -182,7 +183,8 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
             .map { [unowned self] _ in self.activeWeekdaysControl }
             .skipNil()
 
-        let activeWeekdaysEdited = activeWeekdaysControl.map { $0.reactive.selectedSegmentIndexes.map { _ in () } }.flatten(.concat)
+        let activeWeekdaysEdited = activeWeekdaysControl.map { $0.reactive.selectedSegmentIndexes.map { _ in () } }
+            .flatten(.concat)
 
         let workWeekdaysView = activeWeekdaysControl
             .map { $0 as NSView }
@@ -212,7 +214,8 @@ class NoTimeTargetViewController: NSViewController, OnboardingTargetViewsProvide
             })
             .map { [unowned self] in self.createTimeTargetButton as NSView }
 
-        let timeTargetCreationView = timeTargetCreationViewProducer.concat(SignalProducer.never).take(until: createTimeTargetButtonPressed.values)
+        let timeTargetCreationView = timeTargetCreationViewProducer.concat(SignalProducer.never)
+            .take(until: createTimeTargetButtonPressed.values)
 
         return [.createTimeTarget: timeTargetCreationView]
     }

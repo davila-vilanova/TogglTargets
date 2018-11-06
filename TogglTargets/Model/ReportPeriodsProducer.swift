@@ -47,8 +47,10 @@ struct TwoPartTimeReportPeriod {
 }
 
 extension TwoPartTimeReportPeriod: Equatable {
-    static func ==(lhs: TwoPartTimeReportPeriod, rhs: TwoPartTimeReportPeriod) -> Bool {
-        return lhs.scope == rhs.scope && lhs.previousToDayOfRequest == rhs.previousToDayOfRequest && lhs.dayOfRequest == rhs.dayOfRequest
+    static func == (lhs: TwoPartTimeReportPeriod, rhs: TwoPartTimeReportPeriod) -> Bool {
+        return lhs.scope == rhs.scope
+            && lhs.previousToDayOfRequest == rhs.previousToDayOfRequest
+            && lhs.dayOfRequest == rhs.dayOfRequest
     }
 }
 

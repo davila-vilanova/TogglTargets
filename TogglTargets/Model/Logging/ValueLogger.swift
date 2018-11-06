@@ -23,8 +23,9 @@ extension Signal {
 }
 
 extension SignalProducer {
-    public func logValues(_ identifier: String, logger: @escaping EventLogger = cleanEventLog) -> SignalProducer<Value, Error> {
-        return logEvents(identifier: identifier, events: [.value], logger: logger)
+    public func logValues(_ identifier: String, logger: @escaping EventLogger = cleanEventLog)
+        -> SignalProducer<Value, Error> {
+            return logEvents(identifier: identifier, events: [.value], logger: logger)
     }
 }
 

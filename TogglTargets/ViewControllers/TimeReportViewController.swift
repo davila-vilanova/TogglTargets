@@ -69,8 +69,8 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }
 
     private lazy var strategyViewController: StrategyViewController = {
-        // swiftlint:disable:next force_cast
-        let strategy = self.storyboard!.instantiateController(withIdentifier: "StrategyViewController") as! StrategyViewController
+        let strategy = self.storyboard!.instantiateController(withIdentifier: "StrategyViewController")
+            as! StrategyViewController // swiftlint:disable:this force_cast
         strategy <~
             SignalProducer(value: (targetTime: progress.targetTime,
                                    dayBaseline: progress.dayBaseline,
@@ -82,8 +82,8 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     }()
 
     private lazy var targetReachedViewController: TargetReachedViewController = {
-        // swiftlint:disable:next force_cast
-        let targetReached = self.storyboard!.instantiateController(withIdentifier: "TargetReachedViewController") as! TargetReachedViewController
+        let targetReached = self.storyboard!.instantiateController(withIdentifier: "TargetReachedViewController")
+            as! TargetReachedViewController // swiftlint:disable:this force_cast
         targetReached <~ SignalProducer(value: progress.targetTime)
         addChild(targetReached)
         return targetReached
@@ -207,14 +207,17 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
 
                 switch menuItem {
                 case fromTodayItem: return calendar.dayComponents(from: currentDate)
-                case fromNextWorkDayItem: return calendar.nextDay(after: calendar.dayComponents(from: currentDate),
-                                                                  notLaterThan: calendar.lastDayOfMonth(for: currentDate))
+                case fromNextWorkDayItem:
+                    return calendar.nextDay(after: calendar.dayComponents(from: currentDate),
+                                            notLaterThan: calendar.lastDayOfMonth(for: currentDate))
                 default: return nil
                 }
         }
 
         let enableFromNextWorkDayMenuItem = fromNextWorkDayItem.reactive.makeBindingTarget { $0.isEnabled = $1 }
-        let nextDay = SignalProducer.combineLatest(calendar.producer.skipNil(), currentDate.producer.skipNil(), timePeriod.map { $0.end })
+        let nextDay = SignalProducer.combineLatest(calendar.producer.skipNil(),
+                                                   currentDate.producer.skipNil(),
+                                                   timePeriod.map { $0.end })
             .map { $0.nextDay(after: $0.dayComponents(from: $1), notLaterThan: $2) }
         let remainingWorkdaysInPeriod = SignalProducer.combineLatest(
             calendar.producer.skipNil(),
@@ -240,7 +243,8 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
             .map { [unowned self] _ in self.computeStrategyFromButton }
             .skipNil()
 
-        let computeStrategyFromSelectionChanged = computeStrategyFromButton.map { $0.reactive.selectedItems.map { _ in () } }.flatten(.concat)
+        let computeStrategyFromSelectionChanged = computeStrategyFromButton
+            .map { $0.reactive.selectedItems.map { _ in () } }.flatten(.concat)
 
         let computeStrategyFromSelectionView = computeStrategyFromButton
             .map { $0 as NSView }

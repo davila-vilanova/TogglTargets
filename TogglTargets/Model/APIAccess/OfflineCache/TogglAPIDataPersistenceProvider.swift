@@ -122,7 +122,10 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
 
         var projects = [Project]()
         for row in rows {
-            projects.append(Project(id: row[projectIdExpression], name: row[projectNameExpression], active: nil, workspaceId: row[workspaceIdExpression]))
+            projects.append(Project(id: row[projectIdExpression],
+                                    name: row[projectNameExpression],
+                                    active: nil,
+                                    workspaceId: row[workspaceIdExpression]))
         }
 
         guard projects.count > 0 else {

@@ -18,8 +18,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
     private lazy var mainStoryboard = NSStoryboard(name: "Main", bundle: nil)
     // swiftlint:disable:next force_cast
     private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
-    // swiftlint:disable:next force_cast
-    private lazy var mainViewController: ProjectsMasterDetailController = mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
+    private lazy var mainViewController: ProjectsMasterDetailController =
+        mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
+    // swiftlint:disable:previous force_cast
     private lazy var mainWindow: NSWindow = {
         let window = mainWindowController.window!
         window.delegate = self
@@ -72,8 +73,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                                             storeProjectsInCache: togglAPIDataCache.storeProjects,
                                             retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
                                             retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
-
-            let timeTargetsStore = ConcreteProjectIDsProducingTimeTargetsStore(persistenceProvider: timeTargetsPersistenceProvider, undoManager: undoManager)
+            // swiftlint:disable:previous line_length
+            
+            let timeTargetsStore =
+                ConcreteProjectIDsProducingTimeTargetsStore(persistenceProvider: timeTargetsPersistenceProvider,
+                                                            undoManager: undoManager)
 
             modelCoordinator = ModelCoordinator(togglDataRetriever: togglAPIDataRetriever,
                                                 timeTargetsStore: timeTargetsStore,
@@ -220,7 +224,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             preferencesWindow.makeKeyAndOrderFront(nil)
         }
 
-        // Reload profile if user is logged in -- this tests that the credentials keep being valid and takes the latest changes in the user's profile
+        // Reload profile if user is logged in --
+        // this tests that the credentials keep being valid and takes the latest changes in the user's profile
         if credentialStore.output.value != nil {
             modelCoordinator.refreshAllData <~ SignalProducer(value: ())
         }

@@ -70,7 +70,10 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
             .map {
                 String.localizedStringWithFormat(
                     NSLocalizedString("target-strategy.adjusted-baseline",
-                                      comment: "amount of time to work per day to achieve the target time (adjusted day baseline)"),
+                                      comment: """
+                                               amount of time to work per day to achieve the target time
+                                               (adjusted day baseline)
+                                               """),
                     $0)
         }
 
@@ -101,7 +104,10 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
                     if abs(differential) < 0.01 {
                         return String.localizedStringWithFormat(
                             NSLocalizedString("target-strategy.adusted-baseline-matches",
-                                              comment: "the adjusted baseline approximately matches the a priori baseline"),
+                                              comment: """
+                                                       the adjusted baseline approximately matches the
+                                                       a priori baseline
+                                                       """),
                             formattedBaseline)
                     } else if differential > 0 {
                         return String.localizedStringWithFormat(
@@ -129,7 +135,8 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
         }
 
         baselineDifferentialField.reactive.stringValue <~
-            SignalProducer.merge(feasibleCaseDescriptions, unfeasibleCaseDescriptions, impossibleCaseDescriptions, baselineCalculationErrors)
+            SignalProducer.merge(feasibleCaseDescriptions, unfeasibleCaseDescriptions,
+                                 impossibleCaseDescriptions, baselineCalculationErrors)
     }
 }
 

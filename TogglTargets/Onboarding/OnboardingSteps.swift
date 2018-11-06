@@ -78,5 +78,7 @@ func onboardingSteps(startingFrom initialStepIdentifier: OnboardingStepIdentifie
     }
 
     let foundIndex = OnboardingSteps.firstIndex { $0.identifier == initialStepIdentifier }!
-    return [OnboardingStep](OnboardingSteps.suffix(from: foundIndex)) // TODO: return the slice instead of allocating new array?
+    
+    // TODO: return the slice instead of allocating new array?
+    return [OnboardingStep](OnboardingSteps.suffix(from: foundIndex))
 }

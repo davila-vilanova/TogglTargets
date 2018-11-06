@@ -69,12 +69,13 @@ extension SignalProducer where Value == TimeInterval {
 // TODO: Extension in NumberFormatter?
 extension SignalProducer where Value == NSNumber? {
     func mapToNumberFormattedString(numberFormatter: NumberFormatter,
-                                  placeholderForNil: String = DefaultPlaceholderForNil) -> SignalProducer<String, Error> {
-        return map { (numberOrNil: NSNumber?) -> String in
-            guard let number = numberOrNil else {
-                return placeholderForNil
+                                    placeholderForNil: String = DefaultPlaceholderForNil)
+        -> SignalProducer<String, Error> {
+            return map { (numberOrNil: NSNumber?) -> String in
+                guard let number = numberOrNil else {
+                    return placeholderForNil
+                }
+                return numberFormatter.string(from: number) ?? placeholderForNil
             }
-            return numberFormatter.string(from: number) ?? placeholderForNil
-        }
     }
 }

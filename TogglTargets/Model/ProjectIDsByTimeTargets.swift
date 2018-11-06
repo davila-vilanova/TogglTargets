@@ -91,7 +91,8 @@ struct ProjectIDsByTimeTargets {
             /// with a project ID
             ///
             /// - parameters:
-            ///   - newTimeTarget: The value of the affected time target after the update. Pass `nil` for a target deletion.
+            ///   - newTimeTarget: The value of the affected time target after the update. Pass `nil` for a target
+            ///                    deletion.
             ///   - projectId: The project ID whose time target will be created, deleted or updated.
             ///                This ID must be included in the project IDs associated with the `idsByTimeTargets`
             ///                argument. If it is not, this call will return nil.
@@ -105,26 +106,27 @@ struct ProjectIDsByTimeTargets {
             static func forTimeTargetChange(involving newTimeTarget: TimeTarget?,
                                             for projectId: ProjectID,
                                             within timeTargetPreChange: ProjectIdIndexedTimeTargets,
-                                            affecting idsByTimeTargets: ProjectIDsByTimeTargets) -> Update.TimeTargetUpdate? {
-                let currentSortedIDs = idsByTimeTargets.sortedProjectIDs
-                let newlySortedIDs = currentSortedIDs
-                    .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
-                        for: timeTargetPreChange.updatingValue(newTimeTarget, forKey: projectId)))
-
-                guard let oldIndex = currentSortedIDs.index(of: projectId),
-                    let newIndex = newlySortedIDs.index(of: projectId) else {
-                        return nil
-                }
-
-                let oldTimeTarget = timeTargetPreChange[projectId]
-                let indexChange = IndexChange(old: oldIndex, new: newIndex)
-                if (oldTimeTarget == nil) && (newTimeTarget != nil) {
-                    return .create(indexChange)
-                } else if (oldTimeTarget != nil) && (newTimeTarget == nil) {
-                    return .remove(indexChange)
-                } else {
-                    return .update(indexChange)
-                }
+                                            affecting idsByTimeTargets: ProjectIDsByTimeTargets)
+                -> Update.TimeTargetUpdate? {
+                    let currentSortedIDs = idsByTimeTargets.sortedProjectIDs
+                    let newlySortedIDs = currentSortedIDs
+                        .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
+                            for: timeTargetPreChange.updatingValue(newTimeTarget, forKey: projectId)))
+                    
+                    guard let oldIndex = currentSortedIDs.index(of: projectId),
+                        let newIndex = newlySortedIDs.index(of: projectId) else {
+                            return nil
+                    }
+                    
+                    let oldTimeTarget = timeTargetPreChange[projectId]
+                    let indexChange = IndexChange(old: oldIndex, new: newIndex)
+                    if (oldTimeTarget == nil) && (newTimeTarget != nil) {
+                        return .create(indexChange)
+                    } else if (oldTimeTarget != nil) && (newTimeTarget == nil) {
+                        return .remove(indexChange)
+                    } else {
+                        return .update(indexChange)
+                    }
             }
         }
     }
@@ -148,8 +150,8 @@ extension ProjectIDsByTimeTargets {
     }
 
     /// Initializes a `ProjectIDsByTimeTargets` value with the provided projectIDs sorted by the descending size
-    /// of the provided time targets. To guarantee stable order, if two time targets are considered of equivalent size the
-    /// order will be determined by project ID descending.
+    /// of the provided time targets. To guarantee stable order, if two time targets are considered of equivalent size
+    /// the order will be determined by project ID descending.
     ///
     /// - parameters:
     ///   - projectIDs: The IDs to sort by the provided time targets.
@@ -160,7 +162,7 @@ extension ProjectIDsByTimeTargets {
 }
 
 extension ProjectIDsByTimeTargets: Equatable {
-    public static func ==(lhs: ProjectIDsByTimeTargets, rhs: ProjectIDsByTimeTargets) -> Bool {
+    public static func == (lhs: ProjectIDsByTimeTargets, rhs: ProjectIDsByTimeTargets) -> Bool {
         return (lhs.sortedProjectIDs == rhs.sortedProjectIDs) &&
             (lhs.countOfProjectsWithTimeTargets == rhs.countOfProjectsWithTimeTargets)
     }

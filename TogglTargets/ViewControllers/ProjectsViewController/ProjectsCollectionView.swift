@@ -23,7 +23,8 @@ class ProjectsCollectionView: NSCollectionView {
             indexPaths.count == 1,
             scrollPosition.contains(.nearestHorizontalEdge),
             let selectedItemAttrs = layoutAttributesForItem(at: path),
-            let headerAttrs = layoutAttributesForSupplementaryElement(ofKind: "UICollectionElementKindSectionHeader", at: IndexPath(item: 0, section: path.section)),
+            let headerAttrs = layoutAttributesForSupplementaryElement(ofKind: "UICollectionElementKindSectionHeader",
+                                                                      at: IndexPath(item: 0, section: path.section)),
             let scrollView = enclosingScrollView else {
                 delegateToSuper()
                 return

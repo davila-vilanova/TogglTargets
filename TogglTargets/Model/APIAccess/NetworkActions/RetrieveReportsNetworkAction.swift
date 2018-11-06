@@ -46,14 +46,22 @@ func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>) -> Re
 ///            projects combining and indexing logic on top of the provided
 ///            `URLSession` and `TogglAPINetworkRetriever`.
 
-func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>, _ networkRetriever: @escaping TogglAPINetworkRetriever<[ReportEntry]>) -> RetrieveReportsNetworkAction {
+func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>,
+                                      _ networkRetriever:
+    @escaping TogglAPINetworkRetriever<[ReportEntry]>) -> RetrieveReportsNetworkAction {
 
     return RetrieveReportsNetworkAction(unwrapping: urlSession) { (session, inputs) in
         let (workspaceIDs, period) = inputs
         let reportEntriesRetriever = { (endpoint: String) in networkRetriever(endpoint, session) }
-        let workedUntilYesterday = workedTimesProducer(workspaceIDs: workspaceIDs, period: period.previousToDayOfRequest, reportEntriesRetriever: reportEntriesRetriever)
-        let workedToday = workedTimesProducer(workspaceIDs: workspaceIDs, period: period.forDayOfRequest, reportEntriesRetriever: reportEntriesRetriever)
-        return SignalProducer.combineLatest(workedUntilYesterday, workedToday, SignalProducer(value: period.scope))
+        let workedUntilYesterday = workedTimesProducer(workspaceIDs: workspaceIDs,
+                                                       period: period.previousToDayOfRequest,
+                                                       reportEntriesRetriever: reportEntriesRetriever)
+        let workedToday = workedTimesProducer(workspaceIDs: workspaceIDs,
+                                              period: period.forDayOfRequest,
+                                              reportEntriesRetriever: reportEntriesRetriever)
+        return SignalProducer.combineLatest(workedUntilYesterday,
+                                            workedToday,
+                                            SignalProducer(value: period.scope))
             .map(generateIndexedReportsFromWorkedTimes)
     }
 }
@@ -85,16 +93,19 @@ private func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period?,
         return SignalProducer(workspaceIDs)
             .map(timesProducer)
             .flatten(.concat)
-            .reduce(IndexedWorkedTimes(), { (combined: IndexedWorkedTimes, thisWorkspace: IndexedWorkedTimes) -> IndexedWorkedTimes in
-                combined.merging(thisWorkspace, uniquingKeysWith: { valueInCombinedTimes, _ in valueInCombinedTimes }) // Not expecting duplicates
+            .reduce(IndexedWorkedTimes(), { (combined: IndexedWorkedTimes, thisWorkspace: IndexedWorkedTimes)
+                -> IndexedWorkedTimes in
+                // Not expecting duplicates
+                combined.merging(thisWorkspace,
+                                 uniquingKeysWith: { valueInCombinedTimes, _ in valueInCombinedTimes })
             })
 }
 
 /// Returns a producer that, on success, emits a single IndexedWorkedTimes value
 /// corresponding to the aggregate of all the provided workspace IDs, then completes.
 private func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorkedTimes,
-                                           today: IndexedWorkedTimes,
-                                           fullPeriod: Period)
+                                                   today: IndexedWorkedTimes,
+                                                   fullPeriod: Period)
     -> [ProjectID: TwoPartTimeReport] {
         var reports = [ProjectID: TwoPartTimeReport]()
         let ids: Set<ProjectID> = Set<ProjectID>(untilYesterday.keys).union(today.keys)
@@ -111,7 +122,10 @@ private func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorked
 
 private struct ReportsService: Decodable {
     static func endpoint(workspaceId: WorkspaceID, since: String, until: String, userAgent: String) -> String {
-        return "/reports/api/v2/summary?workspace_id=\(workspaceId)&since=\(since)&until=\(until)&grouping=projects&subgrouping=users&user_agent=\(userAgent)"
+        return """
+               /reports/api/v2/summary?workspace_id=\(workspaceId)&since=\(since)
+               &until=\(until)&grouping=projects&subgrouping=users&user_agent=\(userAgent)
+               """
     }
 
     let reportEntries: [ReportEntry]
@@ -128,7 +142,10 @@ private struct ReportsService: Decodable {
 private extension ReportsService {
     static func endpoint(with userAgent: String) -> (WorkspaceID, DayComponents, DayComponents) -> String {
         return { (workspaceId, since, until) in
-            ReportsService.endpoint(workspaceId: workspaceId, since: since.iso8601String, until: until.iso8601String, userAgent: userAgent)
+            ReportsService.endpoint(workspaceId: workspaceId,
+                                    since: since.iso8601String,
+                                    until: until.iso8601String,
+                                    userAgent: userAgent)
         }
     }
 }

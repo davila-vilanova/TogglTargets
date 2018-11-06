@@ -69,8 +69,10 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
         typealias ValidateCredentialActionState = (TogglAPICredential, RetrieveProfileNetworkAction)
         let validateCredentialActionState = Property<ValidateCredentialActionState?>(
             initial: nil,
-            then: SignalProducer.combineLatest(credentialFromUserEnteredData, lastBinding.producer.map { $0?.testURLSessionAction })
-                .map { them -> ValidateCredentialActionState? in (them.0 == nil || them.1 == nil) ? nil : (them.0!, them.1!) })
+            then: SignalProducer.combineLatest(credentialFromUserEnteredData,
+                                               lastBinding.producer.map { $0?.testURLSessionAction })
+                .map { them -> ValidateCredentialActionState? in
+                    (them.0 == nil || them.1 == nil) ? nil : (them.0!, them.1!) })
 
         let validateAction = Action<Void, CredentialValidationResult, NoError>(
             unwrapping: validateCredentialActionState,
@@ -81,21 +83,24 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
                 // profileProducer generates a single value of type profile or triggers an error
                 let profileProducer = testURLSessionAction.apply(session)
 
-                // profileOrErrorProducer generates a single value of type Result that can contain a profile value or an error
-                let profileOrErrorProducer = profileProducer.materialize().map { event -> Result<Profile, ActionError<APIAccessError>>? in
-                    switch event {
-                    case let .value(val): return Result(value: val)
-                    case let .failed(err): return Result(error: err)
-                    default: return nil
-                    }
+                // profileOrErrorProducer generates a single value of type Result
+                // that can contain a profile value or an error
+                let profileOrErrorProducer = profileProducer.materialize()
+                    .map { event -> Result<Profile, ActionError<APIAccessError>>? in
+                        switch event {
+                        case let .value(val): return Result(value: val)
+                        case let .failed(err): return Result(error: err)
+                        default: return nil
+                        }
                     }.skipNil()
 
                 return profileOrErrorProducer.map { (result) -> CredentialValidationResult in
                     switch result {
-                    case let .success(profile): return CredentialValidationResult.valid(TogglAPITokenCredential(apiToken: profile.apiToken!)!, profile)
-                    case .failure(.disabled): return CredentialValidationResult.other // should never run if inner action disabled
-                    case .failure(.producerFailed(.authenticationError)): return CredentialValidationResult.invalid
-                    case let .failure(.producerFailed(apiAccessError)): return CredentialValidationResult.error(apiAccessError)
+                    case let .success(profile):
+                        return .valid(TogglAPITokenCredential(apiToken: profile.apiToken!)!, profile)
+                    case .failure(.disabled): return .other // should never run if inner action disabled
+                    case .failure(.producerFailed(.authenticationError)): return .invalid
+                    case let .failure(.producerFailed(apiAccessError)): return .error(apiAccessError)
                     }
                 }
         })
@@ -118,7 +123,8 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
         loginButton.reactive.makeBindingTarget {
             $0.title = $1
         } <~ validateCredential.values.filter { $0.isError }.map { _ in
-            NSLocalizedString("login.loginButton.retry", comment: "login button's title inviting to retry after login fails")
+            NSLocalizedString("login.loginButton.retry",
+                              comment: "login button's title inviting to retry after login fails")
         }
 
         // Take validated / resolved token credential from action's output

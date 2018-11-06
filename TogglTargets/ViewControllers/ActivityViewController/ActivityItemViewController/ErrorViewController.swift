@@ -11,7 +11,8 @@ import Result
 import ReactiveSwift
 import ReactiveCocoa
 
-let ConfigureUserAccountRequestedNotificationName = NSNotification.Name(rawValue: "ConfigureUserAccountRequestedNotification")
+let ConfigureUserAccountRequestedNotificationName =
+    NSNotification.Name(rawValue: "ConfigureUserAccountRequestedNotification")
 
 private typealias RecoveryAction = Action<Void, Void, NoError>
 

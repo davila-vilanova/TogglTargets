@@ -97,7 +97,9 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
 
         let activitiesToAdd = newActivities.subtracting(previousActivities)
         let activitiesToRemove = previousActivities.subtracting(newActivities)
-        let activitiesToSwap = (newActivities.intersection(previousActivities)).filter { !previousStatusByActivity[$0]!.representedBySameController(as: newStatusByActivity[$0]!) }
+        let activitiesToSwap = (newActivities.intersection(previousActivities)).filter {
+            !previousStatusByActivity[$0]!.representedBySameController(as: newStatusByActivity[$0]!)
+        }
 
         for activity in activitiesToRemove {
             let controller = activityController(for: activity)!

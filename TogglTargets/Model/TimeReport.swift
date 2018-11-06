@@ -52,7 +52,10 @@ extension TwoPartTimeReport: Equatable {
 }
 
 func makeZeroReport(for projectId: ProjectID, period: Period) -> TwoPartTimeReport {
-    return TwoPartTimeReport(projectId: projectId, period: period, workedTimeUntilDayBeforeRequest: 0, workedTimeOnDayOfRequest: 0)
+    return TwoPartTimeReport(projectId: projectId,
+                             period: period,
+                             workedTimeUntilDayBeforeRequest: 0,
+                             workedTimeOnDayOfRequest: 0)
 }
 
 struct ReportEntry: Decodable {

@@ -45,15 +45,17 @@ extension URLSession {
         return mapErrors(from: self.reactive.data(with: request(for: endpoint)))
     }
 
-    func togglAPIRequestProducer<U>(for endpoint: String, decoder: @escaping ((Data, URLResponse) throws -> U)) -> SignalProducer<U, APIAccessError> {
-        return togglAPIRequestProducer(for: endpoint)
-            .attemptMap({ (data, response) -> Result<U, APIAccessError> in
-                do {
-                    return .success(try decoder(data, response))
-                } catch {
-                    return .failure(APIAccessError.invalidJSON(underlyingError: error, data: data))
-                }
-            })
+    func togglAPIRequestProducer<U>(for endpoint: String,
+                                    decoder: @escaping ((Data, URLResponse) throws -> U))
+        -> SignalProducer<U, APIAccessError> {
+            return togglAPIRequestProducer(for: endpoint)
+                .attemptMap({ (data, response) -> Result<U, APIAccessError> in
+                    do {
+                        return .success(try decoder(data, response))
+                    } catch {
+                        return .failure(APIAccessError.invalidJSON(underlyingError: error, data: data))
+                    }
+                })
     }
 
     static func requestDataToString(data: Data, response: URLResponse) -> String {
@@ -75,7 +77,7 @@ private func catchHTTPErrors(data: Data, response: URLResponse) -> Result<(Data,
     guard let httpResponse = response as? HTTPURLResponse else {
         return .failure(APIAccessError.nonHTTPResponseReceived(response: response))
     }
-    switch (httpResponse.statusCode) {
+    switch httpResponse.statusCode {
     case 200...299, 100...199, 300...399: break
     case 401, 403: return .failure(APIAccessError.authenticationError(response: httpResponse))
     case 500...599: return .failure(APIAccessError.serverHiccups(response: httpResponse, data: data))

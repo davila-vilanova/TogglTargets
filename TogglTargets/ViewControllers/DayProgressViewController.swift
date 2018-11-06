@@ -47,7 +47,8 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
         let timeWorkedToday = lastBinding.latestOutput { $0.timeWorkedToday }
         let remainingTimeToDayBaseline = lastBinding.latestOutput { $0.remainingTimeToDayBaseline }
 
-        // Update worked and remaining time today with the values of the corresponding signals formatted to a time string
+        // Update worked and remaining time today with the values of the corresponding signals
+        // formatted to a time string
 
         timeWorkedTodayLabel.reactive.text <~ timeWorkedToday.mapToString(timeFormatter: timeFormatter)
             .map {
@@ -55,10 +56,12 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
                     NSLocalizedString("day-progress.worked-today", comment: "amount of time worked today"), $0)
         }
 
-        timeRemainingToWorkTodayLabel.reactive.text <~ remainingTimeToDayBaseline.mapToString(timeFormatter: timeFormatter)
+        timeRemainingToWorkTodayLabel.reactive.text <~ remainingTimeToDayBaseline
+            .mapToString(timeFormatter: timeFormatter)
             .map {
                 String.localizedStringWithFormat(
-                    NSLocalizedString("day-progress.to-work-today", comment: "amount of time left to meet daily target"), $0)
+                    NSLocalizedString("day-progress.to-work-today",
+                                      comment: "amount of time left to meet daily target"), $0)
         }
 
         // Update progress indicator

@@ -36,7 +36,8 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
     private var projectsListViewController: ProjectsListViewController?
     lazy private var activityViewController: ActivityViewController = {
         // swiftlint:disable:next force_cast
-        let activity = self.storyboard!.instantiateController(withIdentifier: "ActivityViewController") as! ActivityViewController
+        let activity = self.storyboard!.instantiateController(withIdentifier: "ActivityViewController")
+            as! ActivityViewController
         addChild(activity)
         stackView.addView(activity.view, in: .bottom)
         activity.view.leadingAnchor.constraint(equalTo: stackView.leadingAnchor).isActive = true
@@ -75,20 +76,22 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
         )
 
         // Duplicated to allow independent animations
-        let showActivity: BindingTarget<Void> = activityViewController.view.reactive.makeBindingTarget { [unowned self] activityView, _ in
-            NSAnimationContext.runAnimationGroup({ context in
-                context.allowsImplicitAnimation = false
-                activityView.animator().isHidden = false
-                self.stackView.layoutSubtreeIfNeeded()
-            }, completionHandler: nil)
+        let showActivity: BindingTarget<Void> = activityViewController.view.reactive
+            .makeBindingTarget { [unowned self] activityView, _ in
+                NSAnimationContext.runAnimationGroup({ context in
+                    context.allowsImplicitAnimation = false
+                    activityView.animator().isHidden = false
+                    self.stackView.layoutSubtreeIfNeeded()
+                }, completionHandler: nil)
         }
-
-        let hideActivity: BindingTarget<Void> = activityViewController.view.reactive.makeBindingTarget { [unowned self] activityView, _ in
-            NSAnimationContext.runAnimationGroup({ context in
-                context.allowsImplicitAnimation = true
-                activityView.isHidden = true
-                self.stackView.layoutSubtreeIfNeeded()
-            }, completionHandler: nil)
+        
+        let hideActivity: BindingTarget<Void> = activityViewController.view.reactive
+            .makeBindingTarget { [unowned self] activityView, _ in
+                NSAnimationContext.runAnimationGroup({ context in
+                    context.allowsImplicitAnimation = true
+                    activityView.isHidden = true
+                    self.stackView.layoutSubtreeIfNeeded()
+                }, completionHandler: nil)
         }
 
         showActivity <~ displayActivity.signal.skipRepeats().filter { $0 }.map { _ in () }

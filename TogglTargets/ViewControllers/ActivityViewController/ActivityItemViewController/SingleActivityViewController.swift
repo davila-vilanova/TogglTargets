@@ -132,7 +132,8 @@ class ActivityErrorViewController: SingleActivityViewController, NSPopoverDelega
         }
 
         label.reactive.text <~ SignalProducer.merge(noCredentialsErrorDescriptions,
-                                                    statuses.filter(isOtherError).map(ActivityStatus.localizedDescription))
+                                                    statuses.filter(isOtherError)
+                                                        .map(ActivityStatus.localizedDescription))
     }
 }
 

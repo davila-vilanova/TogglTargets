@@ -15,7 +15,8 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
-    internal typealias Interface = (credentialUpstream: BindingTarget<TogglAPICredential?>, attemptLogin: BindingTarget<Void>)
+    internal typealias Interface = (credentialUpstream: BindingTarget<TogglAPICredential?>,
+        attemptLogin: BindingTarget<Void>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -23,8 +24,8 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var tokenViewController: APITokenViewController = {
-        // swiftlint:disable:next force_cast
-        let tokenController = self.storyboard!.instantiateController(withIdentifier: "APITokenViewController") as! APITokenViewController
+        let tokenController = self.storyboard!.instantiateController(withIdentifier: "APITokenViewController")
+            as! APITokenViewController // swiftlint:disable:this force_cast
 
         tokenController <~ SignalProducer
             .combineLatest(lastBinding.producer.skipNil().map { ($0.credentialUpstream, $0.attemptLogin) },
@@ -37,8 +38,9 @@ class LoginMethodViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var emailPasswordViewController: EmailPasswordViewController = {
-        // swiftlint:disable:next force_cast
-        let emailPasswordController = self.storyboard!.instantiateController(withIdentifier: "EmailPasswordViewController") as! EmailPasswordViewController
+        let emailPasswordController = self.storyboard!
+            .instantiateController(withIdentifier: "EmailPasswordViewController") as! EmailPasswordViewController
+        // swiftlint:disable:previous force_cast
 
         emailPasswordController <~ SignalProducer
             .combineLatest(lastBinding.producer.skipNil().map { ($0.credentialUpstream, $0.attemptLogin) },

@@ -27,8 +27,8 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
     @IBOutlet weak var rootStackView: NSStackView!
 
     private lazy var condensedActivityViewController: CondensedActivityViewController = {
-        // swiftlint:disable:next force_cast
-        let condensed = self.storyboard!.instantiateController(withIdentifier: "CondensedActivityViewController") as! CondensedActivityViewController
+        let condensed = self.storyboard!.instantiateController(withIdentifier: "CondensedActivityViewController")
+            as! CondensedActivityViewController // swiftlint:disable:this force_cast
         condensed <~
             SignalProducer<CondensedActivityViewController.Interface, NoError>(
                 value: (activitiesState.output.producer, wantsExtendedDisplay.bindingTarget))
@@ -36,13 +36,15 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var detailedActivityViewController: DetailedActivityViewController = {
-        // swiftlint:disable:next force_cast
-        let detailed = self.storyboard!.instantiateController(withIdentifier: "DetailedActivityViewController") as! DetailedActivityViewController
+        let detailed = self.storyboard!.instantiateController(withIdentifier: "DetailedActivityViewController")
+            as! DetailedActivityViewController // swiftlint:disable:next force_cast
 
         let heldStatuses = Property(initial: [ActivityStatus](), then: activitiesState.output.producer)
         let statuses =
-            SignalProducer.merge(heldStatuses.producer.throttle(while: wantsExtendedDisplay.negate(), on: UIScheduler()),
-                                 heldStatuses.producer.sample(on: wantsExtendedDisplay.producer.filter { $0 }.map { _ in () }),
+            SignalProducer.merge(heldStatuses.producer.throttle(while: wantsExtendedDisplay.negate(),
+                                                                on: UIScheduler()),
+                                 heldStatuses.producer.sample(on: wantsExtendedDisplay.producer.filter { $0 }
+                                    .map { _ in () }),
                                  wantsExtendedDisplay.producer.filter { !$0 }.map { _ in [ActivityStatus]() })
         let wantsDisplay = Property<Bool>(initial: true, then: activitiesState.output.map { !$0.isEmpty })
         reactive.lifetime += wantsDisplay.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.requestDisplay })

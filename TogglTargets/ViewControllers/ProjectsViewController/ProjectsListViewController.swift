@@ -21,7 +21,8 @@ private let NoSelectedProjectIdRestorationValue: Int64 = 0
 
 /// Manages a collection view that displays `Project` items organized by whether they have an associated time target.
 /// Produces a stream of selected `Project` values via the `selectedProject` property.
-class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate, BindingTargetProvider, OnboardingTargetViewsProvider {
+class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate,
+    BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: - Interface
 
@@ -100,13 +101,15 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
-        coder.encode((selectedProjectID.value ?? NoSelectedProjectIdRestorationValue) as Int64, forKey: SelectedProjectIdRestorationKey)
+        coder.encode((selectedProjectID.value ?? NoSelectedProjectIdRestorationValue) as Int64,
+                     forKey: SelectedProjectIdRestorationKey)
     }
 
     override func restoreState(with coder: NSCoder) {
         super.restoreState(with: coder)
         let restoredSelectedProjectId = coder.decodeInt64(forKey: SelectedProjectIdRestorationKey)
-        self.restoredSelectedProjectId.value = restoredSelectedProjectId == NoSelectedProjectIdRestorationValue ? nil : restoredSelectedProjectId
+        self.restoredSelectedProjectId.value = restoredSelectedProjectId == NoSelectedProjectIdRestorationValue ?
+            nil : restoredSelectedProjectId
     }
 
     private func invalidateRestorableStateWhenProjectManuallySelected() {
@@ -185,8 +188,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
 
         let backgroundViews = [
-            attachBackgroundView { background, clip in background.bottomAnchor.constraint(equalTo: clip.documentView!.topAnchor) },
-            attachBackgroundView { background, clip in background.topAnchor.constraint(equalTo: clip.documentView!.bottomAnchor) }
+            attachBackgroundView {
+                background, clip in background.bottomAnchor.constraint(equalTo: clip.documentView!.topAnchor)
+            },
+            attachBackgroundView {
+                background, clip in background.topAnchor.constraint(equalTo: clip.documentView!.bottomAnchor)
+            }
         ]
 
         for background in backgroundViews {
@@ -229,7 +236,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     func wireSingleTimeTargetUpdatesToCollectionView () {
         // reflect the provided update in the value of `currentProjectIDs`, reorder the affected item in the
         // collection view and update the "last item in section" visual state
-        let singlePidsUpdates: Signal<(ProjectIDsByTimeTargets.Update.TimeTargetUpdate, ProjectIDsByTimeTargets, ProjectIDsByTimeTargets), NoError> =
+        let singlePidsUpdates =
             lastProjectIDsByTimeTargetsUpdate.signal.skipNil().filterMap { $0.timeTargetUpdate }
                 .withLatest(from: currentProjectIDs.producer)
                 .map { ($0.0, $0.1, $0.0.apply(to: $0.1)) }
@@ -244,10 +251,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let newIndexPaths = indexPathUpdates.map { $0.1 }
         let updatedPids = singlePidsUpdates.map { $0.2 }
         let itemsWhoseLastInSectionStatusMustUpdate = newIndexPaths.zip(with: updatedPids)
-            .map { (newIndexPath, updatedPids) -> Dictionary<IndexPath, Bool> in
-                var possiblyAffectedItems: Set<IndexPath> = [newIndexPath,
-                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withTimeTargets),
-                                                             updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withoutTimeTargets)]
+            .map { (newIndexPath, updatedPids) -> [IndexPath: Bool] in
+                var possiblyAffectedItems: Set<IndexPath> =
+                    [newIndexPath,
+                     updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withTimeTargets),
+                     updatedPids.indexPathOfLastItem(in: ProjectIDsByTimeTargets.Section.withoutTimeTargets)]
 
                 if let section = ProjectIDsByTimeTargets.Section.init(rawValue: newIndexPath.section),
                     newIndexPath == updatedPids.indexPathOfLastItem(in: section),
@@ -255,7 +263,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                     possiblyAffectedItems.insert(IndexPath(item: newIndexPath.item - 1, section: newIndexPath.section))
                 }
 
-                var withValues = Dictionary<IndexPath, Bool>()
+                var withValues = [IndexPath: Bool]()
                 for indexPath in possiblyAffectedItems {
                     withValues[indexPath] = updatedPids.isIndexPathOfLastItemInSection(indexPath)
                 }
@@ -273,10 +281,11 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
 
         // update "last in section" visual state
-        let updateLastItemInSectionState: BindingTarget<Dictionary<IndexPath, Bool>> =
+        let updateLastItemInSectionState: BindingTarget<[IndexPath: Bool]> =
             projectsCollectionView.reactive.makeBindingTarget { collectionView, itemsToUpdate in
                 for (indexPath, isLastInSection) in itemsToUpdate {
-                    if let item = collectionView.item(at: indexPath) as? ProjectCollectionViewItem { // will only determine the status of already cached items
+                    if let item = collectionView.item(at: indexPath) as? ProjectCollectionViewItem {
+                        // will only determine the status of already cached items
                         item.isLastItemInSection = isLastInSection
                     }
                 }
@@ -293,14 +302,16 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         }
 
         let delayScheduler = QueueScheduler()
-        selectInCollectionView <~ lastBinding.latestOutput { $0.selectionDownstream }.withLatest(from: currentProjectIDs).map { (projectId, idsByTimeTargets) -> IndexPath? in
+        selectInCollectionView <~ lastBinding.latestOutput { $0.selectionDownstream }
+            .withLatest(from: currentProjectIDs).map { (projectId, idsByTimeTargets) -> IndexPath? in
             guard let projectId = projectId else {
                 return nil
             }
             return idsByTimeTargets.indexPath(for: projectId)
             }
             .skipNil()
-            .delay(0, on: delayScheduler) // ensure selection will happen last when it's combined with a partial collection update
+            // ensure selection will happen last when it's combined with a partial collection update
+            .delay(0, on: delayScheduler)
     }
 
     /// Scrolls the collection view to display the currently selected item.
@@ -353,10 +364,12 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
                                                         withIdentifier: SectionHeaderIdentifier, for: indexPath)
         if let header = view as? ProjectCollectionViewHeader {
             switch ProjectIDsByTimeTargets.Section(rawValue: indexPath.section)! {
-            case .withTimeTargets: header.title = NSLocalizedString("project-list.header.with-time-targets",
-                                                             comment: "header of the 'projects with time targets' section of the project list")
-            case .withoutTimeTargets: header.title = NSLocalizedString("project-list.header.without-time-targets",
-                                                                comment: "header of the 'projects without time targets' section of the project list")
+            case .withTimeTargets: header.title =
+                NSLocalizedString("project-list.header.with-time-targets",
+                                  comment: "header of the 'projects with time targets' section of the project list")
+            case .withoutTimeTargets: header.title =
+                NSLocalizedString("project-list.header.without-time-targets",
+                                  comment: "header of the 'projects without time targets' section of the project list")
             }
         }
         return view
@@ -382,7 +395,8 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         let projectWithoutTimeTargetSelected = SignalProducer.combineLatest(
             currentProjectIDs.producer,
             selectedProjectID.producer.skip(first: 1).skipNil())
-            .filter { $0.0.indexPath(for: $0.1)?.section == ProjectIDsByTimeTargets.Section.withoutTimeTargets.rawValue }
+            .filter { $0.0.indexPath(for: $0.1)?.section ==
+                ProjectIDsByTimeTargets.Section.withoutTimeTargets.rawValue }
             .map { _ in () }
 
         let projectsListView = viewDidLoadProducer

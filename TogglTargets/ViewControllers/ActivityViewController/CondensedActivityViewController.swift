@@ -45,9 +45,12 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
         let idleStates = stateProducer.filter(State.isIdle)
 
         statusDescriptionLabel.reactive.text <~ SignalProducer.merge(
-            syncingStates.map { _ in NSLocalizedString("status.condensed.all-data.syncing", comment: "data syncing in progress") },
-            errorStates.map { _ in NSLocalizedString("status.condensed.all-data.error", comment: "there were errors while syncing data") },
-            successStates.map { _ in NSLocalizedString("status.condensed.all-data.synced", comment: "all data up to date") }
+            syncingStates.map { _ in NSLocalizedString("status.condensed.all-data.syncing",
+                                                       comment: "data syncing in progress") },
+            errorStates.map { _ in NSLocalizedString("status.condensed.all-data.error",
+                                                     comment: "there were errors while syncing data") },
+            successStates.map { _ in NSLocalizedString("status.condensed.all-data.synced",
+                                                       comment: "all data up to date") }
         )
 
         statusDetailLabel.reactive.text <~ SignalProducer.merge(
@@ -71,14 +74,16 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
 
         statusDetailLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ shouldShowStatusDetail.negate()
 
-        toggleRequestExpandedDetailsGestureRecognizer.reactive.makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
+        toggleRequestExpandedDetailsGestureRecognizer.reactive
+            .makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
 
-        let showStatusDetail: BindingTarget<Bool> = statusDetailLabel.reactive.makeBindingTarget { [unowned self] label, hidden in
-            NSAnimationContext.runAnimationGroup({ context in
-                context.allowsImplicitAnimation = true
-                label.isHidden = hidden
-                self.view.layoutSubtreeIfNeeded()
-            }, completionHandler: nil)
+        let showStatusDetail: BindingTarget<Bool> = statusDetailLabel.reactive
+            .makeBindingTarget { [unowned self] label, hidden in
+                NSAnimationContext.runAnimationGroup({ context in
+                    context.allowsImplicitAnimation = true
+                    label.isHidden = hidden
+                    self.view.layoutSubtreeIfNeeded()
+                }, completionHandler: nil)
         }
 
         showStatusDetail <~ shouldShowStatusDetail.negate()
@@ -210,8 +215,9 @@ fileprivate extension APIAccessError {
             return NSLocalizedString("status.condensed.error.non-http",
                                      comment: "condensed error message: received a non-http response")
         case .otherHTTPError(response: let response):
-            return String.localizedStringWithFormat(NSLocalizedString("status.condensed.error.other-http",
-                                                                      comment: "condensed error message: other HTTP error"), response.statusCode)
+            return String.localizedStringWithFormat(
+                NSLocalizedString("status.condensed.error.other-http",
+                                  comment: "condensed error message: other HTTP error"), response.statusCode)
         }
     }
 }

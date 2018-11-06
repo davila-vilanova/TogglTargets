@@ -47,7 +47,8 @@ class EmailPasswordViewController: NSViewController, BindingTargetProvider {
         let credentialUpstream = Signal.combineLatest(emailField.reactive.continuousStringValues,
                                                       passwordField.reactive.continuousStringValues)
             .map(TogglAPIEmailCredential.init)
-            // (The following mapping should be much simpler but for some reason I cannot condense it without upsetting the compiler)
+            // (The following mapping should be much simpler but for some reason I cannot condense it
+            // without upsetting the compiler)
             // Generalize the optional TogglAPIEmailCredential values to optional TogglAPICredential values
             .map { credentialOrNil -> TogglAPICredential? in
                 if let emailCredential = credentialOrNil {

@@ -142,9 +142,10 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
         let userModifiedPreference = updatedPreference
 
         let currentPeriod =
-            SignalProducer.combineLatest(SignalProducer.merge(existingPreference.producer, userModifiedPreference.producer),
-                                                              calendar.producer.skipNil(),
-                                                              currentDate.producer.skipNil())
+            SignalProducer.combineLatest(SignalProducer.merge(existingPreference.producer,
+                                                              userModifiedPreference.producer),
+                                         calendar.producer.skipNil(),
+                                         currentDate.producer.skipNil())
             .map { (preference, calendar, currentDate) in
                 preference.currentPeriod(in: calendar, for: currentDate)
         }

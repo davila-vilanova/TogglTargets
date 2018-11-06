@@ -15,7 +15,8 @@ class AboutViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let empty = ""
-        let shortVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? empty
+        let shortVersionString =
+            Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? empty
         let versionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? empty
         versionLabel.stringValue = "\(shortVersionString) (\(versionString))"
     }

@@ -19,7 +19,10 @@ struct OnboardingStep {
     let allowContinue: Bool
     let preferredEdge: NSRectEdge
 
-    init(identifier: OnboardingStepIdentifier, text: String, allowContinue: Bool = false, preferredEdge: NSRectEdge = .maxX) {
+    init(identifier: OnboardingStepIdentifier,
+         text: String,
+         allowContinue: Bool = false,
+         preferredEdge: NSRectEdge = .maxX) {
         self.identifier = identifier
         self.text = text
         self.allowContinue = allowContinue
@@ -39,8 +42,10 @@ class OnboardingGuide {
 
     private let steps: [OnboardingStep]
 
-    private lazy var targetViewEventHolders: [OnboardingStepIdentifier: MutableProperty<Signal<NSView, NoError>.Event?>] = {
-        var holders = [OnboardingStepIdentifier: MutableProperty<Signal<NSView, NoError>.Event?>](minimumCapacity: steps.count)
+    private lazy var
+    targetViewEventHolders: [OnboardingStepIdentifier: MutableProperty<Signal<NSView, NoError>.Event?>] = {
+        var holders =
+            [OnboardingStepIdentifier: MutableProperty<Signal<NSView, NoError>.Event?>](minimumCapacity: steps.count)
         for step in steps {
             holders[step.identifier] = MutableProperty<Signal<NSView, NoError>.Event?>(nil)
         }
@@ -60,11 +65,13 @@ class OnboardingGuide {
     }()
 
     func register(_ registree: AnyObject) {
-        func connect(_ viewProducer: SignalProducer<NSView, NoError>, toViewHolderFor stepIdentifier: OnboardingStepIdentifier) {
+        func connect(_ viewProducer: SignalProducer<NSView, NoError>,
+                     toViewHolderFor stepIdentifier: OnboardingStepIdentifier) {
             func take(from viewProducer: SignalProducer<NSView, NoError>, stepIdentifier: OnboardingStepIdentifier)
                 -> SignalProducer<Signal<NSView, NoError>.Event, NoError> {
                     func moveOnButtonPressed(for stepId: OnboardingStepIdentifier) -> SignalProducer<Void, NoError> {
-                        return stepViewController.moveOnToNextStep.filter { $0 == stepId }.map { _ in () }.take(first: 1)
+                        return stepViewController.moveOnToNextStep.filter { $0 == stepId }
+                            .map { _ in () }.take(first: 1)
                     }
                     return viewProducer.take(until: moveOnButtonPressed(for: stepIdentifier)).materialize()
             }
@@ -93,8 +100,9 @@ class OnboardingGuide {
 
         (lifetime, token) = Lifetime.make()
 
-        func extractViewProducer(_ prop: MutableProperty<Signal<NSView, NoError>.Event?>) -> SignalProducer<NSView, NoError> {
-            return prop.producer.skipNil().dematerialize()
+        func extractViewProducer(_ prop: MutableProperty<Signal<NSView, NoError>.Event?>)
+            -> SignalProducer<NSView, NoError> {
+                return prop.producer.skipNil().dematerialize()
         }
 
         let views = SignalProducer(sortedTargetViewEventHolders)
@@ -149,7 +157,8 @@ class OnboardingGuide {
         _onboardingEnded <~ onboardingEnded
     }
 
-    private lazy var stepViewController = OnboardingStepViewController(nibName: "OnboardingStepViewController", bundle: nil)
+    private lazy var stepViewController =
+        OnboardingStepViewController(nibName: "OnboardingStepViewController", bundle: nil)
 
     private lazy var stepPopover: NSPopover = {
         let popover = NSPopover()

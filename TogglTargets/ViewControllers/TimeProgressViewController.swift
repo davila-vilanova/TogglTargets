@@ -53,7 +53,8 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
         didSet {
             workdaysInPeriodField.reactive.stringValue <~ totalWorkDays.producer.mapToNonNil().map {
                 String.localizedStringWithFormat(
-                    NSLocalizedString("time-progress.workdays.total", comment: "total amount of workdays in current period"),
+                    NSLocalizedString("time-progress.workdays.total",
+                                      comment: "total amount of workdays in current period"),
                     $0)
             }
         }
@@ -63,10 +64,12 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
         didSet {
             let formattedRemainingWorkdays = remainingWorkDays.producer.mapToNonNil()
 
-            let formattedIncludingToday = formattedRemainingWorkdays.throttle(while: strategyStartsToday.negate(), on: UIScheduler())
+            let formattedIncludingToday = formattedRemainingWorkdays.throttle(while: strategyStartsToday.negate(),
+                                                                              on: UIScheduler())
                 .map {
                     String.localizedStringWithFormat(
-                        NSLocalizedString("time-progress.workdays.left.including-today", comment: "remaining workdays in current period, including today"),
+                        NSLocalizedString("time-progress.workdays.left.including-today",
+                                          comment: "remaining workdays in current period, including today"),
                         $0)
 
             }
@@ -74,7 +77,8 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
                 .throttle(while: strategyStartsToday, on: UIScheduler())
                 .map {
                     String.localizedStringWithFormat(
-                        NSLocalizedString("time-progress.workdays.left.excluding-today", comment: "remaining workdays in current period, not including today"),
+                        NSLocalizedString("time-progress.workdays.left.excluding-today",
+                                          comment: "remaining workdays in current period, not including today"),
                         $0)
             }
 

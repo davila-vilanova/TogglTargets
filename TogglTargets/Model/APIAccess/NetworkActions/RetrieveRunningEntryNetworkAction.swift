@@ -15,7 +15,8 @@ typealias RetrieveRunningEntryNetworkActionMaker = (Property<URLSession?>) -> Re
 
 func makeRetrieveRunningEntryNetworkAction(_ urlSession: Property<URLSession?>) -> RetrieveRunningEntryNetworkAction {
     return RetrieveRunningEntryNetworkAction(unwrapping: urlSession) { (session, _) in
-        return session.togglAPIRequestProducer(for: RunningEntryService.endpoint, decoder: RunningEntryService.decodeRunningEntry)
+        return session.togglAPIRequestProducer(for: RunningEntryService.endpoint,
+                                               decoder: RunningEntryService.decodeRunningEntry)
     }
 }
 

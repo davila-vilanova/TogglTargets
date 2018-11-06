@@ -45,17 +45,19 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         setupProfileImageStyle()
 
-        progressIndicator.reactive.makeBindingTarget { $1 ? $0.startAnimation(nil) : $0.stopAnimation(nil) } <~ retrieveProfilePictureImageData.isExecuting
+        progressIndicator.reactive.makeBindingTarget {
+            $1 ? $0.startAnimation(nil) : $0.stopAnimation(nil)
+            } <~ retrieveProfilePictureImageData.isExecuting
 
         let profile = lastBinding.latestOutput { $0.profile }
-        fullNameField.reactive.stringValue <~ profile.filterMap { $0.name } // TODO: or make name not optional, it probably is not on Toggl's side
+        fullNameField.reactive.stringValue <~ profile.filterMap { $0.name }
         profileImageView.reactive.image <~ retrieveProfilePictureImageData.values.map { $0.0 }.map { NSImage(data: $0) }
-        retrieveProfilePictureImageData <~ profile.filterMap { $0.imageUrl } // TODO: ditto?
-        timezoneField.reactive.stringValue <~ profile.filterMap { $0.timezone } // once again
+        retrieveProfilePictureImageData <~ profile.filterMap { $0.imageUrl }
+        timezoneField.reactive.stringValue <~ profile.filterMap { $0.timezone }
         workspaceCountField.reactive.stringValue <~ profile.map {
-            String.localizedStringWithFormat(NSLocalizedString("preferences.logged-in.workspace-count",
-                                                               comment: "count of workspaces managed by the Toggl account"), $0.workspaces.count)
-
+            String.localizedStringWithFormat(
+                NSLocalizedString("preferences.logged-in.workspace-count",
+                                  comment: "count of workspaces managed by the Toggl account"), $0.workspaces.count)
         }
 
         showCredentialsErrorAlert <~ lastBinding.latestOutput { $0.apiAccessError }
@@ -94,11 +96,15 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
         return SignalProducer { (observer: Signal<CredentialsErrorResolution, NoError>.Observer, _: Lifetime) in
             let alert = NSAlert()
             alert.alertStyle = .warning
-            alert.messageText = NSLocalizedString("logged-in.invalid-credentials.title", comment: "credential seems no longer valid: title")
-            alert.informativeText = NSLocalizedString("logged-in.invalid-credentials.informative", comment: "credential seems no longer valid: informative text")
+            alert.messageText = NSLocalizedString("logged-in.invalid-credentials.title",
+                                                  comment: "credential seems no longer valid: title")
+            alert.informativeText = NSLocalizedString("logged-in.invalid-credentials.informative",
+                                                      comment: "credential seems no longer valid: informative text")
 
-            alert.addButton(withTitle: NSLocalizedString("logged-in.invalid-credentials.ignore", comment: "button caption: ignore invalid credentials error"))
-            alert.addButton(withTitle: NSLocalizedString("logged-in.invalid-credentials.reenter", comment: "Reenter Credentials"))
+            alert.addButton(withTitle: NSLocalizedString("logged-in.invalid-credentials.ignore",
+                                                         comment: "button caption: ignore invalid credentials error"))
+            alert.addButton(withTitle: NSLocalizedString("logged-in.invalid-credentials.reenter",
+                                                         comment: "Reenter Credentials"))
 
             alert.beginSheetModal(for: window) { response in
                 switch response {

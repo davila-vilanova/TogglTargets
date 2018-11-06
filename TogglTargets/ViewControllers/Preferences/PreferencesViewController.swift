@@ -64,9 +64,14 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
 
         let validBindings = lastBinding.producer.skipNil()
         if let account = controller as? AccountViewController {
-            account <~ validBindings.map { ($0.existingCredential, $0.profile, $0.apiAccessError, $0.resolvedCredential, $0.testURLSessionAction) }
+            account <~ validBindings.map {
+                ($0.existingCredential, $0.profile, $0.apiAccessError, $0.resolvedCredential, $0.testURLSessionAction)
+            }
         } else if let timePeriods = controller as? TimePeriodPreferencesViewController {
-            timePeriods <~ validBindings.map { ($0.calendar, $0.currentDate, $0.existingTimeTargetPeriodPreference, $0.updatedTimeTargetPeriodPreference) }
+            timePeriods <~ validBindings.map {
+                ($0.calendar, $0.currentDate, $0.existingTimeTargetPeriodPreference,
+                 $0.updatedTimeTargetPeriodPreference)
+            }
         }
     }
 
@@ -75,12 +80,14 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.reactive.makeBindingTarget(on: UIScheduler()) { $0.selectedTabViewItemIndex = $1 } <~ lastBinding.latestOutput { $0.displaySection }
-            .skipNil().map { section -> ContainedControllerType in
-                switch section {
-                case .account: return .account
-                case .timePeriods: return .timePeriods
-                }
-            }.map { $0.rawValue }
+        self.reactive.makeBindingTarget(on: UIScheduler()) {
+            $0.selectedTabViewItemIndex = $1
+            } <~ lastBinding.latestOutput { $0.displaySection }
+                .skipNil().map { section -> ContainedControllerType in
+                    switch section {
+                    case .account: return .account
+                    case .timePeriods: return .timePeriods
+                    }
+                }.map { $0.rawValue }
     }
 }

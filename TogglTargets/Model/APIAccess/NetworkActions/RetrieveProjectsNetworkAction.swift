@@ -45,7 +45,9 @@ func makeRetrieveProjectsNetworkAction(_ urlSession: Property<URLSession?>) -> R
 /// - returns: A `RetrieveProjectsNetworkAction` that applies request splitting,
 ///            projects combining and indexing logic on top of the provided
 ///            `URLSession` and `TogglAPINetworkRetriever`.
-func makeRetrieveProjectsNetworkAction(_ urlSession: Property<URLSession?>, _ networkRetriever: @escaping TogglAPINetworkRetriever<[Project]>) -> RetrieveProjectsNetworkAction {
+func makeRetrieveProjectsNetworkAction(_ urlSession: Property<URLSession?>,
+                                       _ networkRetriever:
+    @escaping TogglAPINetworkRetriever<[Project]>) -> RetrieveProjectsNetworkAction {
     return RetrieveProjectsNetworkAction(unwrapping: urlSession) { (session, workspaceIDs) in
         let workspaceIDsProducer = SignalProducer(workspaceIDs) // will emit one value per workspace ID
         let projectsProducer: SignalProducer<[Project], APIAccessError> =

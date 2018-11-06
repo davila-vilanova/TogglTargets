@@ -28,8 +28,8 @@ class AccountViewController: NSViewController, BindingTargetProvider {
     // MARK: - Contained view controllers
 
     private lazy var loginViewController: LoginViewController = {
-        // swiftlint:disable:next force_cast
-        let loginController = self.storyboard!.instantiateController(withIdentifier: "LoginViewController") as! LoginViewController
+        let loginController = self.storyboard!.instantiateController(withIdentifier: "LoginViewController")
+            as! LoginViewController // swiftlint:disable:this force_cast
         loginController <~ lastBinding.producer.skipNil().map { (credentialUpstream: $0.resolvedCredential,
                                                                  testURLSessionAction: $0.testURLSessionAction) }
         addChild(loginController)
@@ -37,11 +37,12 @@ class AccountViewController: NSViewController, BindingTargetProvider {
     }()
 
     private lazy var loggedInViewController: LoggedInViewController = {
-        // swiftlint:disable:next force_cast
-        let loggedInController = self.storyboard!.instantiateController(withIdentifier: "LoggedInViewController") as! LoggedInViewController
+        let loggedInController = self.storyboard!.instantiateController(withIdentifier: "LoggedInViewController")
+            as! LoggedInViewController // swiftlint:disable:this force_cast
         let validBindings = lastBinding.producer.skipNil()
         let logOutRequested = MutableProperty<Void>(())
-        logOutRequested.signal.map { nil as TogglAPITokenCredential? }.bindOnlyToLatest(validBindings.map { $0.resolvedCredential })
+        logOutRequested.signal.map { nil as TogglAPITokenCredential? }
+            .bindOnlyToLatest(validBindings.map { $0.resolvedCredential })
         loggedInController <~ validBindings.map { (profile: $0.profile,
                                                    apiAccessError: $0.apiAccessError,
                                                    logOut: logOutRequested.bindingTarget) }

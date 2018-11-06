@@ -54,10 +54,18 @@ class OnboardingStepViewController: NSViewController {
         hideMoveOnButton <~ lastStepTrigger.map { _ in false }
 
         moveOnToNextStepButton.reactive.makeBindingTarget { button, title in button.title = title }
-            <~ lastStepTrigger.map { _ in NSLocalizedString("onboarding.close-after-completion", tableName: "OnboardingStepViewController", comment: "onboarding: close after completion") }
+            <~ lastStepTrigger.map { _ in
+                NSLocalizedString("onboarding.close-after-completion",
+                                  tableName: "OnboardingStepViewController",
+                                  comment: "onboarding: close after completion")
+        }
 
         stopOnboardingButton.reactive.makeBindingTarget { $0.isEnabled = $1 } <~ lastStepTrigger.map { _ in false }
         stopOnboardingButton.reactive.makeBindingTarget { button, title in button.title = title }
-            <~ lastStepTrigger.map { _ in NSLocalizedString("onboarding.thank-you", tableName: "OnboardingStepViewController", comment: "onboarding: small thank you note") }
+            <~ lastStepTrigger.map { _ in
+                NSLocalizedString("onboarding.thank-you",
+                                  tableName: "OnboardingStepViewController",
+                                  comment: "onboarding: small thank you note")
+        }
     }
 }
