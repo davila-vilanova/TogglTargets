@@ -141,7 +141,7 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
                                                                     within: indexedTimeTargets,
                                                                     affecting: idsByTimeTargets)
         guard let update = timeTargetUpdate else {
-            XCTFail()
+            XCTFail("`projectId` is not included in `idsByTimeTargets`")
             return
         }
 
@@ -179,7 +179,7 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
                                                                     within: indexedTimeTargets,
                                                                     affecting: idsByTimeTargets)
         guard let update = timeTargetUpdate else {
-            XCTFail()
+            XCTFail("`projectId` is not included in `idsByTimeTargets`")
             return
         }
 
@@ -218,7 +218,7 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
                                                                     affecting: idsByTimeTargets)
 
         guard let update = timeTargetUpdate else {
-            XCTFail()
+            XCTFail("`projectId` is not included in `idsByTimeTargets`")
             return
         }
 
