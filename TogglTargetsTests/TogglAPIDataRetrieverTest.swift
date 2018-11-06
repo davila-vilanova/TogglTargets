@@ -69,7 +69,7 @@ private func equalsTestError(_ candidate: APIAccessError) -> Bool {
 
 private let timeoutForExpectations = TimeInterval(1.0)
 
-class TogglAPIDataRetrieverTest: XCTestCase {
+class TogglAPIDataRetrieverTest: XCTestCase { // swiftlint:disable:this type_body_length
 
     var retrieveProfileNetworkAction: RetrieveProfileNetworkAction!
     var retrieveProfileCacheAction: RetrieveProfileCacheAction!
@@ -524,4 +524,4 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
         wait(for: [cacheStoreExpectation], timeout: timeoutForExpectations)
     }
-}
+} // swiftlint:disable:this file_length
