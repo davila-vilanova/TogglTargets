@@ -20,6 +20,7 @@ class ProjectIDsByTimeTargetsTests: XCTestCase {
         XCTAssertEqual(idsByTimeTargets.countOfProjectsWithoutTimeTargets, 5)
     }
 
+    // swiftlint:disable identifier_name
     func testEquality() {
         let a = ProjectIDsByTimeTargets(sortedProjectIDs: [1, 2, 3], countOfProjectsWithTimeTargets: 2)
         let b = ProjectIDsByTimeTargets(sortedProjectIDs: [1, 2, 3], countOfProjectsWithTimeTargets: 2)
@@ -40,6 +41,7 @@ class ProjectIDsByTimeTargetsTests: XCTestCase {
         XCTAssertTrue(a != b)
         XCTAssertFalse(a == b)
     }
+    // swiftlint:enable identifier_name
 
     func testIndexPathGeneration() {
         XCTAssertEqual(idsByTimeTargets.indexPath(forElementAt: 0), IndexPath(item: 0, section: withTimeTargets))
@@ -56,13 +58,13 @@ class ProjectIDsByTimeTargetsTests: XCTestCase {
     }
 }
 
-private let SetupFailure = "Test setup failure: "
-private let SetupFailureNilIndexedTimeTargets = "\(SetupFailure)indexedTimeTargets and projectId must not be nil"
-private let SetupFailureNonMatchingProjectId =
-    "\(SetupFailure)if a newTimeTarget is provided, newTimeTarget's projectId must match provided projectId"
-private let SetupFailureNilIdsByTimeTargets = "\(SetupFailure)idsByTimeTargets must not be nil"
-private let SetupFailureNilProjectId =
-    "\(SetupFailure)after calling setupForProjectId(_, newTimeTarget:) projectId must not be nil"
+private let setupFailure = "Test setup failure: "
+private let setupFailureNilIndexedTimeTargets = "\(setupFailure)indexedTimeTargets and projectId must not be nil"
+private let setupFailureNonMatchingProjectId =
+    "\(setupFailure)if a newTimeTarget is provided, newTimeTarget's projectId must match provided projectId"
+private let setupFailureNilIdsByTimeTargets = "\(setupFailure)idsByTimeTargets must not be nil"
+private let setupFailureNilProjectId =
+    "\(setupFailure)after calling setupForProjectId(_, newTimeTarget:) projectId must not be nil"
 
 class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
     var indexedTimeTargets: ProjectIdIndexedTimeTargets?
@@ -79,11 +81,11 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
     // Updates the values of projectId, oldTimeTarget, newTimeTarget and newIndexedTimeTargets
     func setUpForProjectId(_ projectId: ProjectID, newTimeTarget: TimeTarget?) {
         guard let oldIndexedTimeTargets = indexedTimeTargets else {
-            XCTFail(SetupFailureNilIndexedTimeTargets)
+            XCTFail(setupFailureNilIndexedTimeTargets)
             return
         }
         guard newTimeTarget == nil || newTimeTarget!.projectId == projectId else {
-            XCTFail(SetupFailureNonMatchingProjectId)
+            XCTFail(setupFailureNonMatchingProjectId)
             return
         }
 
@@ -91,9 +93,9 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
         self.newTimeTarget = newTimeTarget
         oldTimeTarget = oldIndexedTimeTargets[projectId]
         newIndexedTimeTargets = {
-            var t = oldIndexedTimeTargets
-            t[projectId] = newTimeTarget
-            return t
+            var oldTargets = oldIndexedTimeTargets
+            oldTargets[projectId] = newTimeTarget
+            return oldTargets
         }()
     }
 
@@ -115,7 +117,7 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
 
     func testInitialization() {
         guard let idsByTimeTargets = idsByTimeTargets else {
-            XCTFail(SetupFailureNilIdsByTimeTargets)
+            XCTFail(setupFailureNilIdsByTimeTargets)
             return
         }
         XCTAssertEqual(idsByTimeTargets.sortedProjectIDs, [48, 25, 71, 89, 60, 30, 22, 12])
@@ -124,11 +126,11 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
 
     func testEditExistingTimeTarget() {
         guard let idsByTimeTargets = idsByTimeTargets else {
-            XCTFail(SetupFailureNilIdsByTimeTargets)
+            XCTFail(setupFailureNilIdsByTimeTargets)
             return
         }
         guard let indexedTimeTargets = indexedTimeTargets else {
-            XCTFail(SetupFailureNilIndexedTimeTargets)
+            XCTFail(setupFailureNilIndexedTimeTargets)
             return
         }
 
@@ -137,7 +139,7 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
                                                     hoursTarget: 15,
                                                     workWeekdays: WeekdaySelection.exceptWeekend))
         guard let projectId = projectId else {
-            XCTFail(SetupFailureNilProjectId)
+            XCTFail(setupFailureNilProjectId)
             return
         }
 
@@ -167,17 +169,17 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
 
     func testDeleteTimeTarget() {
         guard let idsByTimeTargets = idsByTimeTargets else {
-            XCTFail(SetupFailureNilIdsByTimeTargets)
+            XCTFail(setupFailureNilIdsByTimeTargets)
             return
         }
         guard let indexedTimeTargets = indexedTimeTargets else {
-            XCTFail(SetupFailureNilIndexedTimeTargets)
+            XCTFail(setupFailureNilIndexedTimeTargets)
             return
         }
 
         setUpForProjectId(25, newTimeTarget: nil)
         guard let projectId = projectId else {
-            XCTFail(SetupFailureNilProjectId)
+            XCTFail(setupFailureNilProjectId)
             return
         }
 
@@ -207,11 +209,11 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
 
     func testCreateTimeTarget() {
         guard let idsByTimeTargets = idsByTimeTargets else {
-            XCTFail(SetupFailureNilIdsByTimeTargets)
+            XCTFail(setupFailureNilIdsByTimeTargets)
             return
         }
         guard let indexedTimeTargets = indexedTimeTargets else {
-            XCTFail(SetupFailureNilIndexedTimeTargets)
+            XCTFail(setupFailureNilIndexedTimeTargets)
             return
         }
 
@@ -220,7 +222,7 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
                                                     hoursTarget: 16,
                                                     workWeekdays: WeekdaySelection.exceptWeekend))
         guard let projectId = projectId else {
-            XCTFail(SetupFailureNilProjectId)
+            XCTFail(setupFailureNilProjectId)
             return
         }
 

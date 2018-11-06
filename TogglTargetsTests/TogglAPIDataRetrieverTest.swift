@@ -380,11 +380,11 @@ class TogglAPIDataRetrieverTest: XCTestCase {
 
         let profileActionExecutionStartedExpectation =
             expectation(description: "retrieveProfileNetworkAction action execution started")
-        let projectsActionExecutionStartedExpectation =
+        let projectsActionExecutionStartedExpectation = // swiftlint:disable:this identifier_name
             expectation(description: "retrieveProjectsNetworkAction action execution started")
         let reportsActionExecutionStartedExpectation =
             expectation(description: "retrieveReportsNetworkAction action execution started")
-        let runningEntryActionExecutionStartedExpectation =
+        let runningEntryActionExecutionStartedExpectation = // swiftlint:disable:this identifier_name
             expectation(description: "retrieveRunningEntryAction action execution started")
 
         let profileActionExecutionEndedExpectation =
@@ -393,7 +393,7 @@ class TogglAPIDataRetrieverTest: XCTestCase {
             expectation(description: "retrieveProjectsNetworkAction action execution ended")
         let reportsActionExecutionEndedExpectation =
             expectation(description: "retrieveReportsNetworkAction action execution ended")
-        let runningEntryActionExecutionEndedExpectation =
+        let runningEntryActionExecutionEndedExpectation = // swiftlint:disable:this identifier_name
             expectation(description: "retrieveRunningEntryAction action execution ended")
 
         let (lifetime, token) = Lifetime.make()

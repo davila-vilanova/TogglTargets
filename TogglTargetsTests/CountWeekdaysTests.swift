@@ -24,7 +24,7 @@ class CountWeekdaysTests: XCTestCase {
         let startComps = DayComponents(year: 2017, month: 3, day: 1)//, hour: 0, minute: 0)
         let endComps = DayComponents(year: 2017, month: 3, day: 31)//, hour: 23, minute: 59)
 
-        let expectedCount: Dictionary<Weekday, Int> =
+        let expectedCount: [Weekday: Int] =
             [ .monday: 4,
               .tuesday: 4,
               .wednesday: 5,
@@ -38,7 +38,7 @@ class CountWeekdaysTests: XCTestCase {
         var iterations = 0
 
         for timezoneId in TimeZone.knownTimeZoneIdentifiers {
-            let tz = TimeZone(identifier: timezoneId)!
+            let tz = TimeZone(identifier: timezoneId)! // swiftlint:disable:this identifier_name
 
             calendar.timeZone = tz
 
@@ -63,7 +63,7 @@ class CountWeekdaysTests: XCTestCase {
         let startComps = DayComponents(year: 2016, month: 10, day: 1)
         let endComps = DayComponents(year: 2016, month: 10, day: 31)
 
-        let expectedCount: Dictionary<Weekday, Int> =
+        let expectedCount: [Weekday: Int] =
             [ .monday: 5,
               .tuesday: 4,
               .wednesday: 4,
@@ -77,7 +77,7 @@ class CountWeekdaysTests: XCTestCase {
         var iterations = 0
 
         for timezoneId in TimeZone.knownTimeZoneIdentifiers {
-            let tz = TimeZone(identifier: timezoneId)!
+            let tz = TimeZone(identifier: timezoneId)! // swiftlint:disable:this identifier_name
 
             calendar.timeZone = tz
 
@@ -97,7 +97,7 @@ class CountWeekdaysTests: XCTestCase {
     }
 
     func testPerformanceExample() {
-        let tz = TimeZone(identifier: "Europe/London")!
+        let tz = TimeZone(identifier: "Europe/London")! // swiftlint:disable:this identifier_name
 
         var calendar = Calendar(identifier: .iso8601)
         calendar.timeZone = tz

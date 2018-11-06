@@ -10,7 +10,7 @@ import XCTest
 import Result
 import ReactiveSwift
 
-private let OutputTimeout = TimeInterval(7)
+private let outputTimeout = TimeInterval(7)
 
 class ActivitiesStateTest: XCTestCase {
     let scheduler = QueueScheduler()
@@ -35,7 +35,7 @@ class ActivitiesStateTest: XCTestCase {
 
         testee.input <~ SignalProducer(value: .executing(.syncProfile))
 
-        wait(for: [firstOutputExpectation], timeout: OutputTimeout)
+        wait(for: [firstOutputExpectation], timeout: outputTimeout)
 
         let secondOutputExpectation = expectation(description: "test output value received")
         signalHolder = testee.output.take(first: 1).on(value: { outputValue = $0; secondOutputExpectation.fulfill() })
@@ -44,7 +44,7 @@ class ActivitiesStateTest: XCTestCase {
         testee.input <~ SignalProducer(value: .executing(.syncProjects))
         testee.input <~ SignalProducer(value: .executing(.syncReports))
 
-        wait(for: [secondOutputExpectation], timeout: OutputTimeout)
+        wait(for: [secondOutputExpectation], timeout: outputTimeout)
 
         guard let value = outputValue else {
             XCTFail("output value is nil")
@@ -70,14 +70,14 @@ class ActivitiesStateTest: XCTestCase {
         testee.input <~ SignalProducer(value: .executing(.syncProjects))
         testee.input <~ SignalProducer(value: .executing(.syncReports))
 
-        wait(for: [firstOutputsExpectation], timeout: OutputTimeout)
+        wait(for: [firstOutputsExpectation], timeout: outputTimeout)
 
         let secondOutputExpectation = expectation(description: "test output value received")
         signalHolder = testee.output.take(first: 1).on(value: { outputValue = $0; secondOutputExpectation.fulfill() })
 
         testee.input <~ SignalProducer(value: .succeeded(.syncProjects))
 
-        wait(for: [secondOutputExpectation], timeout: OutputTimeout)
+        wait(for: [secondOutputExpectation], timeout: outputTimeout)
 
         guard let value = outputValue else {
             XCTFail("output value is nil")

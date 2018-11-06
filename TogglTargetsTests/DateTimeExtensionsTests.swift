@@ -21,7 +21,7 @@ class DateTimeExtensionsTests: XCTestCase {
         }
 
         for timezoneId in TimeZone.knownTimeZoneIdentifiers {
-            let tz = TimeZone(identifier: timezoneId)!
+            let tz = TimeZone(identifier: timezoneId)! // swiftlint:disable:this identifier_name
             calendar.timeZone = tz
 
             testCase(original: DayComponents(year: 2016, month: 2, day: 26),
@@ -54,7 +54,7 @@ class DateTimeExtensionsTests: XCTestCase {
         }
 
         for timezoneId in TimeZone.knownTimeZoneIdentifiers {
-            let tz = TimeZone(identifier: timezoneId)!
+            let tz = TimeZone(identifier: timezoneId)! // swiftlint:disable:this identifier_name
             calendar.timeZone = tz
 
             testCase(original: DayComponents(year: 2016, month: 2, day: 27),

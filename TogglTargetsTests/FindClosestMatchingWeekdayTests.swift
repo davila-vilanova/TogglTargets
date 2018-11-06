@@ -118,7 +118,7 @@ class FindClosestMatchingWeekdayTests: XCTestCase {
 
     private func forEachTimezone(_ closure: (Calendar) -> Void ) {
         for timezoneId in TimeZone.knownTimeZoneIdentifiers {
-            let tz = TimeZone(identifier: timezoneId)!
+            let tz = TimeZone(identifier: timezoneId)! // swiftlint:disable:this identifier_name
             var calendar = Calendar(identifier: .iso8601)
             calendar.timeZone = tz
             closure(calendar)
