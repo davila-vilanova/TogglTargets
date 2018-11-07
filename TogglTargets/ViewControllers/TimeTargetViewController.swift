@@ -24,6 +24,13 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
+    // MARK: -
+
+    lazy var calendar = lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
+    lazy var timeTarget = lastBinding.producer.skipNil().map { $0.timeTarget }.flatten(.latest)
+    // Emits non nil timeTarget values coming through the interface
+    lazy var nonNilTimeTarget = timeTarget.producer.skipNil()
+
     // MARK: - Output
 
     private var userUpdates = MutableProperty<TimeTarget?>(nil)
@@ -64,17 +71,18 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
 
         deleteTimeTargetButton.image!.isTemplate = true
 
-        // Connect interface
-        let calendar = lastBinding.producer.skipNil().map { $0.calendar }.flatten(.latest)
-        let timeTarget = lastBinding.producer.skipNil().map { $0.timeTarget }.flatten(.latest)
         userUpdates.signal.skipNil().bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.userUpdates })
 
         // Populate controls that depend on calendar values
         weekdaySegments <~ calendar
 
-        // Emits non nil timeTarget values coming through the interface
-        let nonNilTimeTarget = timeTarget.producer.skipNil()
+        bindInputTimeTargetsToControls()
+        bindControlsToOutputTimeTargets()
+        enableControlsOnlyIfTimeTargetExists()
+        setupTimeTargetDeletionAction()
+    }
 
+    private func bindInputTimeTargetsToControls() {
         // Bind timeTarget values to the values displayed in the controls
         hoursTargetField.reactive.text <~ nonNilTimeTarget.map { $0.hoursTarget }
             .map(NSNumber.init)
@@ -113,9 +121,9 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
         // Bind hours stepper buttons and hours target field
         hoursTargetField.reactive.integerValue <~ hoursTargetStepper.reactive.integerValues
         hoursTargetStepper.reactive.integerValue <~ hoursTargetField.reactive.integerValues
+    }
 
-        // Bind UI to output
-
+    private func bindControlsToOutputTimeTargets() {
         let textFieldValues = hoursTargetField.reactive.stringValues
             .filterMap { [weak formatter = hoursTargetFormatter] (text) -> HoursTargetType? in
                 formatter?.number(from: text)?.intValue
@@ -147,17 +155,20 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
             .map { TimeTarget(for: $1.projectId, hoursTarget: $1.hoursTarget, workWeekdays: $0) }
 
         let editedTimeTarget = SignalProducer.merge(timeTargetFromEditedHours,
-                                              timeTargetFromEditedActiveWeekdays)
+                                                    timeTargetFromEditedActiveWeekdays)
 
         userUpdates <~ editedTimeTarget.map { Optional($0) }
+    }
 
-        // Enable controls only if time target exists
+    private func enableControlsOnlyIfTimeTargetExists() {
         let timeTargetExists = timeTarget.producer.map { $0 != nil }.skipRepeats()
         for control in [hoursTargetLabel, hoursTargetField, activeWeekdaysLabel,
                         activeWeekdaysControl, deleteTimeTargetButton] as [NSControl] {
-            control.reactive.isEnabled <~ timeTargetExists
+                            control.reactive.isEnabled <~ timeTargetExists
         }
+    }
 
+    private func setupTimeTargetDeletionAction() {
         let deleteButtonPressed = Action<Void, Void, NoError> { SignalProducer(value: ()) }
         deleteTimeTargetButton.reactive.pressed = CocoaAction(deleteButtonPressed)
         let deleteTimeTarget = reactive.makeBindingTarget { (timeTargetVC, _: Void) in
