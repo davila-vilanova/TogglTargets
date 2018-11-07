@@ -190,10 +190,12 @@ class TogglAPIDataRetrieverTest: XCTestCase { // swiftlint:disable:this type_bod
     }
 
     func testReportsAreRetrievedWhenWorkspaceIDsAndPeriodsBecomeAvailable() {
-        testRetrieval(of: retrievedReports, satisfying: { XCTAssertEqual($0, testReports) }) { [unowned self] in
-            self.feedAPICredentialIntoDataRetriever()
-            self.feedTwoPartPeriodIntoDataRetriever()
-        }
+        testRetrieval(of: retrievedReports,
+                      satisfying: { XCTAssertEqual($0, testReports) },
+                      after: { [unowned self] in
+                        self.feedAPICredentialIntoDataRetriever()
+                        self.feedTwoPartPeriodIntoDataRetriever()
+        })
     }
 
     func testRetrieveRunningEntryOnDemand() {
@@ -312,9 +314,10 @@ class TogglAPIDataRetrieverTest: XCTestCase { // swiftlint:disable:this type_bod
             SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
         }
 
-        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) }) { [unowned self] in
-            self.feedAPICredentialIntoDataRetriever()
-        }
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) },
+                  after: { [unowned self] in
+                    self.feedAPICredentialIntoDataRetriever()
+        })
     }
 
     func testErrorWhenRetrievingProjectsIsMadeAvailable() {
@@ -322,9 +325,10 @@ class TogglAPIDataRetrieverTest: XCTestCase { // swiftlint:disable:this type_bod
             SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
         }
 
-        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) }) { [unowned self] in
-            self.feedAPICredentialIntoDataRetriever()
-        }
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) },
+                  after: { [unowned self] in
+                    self.feedAPICredentialIntoDataRetriever()
+        })
     }
 
     func testErrorWhenRetrievingReportsIsMadeAvailable() {
@@ -332,10 +336,11 @@ class TogglAPIDataRetrieverTest: XCTestCase { // swiftlint:disable:this type_bod
             SignalProducer(error: APIAccessError.loadingSubsystemError(underlyingError: testUnderlyingError))
         }
 
-        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) }) { [unowned self] in
-            self.feedAPICredentialIntoDataRetriever()
-            self.feedTwoPartPeriodIntoDataRetriever()
-        }
+        testError(satisfies: { XCTAssertTrue(equalsTestError($0)) },
+                  after: { [unowned self] in
+                    self.feedAPICredentialIntoDataRetriever()
+                    self.feedTwoPartPeriodIntoDataRetriever()
+        })
     }
 
     private func testError(satisfies test: @escaping (APIAccessError) -> Void, after trigger: () -> Void) {
