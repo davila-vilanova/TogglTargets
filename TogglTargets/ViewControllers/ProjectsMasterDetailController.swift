@@ -119,6 +119,12 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        wireChildrenViewControllers()
+        wireConfirmDeleteSheetOutputs()
+        setupTimeTargetWritingProperties()
+    }
+
+    private func wireChildrenViewControllers() {
         projectsListActivityViewController <~
             SignalProducer.combineLatest(SignalProducer(value: selectedProjectId.bindingTarget),
                                          lastBinding.producer.skipNil())
@@ -150,16 +156,21 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                      modifyTimeTarget,
                      binding.readReport)
         }
+    }
 
+    private func wireConfirmDeleteSheetOutputs() {
         deleteTimeTarget <~ showConfirmDeleteSheet.values.filterMap { $0.projectIdToDelete }
 
         reactive.lifetime += showConfirmDeleteSheet.disabledErrors.observeValues {
             print("Cannot show 'confirm delete' sheet - action is disabled")
         }
+    }
 
-        registerSelectionInUndoManager <~ SignalProducer.merge(createTimeTarget.producer.skipNil().map { $0.projectId },
-                                                               modifyTimeTarget.producer.skipNil().map { $0.projectId },
-                                                               deleteTimeTarget.producer.skipNil())
+    private func setupTimeTargetWritingProperties() {
+        registerSelectionInUndoManager
+            <~ SignalProducer.merge(createTimeTarget.producer.skipNil().map { $0.projectId },
+                                    modifyTimeTarget.producer.skipNil().map { $0.projectId },
+                                    deleteTimeTarget.producer.skipNil())
 
         createTimeTarget.producer.skipNil()
             .bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.writeTimeTarget })
