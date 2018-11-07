@@ -135,6 +135,8 @@
 		63DC619A1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
 		63DC619B1FED068B00ABB2DA /* TogglAPINetworkRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */; };
 		63DCA5CA2170BE7400D56DD9 /* OnboardingSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DCA5C92170BE7400D56DD9 /* OnboardingSteps.swift */; };
+		63E209CE21926326002DC157 /* ActivityStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E209CD21926326002DC157 /* ActivityStatus.swift */; };
+		63E209CF21926326002DC157 /* ActivityStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E209CD21926326002DC157 /* ActivityStatus.swift */; };
 		63E798B6211DE49B00386BF5 /* UniqueSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E798B5211DE49B00386BF5 /* UniqueSubview.swift */; };
 		63EAD8E61E7ECDB10061158C /* DateTimeExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */; };
 		63EBF3A0218F804C00BD2C3C /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EBF39F218F804C00BD2C3C /* AboutViewController.swift */; };
@@ -315,6 +317,7 @@
 		63DC61971FEA4FCA00ABB2DA /* TogglAPIDataRetrieverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataRetrieverTest.swift; sourceTree = "<group>"; };
 		63DC61991FED068B00ABB2DA /* TogglAPINetworkRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPINetworkRetriever.swift; sourceTree = "<group>"; };
 		63DCA5C92170BE7400D56DD9 /* OnboardingSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSteps.swift; sourceTree = "<group>"; };
+		63E209CD21926326002DC157 /* ActivityStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityStatus.swift; sourceTree = "<group>"; };
 		63E798B5211DE49B00386BF5 /* UniqueSubview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqueSubview.swift; sourceTree = "<group>"; };
 		63EAD8E51E7ECDB10061158C /* DateTimeExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateTimeExtensionsTests.swift; sourceTree = "<group>"; };
 		63EBF39F218F804C00BD2C3C /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
@@ -593,6 +596,7 @@
 				637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */,
 				637DA21920347598000D7EB8 /* Logging */,
 				63415BC120852A650083E40B /* ReadByProjectID.swift */,
+				63E209CD21926326002DC157 /* ActivityStatus.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -836,6 +840,7 @@
 				63D4BBB01F7D821800B87298 /* TogglAPICredential.swift in Sources */,
 				637DA2202034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				637A32481EE16FD600667FC3 /* TimeTargetViewController.swift in Sources */,
+				63E209CE21926326002DC157 /* ActivityStatus.swift in Sources */,
 				635A256620528F2C00EFCE90 /* ProjectsListActivityViewController.swift in Sources */,
 				639E94A81F812223009B27CB /* TimeIntervalExtensions.swift in Sources */,
 				63F1501B20986A150044288F /* EmailPasswordViewController.swift in Sources */,
@@ -902,6 +907,7 @@
 				6355C5BD1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
 				63D4BBBA1F7D821800B87298 /* PropertyExtensions.swift in Sources */,
 				63CE971120815B95006E7167 /* ActivitiesState.swift in Sources */,
+				63E209CF21926326002DC157 /* ActivityStatus.swift in Sources */,
 				639F8B6620DE7CE800FDC8C1 /* TargetFeasibility.swift in Sources */,
 				63D4BBB41F7D821800B87298 /* ProgressToTimeTarget.swift in Sources */,
 				63ED27591FAA45B50041BCA4 /* FindClosestMatchingWeekdayTests.swift in Sources */,
