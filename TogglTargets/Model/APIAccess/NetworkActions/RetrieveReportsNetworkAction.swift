@@ -70,8 +70,8 @@ private let userAgent = "david@davi.la"
 
 private typealias IndexedWorkedTimes = [ProjectID: WorkedTime]
 
-private func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period?,
-                                 reportEntriesRetriever: @escaping (String) -> SignalProducer<[ReportEntry], APIAccessError>) // swiftlint:disable:this line_length
+private func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period?, // swiftlint:disable:next line_length
+                                 reportEntriesRetriever: @escaping (String) -> SignalProducer<[ReportEntry], APIAccessError>)
     ->  SignalProducer<IndexedWorkedTimes, APIAccessError> {
         guard let period = period else {
             return SignalProducer(value: IndexedWorkedTimes()) // empty
