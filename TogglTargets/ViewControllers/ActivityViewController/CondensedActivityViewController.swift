@@ -12,8 +12,6 @@ import ReactiveSwift
 
 class CondensedActivityViewController: NSViewController, BindingTargetProvider {
 
-    private let requestExpandDetails = MutableProperty(false)
-
     // MARK: - Interface
 
     internal typealias Interface = (
@@ -23,27 +21,55 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
+    // MARK: - Private properties
+
+    private let requestExpandDetails = MutableProperty(false)
+    private lazy var stateProducer = makeStateProducer(from: activityStatuses)
+    private lazy var syncingStates = stateProducer.filter(State.isSyncing)
+    private lazy var errorStates = stateProducer.filter(State.isErrors)
+    private lazy var singleErrorStates = errorStates.filter(State.hasSingleItem)
+    private lazy var multipleErrorStates = errorStates.filter(State.hasMultipleItems)
+    private lazy var successStates = stateProducer.filter(State.isSuccess)
+    private lazy var idleStates = stateProducer.filter(State.isIdle)
+    private lazy var activityStatuses = lastBinding.latestOutput { $0.activityStatuses }
+    private lazy var shouldShowStatusDetail = SignalProducer.merge(
+        syncingStates.map { _ in true },
+        errorStates.map { _ in true },
+        successStates.map { _ in false },
+        idleStates.map { _ in false }
+        ).and(requestExpandDetails.negate()).skipRepeats()
+
+    // MARK: - Outlets and action
+
     @IBOutlet weak var statusDescriptionLabel: NSTextField!
     @IBOutlet weak var statusDetailLabel: NSTextField!
     @IBOutlet weak var horizontalLine: NSBox!
     @IBOutlet weak var toggleExpandedDetailsGestureRecognizer: NSClickGestureRecognizer!
 
+    @IBAction func toggleRequestExpandDetails(_ sender: Any) {
+        requestExpandDetails.value = !requestExpandDetails.value
+    }
+
+    // MARK: - Wiring
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let activityStatuses = lastBinding.latestOutput { $0.activityStatuses }
         requestExpandDetails.bindOnlyToLatest(lastBinding.producer.skipNil().map { $0.expandDetails })
 
         horizontalLine.reactive.makeBindingTarget { $0.animator().isHidden = !$1 } <~ requestExpandDetails
 
-        let stateProducer = makeStateProducer(from: activityStatuses)
-        let syncingStates = stateProducer.filter(State.isSyncing)
-        let errorStates = stateProducer.filter(State.isErrors)
-        let singleErrorStates = errorStates.filter(State.hasSingleItem)
-        let multipleErrorStates = errorStates.filter(State.hasMultipleItems)
-        let successStates = stateProducer.filter(State.isSuccess)
-        let idleStates = stateProducer.filter(State.isIdle)
+        wireStatusDescriptionLabel()
+        wireStatusDetailLabel()
 
+        toggleExpandedDetailsGestureRecognizer.reactive
+            .makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
+
+        requestExpandDetails <~ SignalProducer.merge(idleStates.map { _ in false },
+                                                     errorStates.map { _ in true})
+    }
+
+    private func wireStatusDescriptionLabel() {
         statusDescriptionLabel.reactive.text <~ SignalProducer.merge(
             syncingStates.map { _ in NSLocalizedString("status.condensed.all-data.syncing",
                                                        comment: "data syncing in progress") },
@@ -52,7 +78,9 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
             successStates.map { _ in NSLocalizedString("status.condensed.all-data.synced",
                                                        comment: "all data up to date") }
         )
+    }
 
+    private func wireStatusDetailLabel() {
         statusDetailLabel.reactive.text <~ SignalProducer.merge(
             syncingStates.map(State.getCount).map {
                 String.localizedStringWithFormat(NSLocalizedString("status.condensed.all-data.ops-in-progress",
@@ -65,17 +93,7 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
             }
         )
 
-        let shouldShowStatusDetail = SignalProducer.merge(
-            syncingStates.map { _ in true },
-            errorStates.map { _ in true },
-            successStates.map { _ in false },
-            idleStates.map { _ in false }
-        ).and(requestExpandDetails.negate()).skipRepeats()
-
         statusDetailLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ shouldShowStatusDetail.negate()
-
-        toggleExpandedDetailsGestureRecognizer.reactive
-            .makeBindingTarget { $0.isEnabled = $1 } <~ stateProducer.map(State.isIdle).skipRepeats().negate()
 
         let showStatusDetail: BindingTarget<Bool> = statusDetailLabel.reactive
             .makeBindingTarget { [unowned self] label, hidden in
@@ -87,13 +105,6 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
         }
 
         showStatusDetail <~ shouldShowStatusDetail.negate()
-
-        requestExpandDetails <~ SignalProducer.merge(idleStates.map { _ in false },
-                                                     errorStates.map { _ in true})
-    }
-
-    @IBAction func toggleRequestExpandDetails(_ sender: Any) {
-        requestExpandDetails.value = !requestExpandDetails.value
     }
 }
 
