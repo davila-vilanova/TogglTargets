@@ -93,8 +93,6 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
             }
         )
 
-        statusDetailLabel.reactive.makeBindingTarget { $0.animator().isHidden = $1 } <~ shouldShowStatusDetail.negate()
-
         let showStatusDetail: BindingTarget<Bool> = statusDetailLabel.reactive
             .makeBindingTarget { [unowned self] label, hidden in
                 NSAnimationContext.runAnimationGroup({ context in
