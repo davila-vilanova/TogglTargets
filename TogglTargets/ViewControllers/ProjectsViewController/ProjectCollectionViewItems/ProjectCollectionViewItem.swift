@@ -69,18 +69,14 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
         let targetPeriodFormat = SignalProducer.merge(
             periodPreference.filter(isMonthly).map { _ in
-                NSLocalizedString("project-list.item.target.time.monthly",
-                                  comment: """
-                                           target amount of time per month as it appears in each of the project list
-                                           items
-                                           """)
+                NSLocalizedString(
+                    "project-list.item.target.time.monthly",
+                    comment: "target amount of time per month as it appears in each of the project list items")
             },
             periodPreference.filter(isWeekly).map { _ in
-                NSLocalizedString("project-list.item.target.time.weekly",
-                                  comment: """
-                                           target amount of time per week as it appears in each of the project list
-                                           items
-                                           """)
+                NSLocalizedString(
+                    "project-list.item.target.time.weekly",
+                    comment: "target amount of time per week as it appears in each of the project list items")
         })
 
         timeTargetField.reactive.text <~ timeTarget.skipNil().map { $0.hoursTarget }
@@ -90,11 +86,10 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             .map { String.localizedStringWithFormat($1, $0) }
         timeTargetField.reactive.text <~ timeTarget.filter { $0 == nil }
             .map { _ in () }
-            .map { NSLocalizedString("project-list.item.target.no-time-target",
-                                     comment: """
-                                              message to show in each of the project list items when there is no
-                                              associated time target
-                                              """) }
+            .map { NSLocalizedString(
+                "project-list.item.target.no-time-target",
+                comment: "message to show in each of the project list items when there is no associated time target")
+        }
 
         let noReport = report.filter { $0 == nil }.map { _ in () }
         let workedTimeFromReport = report.skipNil().map { $0.workedTime }
@@ -113,15 +108,15 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
         let formattedTime = totalWorkedTime.mapToString(timeFormatter: timeFormatter)
         reportField.reactive.text <~ SignalProducer.merge(
-            noReport.map { NSLocalizedString("project-list.item.report.no-data",
-                                             comment: """
-                                                      message to show in each of the project list items
-                                                      when there is no report data
-                                                      """) },
+            noReport.map { NSLocalizedString(
+                "project-list.item.report.no-data",
+                comment: "message to show in each of the project list items when there is no report data")
+            },
             formattedTime.map { String.localizedStringWithFormat(
                 NSLocalizedString("project-list.item.report.worked-time",
-                                  comment: "formatted worked time for the project represented by a project list item"),
-                $0) })
+                    comment: "formatted worked time for the project represented by a project list item"),
+                $0)
+        })
 
         bottomLining.reactive.makeBindingTarget { (lining, state) in
             let (isSelected, isLastItemInSection) = state

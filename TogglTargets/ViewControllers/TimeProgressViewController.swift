@@ -90,12 +90,11 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
     @IBOutlet weak var workedHoursField: NSTextField! {
         didSet {
             let formattedTime = workedTime.producer.mapToString(timeFormatter: timeFormatter)
-            let noReportAvailableText = SignalProducer(value:
-                NSLocalizedString("time-progress.report.no-data",
-                                  comment: """
-                                           message to show in the time progress view controller when there is
-                                           no report data yet
-                                           """))
+            let noReportAvailableText =
+                SignalProducer(value:
+                    NSLocalizedString(
+                        "time-progress.report.no-data", // swiftlint:disable:next line_length
+                        comment: "message to show in the time progress view controller when there is no report data yet"))
 
             let formattedIncludingToday = formattedTime.throttle(while: strategyStartsToday.negate(), on: UIScheduler())
                 .map {

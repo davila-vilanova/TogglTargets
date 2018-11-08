@@ -71,7 +71,7 @@ private let userAgent = "david@davi.la"
 private typealias IndexedWorkedTimes = [ProjectID: WorkedTime]
 
 private func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period?,
-                                 reportEntriesRetriever: @escaping (String) -> SignalProducer<[ReportEntry], APIAccessError>)  // swiftlint:disable:this line_length
+                                 reportEntriesRetriever: @escaping (String) -> SignalProducer<[ReportEntry], APIAccessError>) // swiftlint:disable:this line_length
     ->  SignalProducer<IndexedWorkedTimes, APIAccessError> {
         guard let period = period else {
             return SignalProducer(value: IndexedWorkedTimes()) // empty
@@ -122,10 +122,8 @@ private func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorked
 
 private struct ReportsService: Decodable {
     static func endpoint(workspaceId: WorkspaceID, since: String, until: String, userAgent: String) -> String {
-        return """
-               /reports/api/v2/summary?workspace_id=\(workspaceId)&since=\(since)
-               &until=\(until)&grouping=projects&subgrouping=users&user_agent=\(userAgent)
-               """
+        return "/reports/api/v2/summary?workspace_id=\(workspaceId)&since=\(since)" +
+        "&until=\(until)&grouping=projects&subgrouping=users&user_agent=\(userAgent)"
     }
 
     let reportEntries: [ReportEntry]

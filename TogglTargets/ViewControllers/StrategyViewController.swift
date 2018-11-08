@@ -79,11 +79,9 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
         baselineField.reactive.text <~ dayBaselineAdjustedToProgress.mapToString(timeFormatter: timeFormatter)
             .map {
                 String.localizedStringWithFormat(
-                    NSLocalizedString("target-strategy.adjusted-baseline",
-                                      comment: """
-                                               amount of time to work per day to achieve the target time
-                                               (adjusted day baseline)
-                                               """),
+                    NSLocalizedString(
+                        "target-strategy.adjusted-baseline",
+                        comment: "amount of time to work per day to achieve the target time (adjusted day baseline)"),
                     $0)
         }
     }
@@ -114,12 +112,9 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
                     return feasibility.isFeasible
                 }.map { (_, differential, formattedDifferential, _, formattedBaseline) -> String in
                     if abs(differential) < 0.01 {
-                        return String.localizedStringWithFormat(
-                            NSLocalizedString("target-strategy.adusted-baseline-matches",
-                                              comment: """
-                                                       the adjusted baseline approximately matches the
-                                                       a priori baseline
-                                                       """),
+                        return String.localizedStringWithFormat(NSLocalizedString(
+                            "target-strategy.adusted-baseline-matches",
+                            comment: "the adjusted baseline approximately matches the a priori baseline"),
                             formattedBaseline)
                     } else if differential > 0 {
                         return String.localizedStringWithFormat(

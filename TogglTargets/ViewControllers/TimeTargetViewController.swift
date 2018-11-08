@@ -105,16 +105,12 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
             .map { $0.periodPreference }.flatten(.latest)
             .map {
                 switch $0 {
-                case .monthly: return NSLocalizedString("time-target-controller.target-hours-period.month",
-                                                        comment: """
-                                                                 month period description as it appears next to the
-                                                                 target hours field in the time target VC
-                                                                 """)
-                case .weekly: return NSLocalizedString("time-target-controller.target-hours-period.week",
-                                                       comment: """
-                                                                week period description as it appears next to the
-                                                                target hours field in the time target VC
-                                                                """)
+                case .monthly: return NSLocalizedString(
+                    "time-target-controller.target-hours-period.month", // swiftlint:disable:next line_length
+                    comment: "month period description as it appears next to the target hours field in the time target VC")
+                case .weekly: return NSLocalizedString(
+                    "time-target-controller.target-hours-period.week", // swiftlint:disable:next line_length
+                    comment: "week period description as it appears next to the target hours field in the time target VC")
                 }
         }
 

@@ -40,10 +40,8 @@ class MakeRetrieveReportsNetworkActionTest: XCTestCase {
         for wid in workspaceIDs {
             var expectationsByEndDate = [EndDay: XCTestExpectation]()
             for endDate in EndDay.allCases {
-                expectationsByEndDate[endDate] = expectation(
-                    description: """
-                    networkRetriever invocation expectation for workspace ID: \(wid), endDate: \(endDate)
-                    """)
+                expectationsByEndDate[endDate] = expectation(description:
+                    "networkRetriever invocation expectation for workspace ID: \(wid), endDate: \(endDate)")
             }
             indexedNetworkRetrieverExpectations[wid] = expectationsByEndDate
         }

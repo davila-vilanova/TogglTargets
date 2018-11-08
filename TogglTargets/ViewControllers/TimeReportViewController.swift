@@ -174,19 +174,17 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
             .map { (period, formatter, calendar) in
                 guard let startDate = calendar.date(from: period.start),
                     let endDate = calendar.date(from: period.end) else {
-                        return NSLocalizedString("time-report.error-computing-period",
-                                                 comment: """
-                                                          message to display in the time report view when an error
-                                                          occurs while computing the current period
-                                                          """)
+                        return NSLocalizedString(
+                            "time-report.error-computing-period",
+                            comment: "message to display in the time report view when an error occurs while " +
+                            "computing the current period")
                 }
                 let formattedStart = formatter.string(from: startDate)
                 let formattedEnd = formatter.string(from: endDate)
                 return String.localizedStringWithFormat(
-                    NSLocalizedString("time-report.period-description",
-                                      comment: """
-                                               description of the current period in the time report view
-                                               """),
+                    NSLocalizedString(
+                        "time-report.period-description",
+                        comment: "description of the current period in the time report view"),
                     formattedStart, formattedEnd)
         }
     }
