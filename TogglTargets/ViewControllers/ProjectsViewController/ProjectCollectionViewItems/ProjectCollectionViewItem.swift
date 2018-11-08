@@ -12,6 +12,9 @@ import ReactiveCocoa
 import Result
 
 class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
+
+    // MARK: - Interface
+
     typealias Interface = (
         runningEntry: SignalProducer<RunningEntry?, NoError>,
         currentDate: SignalProducer<Date, NoError>,
@@ -22,6 +25,15 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
+
+    // MARK: - Private properties
+
+    private lazy var runningEntry = lastBinding.latestOutput { $0.runningEntry }
+    private lazy var currentDate = lastBinding.latestOutput { $0.currentDate }
+    private lazy var project = lastBinding.latestOutput { $0.project }
+    private lazy var timeTarget = lastBinding.latestOutput { $0.timeTarget }
+    private lazy var periodPreference = lastBinding.latestOutput { $0.periodPreference }
+    private lazy var report = lastBinding.latestOutput { $0.report }
 
     // MARK: - Outlets
 
@@ -56,17 +68,20 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let runningEntry = lastBinding.latestOutput { $0.runningEntry }
-        let currentDate = lastBinding.latestOutput { $0.currentDate }
-        let project = lastBinding.latestOutput { $0.project }
-        let timeTarget = lastBinding.latestOutput { $0.timeTarget }
-        let periodPreference = lastBinding.latestOutput { $0.periodPreference }
-        let report = lastBinding.latestOutput { $0.report }
+        wireProjectNameField()
+        wireTimeTargetField()
+        wireReportField()
+        wireBottomLiningVisibility()
+        wireSelectionMaterial()
+    }
 
+    private func wireProjectNameField() {
         projectNameField.reactive.text <~ project.map { project -> String in
             return project?.name ?? ""
         }
+    }
 
+    private func wireTimeTargetField() {
         let targetPeriodFormat = SignalProducer.merge(
             periodPreference.filter(isMonthly).map { _ in
                 NSLocalizedString(
@@ -90,7 +105,9 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
                 "project-list.item.target.no-time-target",
                 comment: "message to show in each of the project list items when there is no associated time target")
         }
+    }
 
+    private func wireReportField() {
         let noReport = report.filter { $0 == nil }.map { _ in () }
         let workedTimeFromReport = report.skipNil().map { $0.workedTime }
         let workedTimeFromRunningEntry = SignalProducer.combineLatest(project, runningEntry, currentDate)
@@ -114,15 +131,19 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
             },
             formattedTime.map { String.localizedStringWithFormat(
                 NSLocalizedString("project-list.item.report.worked-time",
-                    comment: "formatted worked time for the project represented by a project list item"),
+                                  comment: "formatted worked time for the project represented by a project list item"),
                 $0)
         })
+    }
 
+    private func wireBottomLiningVisibility() {
         bottomLining.reactive.makeBindingTarget { (lining, state) in
             let (isSelected, isLastItemInSection) = state
             lining.isHidden = isSelected || isLastItemInSection
-        } <~ SignalProducer.combineLatest(_isSelected, _isLastItemInSection)
+            } <~ SignalProducer.combineLatest(_isSelected, _isLastItemInSection)
+    }
 
+    private func wireSelectionMaterial() {
         let materialTarget = visualEffectView.reactive.makeBindingTarget {
             $0.material = $1
         }
