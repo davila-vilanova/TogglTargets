@@ -25,6 +25,14 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
+    // MARK: - Private properties
+
+    private lazy var targetTime = lastBinding.latestOutput { $0.targetTime }
+    private lazy var dayBaseline = lastBinding.latestOutput { $0.dayBaseline }
+    private lazy var dayBaselineAdjustedToProgress = lastBinding.latestOutput { $0.dayBaselineAdjustedToProgress }
+    private lazy var dayBaselineDifferential = lastBinding.latestOutput { $0.dayBaselineDifferential }
+    private lazy var feasibility = lastBinding.latestOutput { $0.feasibility }
+
     // MARK: - Formatters
 
     private lazy var timeFormatter: DateComponentsFormatter = {
@@ -52,13 +60,12 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let targetTime = lastBinding.latestOutput { $0.targetTime }
-        let dayBaseline = lastBinding.latestOutput { $0.dayBaseline }
-        let dayBaselineAdjustedToProgress = lastBinding.latestOutput { $0.dayBaselineAdjustedToProgress }
-        let dayBaselineDifferential = lastBinding.latestOutput { $0.dayBaselineDifferential }
-        let feasibility = lastBinding.latestOutput { $0.feasibility }
+        wireTotalHoursStrategyField()
+        wireBaselineField()
+        wireBaselineField()
+    }
 
-        // Update total hours and hours per day with the values of the corresponding signals
+    func wireTotalHoursStrategyField() {
         totalHoursStrategyField.reactive.text <~ targetTime.mapToString(timeFormatter: timeFormatter)
             .map {
                 String.localizedStringWithFormat(
@@ -66,6 +73,9 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
                                       comment: "header of the strategy section -- describing the target hours"),
                     $0)
         }
+    }
+
+    func wireBaselineField() {
         baselineField.reactive.text <~ dayBaselineAdjustedToProgress.mapToString(timeFormatter: timeFormatter)
             .map {
                 String.localizedStringWithFormat(
@@ -76,12 +86,14 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
                                                """),
                     $0)
         }
+    }
 
+    func wireBaselineDifferentialField() { // swiftlint:disable:this function_body_length
         let formattedDifferential = dayBaselineDifferential
             .map { $0?.magnitude }
             .map { (differential) -> NSNumber? in
-            guard let differential = differential else { return nil }
-            return NSNumber(value: differential)
+                guard let differential = differential else { return nil }
+                return NSNumber(value: differential)
             }
             .mapToNumberFormattedString(numberFormatter: percentFormatter)
 
@@ -125,7 +137,7 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
         let unfeasibleCaseDescriptions = feasibility.skipNil().filter { $0.isUnfeasible }
             .map { _ in
                 NSLocalizedString("target-strategy.unfeasible",
-                                          comment: "reaching the target time is unfeasible but not impossible")
+                                  comment: "reaching the target time is unfeasible but not impossible")
         }
 
         let impossibleCaseDescriptions = feasibility.skipNil().filter { $0.isImpossible }
