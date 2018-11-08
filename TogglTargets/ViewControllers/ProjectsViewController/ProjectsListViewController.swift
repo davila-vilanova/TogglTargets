@@ -22,7 +22,7 @@ private let noSelectedProjectIdRestorationValue: Int64 = 0
 /// Manages a collection view that displays `Project` items organized by whether they have an associated time target.
 /// Produces a stream of selected `Project` values via the `selectedProject` property.
 class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, NSCollectionViewDelegate,
-    BindingTargetProvider, OnboardingTargetViewsProvider {
+    BindingTargetProvider, OnboardingTargetViewsProvider { // swiftlint:disable:previous type_body_length
 
     // MARK: - Interface
 
