@@ -173,65 +173,6 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
     private let persistenceProvider: TimeTargetPersistenceProvider
     private let undoManager: UndoManager
 
-    init(persistenceProvider: TimeTargetPersistenceProvider, undoManager: UndoManager) {
-        self.persistenceProvider = persistenceProvider
-        self.undoManager = undoManager
-
-        let writeTimeTargetProducer = _writeTimeTarget.producer.skipNil()
-        let deleteTimeTargetProducer = _deleteTimeTarget.producer.skipNil()
-
-        let undoModifyOrDeleteTimeTarget =
-            BindingTarget<TimeTarget>(on: timeTargetWriteScheduler,
-                                      lifetime: lifetime,
-                                      action: { [unowned write = _writeTimeTarget] timeTargetBeforeEditing in
-                                        undoManager.registerUndo(withTarget: write) {
-                                            $0 <~ SignalProducer(value: timeTargetBeforeEditing)
-                                                .start(on: UIScheduler())
-                                        }
-            })
-        let undoCreateTimeTarget =
-            BindingTarget<ProjectID>(on: timeTargetWriteScheduler,
-                                     lifetime: lifetime,
-                                     action: { [unowned delete = _deleteTimeTarget] projectId in
-                                        undoManager.registerUndo(withTarget: delete,
-                                                                 handler: {
-                                                                    $0 <~ SignalProducer(value: projectId)
-                                                                        .start(on: UIScheduler()) })
-            })
-        let timeTargetsPreModification = writeTimeTargetProducer.map { $0.projectId }
-            .withLatest(from: persistenceProvider.allTimeTargets).map { $0.1[$0.0] }.skipNil()
-        let timeTargetsPreDeletion = deleteTimeTargetProducer.withLatest(from: persistenceProvider.allTimeTargets)
-            .map { $0.1[$0.0] }.skipNil()
-
-        undoModifyOrDeleteTimeTarget <~ SignalProducer.merge(timeTargetsPreModification, timeTargetsPreDeletion)
-
-        let projectIdsOfCreatedTimeTargets = writeTimeTargetProducer.map { $0.projectId }
-            .withLatest(from: persistenceProvider.allTimeTargets)
-            .map { ($0.1[$0.0], $0.0) }.filter { $0.0 == nil }.map { $0.1 }
-
-        undoCreateTimeTarget <~ projectIdsOfCreatedTimeTargets
-
-        let singleTimeTargetUpdateComputer = Property<SingleTimeTargetUpdateComputer?>(
-            initial: nil,
-            then: projectIDsByTimeTargetsFullRefresh.withLatest(from: persistenceProvider.allTimeTargets)
-                .map { [unowned self] (projectIDsByTimeTargetsState, indexedTimeTargetsState) in
-                    SingleTimeTargetUpdateComputer(initialStateIndexedTimeTargets: indexedTimeTargetsState,
-                                                   initialStateProjectIDsByTimeTargets: projectIDsByTimeTargetsState,
-                                                   inputWriteTimeTarget: writeTimeTargetProducer,
-                                                   inputDeleteTimeTarget: deleteTimeTargetProducer,
-                                                   outputProjectIDsByTimeTargetsUpdate:
-                        self.projectIDsByTimeTargetsLastSingleUpdate.deoptionalizedBindingTarget)
-            }
-        )
-
-        lifetime.observeEnded {
-            _ = singleTimeTargetUpdateComputer
-        }
-
-        persistenceProvider.persistTimeTarget <~ writeTimeTargetProducer
-        persistenceProvider.deleteTimeTarget <~ deleteTimeTargetProducer
-    }
-
     // MARK: - TimeTarget interface
 
     /// Function which takes a project ID as input and returns a producer that
@@ -288,6 +229,67 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
             projectIDsByTimeTargetsLastSingleUpdate.producer.skipNil()
                 .map (ProjectIDsByTimeTargets.Update.singleTimeTarget)
     )
+
+    lazy var undoModifyOrDeleteTimeTarget =
+            BindingTarget<TimeTarget>(on: timeTargetWriteScheduler,
+                    lifetime: lifetime,
+                    action: { [unowned write = _writeTimeTarget, unowned undoManager] timeTargetBeforeEditing in
+                        undoManager.registerUndo(withTarget: write) {
+                            $0 <~ SignalProducer(value: timeTargetBeforeEditing)
+                                    .start(on: UIScheduler())
+                        }
+                    })
+
+    lazy var undoCreateTimeTarget =
+            BindingTarget<ProjectID>(on: timeTargetWriteScheduler,
+                    lifetime: lifetime,
+                    action: { [unowned delete = _deleteTimeTarget, unowned undoManager] projectId in
+                        undoManager.registerUndo(withTarget: delete,
+                                handler: {
+                                    $0 <~ SignalProducer(value: projectId)
+                                            .start(on: UIScheduler()) })
+                    })
+
+    init(persistenceProvider: TimeTargetPersistenceProvider, undoManager: UndoManager) {
+        self.persistenceProvider = persistenceProvider
+        self.undoManager = undoManager
+
+        let writeTimeTargetProducer = _writeTimeTarget.producer.skipNil()
+        let deleteTimeTargetProducer = _deleteTimeTarget.producer.skipNil()
+
+        let timeTargetsPreModification = writeTimeTargetProducer.map { $0.projectId }
+                .withLatest(from: persistenceProvider.allTimeTargets).map { $0.1[$0.0] }.skipNil()
+        let timeTargetsPreDeletion = deleteTimeTargetProducer.withLatest(from: persistenceProvider.allTimeTargets)
+                .map { $0.1[$0.0] }.skipNil()
+
+        undoModifyOrDeleteTimeTarget <~ SignalProducer.merge(timeTargetsPreModification, timeTargetsPreDeletion)
+
+        let projectIdsOfCreatedTimeTargets = writeTimeTargetProducer.map { $0.projectId }
+                .withLatest(from: persistenceProvider.allTimeTargets)
+                .map { ($0.1[$0.0], $0.0) }.filter { $0.0 == nil }.map { $0.1 }
+
+        undoCreateTimeTarget <~ projectIdsOfCreatedTimeTargets
+
+        let singleTimeTargetUpdateComputer = Property<SingleTimeTargetUpdateComputer?>(
+                initial: nil,
+                then: projectIDsByTimeTargetsFullRefresh.withLatest(from: persistenceProvider.allTimeTargets)
+                        .map { [unowned self] (projectIDsByTimeTargetsState, indexedTimeTargetsState) in
+                            SingleTimeTargetUpdateComputer(initialStateIndexedTimeTargets: indexedTimeTargetsState,
+                                    initialStateProjectIDsByTimeTargets: projectIDsByTimeTargetsState,
+                                    inputWriteTimeTarget: writeTimeTargetProducer,
+                                    inputDeleteTimeTarget: deleteTimeTargetProducer,
+                                    outputProjectIDsByTimeTargetsUpdate:
+                                    self.projectIDsByTimeTargetsLastSingleUpdate.deoptionalizedBindingTarget)
+                        }
+        )
+
+        lifetime.observeEnded {
+            _ = singleTimeTargetUpdateComputer
+        }
+
+        persistenceProvider.persistTimeTarget <~ writeTimeTargetProducer
+        persistenceProvider.deleteTimeTarget <~ deleteTimeTargetProducer
+    }
 }
 
 extension WeekdaySelection: Value {
