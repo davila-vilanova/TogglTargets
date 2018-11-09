@@ -168,7 +168,7 @@ class OnboardingGuide {
         return popover
     }()
 
-    private lazy var stepPopoverDelegate = PopoverDelegate()
+    private lazy var stepPopoverDelegate = PopoverDelegate() // swiftlint:disable:this weak_delegate
 
     static func shouldOnboard(_ defaults: UserDefaults) -> Bool {
         return !defaults.bool(forKey: onboardingNotPendingKey)
