@@ -46,6 +46,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
     private let undoManager = UndoManager()
 
+    private var configureUserAccountRequestedObserver: Any?
+
     private var onboardingGuide: OnboardingGuide?
 
     private var mustSetupAccount: Bool {
@@ -119,10 +121,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
         modelCoordinator.apiCredential <~ credentialStore.output.producer.map { $0 as TogglAPICredential? }
 
-        NotificationCenter.default.addObserver(forName: configureUserAccountRequested,
-                                               object: nil,
-                                               queue: OperationQueue.main,
-                                               using: { _ in self.presentPreferences(jumpingTo: .account) })
+        configureUserAccountRequestedObserver =
+            NotificationCenter.default.addObserver(forName: configureUserAccountRequested,
+                                                   object: nil,
+                                                   queue: OperationQueue.main,
+                                                   using: { _ in self.presentPreferences(jumpingTo: .account) })
 
         func showMainWindow(startOnboarding: Bool) {
             mainWindow.makeKeyAndOrderFront(nil)
@@ -167,6 +170,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
     func applicationWillTerminate(_ notification: Notification) {
         userDefaults.value.synchronize()
+        if let observer = configureUserAccountRequestedObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 
     @IBAction func presentPreferences(_ sender: Any) {
