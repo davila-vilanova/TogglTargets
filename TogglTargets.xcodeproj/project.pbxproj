@@ -53,7 +53,6 @@
 		6355C5BC1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */; };
 		6355C5BD1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */; };
 		635A256620528F2C00EFCE90 /* ProjectsListActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A256520528F2C00EFCE90 /* ProjectsListActivityViewController.swift */; };
-		635A257A205290CE00EFCE90 /* FirstResponderLoggingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A2579205290CE00EFCE90 /* FirstResponderLoggingWindowController.swift */; };
 		635A25832052917B00EFCE90 /* VerticalListLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A257C2052917A00EFCE90 /* VerticalListLayout.swift */; };
 		635A25842052917B00EFCE90 /* ProjectCollectionViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635A257E2052917A00EFCE90 /* ProjectCollectionViewHeader.swift */; };
 		635A25852052917B00EFCE90 /* ProjectCollectionViewHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 635A257F2052917A00EFCE90 /* ProjectCollectionViewHeader.xib */; };
@@ -270,7 +269,6 @@
 		6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDateGenerator.swift; sourceTree = "<group>"; };
 		6355C5BB1FE13232003F4DDC /* TogglAPIDataRetriever.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataRetriever.swift; sourceTree = "<group>"; };
 		635A256520528F2C00EFCE90 /* ProjectsListActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectsListActivityViewController.swift; path = ViewControllers/ProjectsListActivityViewController.swift; sourceTree = "<group>"; };
-		635A2579205290CE00EFCE90 /* FirstResponderLoggingWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstResponderLoggingWindowController.swift; sourceTree = "<group>"; };
 		635A257C2052917A00EFCE90 /* VerticalListLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerticalListLayout.swift; sourceTree = "<group>"; };
 		635A257E2052917A00EFCE90 /* ProjectCollectionViewHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectCollectionViewHeader.swift; sourceTree = "<group>"; };
 		635A257F2052917A00EFCE90 /* ProjectCollectionViewHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProjectCollectionViewHeader.xib; sourceTree = "<group>"; };
@@ -424,7 +422,6 @@
 				639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */,
 				6329574B1DBA99F000E11A10 /* Main.storyboard */,
 				63F76BDA20F672940024939B /* Preferences.storyboard */,
-				635A2578205290CE00EFCE90 /* WindowControllers */,
 				637A32331EE16E7600667FC3 /* View Controllers */,
 				63D4BB981F7D80FC00B87298 /* Model */,
 				63F6D17A2164E3AE004EE7B9 /* Onboarding */,
@@ -478,14 +475,6 @@
 				6334B4A82071A81600A5B796 /* ErrorViewController.xib */,
 			);
 			path = ActivityItemViewController;
-			sourceTree = "<group>";
-		};
-		635A2578205290CE00EFCE90 /* WindowControllers */ = {
-			isa = PBXGroup;
-			children = (
-				635A2579205290CE00EFCE90 /* FirstResponderLoggingWindowController.swift */,
-			);
-			path = WindowControllers;
 			sourceTree = "<group>";
 		};
 		635A257B2052917A00EFCE90 /* ProjectsViewController */ = {
@@ -904,7 +893,6 @@
 				6360175C2154E15A003B56F7 /* ProjectsCollectionView.swift in Sources */,
 				639F38F3208FA4D500AE96CF /* InterfaceBinding.swift in Sources */,
 				6355C5BC1FE13233003F4DDC /* TogglAPIDataRetriever.swift in Sources */,
-				635A257A205290CE00EFCE90 /* FirstResponderLoggingWindowController.swift in Sources */,
 				639D5077216B897900B1DEA2 /* NSViewControllerExtensions.swift in Sources */,
 				63E798B6211DE49B00386BF5 /* UniqueSubview.swift in Sources */,
 				6344EF7B213DA1C900D0B00D /* TimeTargetCreatingDeleting.swift in Sources */,
