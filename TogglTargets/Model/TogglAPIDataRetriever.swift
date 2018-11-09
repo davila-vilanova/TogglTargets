@@ -220,7 +220,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         let state = Property.combineLatest(retrieveReportsNetworkAction.isEnabled,
                                            Property(initial: nil, then: workspaceIDs),
                                            _twoPartReportPeriod)
-            .map { (input: (Bool, [WorkspaceID]?, TwoPartTimeReportPeriod?))
+            .map { (input: (Bool, [WorkspaceID]?, TwoPartTimeReportPeriod?)) // swiftlint:disable:this large_tuple
                 -> ([WorkspaceID], TwoPartTimeReportPeriod)? in
                 let (isUnderlyingEnabled, workspaceIDsOrNil, periodOrNil) = input
                 guard isUnderlyingEnabled,
