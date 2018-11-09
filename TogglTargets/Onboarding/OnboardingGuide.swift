@@ -94,7 +94,7 @@ class OnboardingGuide {
 
     private let delayScheduler = QueueScheduler()
 
-    init(steps: [OnboardingStep], defaults: UserDefaults) {
+    init(steps: [OnboardingStep], defaults: UserDefaults) { // swiftlint:disable:this function_body_length
         assert(!steps.isEmpty)
         self.steps = steps
 
