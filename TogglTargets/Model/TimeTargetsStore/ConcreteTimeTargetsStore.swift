@@ -59,7 +59,7 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
     /// Used to connect the output of the current `SingleTimeTargetUpdateComputer`
     /// to `projectIDsByTimeTargetsProducer`.
     private let projectIDsByTimeTargetsLastSingleUpdate =
-        MutableProperty<ProjectIDsByTimeTargets.Update.TimeTargetUpdate?>(nil)
+        MutableProperty<TimeTargetUpdate?>(nil)
 
     /// Producer of `ProjectIDsByTimeTargets.Update` values that when started emits a
     // `full(ProjectIDsByTimeTargets)` value which can be followed by by full or
@@ -150,7 +150,7 @@ private class SingleTimeTargetUpdateComputer {
          initialStateProjectIDsByTimeTargets: ProjectIDsByTimeTargets,
          inputWriteTimeTarget: SignalProducer<TimeTarget, NoError>,
          inputDeleteTimeTarget: SignalProducer<ProjectID, NoError>,
-         outputProjectIDsByTimeTargetsUpdate: BindingTarget<ProjectIDsByTimeTargets.Update.TimeTargetUpdate>) {
+         outputProjectIDsByTimeTargetsUpdate: BindingTarget<TimeTargetUpdate>) {
 
         indexedTimeTargets = initialStateIndexedTimeTargets
         projectIDsByTimeTargets = initialStateProjectIDsByTimeTargets
@@ -178,7 +178,7 @@ private class SingleTimeTargetUpdateComputer {
 
     private func computeAndUpdate(timeTarget: TimeTarget?, projectID: ProjectID) {
         // Compute update
-        guard let update = ProjectIDsByTimeTargets.Update.TimeTargetUpdate
+        guard let update = TimeTargetUpdate
             .forTimeTargetChange(involving: timeTarget,
                                  for: projectID,
                                  within: indexedTimeTargets,
@@ -199,5 +199,5 @@ private class SingleTimeTargetUpdateComputer {
     // MARK: - Output
 
     private let projectIDsByTimeTargetsUpdatePipe =
-        Signal<ProjectIDsByTimeTargets.Update.TimeTargetUpdate, NoError>.pipe()
+        Signal<TimeTargetUpdate, NoError>.pipe()
 }

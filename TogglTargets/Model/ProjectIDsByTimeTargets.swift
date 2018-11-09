@@ -25,114 +25,114 @@ struct ProjectIDsByTimeTargets {
 
         /// An update that affects a single time target.
         case singleTimeTarget(TimeTargetUpdate)
-
-        /// Represents an update that consists of a reorder operation for a single project ID
-        /// and possibly an increment or decrement of the count of projects associated with time targets.
-        enum TimeTargetUpdate {
-
-            /// Represents the effect of a reorder operation affecting a single project ID.
-            struct IndexChange {
-                /// The index of the affected project ID in the pre-update array of sorted project IDs.
-                let old: Int
-
-                /// The index of the affected project ID in the post-update array of sorted project IDs.
-                let new: Int
-            }
-
-            /// Represents the update resulting from the creation of one time target.
-            case create(IndexChange)
-
-            /// Represents the update resulting from the removal of one time target.
-            case remove(IndexChange)
-
-            /// Represents the update resulting from the change of the values of a single time target.
-            case update(IndexChange)
-
-            /// Returns the `IndexChange` resulting form this update.
-            var indexChange: IndexChange {
-                switch self {
-                case .create(let change): return change
-                case .remove(let change): return change
-                case .update(let change): return change
-                }
-            }
-
-            /// Returns the new count of project IDs associated with time targets after this update.
-            ///
-            /// - parameters:
-            ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value immediately previous to this update.
-            ///
-            /// - returns: The count of project IDs associated with time targets resulting from applying
-            ///            this udpate to `idsByTimeTarget`
-            func computeNewCount(from idsByTimeTargets: ProjectIDsByTimeTargets) -> Int {
-                let oldCount = idsByTimeTargets.countOfProjectsWithTimeTargets
-                switch self {
-                case .create: return oldCount + 1
-                case .remove: return oldCount - 1
-                case .update: return oldCount
-                }
-            }
-
-            /// Returns the result of applying this update to a `ProjectIDsByTimeTargets` value.
-            ///
-            /// - parameters:
-            ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value immediately previous to this update.
-            ///
-            ///   - returns: A `ProjectIDsByTimeTargets` value resulting of applying this update to `idsByTimeTargets`
-            func apply(to idsByTimeTargets: ProjectIDsByTimeTargets) -> ProjectIDsByTimeTargets {
-                var sortedIDs = idsByTimeTargets.sortedProjectIDs
-                let item = sortedIDs.remove(at: indexChange.old)
-                sortedIDs.insert(item, at: indexChange.new)
-                return ProjectIDsByTimeTargets(sortedProjectIDs: sortedIDs,
-                                               countOfProjectsWithTimeTargets: computeNewCount(from: idsByTimeTargets))
-            }
-
-            /// Generates the update corresponding to creating, deleting or updating the time target associated
-            /// with a project ID
-            ///
-            /// - parameters:
-            ///   - newTimeTarget: The value of the affected time target after the update. Pass `nil` for a target
-            ///                    deletion.
-            ///   - projectId: The project ID whose time target will be created, deleted or updated.
-            ///                This ID must be included in the project IDs associated with the `idsByTimeTargets`
-            ///                argument. If it is not, this call will return nil.
-            ///   - timeTargetsPreChange: The `ProjectIdIndexedTimeTargets` value previous to updating the time target.
-            ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value that will be affected by this update.
-            ///
-            ///   - note: The old time target value will be extracted from `timeTargetsPreChange`
-            ///
-            ///   - returns: The update corresponding to the change in the time target associated with `projectId`,
-            ///              `nil` if `projectId` is not included in `idsByTimeTargets`
-            static func forTimeTargetChange(involving newTimeTarget: TimeTarget?,
-                                            for projectId: ProjectID,
-                                            within timeTargetPreChange: ProjectIdIndexedTimeTargets,
-                                            affecting idsByTimeTargets: ProjectIDsByTimeTargets)
-                -> Update.TimeTargetUpdate? {
-                    let currentSortedIDs = idsByTimeTargets.sortedProjectIDs
-                    let newlySortedIDs = currentSortedIDs
-                        .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
-                            for: timeTargetPreChange.updatingValue(newTimeTarget, forKey: projectId)))
-
-                    guard let oldIndex = currentSortedIDs.index(of: projectId),
-                        let newIndex = newlySortedIDs.index(of: projectId) else {
-                            return nil
-                    }
-
-                    let oldTimeTarget = timeTargetPreChange[projectId]
-                    let indexChange = IndexChange(old: oldIndex, new: newIndex)
-                    if (oldTimeTarget == nil) && (newTimeTarget != nil) {
-                        return .create(indexChange)
-                    } else if (oldTimeTarget != nil) && (newTimeTarget == nil) {
-                        return .remove(indexChange)
-                    } else {
-                        return .update(indexChange)
-                    }
-            }
-        }
     }
 
     /// Represents an empty `ProjectIDsByTimeTargets` value
     static let empty = ProjectIDsByTimeTargets(sortedProjectIDs: [ProjectID](), countOfProjectsWithTimeTargets: 0)
+}
+
+/// Represents an update that consists of a reorder operation for a single project ID
+/// and possibly an increment or decrement of the count of projects associated with time targets.
+enum TimeTargetUpdate {
+
+    /// Represents the effect of a reorder operation affecting a single project ID.
+    struct IndexChange {
+        /// The index of the affected project ID in the pre-update array of sorted project IDs.
+        let old: Int
+
+        /// The index of the affected project ID in the post-update array of sorted project IDs.
+        let new: Int
+    }
+
+    /// Represents the update resulting from the creation of one time target.
+    case create(IndexChange)
+
+    /// Represents the update resulting from the removal of one time target.
+    case remove(IndexChange)
+
+    /// Represents the update resulting from the change of the values of a single time target.
+    case update(IndexChange)
+
+    /// Returns the `IndexChange` resulting form this update.
+    var indexChange: IndexChange {
+        switch self {
+        case .create(let change): return change
+        case .remove(let change): return change
+        case .update(let change): return change
+        }
+    }
+
+    /// Returns the new count of project IDs associated with time targets after this update.
+    ///
+    /// - parameters:
+    ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value immediately previous to this update.
+    ///
+    /// - returns: The count of project IDs associated with time targets resulting from applying
+    ///            this udpate to `idsByTimeTarget`
+    func computeNewCount(from idsByTimeTargets: ProjectIDsByTimeTargets) -> Int {
+        let oldCount = idsByTimeTargets.countOfProjectsWithTimeTargets
+        switch self {
+        case .create: return oldCount + 1
+        case .remove: return oldCount - 1
+        case .update: return oldCount
+        }
+    }
+
+    /// Returns the result of applying this update to a `ProjectIDsByTimeTargets` value.
+    ///
+    /// - parameters:
+    ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value immediately previous to this update.
+    ///
+    ///   - returns: A `ProjectIDsByTimeTargets` value resulting of applying this update to `idsByTimeTargets`
+    func apply(to idsByTimeTargets: ProjectIDsByTimeTargets) -> ProjectIDsByTimeTargets {
+        var sortedIDs = idsByTimeTargets.sortedProjectIDs
+        let item = sortedIDs.remove(at: indexChange.old)
+        sortedIDs.insert(item, at: indexChange.new)
+        return ProjectIDsByTimeTargets(sortedProjectIDs: sortedIDs,
+                                       countOfProjectsWithTimeTargets: computeNewCount(from: idsByTimeTargets))
+    }
+
+    /// Generates the update corresponding to creating, deleting or updating the time target associated
+    /// with a project ID
+    ///
+    /// - parameters:
+    ///   - newTimeTarget: The value of the affected time target after the update. Pass `nil` for a target
+    ///                    deletion.
+    ///   - projectId: The project ID whose time target will be created, deleted or updated.
+    ///                This ID must be included in the project IDs associated with the `idsByTimeTargets`
+    ///                argument. If it is not, this call will return nil.
+    ///   - timeTargetsPreChange: The `ProjectIdIndexedTimeTargets` value previous to updating the time target.
+    ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value that will be affected by this update.
+    ///
+    ///   - note: The old time target value will be extracted from `timeTargetsPreChange`
+    ///
+    ///   - returns: The update corresponding to the change in the time target associated with `projectId`,
+    ///              `nil` if `projectId` is not included in `idsByTimeTargets`
+    static func forTimeTargetChange(involving newTimeTarget: TimeTarget?,
+                                    for projectId: ProjectID,
+                                    within timeTargetPreChange: ProjectIdIndexedTimeTargets,
+                                    affecting idsByTimeTargets: ProjectIDsByTimeTargets)
+        -> TimeTargetUpdate? {
+            let currentSortedIDs = idsByTimeTargets.sortedProjectIDs
+            let newlySortedIDs = currentSortedIDs
+                .sorted(by: makeAreProjectIDsInIncreasingOrderFunction(
+                    for: timeTargetPreChange.updatingValue(newTimeTarget, forKey: projectId)))
+
+            guard let oldIndex = currentSortedIDs.index(of: projectId),
+                let newIndex = newlySortedIDs.index(of: projectId) else {
+                    return nil
+            }
+
+            let oldTimeTarget = timeTargetPreChange[projectId]
+            let indexChange = IndexChange(old: oldIndex, new: newIndex)
+            if (oldTimeTarget == nil) && (newTimeTarget != nil) {
+                return .create(indexChange)
+            } else if (oldTimeTarget != nil) && (newTimeTarget == nil) {
+                return .remove(indexChange)
+            } else {
+                return .update(indexChange)
+            }
+    }
 }
 
 extension ProjectIDsByTimeTargets {
