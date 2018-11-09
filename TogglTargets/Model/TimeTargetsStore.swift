@@ -91,15 +91,31 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     /// Retrieves all time targets from the database
     private func retrieveAllTimeTargets() -> ProjectIdIndexedTimeTargets {
         var retrievedTimeTargets = ProjectIdIndexedTimeTargets()
-        let retrievedRows = try! dbConnection.prepare(timeTargetsTable)
-        for retrievedRow in retrievedRows {
-            let projectIdValue = retrievedRow[projectIdExpression]
-            let hoursTargetValue = retrievedRow[hoursTargetExpression]
-            let workWeekdaysValue = try! /* TODO */ retrievedRow.get(workWeekdaysExpression) // [1]
-            let timeTarget = TimeTarget(for: projectIdValue,
-                            hoursTarget: hoursTargetValue,
-                            workWeekdays: workWeekdaysValue)
-            retrievedTimeTargets[projectIdValue] = timeTarget
+
+        func extractWeekdaySelection(from row: Row) -> WeekdaySelection {
+            do {
+                return try row.get(workWeekdaysExpression) // [1]
+            } catch let error {
+                // An error is utterly not expected. Output it to the console and crash if assertions are enabled.
+                print("Cannot extract week day selection from row - error: \(error)")
+                assert(false)
+                return WeekdaySelection.empty
+            }
+        }
+
+        do {
+            let retrievedRows = try dbConnection.prepare(timeTargetsTable)
+            for retrievedRow in retrievedRows {
+                let projectIdValue = retrievedRow[projectIdExpression]
+                let hoursTargetValue = retrievedRow[hoursTargetExpression]
+                let workWeekdaysValue = extractWeekdaySelection(from: retrievedRow)
+                let timeTarget = TimeTarget(for: projectIdValue,
+                                            hoursTarget: hoursTargetValue,
+                                            workWeekdays: workWeekdaysValue)
+                retrievedTimeTargets[projectIdValue] = timeTarget
+            }
+        } catch let error {
+            print("Cannot retrieve time targets - SQLite threw an error: \(error)")
         }
 
         return retrievedTimeTargets
@@ -126,17 +142,27 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
         ensureSchemaCreated()
 
         let persistProducer = _persistTimeTarget.producer.skipNil().on(value: { [unowned self] timeTarget in
-            try! self.dbConnection
-                .run(self.timeTargetsTable.insert(or: .replace,
-                                                  self.projectIdExpression <- timeTarget.projectId,
-                                                  self.hoursTargetExpression <- timeTarget.hoursTarget,
-                                                  self.workWeekdaysExpression <- timeTarget.workWeekdays))
-            // TODO: synchronize periodically instead of writing immediately
+            do {
+                try self.dbConnection
+                    .run(self.timeTargetsTable.insert(or: .replace,
+                                                      self.projectIdExpression <- timeTarget.projectId,
+                                                      self.hoursTargetExpression <- timeTarget.hoursTarget,
+                                                      self.workWeekdaysExpression <- timeTarget.workWeekdays))
+            } catch let error {
+                print("Cannot persist time targets - SQLite threw an error: \(error)")
+                assert(false)
+            }
+            // TODO: consider synchronizing periodically instead of writing immediately
         }).start(on: timeTargetWriteScheduler)
 
         let deleteProducer = _deleteTimeTarget.producer.skipNil().on(value: { [unowned self] projectId in
             let query = self.timeTargetsTable.filter(self.projectIdExpression == projectId)
-            try! self.dbConnection.run(query.delete())
+            do {
+                try self.dbConnection.run(query.delete())
+            } catch let error {
+                print("Cannot delete time target - SQLite threw an error: \(error)")
+                assert(false)
+            }
         }).start(on: timeTargetWriteScheduler)
 
         allTimeTargets <~ persistProducer.withLatest(from: allTimeTargets).map {
@@ -150,12 +176,17 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
 
     /// Creates the underlying database schema if not already created.
     private func ensureSchemaCreated() {
-        try! dbConnection.run(timeTargetsTable.create(ifNotExists: true) { tableBuilder in
-            tableBuilder.column(idExpression, primaryKey: .autoincrement)
-            tableBuilder.column(projectIdExpression, unique: true)
-            tableBuilder.column(hoursTargetExpression)
-            tableBuilder.column(workWeekdaysExpression)
-        })
+        do {
+            try dbConnection.run(timeTargetsTable.create(ifNotExists: true) { tableBuilder in
+                tableBuilder.column(idExpression, primaryKey: .autoincrement)
+                tableBuilder.column(projectIdExpression, unique: true)
+                tableBuilder.column(hoursTargetExpression)
+                tableBuilder.column(workWeekdaysExpression)
+            })
+        } catch let error {
+            print("\(#function) - SQLite threw an error: \(error)")
+            assert(false)
+        }
     }
 }
 
