@@ -82,13 +82,7 @@ struct WeekdaySelection {
     }
 
     var countOfSelectedDays: Int {
-        var count = 0
-        for (_, isSelected) in selectionDict {
-            if isSelected {
-                count += 1
-            }
-        }
-        return count
+        return selectionDict.filter { $0.1 }.count
     }
 
     init(selectedDays: Set<Weekday>) {
