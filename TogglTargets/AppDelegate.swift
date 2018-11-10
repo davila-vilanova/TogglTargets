@@ -60,7 +60,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         return credentialStore.output.value == nil
     }
 
-    // MARK: - 
+    // MARK: - General infrastructure
 
     private let modelCoordinator: ModelCoordinator
 
@@ -71,6 +71,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
     private let (applicationLifetime, token) = Lifetime.make()
 
     private let undoManager = UndoManager()
+
+    // MARK: - Starting up
 
     override init() {
         let supportDir: URL
@@ -185,16 +187,36 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         }
     }
 
-    func applicationWillTerminate(_ notification: Notification) {
-        userDefaults.value.synchronize()
-        if let observer = configureUserAccountRequestedObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-    }
+    // MARK: - Actions
 
     @IBAction func presentPreferences(_ sender: Any) {
         presentPreferences()
     }
+
+    @IBAction func refreshAllData(_ sender: Any) {
+        modelCoordinator.refreshAllData <~ SignalProducer(value: ())
+    }
+
+    @IBAction func orderFrontAboutPanel(_ sender: Any) {
+        let aboutStoryboard = NSStoryboard(name: "About", bundle: nil)
+        // swiftlint:disable:next force_cast
+        let aboutWindowController = aboutStoryboard.instantiateInitialController() as! NSWindowController
+        let aboutWindow = aboutWindowController.window!
+        aboutWindow.delegate = self
+        aboutWindow.makeKeyAndOrderFront(sender)
+    }
+
+    @IBAction func startOnboarding(_ sender: Any?) {
+        guard !isCurrentlyOnboarding else {
+            return
+        }
+        if mustSetupTogglAccount {
+            presentPreferences(jumpingTo: .account, asSheet: true)
+        }
+        startOnboarding()
+    }
+
+    // MARK: - Presenting preferences window
 
     private func presentPreferences(jumpingTo prefsSection: PreferencesViewController.Section? = nil,
                                     asSheet presentAsSheet: Bool = false) {
@@ -261,15 +283,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         presentedPreferencesWindow = preferencesWindow
     }
 
-    @IBAction func orderFrontAboutPanel(_ sender: Any) {
-        let aboutStoryboard = NSStoryboard(name: "About", bundle: nil)
-        // swiftlint:disable:next force_cast
-        let aboutWindowController = aboutStoryboard.instantiateInitialController() as! NSWindowController
-        let aboutWindow = aboutWindowController.window!
-        aboutWindow.delegate = self
-        aboutWindow.makeKeyAndOrderFront(sender)
-    }
-
     func windowWillClose(_ notification: Notification) {
         if let closing = notification.object as? NSWindow,
             let prefsWindow = presentedPreferencesWindow,
@@ -278,17 +291,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         }
     }
 
-    func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
-        return window == mainWindow ? undoManager : nil
-    }
-
-    @IBAction func refreshAllData(_ sender: Any) {
-        modelCoordinator.refreshAllData <~ SignalProducer(value: ())
-    }
-
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        return true
-    }
+    // MARK: - Onboarding
 
     private var shouldStartOnboarding: Bool {
         return OnboardingGuide.shouldOnboard(defaults) &&
@@ -297,16 +300,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
     private var isCurrentlyOnboarding: Bool {
         return onboardingGuide != nil
-    }
-
-    @IBAction func startOnboarding(_ sender: Any?) {
-        guard !isCurrentlyOnboarding else {
-            return
-        }
-        if mustSetupTogglAccount {
-            presentPreferences(jumpingTo: .account, asSheet: true)
-        }
-        startOnboarding()
     }
 
     public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
@@ -327,8 +320,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         mainViewController.setOnboardingGuide(guide)
         presentedPreferencesWindow?.contentViewController?.setOnboardingGuide(guide)
     }
+
+    // MARK: - Undo manager
+
+    func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
+        return window == mainWindow ? undoManager : nil
+    }
+
+    // MARK: - Shutting down
+
+    func applicationWillTerminate(_ notification: Notification) {
+        userDefaults.value.synchronize()
+        if let observer = configureUserAccountRequestedObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return true
+    }
 }
 
+// MARK: - 
+
+/// Used for development
 private func resetOnboardingState() {
     defaults.removeObject(forKey: "OnboardingNotPending")
 }
