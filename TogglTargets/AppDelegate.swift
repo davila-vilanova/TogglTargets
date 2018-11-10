@@ -15,48 +15,66 @@ private let defaults = UserDefaults.standard
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInterfaceValidations {
 
-    private lazy var mainStoryboard = NSStoryboard(name: "Main", bundle: nil)
-    // swiftlint:disable:next force_cast
-    private lazy var mainWindowController = mainStoryboard.instantiateInitialController() as! NSWindowController
-    private lazy var mainViewController: ProjectsMasterDetailController =
-        mainWindowController.window?.contentViewController as! ProjectsMasterDetailController
-    // swiftlint:disable:previous force_cast
+    // MARK: Main and preferences windows
+
     private lazy var mainWindow: NSWindow = {
         let window = mainWindowController.window!
         window.delegate = self
         return window
     }()
 
+    // The preferences window is destroyed when closed and recreated when opened again
     private var presentedPreferencesWindow: NSWindow?
+
+    // MARK: - Main window's storyboard, window and view controller
+
+    private lazy var mainStoryboard = NSStoryboard(name: "Main", bundle: nil)
+
+    private lazy var mainWindowController =
+        mainStoryboard.instantiateInitialController() as! NSWindowController // swiftlint:disable:this force_cast
+
+    private lazy var mainViewController: ProjectsMasterDetailController = mainWindowController.window?
+        .contentViewController as! ProjectsMasterDetailController // swiftlint:disable:this force_cast
+
+    // MARK: - Preferences storage
+
+    private let userDefaults = Property(value: defaults)
 
     private let scheduler = QueueScheduler()
 
-    private let currentDateGenerator = CurrentDateGenerator.shared
-    private let calendar = Property(value: Calendar.iso8601)
-
-    private let userDefaults = Property(value: defaults)
     private lazy var credentialStore = PreferenceStore<TogglAPITokenCredential>(userDefaults: userDefaults,
                                                                                 scheduler: scheduler)
     private lazy var periodPreferenceStore = PreferenceStore<PeriodPreference>(userDefaults: userDefaults,
                                                                                scheduler: scheduler,
                                                                                defaultValue: PeriodPreference.monthly)
-    private let (applicationLifetime, token) = Lifetime.make()
 
-    private let modelCoordinator: ModelCoordinator
-
-    private let undoManager = UndoManager()
+    // MARK: - Registered notification observers
 
     private var configureUserAccountRequestedObserver: Any?
 
+    // MARK: - Onboarding
+
     private var onboardingGuide: OnboardingGuide?
 
-    private var mustSetupAccount: Bool {
+    private var mustSetupTogglAccount: Bool {
         return credentialStore.output.value == nil
     }
 
+    // MARK: - 
+
+    private let modelCoordinator: ModelCoordinator
+
+    private let currentDateGenerator = CurrentDateGenerator.shared
+
+    private let calendar = Property(value: Calendar.iso8601)
+
+    private let (applicationLifetime, token) = Lifetime.make()
+
+    private let undoManager = UndoManager()
+
     override init() {
         let supportDir: URL
-
+        resetOnboardingState()
         do {
             supportDir = try SupportDirectoryProvider.shared.appSupportDirectory()
         } catch {
@@ -70,16 +88,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                                                 writeTimeTargetsOn: timeTargetWriteScheduler),
             let cachePersistenceProvider = SQLiteTogglAPIDataPersistenceProvider(baseDirectory: supportDir) {
             let togglAPIDataCache = TogglAPIDataCache(persistenceProvider: cachePersistenceProvider)
-            let togglAPIDataRetriever =
-                CachedTogglAPIDataRetriever(retrieveProfileNetworkActionMaker: makeRetrieveProfileNetworkAction,
-                                            retrieveProfileFromCache: togglAPIDataCache.retrieveProfile,
-                                            storeProfileInCache: togglAPIDataCache.storeProfile,
-                                            retrieveProjectsNetworkActionMaker: makeRetrieveProjectsNetworkAction,
-                                            retrieveProjectsFromCache: togglAPIDataCache.retrieveProjects,
-                                            storeProjectsInCache: togglAPIDataCache.storeProjects,
-                                            retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
-                                            retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
-            // swiftlint:disable:previous line_length
+            let togglAPIDataRetriever = CachedTogglAPIDataRetriever(
+                retrieveProfileNetworkActionMaker: makeRetrieveProfileNetworkAction,
+                retrieveProfileFromCache: togglAPIDataCache.retrieveProfile,
+                storeProfileInCache: togglAPIDataCache.storeProfile,
+                retrieveProjectsNetworkActionMaker: makeRetrieveProjectsNetworkAction,
+                retrieveProjectsFromCache: togglAPIDataCache.retrieveProjects,
+                storeProjectsInCache: togglAPIDataCache.storeProjects,
+                retrieveReportsNetworkActionMaker: makeRetrieveReportsNetworkAction,
+                retrieveRunningEntryNetworkActionMaker: makeRetrieveRunningEntryNetworkAction)
 
             let timeTargetsStore =
                 ConcreteTimeTargetsStore(persistenceProvider: timeTargetsPersistenceProvider,
@@ -91,6 +108,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                                                 currentDateGenerator: currentDateGenerator,
                                                 calendar: calendar.producer,
                                                 reportPeriodsProducer: ReportPeriodsProducer())
+
             applicationLifetime.observeEnded {
                 _ = togglAPIDataCache
             }
@@ -128,7 +146,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
         func showMainWindow(startOnboarding: Bool) {
             mainWindow.makeKeyAndOrderFront(nil)
-            if mustSetupAccount {
+            if mustSetupTogglAccount {
                 presentPreferences(jumpingTo: .account, asSheet: true)
             }
             if startOnboarding {
@@ -138,13 +156,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
         if shouldStartOnboarding {
             let welcomeStoryboard = NSStoryboard(name: "Welcome", bundle: nil)
-            // swiftlint:disable:next force_cast
-            let welcomeWindowController = welcomeStoryboard.instantiateInitialController() as! NSWindowController
+            let welcomeWindowController = welcomeStoryboard.instantiateInitialController()
+                as! NSWindowController // swiftlint:disable:this force_cast
             let welcomeWindow = welcomeWindowController.window!
-            // swiftlint:disable:next force_cast
-            let welcomeController = welcomeWindow.contentViewController as! WelcomeViewController
+            let welcomeController = welcomeWindow.contentViewController
+                as! WelcomeViewController // swiftlint:disable:this force_cast
 
-            BindingTarget(on: UIScheduler(), lifetime: welcomeWindow.reactive.lifetime) {
+            welcomeWindow.reactive.makeBindingTarget { welcomeWindow, _ in
                 welcomeWindow.close()
                 showMainWindow(startOnboarding: true)
             } <~ welcomeController.continuePressed
@@ -285,7 +303,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
         guard !isCurrentlyOnboarding else {
             return
         }
-        if mustSetupAccount {
+        if mustSetupTogglAccount {
             presentPreferences(jumpingTo: .account, asSheet: true)
         }
         startOnboarding()
@@ -300,7 +318,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
     }
 
     private func startOnboarding() {
-        let initialRelevantStep: OnboardingStepIdentifier = mustSetupAccount ? .login : .selectProject
+        let initialRelevantStep: OnboardingStepIdentifier = mustSetupTogglAccount ? .login : .selectProject
         let guide = OnboardingGuide(steps: onboardingSteps(startingFrom: initialRelevantStep), defaults: defaults)
 
         self.onboardingGuide = guide
