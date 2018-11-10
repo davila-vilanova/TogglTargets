@@ -8,27 +8,37 @@
 
 import Foundation
 
+/// Retrieves and caches the app support directory.
 class SupportDirectoryProvider {
     static var shared: SupportDirectoryProvider = { SupportDirectoryProvider() }()
 
     private let fileManager = FileManager.default
 
     private let defaultAppIdentifier = "la.davi.TogglTargets" // fallback if no bundle ID available
-    private var _appIdentifier: String?
+    private var cachedAppIdentifier: String?
     private var appIdentifier: String {
-        if let identifier = _appIdentifier {
+        if let identifier = cachedAppIdentifier {
             return identifier
         } else if let identifier = Bundle.main.bundleIdentifier {
-            _appIdentifier = identifier
+            cachedAppIdentifier = identifier
             return identifier
         } else {
             return defaultAppIdentifier
         }
     }
 
-    private var _appSupportDirectory: URL?
+    private var cachedAppSupportDirectory: URL?
+
+    /// Retrieves this application's support directory.
+    /// The name of the support directory specific to this application will match the application identifier,
+    /// and it will be contained in the user's "Application Support" directory.
+    ///
+    /// If the directory does not exist this will attempt to create one. If creation fails, this will throw
+    /// the error that prevented the creation.
+    /// 
+    /// - returns: The URL of the support directory specific to this application.
     func appSupportDirectory() throws -> URL {
-        if let supportDir = _appSupportDirectory {
+        if let supportDir = cachedAppSupportDirectory {
             return supportDir
         }
 
@@ -45,7 +55,7 @@ class SupportDirectoryProvider {
             try fileManager.createDirectory(at: supportDir, withIntermediateDirectories: true, attributes: nil)
         }
 
-        _appSupportDirectory = supportDir
+        cachedAppSupportDirectory = supportDir
         return supportDir
     }
 }
