@@ -100,6 +100,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
         super.init()
 
+        modelCoordinator.apiCredential <~ credentialStore.output.producer.map { $0 as TogglAPICredential? }
         modelCoordinator.periodPreference <~ periodPreferenceStore.output.producer.skipNil()
     }
 
@@ -118,8 +119,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
                     writeTimeTarget: modelCoordinator.writeTimeTarget,
                     deleteTimeTarget: modelCoordinator.deleteTimeTarget,
                     readReport: modelCoordinator.readReport))
-
-        modelCoordinator.apiCredential <~ credentialStore.output.producer.map { $0 as TogglAPICredential? }
 
         configureUserAccountRequestedObserver =
             NotificationCenter.default.addObserver(forName: configureUserAccountRequested,
