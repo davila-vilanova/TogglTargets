@@ -58,6 +58,7 @@ func makeZeroReport(for projectId: ProjectID, period: Period) -> TwoPartTimeRepo
                              workedTimeOnDayOfRequest: 0)
 }
 
+/// The amount of time worked in a particular project as returned by the Toggl reports service.
 struct ReportEntry: Decodable {
     let id: Int64 // swiftlint:disable:this identifier_name
     let time: TimeInterval

@@ -10,6 +10,7 @@ import Foundation
 
 typealias ProjectID = Int64
 
+/// Represents a project entity retrieved from the Toggl API.
 struct Project: Decodable {
     let id: ProjectID // swiftlint:disable:this identifier_name
     let name: String?

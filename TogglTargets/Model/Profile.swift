@@ -8,7 +8,7 @@
 
 import Foundation
 
-// TODO: some properties don't need to be optional
+/// Represents the user's profile as retrieved from the Toggl API.
 struct Profile: Decodable {
     let id: Int64 // swiftlint:disable:this identifier_name
     let name: String?
@@ -17,6 +17,7 @@ struct Profile: Decodable {
     let timezone: String?
     let workspaces: [Workspace]
     let apiToken: String?
+    // TODO: some properties don't need to be optional
 
     private enum CodingKeys: String, CodingKey {
         case id // swiftlint:disable:this identifier_name
@@ -43,6 +44,7 @@ extension Profile: Equatable {
 
 typealias WorkspaceID = Int64
 
+/// Represents a workspace in the Toggl API.
 struct Workspace: Decodable {
     let id: WorkspaceID // swiftlint:disable:this identifier_name
     let name: String?
