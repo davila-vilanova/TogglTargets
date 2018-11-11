@@ -10,7 +10,7 @@ import Foundation
 import ReactiveSwift
 
 /// Action that takes an array of `WorkspaceID` values, retrieves from the Toggl
-///  API the projects corresponding to each workspace and merges them in an
+/// API the projects corresponding to each workspace and merges them in an
 /// `IndexedProjects` dictionary.
 typealias RetrieveProjectsNetworkAction = Action<([WorkspaceID]), IndexedProjects, APIAccessError>
 
@@ -64,6 +64,8 @@ func makeRetrieveProjectsNetworkAction(_ urlSession: Property<URLSession?>,
     }
 }
 
+/// Represents the data returned in the body of the response obtained by calling Toggl's projects endpoint
+/// with a valid credential.
 private struct ProjectsService {
 
     static func endpoint(for workspaceId: WorkspaceID) -> String {

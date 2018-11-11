@@ -10,9 +10,16 @@ import Foundation
 import Result
 import ReactiveSwift
 
+/// An `Action` that upon application produces the latest cached user profile or a nil value if no cached profile is
+/// available.
 typealias RetrieveProfileCacheAction = Action<(), Profile?, NoError>
+
+/// An `Action` that when applied produces the latest cached collection of user projects or a nil value if no cached
+/// projects are available.
 typealias RetrieveProjectsCacheAction = Action<(), IndexedProjects?, NoError>
 
+/// Manages a `TogglAPIDataPersistenceProvider` and provides binding targets and retrieval actions to locally store
+/// and retrieve the user's Toggl profile and projects.
 internal class TogglAPIDataCache {
     private let persistenceProvider: TogglAPIDataPersistenceProvider
     private let scheduler: QueueScheduler

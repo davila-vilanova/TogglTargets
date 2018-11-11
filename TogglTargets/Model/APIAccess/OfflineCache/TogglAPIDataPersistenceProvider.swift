@@ -9,15 +9,28 @@
 import Foundation
 import SQLite
 
+/// The inteface of an entity taht can persist, delete and retrieve the user's Toggl profile and projects.
 protocol TogglAPIDataPersistenceProvider {
+    /// Persists the user's Toggl profile in the local storage.
     func persist(profile: Profile)
+
+    /// Retrieves the locally stored user profile, or nil if no user profile is stored. 
     func retrieveProfile() -> Profile?
+
+    /// Removes the user profile from local storage.
     func deleteProfile()
+
+    /// Stores the user's projects in local storage.
     func persist(projects: [Project])
+
+    /// Retrieves the locally stored user's projects, or nil if the user projects are not stored.
     func retrieveProjects() -> [Project]?
+
+    /// Removes the user's projects from local storage.
     func deleteProjects()
 }
 
+/// An implementation of `TogglAPIDataPersistenceProvider` that uses a SQLite database. 
 class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
     private let databaseConnection: Connection
 

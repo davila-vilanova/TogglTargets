@@ -45,7 +45,6 @@ func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>) -> Re
 /// - returns: A `RetrieveReportsNetworkAction` that applies request splitting,
 ///            projects combining and indexing logic on top of the provided
 ///            `URLSession` and `TogglAPINetworkRetriever`.
-
 func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>,
                                       _ networkRetriever:
     @escaping TogglAPINetworkRetriever<[ReportEntry]>) -> RetrieveReportsNetworkAction {
@@ -70,8 +69,24 @@ private let userAgent = "david@davi.la"
 
 private typealias IndexedWorkedTimes = [ProjectID: WorkedTime]
 
-private func workedTimesProducer(workspaceIDs: [WorkspaceID], period: Period?, // swiftlint:disable:next line_length
-                                 reportEntriesRetriever: @escaping (String) -> SignalProducer<[ReportEntry], APIAccessError>)
+/// Returns a SignalProducer that upon start retrieves, using the closure passed as reportEntriesRetriever, the amounts
+/// of time worked for each of the projects in the provided workspace IDs during a the time period delimited by the
+/// provided `Period`.
+///
+/// - parameters:
+///   - workspaceIDs: the IDs of the workspaces for which to retrieve the worked times.
+///   - period: the `Period` representing the start and end dates delimiting the time period for which to request
+///     the worked time reports. Nil periods may be passed and they will cause the returning producer to emit a single
+///     empty `IndexedWorkedTimes` value.
+///   - reportEntriesRetriever a closure which given an endpoint corresponding to the Toggl's reports API and query 
+///     for a given workspace and period will return a `SignalProducer` of `ReportEntry`es corresponding to that
+///     workspace and period. If the returned producer fails, its failure will be immediately propagated.
+///
+/// - returns: A producer that will emit a single value containing the aggregated `IndexedWorkedTimes` of all workspaces.
+private func workedTimesProducer(workspaceIDs: [WorkspaceID],
+                                 period: Period?,
+                                 reportEntriesRetriever:
+                                    @escaping (String) -> SignalProducer<[ReportEntry], APIAccessError>)
     ->  SignalProducer<IndexedWorkedTimes, APIAccessError> {
         guard let period = period else {
             return SignalProducer(value: IndexedWorkedTimes()) // empty
@@ -120,6 +135,8 @@ private func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorked
         return reports
 }
 
+/// Represents the data returned in the body of the response obtained by calling Toggl's reports summary endpoint
+/// with a valid credential.
 private struct ReportsService: Decodable {
     static func endpoint(workspaceId: WorkspaceID, since: String, until: String, userAgent: String) -> String {
         return "/reports/api/v2/summary?workspace_id=\(workspaceId)&since=\(since)" +
