@@ -40,7 +40,7 @@ extension Calendar {
     /// - parameters:
     ///   - date: The `Date` instance from which to extract the day components.
     ///
-    ///   - returns: A `DayComponents` instance representing the year, month and day that contains the provided `Date`
+    /// - returns: A `DayComponents` instance representing the year, month and day that contains the provided `Date`
     ///              in the calendar's time zone.
     func dayComponents(from date: Date) -> DayComponents {
         let dateComps = dateComponents([.year, .month, .day], from: date)
@@ -52,7 +52,7 @@ extension Calendar {
     /// - parameters:
     ///   - dayComponents: Used as input to the search algorithm for finding the corresponding date.
     ///
-    ///   - returns: A new `Date`, or `nil` if the components are invalid.
+    /// - returns: A new `Date`, or `nil` if the components are invalid.
     func date(from dayComponents: DayComponents) -> Date? {
         let dateComponents = dayComponents.toDateComponents()
         guard let date = date(from: dateComponents) else {
@@ -69,7 +69,7 @@ extension Calendar {
     /// - parameters:
     ///   - date: An absolute point in time.
     ///
-    ///   - returns: The components of the first day of the month that contains the provided `Date`, interprete in the
+    /// - returns: The components of the first day of the month that contains the provided `Date`, interprete in the
     ///              calendar's time zone.
     func firstDayOfMonth(for date: Date) -> DayComponents {
         var dayComps = dayComponents(from: date)
@@ -82,11 +82,11 @@ extension Calendar {
     /// - parameters:
     ///   - date: An absolute point in time.
     ///
-    ///   - returns: The components of the last day of the month that contains the provided `Date`, interprete in the
+    /// - returns: The components of the last day of the month that contains the provided `Date`, interprete in the
     ///              calendar's time zone.
     func lastDayOfMonth(for date: Date) -> DayComponents {
         var dayComps = dayComponents(from: date)
-        dayComps.day = lastDayInMonth(for: date)
+        dayComps.day = countOfDaysInMonth(for: date) - 1
         return dayComps
     }
 
@@ -96,7 +96,7 @@ extension Calendar {
     ///   - originalDay: The day used as a reference to calculate the following day.
     ///   - upperLimitDay: The latest possible day that should be returned.
     ///
-    ///   - returns: The components of the day that follows the specified day, or `nil` if the computed day would be a
+    /// - returns: The components of the day that follows the specified day, or `nil` if the computed day would be a
     ///              later day than the one represented by upperLimitDay
     func nextDay(after originalDay: DayComponents, notLaterThan upperLimitDay: DayComponents) -> DayComponents? {
         let oneDayIncrement = DateComponents(day: 1)
@@ -115,7 +115,7 @@ extension Calendar {
     ///   - originalDay: The day used as a reference to calculate the preceding day.
     ///   - lowerLimitDay: The earliest possible day that should be returned.
     ///
-    ///   - returns: The components of the day that precedes the specified day, or `nil` if the computed day would be an
+    /// - returns: The components of the day that precedes the specified day, or `nil` if the computed day would be an
     ///              earlier day than the one represented by lowerLimitDay
     func previousDay(before originalDay: DayComponents, notEarlierThan lowerLimitDay: DayComponents) -> DayComponents? {
         let oneDayDecrement = DateComponents(day: -1)
@@ -128,30 +128,61 @@ extension Calendar {
         return dayComponents(from: adjustedDate)
     }
 
+    /// Returns the amount of days in the month that contains a given `Date`.
+    /// 
+    /// - parameters:
+    ///   - date: An absolute point in time.
+    ///
+    /// - returns: The amount of days in the month that contains the specified point in time as interpreted in the
+    ///              calendar's time zone.
     func countOfDaysInMonth(for date: Date) -> Int {
         let daysRange = range(of: .day, in: .month, for: date)!
         return daysRange.upperBound
     }
-
-    private func lastDayInMonth(for date: Date) -> Int {
-        return countOfDaysInMonth(for: date)  - 1
-    }
 }
 
 extension Calendar {
+    /// Returns whether a specified date is contained in an earlier day than a reference date.
+    /// Both dates are interpreted according to the calendar's time zone.
+    ///
+    /// - parameters:
+    ///   - compared: The date to evaluate. 
+    ///   - reference: A reference date.
+    ///
+    /// - returns: `true` if the day that contains `compared` in the calendar's time zone is an earlier day than
+    ///              the day that contains `reference`, false otherwise.
     func isDate(_ compared: Date, inEarlierDayThan reference: Date) -> Bool {
         return compared < reference && !isDate(compared, inSameDayAs: reference)
     }
 
+    /// Returns whether a specified date is contained in a later day than a reference date.
+    /// Both dates are interpreted according to the calendar's time zone.
+    ///
+    /// - parameters:
+    ///   - compared: The date to evaluate. 
+    ///   - reference: A reference date.
+    ///
+    /// - returns: `true` if the day that contains `compared` in the calendar's time zone is a later day than
+    ///              the day that contains `reference`, false otherwise.
     func isDate(_ compared: Date, inLaterDayThan reference: Date) -> Bool {
         return compared > reference && !isDate(compared, inSameDayAs: reference)
     }
 }
 
 extension Calendar {
-    func findClosestWeekdayDate(startingFrom: Date,
-                                matchingWeekDay soughtWeekday: Int,
-                                direction: SearchDirection) -> Date? {
+    /// Find the closest day to a specified point in time that matches the sought weekday using the provided search
+    /// direction.
+    ///
+    /// - parameters:
+    ///   - matching: The weekday to find.
+    ///   - startingFrom: The point in time from which to begin the search. This is an absolute point in time that will
+    ///                   be interpreted as a day in the calendar's time zone.
+    ///
+    /// - returns: The components of the day which matches the desired weekday and that's been found to be the closest
+    ///              to the reference point in time.
+    func findClosestDay(matching weekday: Weekday,
+                        startingFrom date: Date,
+                        direction: SearchDirection) -> DayComponents {
         let weekdayCount = veryShortWeekdaySymbols.count
         let startDayDate = startOfDay(for: startingFrom)
 
@@ -163,30 +194,25 @@ extension Calendar {
             }
         }()
 
+        let foundDate: Date?
         for dayAmount in range {
             if let candidate = date(byAdding: .day,
                                     value: dayAmount,
                                     to: startDayDate,
                                     wrappingComponents: false),
                 dateComponents([.weekday], from: candidate).weekday == soughtWeekday {
-                return candidate
+                foundDate = candidate
+                break
             }
         }
-        return nil
-    }
-
-    func findClosestDay(matching weekday: Weekday,
-                        startingFrom date: Date,
-                        direction: SearchDirection) -> DayComponents {
-        let date =
-            findClosestWeekdayDate(startingFrom: date,
-                                   matchingWeekDay: weekday.indexInGregorianCalendar,
-                                   direction: direction)! // Assumed it cannot fail for range-bound weekday
+        assert(foundDate != nil)
+        let date = foundDate! // Assumed it cannot fail for range-bound weekday
         return dayComponents(from: date)
     }
 }
 
 extension Calendar {
+    /// Returns a calendar compatible with Toggl's service.
     static var iso8601: Calendar {
         var calendar = Calendar(identifier: .iso8601)
         calendar.locale = Locale.autoupdatingCurrent

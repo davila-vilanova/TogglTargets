@@ -85,7 +85,7 @@ class ReportPeriodsProducer {
         SignalProducer.combineLatest(_periodPreference.producer.skipNil(),
                                      _calendar.producer.skipNil(),
                                      _currentDate.producer.skipNil())
-            .map { $0.currentPeriod(in: $1, for: $2) }
+            .map { $0.period(in: $1, for: $2) }
 
     /// Produces `DayComponents` values representing the day corresponding to `currentDate`
     private lazy var today: SignalProducer<DayComponents, NoError>

@@ -10,17 +10,31 @@ import Cocoa
 import ReactiveSwift
 import Result
 
+/// Represents a data type that can store itself in the user defaults.
 protocol StorableInUserDefaults {
     init?(userDefaults: UserDefaults)
     func write(to userDefaults: UserDefaults)
     static func delete(from userDefaults: UserDefaults)
 }
 
+/// Responsible for managing the storage and retrieval of a given user defaults datatype.
 class PreferenceStore<PreferenceType: StorableInUserDefaults> {
 
+    /// Outputs the latest stored value.
     let output: Property<PreferenceType?>
+
+    /// Stores any received values. A new value will overwrite the previous one.
     let input: BindingTarget<PreferenceType?>
 
+    /// Initializes a new store for a given datatype that immediately outputs the stored value.
+    /// 
+    ///
+    /// - parameters:
+    ///   - userDefaults: The userDefaults to use to retrieve and store values.
+    ///   - scheduler: The scheduler in which to schedule the read and write operations issued by this store.
+    ///   - defaultValue: The value to output if no value is stored in the user defaults. This affects the first value
+    ///                   which is output, which is read from the user defaults. Subsequent `nil` values coming from the
+    ///                   input will result in corresponding `nil` value being output.
     init(userDefaults: Property<UserDefaults>,
          scheduler: Scheduler,
          defaultValue: PreferenceType? = nil) {

@@ -83,7 +83,7 @@ enum TimeTargetUpdate {
     /// - parameters:
     ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value immediately previous to this update.
     ///
-    ///   - returns: A `ProjectIDsByTimeTargets` value resulting of applying this update to `idsByTimeTargets`
+    /// - returns: A `ProjectIDsByTimeTargets` value resulting of applying this update to `idsByTimeTargets`
     func apply(to idsByTimeTargets: ProjectIDsByTimeTargets) -> ProjectIDsByTimeTargets {
         var sortedIDs = idsByTimeTargets.sortedProjectIDs
         let item = sortedIDs.remove(at: indexChange.old)
@@ -106,7 +106,7 @@ enum TimeTargetUpdate {
     ///
     ///   - note: The old time target value will be extracted from `timeTargetsPreChange`
     ///
-    ///   - returns: The update corresponding to the change in the time target associated with `projectId`,
+    /// - returns: The update corresponding to the change in the time target associated with `projectId`,
     ///              `nil` if `projectId` is not included in `idsByTimeTargets`
     static func forTimeTargetChange(involving newTimeTarget: TimeTarget?,
                                     for projectId: ProjectID,

@@ -40,7 +40,7 @@ extension URLSession {
     /// - parameters:
     ///   - endpoint: The endpoint to which to send the request
     ///
-    ///   - returns: The created producer that will send the request upon start and it will emit a single value or an
+    /// - returns: The created producer that will send the request upon start and it will emit a single value or an
     ///              error and then complete.
     func togglAPIRequestProducer(for endpoint: String) -> SignalProducer<(Data, URLResponse), APIAccessError> {
         guard isCredentialSet else {
@@ -70,7 +70,7 @@ extension URLSession {
     ///   - decoder: A function that takes a `Data` value enclosing a JSON string and decodes it into a `U` value or
     ///     throws an error if it fails to decode the JSON.
     ///
-    ///   - returns: The created producer that will send the request upon start and it will emit a single value or an
+    /// - returns: The created producer that will send the request upon start and it will emit a single value or an
     ///              error and then complete.
     func togglAPIRequestProducer<U>(for endpoint: String,
                                     decoder: @escaping ((Data, URLResponse) throws -> U))
@@ -96,7 +96,7 @@ extension URLSession {
 /// - parameters:
 ///   - producer: The producer to transform
 ///
-///   - returns: A producer that can fail only with an `APIAccessError`.
+/// - returns: A producer that can fail only with an `APIAccessError`.
 private func mapErrors(from producer: SignalProducer<(Data, URLResponse), AnyError>)
     -> SignalProducer<(Data, URLResponse), APIAccessError> {
         return producer.mapError(wrapAnyErrorInLoadingSubsystemError)
@@ -108,7 +108,7 @@ private func mapErrors(from producer: SignalProducer<(Data, URLResponse), AnyErr
 /// - parameters:
 ///   - err: The error to wrap.
 ///
-///   - returns: The wrapped error.
+/// - returns: The wrapped error.
 private func wrapAnyErrorInLoadingSubsystemError(_ err: AnyError) -> APIAccessError {
     return APIAccessError.loadingSubsystemError(underlyingError: err)
 }

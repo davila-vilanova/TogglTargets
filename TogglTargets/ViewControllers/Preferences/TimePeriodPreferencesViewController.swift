@@ -147,7 +147,7 @@ class TimePeriodPreferencesViewController: NSViewController, BindingTargetProvid
                                          calendar.producer.skipNil(),
                                          currentDate.producer.skipNil())
             .map { (preference, calendar, currentDate) in
-                preference.currentPeriod(in: calendar, for: currentDate)
+                preference.period(in: calendar, for: currentDate)
         }
 
         let formatter: SignalProducer<DateFormatter, NoError> = {

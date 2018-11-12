@@ -8,25 +8,39 @@
 
 import Foundation
 
+/// Represents the user's preference for pursuing time targets in monthly or weekly periods.
 enum PeriodPreference {
+    /// Represents a user's preference for pursuing time targets in monthly periods.
     case monthly
+
+    /// Represents a user's preference for pursuing time targets in weekly periods that start from a specified weekday.
     case weekly(startDay: Weekday)
 }
 
 extension PeriodPreference {
-    func currentPeriod(in calendar: Calendar, for currentDate: Date) -> Period {
+
+    /// Determines the `Period` that contains the specified point in time for this preference.
+    ///
+    /// - parameters:
+    ///   - calendar: The calendar to use to interpret the specified point in time. This calendar's time zone will be 
+    ///               used.
+    ///   - date: The reference date which will be contained in the determined period.
+    ///
+    /// - returns: The period that conforms to this preference and contains the given point in time as interpreted
+    ///              in the provided calendar.
+    func period(in calendar: Calendar, for date: Date) -> Period {
         switch self {
         case .monthly:
-            let first = calendar.firstDayOfMonth(for: currentDate)
-            let last = calendar.lastDayOfMonth(for: currentDate)
+            let first = calendar.firstDayOfMonth(for: date)
+            let last = calendar.lastDayOfMonth(for: date)
             return Period(start: first, end: last)
         case .weekly(let startWeekday):
             let endWeekday = startWeekday.previous
             return Period(start: calendar.findClosestDay(matching: startWeekday,
-                                                         startingFrom: currentDate,
+                                                         startingFrom: date,
                                                          direction: .backward),
                           end: calendar.findClosestDay(matching: endWeekday,
-                                                       startingFrom: currentDate,
+                                                       startingFrom: date,
                                                        direction: .forward))
         }
     }
@@ -71,6 +85,7 @@ extension PeriodPreference: StorableInUserDefaults {
 }
 
 extension PeriodPreference {
+    /// Whether this represents a preference for a monthly period.
     var isMonthly: Bool {
         switch self {
         case .monthly: return true
@@ -78,6 +93,7 @@ extension PeriodPreference {
         }
     }
 
+    /// Whether this represents a preference for a weekly period.
     var isWeekly: Bool {
         switch self {
         case .weekly: return true
@@ -85,6 +101,7 @@ extension PeriodPreference {
         }
     }
 
+    /// If this is a weekly period preference, the preferred weekday to start the week. `nil` otherwise.
     var selectedWeekday: Weekday? {
         switch self {
         case .weekly(let weekday): return weekday
@@ -93,14 +110,18 @@ extension PeriodPreference {
     }
 }
 
+/// Determines whether the specified period preference is montly.
 func isMonthly(_ pref: PeriodPreference) -> Bool {
     return pref.isMonthly
 }
 
+/// Determines whether the specified period preference is weekly.
 func isWeekly(_ pref: PeriodPreference) -> Bool {
     return pref.isWeekly
 }
 
+/// Determines the preferred weekday to start the week if the specified period preference is a weekly period preference.
+/// Returns `nil` if the specified preference is not weekly.
 func selectedWeekday(_ pref: PeriodPreference) -> Weekday? {
     return pref.selectedWeekday
 }

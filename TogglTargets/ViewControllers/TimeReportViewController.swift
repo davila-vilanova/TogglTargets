@@ -43,7 +43,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
     private lazy var timePeriod: SignalProducer<Period, NoError> =
         SignalProducer.combineLatest(periodPreference.producer.skipNil(),
                                      calendar.producer.skipNil(), currentDate.producer.skipNil())
-            .map { $0.currentPeriod(in: $1, for: $2) }
+            .map { $0.period(in: $1, for: $2) }
 
     // MARK: - Outlets
 

@@ -8,8 +8,13 @@
 
 import Foundation
 
+/// Represents a period of time delimited by a start and an end.
+/// The period includes the start and end days.
 struct Period {
+    /// The components of the first day of the period.
     let start: DayComponents
+
+    /// The components of the last day of the period.
     let end: DayComponents
 }
 
