@@ -10,16 +10,6 @@ import Foundation
 import ReactiveSwift
 import Result
 
-extension SignalProducer {
-    func mapToNoError() -> SignalProducer<Value, NoError> {
-        return flatMapError { _ in
-            // log message
-
-            return SignalProducer<Value, NoError>.empty
-        }
-    }
-}
-
 private let defaultPlaceholderForNil = "--"
 
 extension SignalProducer where Value == Int? {
