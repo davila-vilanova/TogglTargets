@@ -56,7 +56,7 @@
 "target-strategy.impossible" = "This would require more than a full day of work per day";
 
 /* the target time has been reached */
-"target-time-reached" = "You have achieved your target time of %@";
+"target-time-reached" = "You have reached your target time of %@";
 
 /* loading profile status description */
 "logged-in.loading-profile" = "Loading...";
