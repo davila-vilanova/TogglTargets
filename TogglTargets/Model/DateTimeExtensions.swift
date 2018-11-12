@@ -223,10 +223,27 @@ extension Calendar {
 }
 
 extension Calendar {
-    func countWeekdaysMatching(_ weekday: Weekday, from: DayComponents, until: DayComponents) -> Int {
-        return countWeekdaysMatching([weekday], from: from, to: until)
+
+    /// Returns the amount of days between a start and end day that match the specified weekday.
+    ///
+    /// - parameters:
+    ///   - weekday: The weekday that will be used as reference for the count.
+    ///   - start: The first day of the period in which to count the days.
+    ///   - end: The last day of the period in which to count the days.
+    ///
+    /// - returns: The determined count of days.
+    func countWeekdaysMatching(_ weekday: Weekday, from start: DayComponents, until end: DayComponents) -> Int {
+        return countWeekdaysMatching([weekday], from: start, to: end)
     }
 
+    /// Returns the amount of days between a start and end day that match any of the specified weekdays.
+    ///
+    /// - parameters:
+    ///   - weekdays: Each of the weekdays that will be used as reference for the count.
+    ///   - start: The first day of the period in which to count the days.
+    ///   - end: The last day of the period in which to count the days.
+    ///
+    /// - returns: The determined count of days.
     func countWeekdaysMatching(_ weekdays: [Weekday], from start: DayComponents, to end: DayComponents) -> Int {
         var count = 0
 
@@ -262,6 +279,15 @@ extension Calendar {
     }
 }
 
+/// Returns the amount of days between a start and end day that match any of the weekdays included in the specified
+/// `WeekdaySelection`.
+///
+/// - parameters:
+///   - weekdays: The weekday selection that will be used as reference for the count.
+///   - start: The first day of the period in which to count the days.
+///   - end: The last day of the period in which to count the days.
+///
+/// - returns: The determined count of days.
 extension Calendar {
     // swiftlint:disable:next identifier_name
     func countWeekdaysMatching(_ selection: WeekdaySelection, from: DayComponents, to: DayComponents) -> Int {
