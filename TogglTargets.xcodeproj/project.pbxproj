@@ -77,8 +77,6 @@
 		637A32501EE16FD600667FC3 /* SelectionDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */; };
 		637DA20F202F7659000D7EB8 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */; };
 		637DA210202F7659000D7EB8 /* CollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */; };
-		637DA2202034760F000D7EB8 /* ValueLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA21F2034760F000D7EB8 /* ValueLogger.swift */; };
-		637DA2212034760F000D7EB8 /* ValueLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA21F2034760F000D7EB8 /* ValueLogger.swift */; };
 		637DA22520385096000D7EB8 /* ActivitiesStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */; };
 		638561ED20FE15DC002E97E8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638561F120FE15DC002E97E8 /* MainMenu.xib */; };
 		638561EE20FE15DC002E97E8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638561F120FE15DC002E97E8 /* MainMenu.xib */; };
@@ -291,7 +289,6 @@
 		637A323C1EE16FD600667FC3 /* ProjectsMasterDetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProjectsMasterDetailController.swift; path = ViewControllers/ProjectsMasterDetailController.swift; sourceTree = "<group>"; };
 		637A323D1EE16FD600667FC3 /* SelectionDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SelectionDetailViewController.swift; path = ViewControllers/SelectionDetailViewController.swift; sourceTree = "<group>"; };
 		637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensions.swift; sourceTree = "<group>"; };
-		637DA21F2034760F000D7EB8 /* ValueLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueLogger.swift; sourceTree = "<group>"; };
 		637DA22420385096000D7EB8 /* ActivitiesStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesStateTest.swift; sourceTree = "<group>"; };
 		638561F020FE15DC002E97E8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		638561F720FE16D3002E97E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
@@ -525,14 +522,6 @@
 			name = "View Controllers";
 			sourceTree = "<group>";
 		};
-		637DA21920347598000D7EB8 /* Logging */ = {
-			isa = PBXGroup;
-			children = (
-				637DA21F2034760F000D7EB8 /* ValueLogger.swift */,
-			);
-			path = Logging;
-			sourceTree = "<group>";
-		};
 		639F38EF208FA4D500AE96CF /* Util */ = {
 			isa = PBXGroup;
 			children = (
@@ -601,7 +590,6 @@
 				63B1BBE61FBE2570001E9FBE /* ReportPeriodsProducer.swift */,
 				6355C5B61FDF3A26003F4DDC /* CurrentDateGenerator.swift */,
 				637DA20E202F7659000D7EB8 /* CollectionExtensions.swift */,
-				637DA21920347598000D7EB8 /* Logging */,
 				63415BC120852A650083E40B /* ReadByProjectID.swift */,
 				63E209CD21926326002DC157 /* ActivityStatus.swift */,
 			);
@@ -862,7 +850,6 @@
 				63D4BBA71F7D821800B87298 /* DateTimeExtensions.swift in Sources */,
 				637A32421EE16FD600667FC3 /* TimeProgressViewController.swift in Sources */,
 				63D4BBB01F7D821800B87298 /* TogglAPICredential.swift in Sources */,
-				637DA2202034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				637A32481EE16FD600667FC3 /* TimeTargetViewController.swift in Sources */,
 				63E209CE21926326002DC157 /* ActivityStatus.swift in Sources */,
 				635A256620528F2C00EFCE90 /* ProjectsListActivityViewController.swift in Sources */,
@@ -950,7 +937,6 @@
 				639C5BBF20F2D07100567FF7 /* SQLiteTimeTargetPersistenceProviderTests.swift in Sources */,
 				639F8B6F20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift in Sources */,
 				63D91E6F2195EC3700D7FCF7 /* TimeTargetPersistenceProvider.swift in Sources */,
-				637DA2212034760F000D7EB8 /* ValueLogger.swift in Sources */,
 				6343968A1F80456200FDADE3 /* ProgressToTimeTargetTests.swift in Sources */,
 				63D91E722195EC7400D7FCF7 /* ProjectIDsByTimeTargetsProducing.swift in Sources */,
 				63A67F3C1FCD9B60004BEFC6 /* RetrieveReportsNetworkAction.swift in Sources */,
