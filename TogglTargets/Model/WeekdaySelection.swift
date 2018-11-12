@@ -191,3 +191,15 @@ extension WeekdaySelection {
         return isSelected(weekday)
     }
 }
+
+extension WeekdaySelection {
+    var selectedWeekdays: [Weekday] {
+        var retval = [Weekday]()
+        for day in Weekday.allDays {
+            if isSelected(day) {
+                retval.append(day)
+            }
+        }
+        return retval
+    }
+}
