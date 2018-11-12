@@ -17,10 +17,10 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
 
     internal typealias Interface = (
         targetTime: SignalProducer<TimeInterval, NoError>,
-        dayBaseline: SignalProducer<TimeInterval?, NoError>,
-        dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError>,
-        dayBaselineDifferential: SignalProducer<Double?, NoError>,
-        feasibility: SignalProducer<TargetFeasibility?, NoError>)
+        dayBaseline: SignalProducer<TimeInterval, NoError>,
+        dayBaselineAdjustedToProgress: SignalProducer<TimeInterval, NoError>,
+        dayBaselineDifferential: SignalProducer<Double, NoError>,
+        feasibility: SignalProducer<TargetFeasibility, NoError>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -86,27 +86,17 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
         }
     }
 
-    func wireBaselineDifferentialField() { // swiftlint:disable:this function_body_length
+    func wireBaselineDifferentialField() {
         let formattedDifferential = dayBaselineDifferential
-            .map { $0?.magnitude }
-            .map { (differential) -> NSNumber? in
-                guard let differential = differential else { return nil }
-                return NSNumber(value: differential)
-            }
+            .map { $0.magnitude }
+            .map(NSNumber.init)
             .mapToNumberFormattedString(numberFormatter: percentFormatter)
 
-        let baselineCalculationErrors = SignalProducer.combineLatest(dayBaselineAdjustedToProgress.filter { $0 == nil },
-                                                                     dayBaseline.filter { $0 == nil },
-                                                                     dayBaselineDifferential.filter { $0 == nil },
-                                                                     feasibility.filter { $0 == nil })
-            .map { _ in NSLocalizedString("target-strategy.cannot-calculate-baseline",
-                                          comment: "the adjusted day baseline could not be calculated") }
-
         let feasibleCaseDescriptions =
-            SignalProducer.combineLatest(feasibility.skipNil(),
-                                         dayBaselineDifferential.skipNil(),
+            SignalProducer.combineLatest(feasibility,
+                                         dayBaselineDifferential,
                                          formattedDifferential,
-                                         dayBaseline.skipNil(),
+                                         dayBaseline,
                                          dayBaseline.mapToString(timeFormatter: timeFormatter))
                 .filter { (feasibility, _, _, _, _) in
                     return feasibility.isFeasible
@@ -129,21 +119,20 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
                     }
         }
 
-        let unfeasibleCaseDescriptions = feasibility.skipNil().filter { $0.isUnfeasible }
+        let unfeasibleCaseDescriptions = feasibility.filter { $0.isUnfeasible }
             .map { _ in
                 NSLocalizedString("target-strategy.unfeasible",
                                   comment: "reaching the target time is unfeasible but not impossible")
         }
 
-        let impossibleCaseDescriptions = feasibility.skipNil().filter { $0.isImpossible }
+        let impossibleCaseDescriptions = feasibility.filter { $0.isImpossible }
             .map { _ in
                 NSLocalizedString("target-strategy.impossible",
                                   comment: "reaching the target time is impossible")
         }
 
         baselineDifferentialField.reactive.stringValue <~
-            SignalProducer.merge(feasibleCaseDescriptions, unfeasibleCaseDescriptions,
-                                 impossibleCaseDescriptions, baselineCalculationErrors)
+            SignalProducer.merge(feasibleCaseDescriptions, unfeasibleCaseDescriptions, impossibleCaseDescriptions)
     }
 }
 

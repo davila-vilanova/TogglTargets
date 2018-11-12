@@ -123,11 +123,10 @@ class ProgressToTimeTarget {
         }
     }()
 
-    // dayBaseline will publish nil values when totalWorkDays itself returns nil
-    public lazy var dayBaseline: SignalProducer<TimeInterval?, NoError> = {
+    public lazy var dayBaseline: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(targetTime.skipRepeats(),
                                             totalWorkDays.skipRepeats())
-            .map { (targetTime, totalWorkDays) -> TimeInterval? in
+            .map { (targetTime, totalWorkDays) -> TimeInterval in
                 guard totalWorkDays > 0 else {
                     return 0
                 }
@@ -135,11 +134,10 @@ class ProgressToTimeTarget {
         }
     }()
 
-    // dayBaselineAdjustedToProgress will publish nil values when remainingWorkDays itself returns nil
-    public lazy var dayBaselineAdjustedToProgress: SignalProducer<TimeInterval?, NoError> = {
+    public lazy var dayBaselineAdjustedToProgress: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(remainingWorkDays.skipRepeats(),
                                             remainingTimeToTarget.skipRepeats())
-            .map { (remainingWorkDays, remainingTimeToTarget) -> TimeInterval? in
+            .map { (remainingWorkDays, remainingTimeToTarget) -> TimeInterval in
                 guard remainingWorkDays > 0 else {
                     return 0
                 }
@@ -147,25 +145,13 @@ class ProgressToTimeTarget {
         }
     }()
 
-    public lazy var feasibility: SignalProducer<TargetFeasibility?, NoError> =
-        dayBaselineAdjustedToProgress.map {
-            guard let baseline = $0 else {
-                return nil
-            }
-            return TargetFeasibility.from(dayBaseline: baseline)
-    }
+    public lazy var feasibility: SignalProducer<TargetFeasibility, NoError> =
+        dayBaselineAdjustedToProgress.map(TargetFeasibility.from)
 
-    // dayBaselineDifferential will publish nil values if either dayBaseline or dayBaselineAdjustedToProgress are nil
-    public lazy var dayBaselineDifferential: SignalProducer<Double?, NoError>  = {
+    public lazy var dayBaselineDifferential: SignalProducer<Double, NoError>  = {
         return SignalProducer.combineLatest(dayBaseline.skipRepeats(),
                                             dayBaselineAdjustedToProgress.skipRepeats())
-            .map { (dayBaseline, dayBaselineAdjustedToProgress) -> Double? in
-                guard let dayBaseline = dayBaseline else {
-                    return nil
-                }
-                guard let dayBaselineAdjustedToProgress = dayBaselineAdjustedToProgress else {
-                    return nil
-                }
+            .map { (dayBaseline, dayBaselineAdjustedToProgress) -> Double in
                 assert(dayBaseline >= 0)
                 return (dayBaselineAdjustedToProgress - dayBaseline) / dayBaseline
         }
@@ -180,19 +166,14 @@ class ProgressToTimeTarget {
         }
     }()
 
-    // remainingTimeToDayBaseline will publish nil values when either of this is true:
-    // * today's date is not included in the period for which the target-reaching strategy is being calculated
-    //   (there is no day baseline),
-    // * dayBaselineAdjustedToProgress itself returns nil
+    // remainingTimeToDayBaseline will publish nil values when today's date is not included in the period for which the
+    // target-reaching strategy is being calculated (there is no day baseline).
     public lazy var remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError> = {
         return SignalProducer.combineLatest(strategyStartsToday.skipRepeats(),
                                             dayBaselineAdjustedToProgress.skipRepeats(),
                                             timeWorkedToday.skipRepeats())
             .map { (strategyStartsToday, dayBaselineAdjustedToProgress, timeWorkedToday) -> TimeInterval? in
                 guard strategyStartsToday else {
-                    return nil
-                }
-                guard let dayBaselineAdjustedToProgress = dayBaselineAdjustedToProgress else {
                     return nil
                 }
                 return Double.maximum(dayBaselineAdjustedToProgress - timeWorkedToday, 0.0)

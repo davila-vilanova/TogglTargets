@@ -37,9 +37,6 @@
 /* amount of time to work per day to achieve the target time (adjusted day baseline) */
 "target-strategy.adjusted-baseline" = "work %@ per day";
 
-/* the adjusted day baseline could not be calculated */
-"target-strategy.cannot-calculate-baseline" = "the day baseline could not be calculated";
-
 /* the adjusted baseline approximately matches the a priori baseline */
 "target-strategy.adusted-baseline-matches" = "That pretty much matches your baseline of %@";
 

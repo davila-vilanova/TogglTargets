@@ -17,7 +17,7 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
 
     internal typealias Interface = (timeWorkedToday: SignalProducer<TimeInterval, NoError>,
         remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError>,
-        feasibility: SignalProducer<TargetFeasibility?, NoError>)
+        feasibility: SignalProducer<TargetFeasibility, NoError>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -73,7 +73,7 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
 
         // Show or hide time remaining and progress indicator
         let isTimeRemainingMissing = remainingTimeToDayBaseline.map { $0 == nil }
-        let isMeetingTargetImpossible = lastBinding.latestOutput { $0.feasibility }.map { $0?.isImpossible ?? true }
+        let isMeetingTargetImpossible = lastBinding.latestOutput { $0.feasibility }.map { $0.isImpossible }
         let hide = isTimeRemainingMissing.or(isMeetingTargetImpossible)
         timeRemainingToWorkTodayLabel.reactive.makeBindingTarget { $0.isHidden = $1 } <~ hide
         todayProgressIndicator.reactive.makeBindingTarget { $0.isIndeterminate = $1 } <~ hide
