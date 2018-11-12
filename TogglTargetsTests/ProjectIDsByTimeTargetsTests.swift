@@ -76,8 +76,6 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
     var newTimeTarget: TimeTarget?
     var newIndexedTimeTargets: ProjectIdIndexedTimeTargets?
 
-    typealias TimeTargetUpdate = ProjectIDsByTimeTargets.Update.TimeTargetUpdate
-
     // Updates the values of projectId, oldTimeTarget, newTimeTarget and newIndexedTimeTargets
     func setUpForProjectId(_ projectId: ProjectID, newTimeTarget: TimeTarget?) {
         guard let oldIndexedTimeTargets = indexedTimeTargets else {

@@ -17,7 +17,8 @@ class SQLiteTimeTargetPersistenceProviderTests: XCTestCase {
         let fixtureMonthly = TimeTarget(for: 4121, hoursTarget: 24, workWeekdays: .exceptWeekend)
         let fixtureWeekly = TimeTarget(for: 1381, hoursTarget: 8, workWeekdays: .wholeWeek)
 
-        guard let store = SQLiteTimeTargetPersistenceProvider(baseDirectory: FileManager.default.temporaryDirectory)
+        guard let store = SQLiteTimeTargetPersistenceProvider(baseDirectory: FileManager.default.temporaryDirectory,
+                                                              writeTimeTargetsOn: UIScheduler())
             else {
                 XCTFail("The database file cannot be opened and cannot be created")
                 return

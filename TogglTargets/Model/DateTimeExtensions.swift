@@ -174,17 +174,17 @@ extension Calendar {
     /// direction.
     ///
     /// - parameters:
-    ///   - matching: The weekday to find.
+    ///   - weekday: The weekday to find.
     ///   - startingFrom: The point in time from which to begin the search. This is an absolute point in time that will
     ///                   be interpreted as a day in the calendar's time zone.
     ///
     /// - returns: The components of the day which matches the desired weekday and that's been found to be the closest
     ///              to the reference point in time.
     func findClosestDay(matching weekday: Weekday,
-                        startingFrom date: Date,
+                        startingFrom startDate: Date,
                         direction: SearchDirection) -> DayComponents {
         let weekdayCount = veryShortWeekdaySymbols.count
-        let startDayDate = startOfDay(for: startingFrom)
+        let startDayDate = startOfDay(for: startDate)
 
         let range: CountableClosedRange<Int> = {
             let limit = weekdayCount - 1
@@ -194,20 +194,22 @@ extension Calendar {
             }
         }()
 
-        let foundDate: Date?
-        for dayAmount in range {
-            if let candidate = date(byAdding: .day,
-                                    value: dayAmount,
-                                    to: startDayDate,
-                                    wrappingComponents: false),
-                dateComponents([.weekday], from: candidate).weekday == soughtWeekday {
-                foundDate = candidate
-                break
+        let foundDate: Date? = {
+            for dayAmount in range {
+                if let candidate = date(byAdding: .day,
+                                        value: dayAmount,
+                                        to: startDayDate,
+                                        wrappingComponents: false),
+                    dateComponents([.weekday], from: candidate).weekday == weekday.indexInGregorianCalendar {
+                    return candidate
+                }
             }
-        }
-        assert(foundDate != nil)
-        let date = foundDate! // Assumed it cannot fail for range-bound weekday
-        return dayComponents(from: date)
+            assert(false)
+            return nil
+        }()
+
+        let unwrappedDate = foundDate! // Assumed it cannot fail for range-bound weekday
+        return dayComponents(from: unwrappedDate)
     }
 }
 
