@@ -17,8 +17,8 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
     internal typealias Interface = (
         targetTime: SignalProducer<TimeInterval, NoError>,
-        totalWorkDays: SignalProducer<Int?, NoError>,
-        remainingWorkDays: SignalProducer<Int?, NoError>,
+        totalWorkDays: SignalProducer<Int, NoError>,
+        remainingWorkDays: SignalProducer<Int, NoError>,
         reportAvailable: SignalProducer<Bool, NoError>,
         workedTime: SignalProducer<TimeInterval, NoError>,
         remainingTimeToTarget: SignalProducer<TimeInterval, NoError>,
@@ -51,7 +51,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
     @IBOutlet weak var workdaysInPeriodField: NSTextField! {
         didSet {
-            workdaysInPeriodField.reactive.stringValue <~ totalWorkDays.producer.mapToNonNil().map {
+            workdaysInPeriodField.reactive.stringValue <~ totalWorkDays.producer.skipNil().map {
                 String.localizedStringWithFormat(
                     NSLocalizedString("time-progress.workdays.total",
                                       comment: "total amount of workdays in current period"),
@@ -137,12 +137,10 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
     @IBOutlet weak var workDaysProgressIndicator: NSProgressIndicator! {
         didSet {
-            SignalProducer.combineLatest(totalWorkDays.producer.map(intToDouble),
-                                         remainingWorkDays.producer.map(intToDouble))
+            SignalProducer.combineLatest(totalWorkDays.producer.skipNil().map(Double.init),
+                                         remainingWorkDays.producer.skipNil().map(Double.init))
                 .observe(on: UIScheduler())
-                .startWithValues { [indicator = workDaysProgressIndicator] (totalOrNil, remainingOrNil) in
-                    let total = totalOrNil ?? 0.0
-                    let remaining = remainingOrNil ?? 0.0
+                .startWithValues { [indicator = workDaysProgressIndicator] total, remaining in
                     indicator!.maxValue = total
                     // Has a hard limit (the end of the time period for which the target is being calculated)
                     indicator!.doubleValue = total - remaining
@@ -186,11 +184,4 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
         return [.seeTimeProgress: timeProgressView]
     }
-}
-
-private let intToDouble = { (integerOrNil: Int?) -> Double? in
-    guard let integer = integerOrNil else {
-        return nil
-    }
-    return Double(integer)
 }

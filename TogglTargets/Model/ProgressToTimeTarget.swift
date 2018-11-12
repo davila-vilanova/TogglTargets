@@ -24,6 +24,7 @@ class ProgressToTimeTarget {
     public var timeTarget: BindingTarget<TimeTarget> { return _timeTarget.deoptionalizedBindingTarget }
 
     /// The associated worked time report. `nil` reports are interpreted as zero worked time.
+    // TODO: for non nil reports, check that reference date is coherent with this instance's reference date
     public var report: BindingTarget<TwoPartTimeReport?> { return _report.bindingTarget }
 
     /// The currently running entry, if any. If the entry's project ID matches the ID of the project whose time target
@@ -41,6 +42,7 @@ class ProgressToTimeTarget {
     public var startStrategyDay: BindingTarget<DayComponents> { return _startStrategyDay.deoptionalizedBindingTarget }
 
     /// The reference date to use to calculate progress
+    // TODO: rename to reference date
     public var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
 
     /// The calendar to use to perform any computations that require one
@@ -55,7 +57,7 @@ class ProgressToTimeTarget {
 
     /// The total work days in the current period given the days of the week that are available to work according to
     /// the current time target. 
-    public lazy var totalWorkDays: SignalProducer<Int?, NoError> = {
+    public lazy var totalWorkDays: SignalProducer<Int, NoError> = {
         return SignalProducer.combineLatest(_timeTarget.producer.skipNil().skipRepeats(),
                                             _startDay.producer.skipNil().skipRepeats(),
                                             _endDay.producer.skipNil().skipRepeats(),
@@ -67,7 +69,7 @@ class ProgressToTimeTarget {
 
     /// The amount of work days that remain in the current time period based to the days of the week that are
     /// available to work according to the current time target and the day from which to calculate the strategy.
-    public lazy var remainingWorkDays: SignalProducer<Int?, NoError> = {
+    public lazy var remainingWorkDays: SignalProducer<Int, NoError> = {
         return SignalProducer.combineLatest(_timeTarget.producer.skipNil().skipRepeats(),
                                             _startStrategyDay.producer.skipNil().skipRepeats(),
                                             _endDay.producer.skipNil().skipRepeats(),
@@ -126,9 +128,6 @@ class ProgressToTimeTarget {
         return SignalProducer.combineLatest(targetTime.skipRepeats(),
                                             totalWorkDays.skipRepeats())
             .map { (targetTime, totalWorkDays) -> TimeInterval? in
-                guard let totalWorkDays = totalWorkDays else {
-                    return nil
-                }
                 guard totalWorkDays > 0 else {
                     return 0
                 }
@@ -141,9 +140,6 @@ class ProgressToTimeTarget {
         return SignalProducer.combineLatest(remainingWorkDays.skipRepeats(),
                                             remainingTimeToTarget.skipRepeats())
             .map { (remainingWorkDays, remainingTimeToTarget) -> TimeInterval? in
-                guard let remainingWorkDays = remainingWorkDays else {
-                    return nil
-                }
                 guard remainingWorkDays > 0 else {
                     return 0
                 }
