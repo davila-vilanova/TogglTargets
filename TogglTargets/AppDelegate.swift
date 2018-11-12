@@ -76,7 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
 
     override init() {
         let supportDir: URL
-        resetOnboardingState()
+
         do {
             supportDir = try SupportDirectoryProvider.shared.appSupportDirectory()
         } catch {
