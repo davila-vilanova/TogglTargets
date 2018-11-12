@@ -115,7 +115,7 @@ private func wrapAnyErrorInLoadingSubsystemError(_ err: AnyError) -> APIAccessEr
 
 /// Takes a `Data` and a `URLResponse` pair of values and wraps them into a `Result` value. If the response is an
 /// `HTTPURLResponse`, the returned `Result` will be `.success` or a `.failure` depending on the response's HTTP status
-/// code. If the response is not HTTP, `.failure` will be returned. `.success` return values enclose the passed data and 
+/// code. If the response is not HTTP, `.failure` will be returned. `.success` return values enclose the passed data and
 /// response.
 private func catchHTTPErrors(data: Data, response: URLResponse) -> Result<(Data, URLResponse), APIAccessError> {
     guard let httpResponse = response as? HTTPURLResponse else {
