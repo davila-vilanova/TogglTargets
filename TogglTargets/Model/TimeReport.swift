@@ -29,6 +29,7 @@ struct TwoPartTimeReport {
 
     /// The time worked from the start of the `Period` until the day before requesting the report,
     /// that is, until 'yesterday'.
+    // TODO: rename to 'reference date'
     let workedTimeUntilDayBeforeRequest: WorkedTime
 
     /// The time worked on the day the report is requested, that is, 'today'.

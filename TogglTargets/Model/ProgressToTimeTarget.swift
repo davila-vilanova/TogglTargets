@@ -10,27 +10,51 @@ import Foundation
 import ReactiveSwift
 import Result
 
-/// ProgressToTimeTarget 
+/// Calculates the progress made towards a given time target based on a reference date (such as the current date),
+/// the time period that frames the target, the day to start the calculation from and the time worked so far.
 class ProgressToTimeTarget {
-    // MARK: - Interface
 
-    public var projectId: BindingTarget<Int64> { return _projectId.deoptionalizedBindingTarget }
+    // MARK: - Inputs
+
+    /// The ID of the project associated with the time target towards which to calculate progress
+    // TODO: Remove as redundant with timeTarget.projectId 
+    public var projectId: BindingTarget<ProjectID> { return _projectId.deoptionalizedBindingTarget }
+
+    /// The time target towards which to calculate progress
     public var timeTarget: BindingTarget<TimeTarget> { return _timeTarget.deoptionalizedBindingTarget }
+
+    /// The associated worked time report. `nil` reports are interpreted as zero worked time.
     public var report: BindingTarget<TwoPartTimeReport?> { return _report.bindingTarget }
+
+    /// The currently running entry, if any. If the entry's project ID matches the ID of the project whose time target
+    /// progress is being calculated, the entry's worked time will count towards the progress.
     public var runningEntry: BindingTarget<RunningEntry?> { return _runningEntry.bindingTarget }
+
+    /// The first day of the period in which progress is being calculated
     public var startDay: BindingTarget<DayComponents> { return _startDay.deoptionalizedBindingTarget }
+
+    /// The last day of the period in which progress is being calculated
     public var endDay: BindingTarget<DayComponents> { return _endDay.deoptionalizedBindingTarget }
+
+    /// The day from which the 'strategy', that is, the amount of time to work per day given the remaining work days,
+    /// will be calculated.
     public var startStrategyDay: BindingTarget<DayComponents> { return _startStrategyDay.deoptionalizedBindingTarget }
+    
+    /// The reference date to use to calculate progress
     public var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
+    
+    /// The calendar to use to perform any computations that require one
     public var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
 
     // MARK: - Outputs
 
+    /// The time target in seconds
     public lazy var targetTime: SignalProducer<TimeInterval, NoError> = {
         return _timeTarget.producer.skipNil().skipRepeats().map { TimeInterval.from(hours: $0.hoursTarget) }
     }()
 
-    // Will be nil if start or end are invalid dates
+    /// The total work days in the current period given the days of the week that are available to work according to
+    /// the current time target. 
     public lazy var totalWorkDays: SignalProducer<Int?, NoError> = {
         return SignalProducer.combineLatest(_timeTarget.producer.skipNil().skipRepeats(),
                                             _startDay.producer.skipNil().skipRepeats(),
@@ -41,7 +65,8 @@ class ProgressToTimeTarget {
         }
     }()
 
-    // Will be nil if start or end are invalid dates
+    /// The amount of work days that remain in the current time period based to the days of the week that are
+    /// available to work according to the current time target and the day from which to calculate the strategy.
     public lazy var remainingWorkDays: SignalProducer<Int?, NoError> = {
         return SignalProducer.combineLatest(_timeTarget.producer.skipNil().skipRepeats(),
                                             _startStrategyDay.producer.skipNil().skipRepeats(),
@@ -52,6 +77,8 @@ class ProgressToTimeTarget {
         }
     }()
 
+    /// Whether the day from which the strategy should be calculated matches the day that contains the reference date
+    /// `currentDate`, as interpreted in the current calendar's time zone.
     public lazy var strategyStartsToday: SignalProducer<Bool, NoError> = {
         return SignalProducer.combineLatest(_startStrategyDay.producer.skipNil().skipRepeats(),
                                             _currentDate.producer.skipNil().skipRepeats(),
@@ -61,8 +88,13 @@ class ProgressToTimeTarget {
         }
     }()
 
+    /// Whether a time report is available
+    // TODO: if nil time reports are interpreted as zero worked time, this property may not make sense.
+    // TODO: if this property does make sense, check whether the report's project ID matches the active project ID.
     public lazy var reportAvailable = _report.map { $0 != nil }
 
+    /// The amount of time worked for the project corresponding to the current time target. Includes the time worked
+    /// in the reference date if `strategyStartsToday` is currently true.
     public lazy var workedTime: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(_report.producer.skipRepeats(),
                                             strategyStartsToday.skipRepeats(),
@@ -76,6 +108,11 @@ class ProgressToTimeTarget {
             }
     }()
 
+    /// The amount of time left to reach the current time target.
+    /// This is calculated differently depending on whether today (or, more generally, the day represented by the 
+    /// reference date) is the day from which to calculate the strategy from. If that is the case, the time worked today
+    /// is not subtracted from the remaining time to work. Instead, that time will count against the time that must be
+    /// worked today. If the strategy starts in a later day, the time worked today is subtracted.
     public lazy var remainingTimeToTarget: SignalProducer<TimeInterval, NoError>  = {
         return SignalProducer.combineLatest(targetTime.skipRepeats(),
                                             workedTime.skipRepeats())
