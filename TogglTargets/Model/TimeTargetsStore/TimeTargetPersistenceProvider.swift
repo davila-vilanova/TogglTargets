@@ -11,7 +11,7 @@ import ReactiveSwift
 
 /// An entity that provides persistent storage of `TimeTarget` values.
 protocol TimeTargetPersistenceProvider {
-    
+
     /// This property is populated with the result of retrieving all persisted time targets and updated with any 
     /// creation, update or deletion of any time targets.
     var allTimeTargets: MutableProperty<ProjectIdIndexedTimeTargets> { get }

@@ -39,10 +39,10 @@ class ProgressToTimeTarget {
     /// The day from which the 'strategy', that is, the amount of time to work per day given the remaining work days,
     /// will be calculated.
     public var startStrategyDay: BindingTarget<DayComponents> { return _startStrategyDay.deoptionalizedBindingTarget }
-    
+
     /// The reference date to use to calculate progress
     public var currentDate: BindingTarget<Date> { return _currentDate.deoptionalizedBindingTarget }
-    
+
     /// The calendar to use to perform any computations that require one
     public var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
 

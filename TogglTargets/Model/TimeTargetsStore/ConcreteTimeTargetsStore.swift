@@ -38,7 +38,7 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
 
     /// Binding target which, for each received project ID, removes the timeTarget associated with that project ID.
     var deleteTimeTarget: BindingTarget<ProjectID> { return _deleteTimeTarget.deoptionalizedBindingTarget }
-    
+
     /// The value backer for the `deleteTimeTarget` binding target.
     private let _deleteTimeTarget = MutableProperty<ProjectID?>(nil)
 

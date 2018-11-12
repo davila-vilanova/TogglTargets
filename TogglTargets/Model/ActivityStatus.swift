@@ -71,7 +71,7 @@ enum ActivityStatus {
         default: return false
         }
     }
- 
+
     /// If this is the `.error` case, returns the  the `Action` that can be invoked to retry 
     /// the operation. Otherwise, it returns `nil`.
     var retryAction: RetryAction? {
