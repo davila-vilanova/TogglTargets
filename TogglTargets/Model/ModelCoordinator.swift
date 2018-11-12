@@ -137,6 +137,8 @@ internal class ModelCoordinator: NSObject {
     ///   - timeTargetsStore: The store for the user's time targets.
     ///   - currentDateGenerator: The current date generator used to access and
     ///     trigger updates to the current date.
+    ///   - calendar: A producer of the current calendar and any updates to it. The latest received calendar will be
+    ///                used to perform computations that require a `Calendar` instance.
     ///   - reportPeriodsProducer: The `ReportPeriodsProducer` used to determine
     ///     the dates to scope the requests for reports.
     internal init(togglDataRetriever: TogglAPIDataRetriever,

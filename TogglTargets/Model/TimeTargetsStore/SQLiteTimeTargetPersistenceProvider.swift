@@ -10,6 +10,7 @@ import Foundation
 import SQLite
 import ReactiveSwift
 
+/// A `TimeTargetPersistenceProvider` backed by a SQLite database.
 class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     /// The database connection used to store and retrieve time targets.
     private let dbConnection: Connection
@@ -84,9 +85,9 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     ///
     /// - parameters:
     ///   - baseDirectory: The `URL` of the directory from which to read and to which to write
-    ///     the database used by this instance.
+    ///                    the database used by this instance.
     ///   - timeTargetWriteScheduler: The scheduler in which to schedule any time target writing operations
-    ///     issued by this instance.
+    ///                               issued by this instance.
     init?(baseDirectory: URL?, writeTimeTargetsOn timeTargetWriteScheduler: Scheduler) {
         do {
             let databaseURL = URL(fileURLWithPath: "timetargetsdb.sqlite3", relativeTo: baseDirectory)

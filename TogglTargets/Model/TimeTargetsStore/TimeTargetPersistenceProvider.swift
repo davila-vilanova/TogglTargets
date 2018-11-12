@@ -9,8 +9,16 @@
 import Foundation
 import ReactiveSwift
 
+/// An entity that provides persistent storage of `TimeTarget` values.
 protocol TimeTargetPersistenceProvider {
-    var persistTimeTarget: BindingTarget<TimeTarget> { get }
-    var deleteTimeTarget: BindingTarget<ProjectID> { get }
+    
+    /// This property is populated with the result of retrieving all persisted time targets and updated with any 
+    /// creation, update or deletion of any time targets.
     var allTimeTargets: MutableProperty<ProjectIdIndexedTimeTargets> { get }
+
+    /// This binding target accepts and persists `TimeTarget` values.
+    var persistTimeTarget: BindingTarget<TimeTarget> { get }
+
+    /// Deletes the time targets associated with the project IDs it receives.
+    var deleteTimeTarget: BindingTarget<ProjectID> { get }
 }

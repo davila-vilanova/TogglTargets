@@ -8,11 +8,14 @@
 
 import Foundation
 
+/// A date identified by year, month and day of the month.
+/// As opposed to `DateComponents`, these three components are non optional, and no other components are present.
 struct DayComponents: Equatable {
     var year: Int
     var month: Int
     var day: Int
 
+    /// Returns the date represented by this instance as a `DateComponents` instance.
     func toDateComponents() -> DateComponents {
         return DateComponents(year: year, month: month, day: day)
     }
@@ -25,17 +28,31 @@ struct DayComponents: Equatable {
 }
 
 extension DayComponents {
+    /// Returns the date represented by this instance as a String formatted as a ISO8601 date.
     var iso8601String: String {
         return String(format: "%04d-%02d-%02d", year, month, day)
     }
 }
 
 extension Calendar {
+    /// Extracts the day components from a provided absolute point in time.
+    ///
+    /// - parameters:
+    ///   - date: The `Date` instance from which to extract the day components.
+    ///
+    ///   - returns: A `DayComponents` instance representing the year, month and day that contains the provided `Date`
+    ///              in the calendar's time zone.
     func dayComponents(from date: Date) -> DayComponents {
         let dateComps = dateComponents([.year, .month, .day], from: date)
         return DayComponents(year: dateComps.year!, month: dateComps.month!, day: dateComps.day!)
     }
 
+    /// Returns a date created with the provided day components
+    ///
+    /// - parameters:
+    ///   - dayComponents: Used as input to the search algorithm for finding the corresponding date.
+    ///
+    ///   - returns: A new `Date`, or `nil` if the components are invalid.
     func date(from dayComponents: DayComponents) -> Date? {
         let dateComponents = dayComponents.toDateComponents()
         guard let date = date(from: dateComponents) else {
@@ -46,18 +63,41 @@ extension Calendar {
 }
 
 extension Calendar {
+
+    /// Returns the first day of the month for a given date.
+    ///
+    /// - parameters:
+    ///   - date: An absolute point in time.
+    ///
+    ///   - returns: The components of the first day of the month that contains the provided `Date`, interprete in the
+    ///              calendar's time zone.
     func firstDayOfMonth(for date: Date) -> DayComponents {
         var dayComps = dayComponents(from: date)
         dayComps.day = 1
         return dayComps
     }
 
+    /// Returns the last day of the month for a given date.
+    ///
+    /// - parameters:
+    ///   - date: An absolute point in time.
+    ///
+    ///   - returns: The components of the last day of the month that contains the provided `Date`, interprete in the
+    ///              calendar's time zone.
     func lastDayOfMonth(for date: Date) -> DayComponents {
         var dayComps = dayComponents(from: date)
         dayComps.day = lastDayInMonth(for: date)
         return dayComps
     }
 
+    /// Returns the day that follows the day represented by the specified components.
+    ///
+    /// - parameters:
+    ///   - originalDay: The day used as a reference to calculate the following day.
+    ///   - upperLimitDay: The latest possible day that should be returned.
+    ///
+    ///   - returns: The components of the day that follows the specified day, or `nil` if the computed day would be a
+    ///              later day than the one represented by upperLimitDay
     func nextDay(after originalDay: DayComponents, notLaterThan upperLimitDay: DayComponents) -> DayComponents? {
         let oneDayIncrement = DateComponents(day: 1)
         guard let originalDate = date(from: originalDay),
@@ -69,6 +109,14 @@ extension Calendar {
         return dayComponents(from: adjustedDate)
     }
 
+    /// Returns the day that precedes the day represented by the specified components.
+    ///
+    /// - parameters:
+    ///   - originalDay: The day used as a reference to calculate the preceding day.
+    ///   - lowerLimitDay: The earliest possible day that should be returned.
+    ///
+    ///   - returns: The components of the day that precedes the specified day, or `nil` if the computed day would be an
+    ///              earlier day than the one represented by lowerLimitDay
     func previousDay(before originalDay: DayComponents, notEarlierThan lowerLimitDay: DayComponents) -> DayComponents? {
         let oneDayDecrement = DateComponents(day: -1)
         guard let originalDate = date(from: originalDay),

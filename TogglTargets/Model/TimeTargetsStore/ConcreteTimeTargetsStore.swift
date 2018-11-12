@@ -20,7 +20,7 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
 
     // MARK: - TimeTarget interface
 
-    /// Function which takes a project ID as input and returns a producer that
+    /// Holds a function which takes a project ID as input and returns a producer that
     /// emits values over time corresponding to the time target associated with that
     /// project ID.
     ///
@@ -30,10 +30,16 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
         self.persistenceProvider.allTimeTargets.producer.map { $0[projectID] }.skipRepeats { $0 == $1 }
     }
 
+    /// Binding target which accepts new (or edited) timeTarget values.
     var writeTimeTarget: BindingTarget<TimeTarget> { return _writeTimeTarget.deoptionalizedBindingTarget }
+
+    /// The value backer for the `writeTimeTarget`binding target.
     private let _writeTimeTarget = MutableProperty<TimeTarget?>(nil)
 
+    /// Binding target which, for each received project ID, removes the timeTarget associated with that project ID.
     var deleteTimeTarget: BindingTarget<ProjectID> { return _deleteTimeTarget.deoptionalizedBindingTarget }
+    
+    /// The value backer for the `deleteTimeTarget` binding target.
     private let _deleteTimeTarget = MutableProperty<ProjectID?>(nil)
 
     // MARK: - Generation of ProjectIDsByTimeTargets
@@ -42,7 +48,7 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
     /// that this store has knowledge of.
     var projectIDs: BindingTarget<[ProjectID]> { return _projectIDs.deoptionalizedBindingTarget }
 
-    /// The value backer for the `projectIDs` target.
+    /// The value backer for the `projectIDs` binding target.
     private var _projectIDs = MutableProperty<[ProjectID]?>(nil)
 
     /// Produces a new `ProjectIDsByTimeTargets` value each time a value is sent to the `projectIDs` target
@@ -75,6 +81,8 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
                 .map (ProjectIDsByTimeTargets.Update.singleTimeTarget)
     )
 
+    /// Registers an undo action for each received `TimeTarget` that, if and when invoked, will have the same effect as
+    /// sending the received value to `writeTimeTarget`.
     lazy var undoModifyOrDeleteTimeTarget =
         BindingTarget<TimeTarget>(on: timeTargetWriteScheduler,
                                   lifetime: lifetime, // swiftlint:disable:next line_length
@@ -85,6 +93,8 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
                                     }
         })
 
+    /// Registers an undo action for each received `ProjectID` that, if and when invoked, will have the same effect as
+    /// sending the received value to `deleteTimeTarget`.
     lazy var undoCreateTimeTarget =
         BindingTarget<ProjectID>(on: timeTargetWriteScheduler,
                                  lifetime: lifetime,
@@ -95,6 +105,12 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
                                                                     .start(on: UIScheduler()) })
         })
 
+    /// Initializes a ConcreteTimeTargetsStore.
+    /// 
+    /// - parameters:
+    ///   - persistenceProvider: The `TimeTargetPersistenceProvider` used to persist the managed time targets.
+    ///   - timeTargetWriteScheduler: The scheduler in which to schedule any time target modifying operations issued
+    ///                               by this instance.
     init(persistenceProvider: TimeTargetPersistenceProvider,
          writeTimeTargetsOn timeTargetWriteScheduler: Scheduler,
          undoManager: UndoManager) {

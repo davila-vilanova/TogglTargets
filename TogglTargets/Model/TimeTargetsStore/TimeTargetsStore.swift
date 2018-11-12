@@ -18,7 +18,7 @@ typealias ProjectIdIndexedTimeTargets = [ProjectID: TimeTarget]
 /// incremental updates.
 typealias ProjectIDsByTimeTargetsProducer = SignalProducer<ProjectIDsByTimeTargets.Update, NoError>
 
-/// An entity that stores and retrieves TimeTarget values
+/// An entity that keeps track of `TimeTarget` values.
 protocol TimeTargetsStore {
 
     /// Function which takes a project ID as input and returns a producer that
@@ -32,6 +32,6 @@ protocol TimeTargetsStore {
     /// Target which accepts new (or edited) timeTarget values.
     var writeTimeTarget: BindingTarget<TimeTarget> { get }
 
-    /// Target which for each received project ID deletes the timeTarget associated with that project ID.
+    /// Target which for each received project ID removes the timeTarget associated with that project ID.
     var deleteTimeTarget: BindingTarget<ProjectID> { get }
 }

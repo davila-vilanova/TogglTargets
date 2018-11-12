@@ -9,6 +9,19 @@
 import Foundation
 import ReactiveSwift
 
+extension Signal {
+    public func logValues(_ identifier: String, logger: @escaping EventLogger = logEventMinimally) -> Signal<Value, Error> {
+        return logEvents(identifier: identifier, events: [.value], logger: logEventMinimally)
+    }
+}
+
+extension SignalProducer {
+    public func logValues(_ identifier: String, logger: @escaping EventLogger = logEventMinimally)
+        -> SignalProducer<Value, Error> {
+            return logEvents(identifier: identifier, events: [.value], logger: logger)
+    }
+}
+
 private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .none
@@ -16,19 +29,6 @@ private let dateFormatter: DateFormatter = {
     return formatter
 }()
 
-extension Signal {
-    public func logValues(_ identifier: String, logger: @escaping EventLogger = cleanEventLog) -> Signal<Value, Error> {
-        return logEvents(identifier: identifier, events: [.value], logger: cleanEventLog)
-    }
-}
-
-extension SignalProducer {
-    public func logValues(_ identifier: String, logger: @escaping EventLogger = cleanEventLog)
-        -> SignalProducer<Value, Error> {
-            return logEvents(identifier: identifier, events: [.value], logger: logger)
-    }
-}
-
-public func cleanEventLog(identifier: String, event: String, fileName: String, functionName: String, lineNumber: Int) {
+public func logEventMinimally(identifier: String, event: String, fileName: String, functionName: String, lineNumber: Int) {
     print("\(dateFormatter.string(from: Date())): [\(identifier)] \(event)")
 }
