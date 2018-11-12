@@ -82,7 +82,8 @@ private typealias IndexedWorkedTimes = [ProjectID: WorkedTime]
 ///     for a given workspace and period will return a `SignalProducer` of `ReportEntry`es corresponding to that
 ///     workspace and period. If the returned producer fails, its failure will be immediately propagated.
 ///
-/// - returns: A producer that will emit a single value containing the aggregated `IndexedWorkedTimes` of all workspaces.
+/// - returns: A producer that will emit a single value containing the aggregated `IndexedWorkedTimes` of all
+///            workspaces.
 private func workedTimesProducer(workspaceIDs: [WorkspaceID],
                                  period: Period?,
                                  reportEntriesRetriever:
