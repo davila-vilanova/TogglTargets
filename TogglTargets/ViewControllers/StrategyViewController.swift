@@ -62,7 +62,7 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
 
         wireTotalHoursStrategyField()
         wireBaselineField()
-        wireBaselineField()
+        wireBaselineDifferentialField()
     }
 
     func wireTotalHoursStrategyField() {
