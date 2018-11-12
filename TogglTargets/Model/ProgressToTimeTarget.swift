@@ -123,6 +123,7 @@ class ProgressToTimeTarget {
         }
     }()
 
+    /// The amount of time one would have to work each work day through the period to achieve the current time target.
     public lazy var dayBaseline: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(targetTime.skipRepeats(),
                                             totalWorkDays.skipRepeats())
@@ -134,6 +135,8 @@ class ProgressToTimeTarget {
         }
     }()
 
+    /// The amount of time one would have to work each work day from `startStrategyDay` until the end of the period
+    /// to achieve the current time target, given the current progress.
     public lazy var dayBaselineAdjustedToProgress: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(remainingWorkDays.skipRepeats(),
                                             remainingTimeToTarget.skipRepeats())
@@ -145,9 +148,11 @@ class ProgressToTimeTarget {
         }
     }()
 
+    /// The feasibility of working `dayBaselineAdjustedToProgress`.
     public lazy var feasibility: SignalProducer<TargetFeasibility, NoError> =
         dayBaselineAdjustedToProgress.map(TargetFeasibility.from)
 
+    /// Calculated based on `dayBaseline` and `dayBaselineAccordingToProgress`.
     public lazy var dayBaselineDifferential: SignalProducer<Double, NoError>  = {
         return SignalProducer.combineLatest(dayBaseline.skipRepeats(),
                                             dayBaselineAdjustedToProgress.skipRepeats())
@@ -157,6 +162,8 @@ class ProgressToTimeTarget {
         }
     }()
 
+    /// The amount of time worked on the reference date. Calculated by combining the relevant part of the report and the
+    /// running time entry.
     public lazy var timeWorkedToday: SignalProducer<TimeInterval, NoError>  = {
         return SignalProducer.combineLatest(_report.skipRepeats(),
                                             runningEntryTime.skipRepeats())
@@ -166,8 +173,9 @@ class ProgressToTimeTarget {
         }
     }()
 
-    // remainingTimeToDayBaseline will publish nil values when today's date is not included in the period for which the
-    // target-reaching strategy is being calculated (there is no day baseline).
+    /// The amount of time left to meet the adjusted day baseline on the reference date.
+    /// Returns `nil` if the reference date is not included in the period for which the target-reaching strategy is
+    /// being calculated.
     public lazy var remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError> = {
         return SignalProducer.combineLatest(strategyStartsToday.skipRepeats(),
                                             dayBaselineAdjustedToProgress.skipRepeats(),
@@ -194,6 +202,9 @@ class ProgressToTimeTarget {
 
     // MARK: - Intermediates
 
+    /// Calculates the amount of time worked from the beginning of the currently running time entry until the reference
+    /// date. Emits zero values when there is no currently running time entry or it belongs to a project other than the
+    /// one corresponding to the current time target.
     private lazy var runningEntryTime: SignalProducer<TimeInterval, NoError> = {
         return SignalProducer.combineLatest(_projectId.producer.skipNil().skipRepeats(),
                                             _runningEntry.skipRepeats(),
