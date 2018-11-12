@@ -104,7 +104,7 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
             alert.addButton(withTitle: NSLocalizedString("logged-in.invalid-credentials.ignore",
                                                          comment: "button caption: ignore invalid credentials error"))
             alert.addButton(withTitle: NSLocalizedString("logged-in.invalid-credentials.reenter",
-                                                         comment: "Reenter Credentials"))
+                                                         comment: "reenter credentials"))
 
             alert.beginSheetModal(for: window) { response in
                 switch response {

@@ -67,7 +67,7 @@
 /* credential seems no longer valid: informative text */
 "logged-in.invalid-credentials.informative" = "Esto podría ser un problema en el servidor pero lo más probable es que tengas que reintroducir tus credenciales de Toggl.";
 
-/* Reenter Credentials */
+/* reenter credentials */
 "logged-in.invalid-credentials.reenter" = "Reintroducir credenciales";
 
 /* button caption: ignore invalid credentials error */

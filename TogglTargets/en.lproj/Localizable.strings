@@ -67,8 +67,8 @@
 /* credential seems no longer valid: informative text */
 "logged-in.invalid-credentials.informative" = "This could be a hiccups on the server side but it more likely means that you should reenter your Toggl credentials.";
 
-/* Reenter Credentials */
-"logged-in.invalid-credentials.reenter" = "Reenter Credentials";
+/* reenter credentials */
+"logged-in.invalid-credentials.reenter" = "reenter credentials";
 
 /* button caption: ignore invalid credentials error */
 "logged-in.invalid-credentials.ignore" = "Ignore for now";
