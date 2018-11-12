@@ -10,11 +10,11 @@ import Foundation
 import Result
 import ReactiveSwift
 
-// TODO: Extension on BindingTargetProvider?
 extension MutablePropertyProtocol where Value: OptionalProtocol {
+    /// Returns a binding target that accepts only non optional values.
     public var deoptionalizedBindingTarget: BindingTarget<Value.Wrapped> {
-        return BindingTarget(lifetime: lifetime) { [unowned self] (neverNilValue: Value.Wrapped) in
-            self.value = Value(reconstructing: neverNilValue)
+        return BindingTarget(lifetime: lifetime) { [unowned self] (neverNil: Value.Wrapped) in
+            self.value = Value(reconstructing: neverNil)
         }
     }
 }
