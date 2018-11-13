@@ -10,16 +10,6 @@ import XCTest
 
 class CountWeekdaysTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-
     func testCountWeekdaysWorksInAllKnownTimezonesForMarch() {
         let startComps = DayComponents(year: 2017, month: 3, day: 1)//, hour: 0, minute: 0)
         let endComps = DayComponents(year: 2017, month: 3, day: 31)//, hour: 23, minute: 59)
