@@ -62,7 +62,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
     @IBOutlet weak var remainingWorkdaysField: NSTextField! {
         didSet {
-            let formattedRemainingWorkdays = remainingWorkDays.producer.mapToNonNil()
+            let formattedRemainingWorkdays = remainingWorkDays.producer.skipNil()
 
             let formattedIncludingToday = formattedRemainingWorkdays.throttle(while: strategyStartsToday.negate(),
                                                                               on: UIScheduler())

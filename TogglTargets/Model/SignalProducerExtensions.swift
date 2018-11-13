@@ -12,28 +12,6 @@ import Result
 
 private let defaultPlaceholderForNil = "--"
 
-extension SignalProducer where Value == Int? {
-    func mapToString(placeholderForNil: String = defaultPlaceholderForNil) -> SignalProducer<String, Error> {
-        return map { (valueOrNil: Int?) -> String in
-            if let value = valueOrNil {
-                return "\(value)"
-            } else {
-                return placeholderForNil
-            }
-        }
-    }
-
-    func mapToNonNil(valueForNil: Int = 0) -> SignalProducer<Int, Error> {
-        return map { (valueOrNil: Int?) -> Int in
-            if let value = valueOrNil {
-                return value
-            } else {
-                return valueForNil
-            }
-        }
-    }
-}
-
 // TODO: Extension on DateComponentsFormatter?
 extension SignalProducer where Value == TimeInterval? {
     func mapToString(timeFormatter: DateComponentsFormatter,
