@@ -52,6 +52,14 @@ extension TwoPartTimeReport: Equatable {
     }
 }
 
+/// Returns a two part time report for the given project ID and for the proviced period, with the amount of worked time
+/// set to zero.
+///
+/// - parameters:
+///   - projectId: The ID of the project to associate with  this time report.
+///   - period: The corresponding to associate with this time report.
+///
+/// - returns: A report for the provided project ID and period with the amount of worked time set to zero.
 func makeZeroReport(for projectId: ProjectID, period: Period) -> TwoPartTimeReport {
     return TwoPartTimeReport(projectId: projectId,
                              period: period,

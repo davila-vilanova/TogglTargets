@@ -25,6 +25,7 @@ struct Project: Decodable {
     }
 }
 
+/// A collection of projects indexed by project ID[
 typealias IndexedProjects = [ProjectID: Project]
 
 extension Project: Equatable {

@@ -20,6 +20,7 @@ enum Weekday: Int, CaseIterable {
 }
 
 extension Weekday {
+    /// The weekday that comes before this.
     var previous: Weekday {
         switch self.rawValue {
         case 0: return Weekday.allCases.last!
@@ -29,31 +30,63 @@ extension Weekday {
 }
 
 extension Weekday {
+    /// The 1-based index of this weekday, starting from 1 for Sunday.
     var indexInGregorianCalendar: Int {
         return rawValue + 1
     }
+
+    /// Returns the weekday corresponding to the provided index, where 1 corresponds to Sunday and 7 to Saturday.
+    ///
+    /// - parameters:
+    ///   - index: An index no smaller than 1 and no greater than 7.
+    ///
+    /// - returns: The corresponding weekday.
     static func fromIndexInGregorianCalendar(_ index: Int) -> Weekday? {
         return Weekday(rawValue: index - 1)
     }
+
+    /// The zero-based index of this weekday, starting from 0 for Sunday.
     var indexInGregorianCalendarSymbolsArray: Int {
         return rawValue
     }
+
+    /// Returns the weekday corresponding to the provided index, where 0 corresponds to Sunday and 6 to Saturday.
+    ///
+    /// - parameters:
+    ///   - index: An index no smaller than 0 and no greater than 6.
+    ///
+    /// - returns: The corresponding weekday.
     static func fromIndexInGregorianCalendarSymbolsArray(_ index: Int) -> Weekday? {
         return Weekday(rawValue: index)
     }
 }
 
+/// Represents the selected state of all weekdays.
 struct WeekdaySelection {
     private var selectionDict = [Weekday: Bool]()
 
+    /// Marks a weekday as selected.
+    ///
+    /// - parameters:
+    ///   - day: The weekday to select.
     mutating func select(_ day: Weekday) {
         selectionDict[day] = true
     }
 
+    /// Marks a weekday as not selected.
+    ///
+    /// - parameters:
+    ///   - day: The weekday to deselect.
     mutating func deselect(_ day: Weekday) {
         selectionDict[day] = false
     }
 
+    /// Checks whether the provided weekday is selected.
+    ///
+    /// - parameters:
+    ///   - day: The day whose selected status to check.
+    ///
+    /// - returns: True if day is selected, false otherwise.
     func isSelected(_ day: Weekday) -> Bool {
         if let selection = selectionDict[day] {
             return selection
@@ -62,10 +95,15 @@ struct WeekdaySelection {
         }
     }
 
+    /// The count of weekdays marked as selected.
     var countOfSelectedDays: Int {
         return selectionDict.filter { $0.1 }.count
     }
 
+    /// Initializes a new `WeekdaySelection` setting as selected any weekdays contained in the provided set.
+    ///
+    /// - parameters:
+    ///   - selectedDays: The days to initially mark as selected.
     init(selectedDays: Set<Weekday>) {
         for day in selectedDays {
             select(day)
@@ -93,19 +131,28 @@ extension WeekdaySelection: CustomDebugStringConvertible {
 }
 
 extension WeekdaySelection {
+    /// Each access returns a new selection that has all weekdays except for Saturday and Sunday initially marked as
+    /// selected.
     static var exceptWeekend: WeekdaySelection {
-        return WeekdaySelection(selectedDays: [.monday,
-                                               .tuesday, .wednesday, .thursday, .friday])
+        return WeekdaySelection(selectedDays: [.monday, .tuesday, .wednesday, .thursday, .friday])
     }
 
+    /// Each access returns a new selection that has all weekdays initially marked as selected.
     static var wholeWeek: WeekdaySelection {
         return WeekdaySelection(selectedDays: Set(Weekday.allCases))
     }
 
+    /// Each access returns a new selection that has all weekdays initially marked as not selected.
     static var empty: WeekdaySelection {
         return WeekdaySelection(selectedDays: [])
     }
 
+    /// Returns a new selection that has a single day initially marked as selected.
+    ///
+    /// - parameters:
+    ///   - day: The day to initially mark as selected in the new selection.
+    ///
+    /// - returns: A new selection with `day` already marked as selected.
     static func singleDay(_ day: Weekday) -> WeekdaySelection {
         return WeekdaySelection(selectedDays: [day])
     }
@@ -123,6 +170,7 @@ extension WeekdaySelection: Equatable {
 }
 
 extension WeekdaySelection: Comparable {
+    /// Selection A is considered smaller than B only if A has fewer days marked as selected then B has.
     static func < (lhs: WeekdaySelection, rhs: WeekdaySelection) -> Bool {
         return lhs.countOfSelectedDays < rhs.countOfSelectedDays
     }
@@ -130,39 +178,14 @@ extension WeekdaySelection: Comparable {
 }
 
 extension WeekdaySelection {
-    typealias IntegerRepresentationType = UInt8
-    var integerRepresentation: IntegerRepresentationType {
-        get {
-            var int = IntegerRepresentationType(0)
-            let orderedDays = Weekday.allCases
-            assert(orderedDays.count >= MemoryLayout<IntegerRepresentationType>.size)
-
-            for day in orderedDays {
-                if isSelected(day) {
-                    int = int | IntegerRepresentationType(1 << day.rawValue)
-                }
-            }
-            return int
-        }
-
-        set {
-            let orderedDays = Weekday.allCases
-            assert(orderedDays.count >= MemoryLayout<IntegerRepresentationType>.size)
-
-            for day in orderedDays {
-                if (newValue & IntegerRepresentationType(1 << day.rawValue)) != 0 {
-                    select(day)
-                }
-            }
-        }
-    }
-
-    init(integerRepresentation: IntegerRepresentationType) {
-        self.integerRepresentation = integerRepresentation
-    }
-}
-
-extension WeekdaySelection {
+    /// Determines whether this delection has marked as selected the weekday corresponding to the provided date,
+    /// interpreted using the provided calendar.
+    ///
+    /// - parameters:
+    ///   - date: The date to check.
+    ///   - calendar: The calendar to use to interpret `date` according to the calendar's timezone.
+    ///
+    /// - returns: True if this selection has marked as selected the corresponding weekday, false otherwise.
     func includesDay(in date: Date, accordingTo calendar: Calendar) -> Bool {
         let dateComponents = calendar.dateComponents([.weekday], from: date)
         guard let weekdayIndex = dateComponents.weekday,
@@ -174,6 +197,7 @@ extension WeekdaySelection {
 }
 
 extension WeekdaySelection {
+    /// Returns all the weekdays that this selection has marked as selected.
     var selectedWeekdays: [Weekday] {
         var retval = [Weekday]()
         for day in Weekday.allCases {

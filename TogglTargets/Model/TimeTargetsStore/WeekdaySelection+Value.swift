@@ -24,3 +24,36 @@ extension WeekdaySelection: Value {
         return Datatype(integerRepresentation)
     }
 }
+
+extension WeekdaySelection {
+    typealias IntegerRepresentationType = UInt8
+    var integerRepresentation: IntegerRepresentationType {
+        get {
+            var int = IntegerRepresentationType(0)
+            let orderedDays = Weekday.allCases
+            assert(orderedDays.count >= MemoryLayout<IntegerRepresentationType>.size)
+
+            for day in orderedDays {
+                if isSelected(day) {
+                    int = int | IntegerRepresentationType(1 << day.rawValue)
+                }
+            }
+            return int
+        }
+
+        set {
+            let orderedDays = Weekday.allCases
+            assert(orderedDays.count >= MemoryLayout<IntegerRepresentationType>.size)
+
+            for day in orderedDays {
+                if (newValue & IntegerRepresentationType(1 << day.rawValue)) != 0 {
+                    select(day)
+                }
+            }
+        }
+    }
+
+    init(integerRepresentation: IntegerRepresentationType) {
+        self.integerRepresentation = integerRepresentation
+    }
+}
