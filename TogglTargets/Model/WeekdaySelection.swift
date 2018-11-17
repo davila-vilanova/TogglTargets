@@ -9,7 +9,7 @@
 import Foundation
 
 /// Represents the days of the week.
-enum Weekday: Int {
+enum Weekday: Int, CaseIterable {
     case sunday = 0
     case monday
     case tuesday
@@ -17,32 +17,12 @@ enum Weekday: Int {
     case thursday
     case friday
     case saturday
-
-    static let allDays: Set<Weekday> = {
-        var days = Set<Weekday>()
-        var dayIndex = 0
-        while let day = Weekday(rawValue: dayIndex) {
-            days.insert(day)
-            dayIndex += 1
-        }
-        return days
-    }()
-
-    static let allDaysOrdered: [Weekday] = {
-        var days = [Weekday]()
-        var dayIndex = 0
-        while let day = Weekday(rawValue: dayIndex) {
-            days.append(day)
-            dayIndex += 1
-        }
-        return days
-    }()
 }
 
 extension Weekday {
     var previous: Weekday {
         switch self.rawValue {
-        case 0: return Weekday.allDaysOrdered.last!
+        case 0: return Weekday.allCases.last!
         default: return Weekday(rawValue: self.rawValue - 1)!
         }
     }
@@ -99,10 +79,10 @@ extension WeekdaySelection: CustomDebugStringConvertible {
         let count = countOfSelectedDays
         if count == 0 {
             desc += "no days selected"
-        } else if count == Weekday.allDays.count {
+        } else if count == Weekday.allCases.count {
             desc += "all days selected"
         } else {
-            for day in Weekday.allDaysOrdered {
+            for day in Weekday.allCases {
                 desc += isSelected(day) ? "O" : "X"
             }
         }
@@ -119,7 +99,7 @@ extension WeekdaySelection {
     }
 
     static var wholeWeek: WeekdaySelection {
-        return WeekdaySelection(selectedDays: Weekday.allDays)
+        return WeekdaySelection(selectedDays: Set(Weekday.allCases))
     }
 
     static var empty: WeekdaySelection {
@@ -133,7 +113,7 @@ extension WeekdaySelection {
 
 extension WeekdaySelection: Equatable {
     static func == (lhs: WeekdaySelection, rhs: WeekdaySelection) -> Bool {
-        for day in Weekday.allDays {
+        for day in Weekday.allCases {
             if lhs.isSelected(day) != rhs.isSelected(day) {
                 return false
             }
@@ -154,7 +134,7 @@ extension WeekdaySelection {
     var integerRepresentation: IntegerRepresentationType {
         get {
             var int = IntegerRepresentationType(0)
-            let orderedDays = Weekday.allDaysOrdered
+            let orderedDays = Weekday.allCases
             assert(orderedDays.count >= MemoryLayout<IntegerRepresentationType>.size)
 
             for day in orderedDays {
@@ -166,7 +146,7 @@ extension WeekdaySelection {
         }
 
         set {
-            let orderedDays = Weekday.allDaysOrdered
+            let orderedDays = Weekday.allCases
             assert(orderedDays.count >= MemoryLayout<IntegerRepresentationType>.size)
 
             for day in orderedDays {
@@ -196,7 +176,7 @@ extension WeekdaySelection {
 extension WeekdaySelection {
     var selectedWeekdays: [Weekday] {
         var retval = [Weekday]()
-        for day in Weekday.allDays {
+        for day in Weekday.allCases {
             if isSelected(day) {
                 retval.append(day)
             }

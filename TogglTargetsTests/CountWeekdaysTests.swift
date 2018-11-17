@@ -32,7 +32,7 @@ class CountWeekdaysTests: XCTestCase {
 
             calendar.timeZone = tz
 
-            for day in Weekday.allDaysOrdered {
+            for day in Weekday.allCases {
                 let count = calendar.countWeekdaysMatching(day, from: startComps, until: endComps)
                 let expected = expectedCount[day]!
                 XCTAssertEqual(
@@ -69,7 +69,7 @@ class CountWeekdaysTests: XCTestCase {
 
             calendar.timeZone = tz
 
-            for day in Weekday.allDaysOrdered {
+            for day in Weekday.allCases {
                 let count = calendar.countWeekdaysMatching(day, from: startComps, until: endComps)
                 let expected = expectedCount[day]!
                 XCTAssertEqual(count, expected,

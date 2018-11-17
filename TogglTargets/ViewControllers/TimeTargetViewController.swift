@@ -55,7 +55,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
             let displayDaySymbols = calendar.veryShortStandaloneWeekdaySymbols
             let toolTipDaySymbols = calendar.standaloneWeekdaySymbols
             let dayCount = displayDaySymbols.count
-            assert(dayCount == Weekday.allDays.count)
+            assert(dayCount == Weekday.allCases.count)
             control.segmentCount = dayCount
 
             for dayIndex in 0..<dayCount {
@@ -93,7 +93,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
 
         activeWeekdaysControl.reactive
             .makeBindingTarget(on: UIScheduler()) { $0.setSelected($1.0, forSegment: $1.1) }
-            <~ Property(value: Weekday.allDaysOrdered).producer
+            <~ Property(value: Weekday.allCases).producer
                 .sample(on: nonNilTimeTarget.map { _ in () })
                 .map(SignalProducer<Weekday, NoError>.init)
                 .flatten(.latest)
@@ -138,7 +138,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
                 }
                 var newSelection = WeekdaySelection.empty
 
-                for day in Weekday.allDaysOrdered {
+                for day in Weekday.allCases {
                     if control.isSelected(forSegment: day.indexInGregorianCalendarSymbolsArray) {
                         newSelection.select(day)
                     }

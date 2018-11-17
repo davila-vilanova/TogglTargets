@@ -127,7 +127,7 @@ class FindClosestMatchingWeekdayTests: XCTestCase {
 
     private func forEachWeekdayAndTimezone(_ closure: (Weekday, Calendar) -> Void ) {
         forEachTimezone { calendar in
-            for weekday in Weekday.allDays {
+            for weekday in Weekday.allCases {
                 closure(weekday, calendar)
             }
         }
