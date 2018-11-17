@@ -12,8 +12,23 @@ import Result
 
 /// Represents a data type that can store itself in the user defaults.
 protocol StorableInUserDefaults {
+
+    /// Initializes a new instance with a reference to the user defaults from which to retrieve its initial value.
+    ///
+    /// - parameters:
+    ///   - userDefaults: The `UserDefaults` from which this instance will try to retrieve its initial value.
     init?(userDefaults: UserDefaults)
+
+    /// Writes this instance's current value to the user defaults.
+    ///
+    /// - parameters:
+    ///   - userDefaults: The user defaults to which to write this instance's current value.
     func write(to userDefaults: UserDefaults)
+
+    /// Deletes from the user defaults the value associated with instances of this class.
+    ///
+    /// - parameters:
+    ///   - userDefaults: The user defaults from which to delete the value value.
     static func delete(from userDefaults: UserDefaults)
 }
 

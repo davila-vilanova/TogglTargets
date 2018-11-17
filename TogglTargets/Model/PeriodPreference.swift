@@ -47,10 +47,23 @@ extension PeriodPreference {
 }
 
 extension PeriodPreference: StorableInUserDefaults {
+
+    /// The key strings user to store `PeriodPreference` values in the user defaults.
     private enum UserDefaultsKey: String {
         case typeMonthly = "MonthlyPeriodPreference"
         case typeWeekly = "WeeklyPeriodPreference"
         case startWeekday = "StartWeekDay"
+    }
+
+    init?(userDefaults: UserDefaults) {
+        if userDefaults.bool(forKey: UserDefaultsKey.typeMonthly.rawValue) {
+            self = .monthly
+        } else if userDefaults.bool(forKey: UserDefaultsKey.typeWeekly.rawValue),
+            let startDay = Weekday(rawValue: userDefaults.integer(forKey: UserDefaultsKey.startWeekday.rawValue)) {
+            self = .weekly(startDay: startDay)
+        } else {
+            return nil
+        }
     }
 
     func write(to defaults: UserDefaults) {
@@ -63,17 +76,6 @@ extension PeriodPreference: StorableInUserDefaults {
             defaults.set(true, forKey: UserDefaultsKey.typeWeekly.rawValue)
             defaults.removeObject(forKey: UserDefaultsKey.typeMonthly.rawValue)
             defaults.set(startDay.rawValue, forKey: UserDefaultsKey.startWeekday.rawValue)
-        }
-    }
-
-    init?(userDefaults: UserDefaults) {
-        if userDefaults.bool(forKey: UserDefaultsKey.typeMonthly.rawValue) {
-            self = .monthly
-        } else if userDefaults.bool(forKey: UserDefaultsKey.typeWeekly.rawValue),
-            let startDay = Weekday(rawValue: userDefaults.integer(forKey: UserDefaultsKey.startWeekday.rawValue)) {
-            self = .weekly(startDay: startDay)
-        } else {
-            return nil
         }
     }
 
