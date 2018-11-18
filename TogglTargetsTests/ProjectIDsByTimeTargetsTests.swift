@@ -141,10 +141,11 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
             return
         }
 
-        let timeTargetUpdate = TimeTargetUpdate.forTimeTargetChange(involving: newTimeTarget,
-                                                                    for: projectId,
-                                                                    within: indexedTimeTargets,
-                                                                    affecting: idsByTimeTargets)
+        let timeTargetUpdate = ProjectIDsByTimeTargets.SingleTimeTargetUpdate
+            .forTimeTargetChange(involving: newTimeTarget,
+                                 for: projectId,
+                                 within: indexedTimeTargets,
+                                 affecting: idsByTimeTargets)
         guard let update = timeTargetUpdate else {
             XCTFail("`projectId` is not included in `idsByTimeTargets`")
             return
@@ -181,10 +182,11 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
             return
         }
 
-        let timeTargetUpdate = TimeTargetUpdate.forTimeTargetChange(involving: newTimeTarget,
-                                                                    for: projectId,
-                                                                    within: indexedTimeTargets,
-                                                                    affecting: idsByTimeTargets)
+        let timeTargetUpdate = ProjectIDsByTimeTargets.SingleTimeTargetUpdate
+            .forTimeTargetChange(involving: newTimeTarget,
+                                 for: projectId,
+                                 within: indexedTimeTargets,
+                                 affecting: idsByTimeTargets)
         guard let update = timeTargetUpdate else {
             XCTFail("`projectId` is not included in `idsByTimeTargets`")
             return
@@ -224,10 +226,11 @@ class ProjectIDsByTimeTargetsUpdateTests: XCTestCase {
             return
         }
 
-        let timeTargetUpdate = TimeTargetUpdate.forTimeTargetChange(involving: newTimeTarget,
-                                                                    for: projectId,
-                                                                    within: indexedTimeTargets,
-                                                                    affecting: idsByTimeTargets)
+        let timeTargetUpdate = ProjectIDsByTimeTargets.SingleTimeTargetUpdate
+            .forTimeTargetChange(involving: newTimeTarget,
+                                 for: projectId,
+                                 within: indexedTimeTargets,
+                                 affecting: idsByTimeTargets)
 
         guard let update = timeTargetUpdate else {
             XCTFail("`projectId` is not included in `idsByTimeTargets`")

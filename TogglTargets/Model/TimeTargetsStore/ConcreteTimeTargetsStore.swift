@@ -65,7 +65,7 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
     /// Used to connect the output of the current `SingleTimeTargetUpdateComputer`
     /// to `projectIDsByTimeTargetsProducer`.
     private let projectIDsByTimeTargetsLastSingleUpdate =
-        MutableProperty<TimeTargetUpdate?>(nil)
+        MutableProperty<ProjectIDsByTimeTargets.SingleTimeTargetUpdate?>(nil)
 
     /// Producer of `ProjectIDsByTimeTargets.Update` values that when started emits a
     // `full(ProjectIDsByTimeTargets)` value which can be followed by by full or
@@ -158,7 +158,7 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
 
 // MARK: -
 
-/// 
+/// Generates updates 
 private class SingleTimeTargetUpdateComputer {
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
@@ -167,7 +167,7 @@ private class SingleTimeTargetUpdateComputer {
          initialStateProjectIDsByTimeTargets: ProjectIDsByTimeTargets,
          inputWriteTimeTarget: SignalProducer<TimeTarget, NoError>,
          inputDeleteTimeTarget: SignalProducer<ProjectID, NoError>,
-         outputProjectIDsByTimeTargetsUpdate: BindingTarget<TimeTargetUpdate>) {
+         outputProjectIDsByTimeTargetsUpdate: BindingTarget<ProjectIDsByTimeTargets.SingleTimeTargetUpdate>) {
 
         indexedTimeTargets = initialStateIndexedTimeTargets
         projectIDsByTimeTargets = initialStateProjectIDsByTimeTargets
@@ -195,7 +195,7 @@ private class SingleTimeTargetUpdateComputer {
 
     private func computeAndUpdate(timeTarget: TimeTarget?, projectID: ProjectID) {
         // Compute update
-        guard let update = TimeTargetUpdate
+        guard let update = ProjectIDsByTimeTargets.SingleTimeTargetUpdate
             .forTimeTargetChange(involving: timeTarget,
                                  for: projectID,
                                  within: indexedTimeTargets,
@@ -216,5 +216,5 @@ private class SingleTimeTargetUpdateComputer {
     // MARK: - Output
 
     private let projectIDsByTimeTargetsUpdatePipe =
-        Signal<TimeTargetUpdate, NoError>.pipe()
+        Signal<ProjectIDsByTimeTargets.SingleTimeTargetUpdate, NoError>.pipe()
 }
