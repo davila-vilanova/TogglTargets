@@ -10,9 +10,17 @@ import Foundation
 
 typealias HoursTargetType = Int
 
+/// Represents the amount of time that a user wishes to have worked in a given project at the end of a time period
+/// together with related data such as the days of the week in which the user intends to work in the project.
 struct TimeTarget {
+
+    /// The ID of the project associated with this target.
     let projectId: Int64
+
+    /// The amount of hours which this target represents.
     var hoursTarget: HoursTargetType
+
+    /// The days of the week in which the user intends to work in the project associated with this target.
     var workWeekdays: WeekdaySelection
 
     init(for projectId: Int64, hoursTarget: HoursTargetType, workWeekdays: WeekdaySelection) {
@@ -31,16 +39,25 @@ extension TimeTarget: Equatable {
 }
 
 extension TimeTarget: Comparable {
+    /// A target A is smaller than target B only if A represents a smaller number of hours than B.
     static func < (lhs: TimeTarget, rhs: TimeTarget) -> Bool {
         return lhs.hoursTarget < rhs.hoursTarget
     }
 }
 
 extension TimeTarget {
+    /// Each invocation returns an empty target: zero hours, no workdays selected, zeroed project ID.
     static var empty: TimeTarget {
         return TimeTarget(for: 0, hoursTarget: 0, workWeekdays: WeekdaySelection.empty)
     }
 
+    /// Creates a target with default values for the provided project ID.
+    ///
+    /// - parameters:
+    ///   - projectId: The ID of the project associated with this target.
+    ///
+    /// - returns: A newly created target for the provided project ID with default work time target and default
+    ///            weekdays selected.
     static func createDefault(for projectId: ProjectID) -> TimeTarget {
         return TimeTarget(for: projectId, hoursTarget: 10, workWeekdays: WeekdaySelection.exceptWeekend)
     }

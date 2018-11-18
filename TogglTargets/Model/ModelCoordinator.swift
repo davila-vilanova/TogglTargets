@@ -89,8 +89,7 @@ internal class ModelCoordinator: NSObject {
     /// The value of the last retrieved running entry. Periodically updated.
     var runningEntry: Property<RunningEntry?> { return togglDataRetriever.runningEntry }
 
-    /// Apply this action to attempt a refresh and update of the currently
-    /// running entry.
+    /// Apply this action to attempt a refresh and update of the currently running entry.
     var updateRunningEntry: RefreshAction { return togglDataRetriever.updateRunningEntry }
 
     /// Used to schedule the next automatic refresh of the currently running entry.
@@ -102,9 +101,8 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Time targets
 
-    /// Function which takes a project ID as input and returns a producer that
-    /// emits values over time corresponding to the time target associated with that
-    /// project ID.
+    /// Function which takes a project ID as input and returns a producer that emits values over time corresponding to
+    /// the time target associated with that project ID.
     ///
     /// - note: `nil` timeTarget values represent a target that does not exist yet or
     ///         that has been deleted.
@@ -132,15 +130,14 @@ internal class ModelCoordinator: NSObject {
     /// Initializes a new instance with the provided dependencies.
     ///
     /// - parameters:
-    ///   - togglDataRetriever: The `TogglAPIDataRetriever` used to access data
-    ///     from the Toggl API.
+    ///   - togglDataRetriever: The `TogglAPIDataRetriever` used to access data from the Toggl API.
     ///   - timeTargetsStore: The store for the user's time targets.
-    ///   - currentDateGenerator: The current date generator used to access and
-    ///     trigger updates to the current date.
+    ///   - currentDateGenerator: The current date generator used to access and trigger updates to the current date.
     ///   - calendar: A producer of the current calendar and any updates to it. The latest received calendar will be
     ///                used to perform computations that require a `Calendar` instance.
-    ///   - reportPeriodsProducer: The `ReportPeriodsProducer` used to determine
-    ///     the dates to scope the requests for reports.
+    ///   - reportPeriodsProducer: The `ReportPeriodsProducer` used to determine the dates to scope the requests for
+    ///                            reports.
+    ///
     internal init(togglDataRetriever: TogglAPIDataRetriever,
                   timeTargetsStore: ProjectIDsProducingTimeTargetsStore,
                   currentDateGenerator: CurrentDateGeneratorProtocol,
@@ -184,13 +181,13 @@ internal class ModelCoordinator: NSObject {
 private let oneMinute = TimeInterval.from(minutes: 1)
 private let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
 
-/// Emits empty values that act as triggers to update the currently running entry
-/// based on whether a running entry is currently running and its start date.
+/// Emits empty values as triggers to update the currently running entry based on whether a running entry is currently
+/// running, its start date and the current date.
 private class RunningEntryUpdateTimer {
-    /// Emits empty values that act as triggers to update the currently running entry
+    /// Emits trigger values to update the currently running entry.
     var trigger: Signal<(), NoError> { return triggerPipe.output }
 
-    /// The pipe used to convey values to `trigger`
+    /// The pipe used to convey values to `trigger`.
     private let triggerPipe = Signal<(), NoError>.pipe()
 
     /// The `QueueScheduler` used to schedule actions in the future.
@@ -202,6 +199,13 @@ private class RunningEntryUpdateTimer {
     /// The associated lifetime and its token.
     private let (lifetime, token) = Lifetime.make()
 
+    /// Initializes a new instance.
+    ///
+    /// - parameters:
+    ///   - now: A producer of periodically updated current date values.
+    ///   - lastEntryStart: A producer of start dates for the current time entry or `nil` values for no current entry.
+    ///   - calendar: A producer of typically one, but updates accepted, calendars to perform the calendrical
+    ///     computations on which this update timer relies.
     init(now: SignalProducer<Date, NoError>,
          lastEntryStart: SignalProducer<Date?, NoError>,
          calendar: SignalProducer<Calendar, NoError>) {
@@ -228,21 +232,31 @@ private class RunningEntryUpdateTimer {
     }
 }
 
+/// Emits empty values as triggers to update the current time signal each time the minutes turn on the clock and
+/// whenever the currently running time entry changes.
 private class CurrentDateUpdateTimer {
-    /// Emits empty values that act as triggers to update the current date
+    /// Emits empty values that act as triggers to update the current date.
     var trigger: Signal<(), NoError> { return triggerPipe.output }
 
-    /// The pipe used to convey values to `trigger`
+    /// The pipe used to convey values to `trigger`.
     private let triggerPipe = Signal<(), NoError>.pipe()
 
     /// The `QueueScheduler` used to schedule actions in the future.
     private let scheduler = QueueScheduler(name: "CurrentDateUpdateTimer-scheduler")
 
+    /// Keeps the `Disposable` associated to latest scheduled timer.
     private var scheduledMinuteOnTheClockTickDisposable: Disposable?
 
     /// The associated lifetime and its token.
     private let (lifetime, token) = Lifetime.make()
 
+    /// Initializes a new instance.
+    ///
+    /// - parameters:
+    ///   - now: A producer of periodically updated current date values.
+    ///   - runningEntry: A producer of running entry values or `nil` values for no current entry.
+    ///   - calendar: A producer of typically one, but updates accepted, calendars to perform the calendrical
+    ///     computations on which this update timer relies.
     init(now: SignalProducer<Date, NoError>,
          runningEntry: SignalProducer<RunningEntry?, NoError>,
          calendar: SignalProducer<Calendar, NoError>) {
@@ -262,6 +276,14 @@ private class CurrentDateUpdateTimer {
     }
 }
 
+/// Finds the closest date after a given date that matches the specified second components.
+///
+/// - parameters:
+///   - date: The date used as reference.
+///   - secondsComponent: The value that the second components extracted from the found date will have to match.
+///   - calendar: A calendar instance that will be used to perform this computation.
+///
+/// - returns: The closest date after the provided one that matches the specified second components.
 private func findClosestDate(after date: Date, matching secondsComponent: Int, using calendar: Calendar) -> Date {
     let seconds = calendar.component(.second, from: date)
     let offset = (seconds < secondsComponent ? 0 : 60) + secondsComponent - seconds

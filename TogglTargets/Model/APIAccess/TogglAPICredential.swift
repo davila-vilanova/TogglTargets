@@ -8,24 +8,32 @@
 
 import Foundation
 
+/// The fixed password to use to authenticate against the Toggl API when using the API access token as the user name.
 private let APITokenPassword = "api_token"
+
+/// The key of the HTTP authorization header.
 private let authorizationHeaderKey = "Authorization"
-private let basicAuthHeaderPrefix = "Basic " // <-- end space built into the prefix
+
+/// The beginning of the value of the HTTP authorization header, including a space at the end.
+private let basicAuthHeaderPrefix = "Basic "
+
+/// The token used as separator between the key and the value of the HTTP authorization key.
 private let usernamePasswordSeparator: Character = ":"
 
-/// Represents the kinds of authentication credential that the Toggl API accepts
+/// Represents the kinds of authentication credential that the Toggl API accepts.
 enum CredentialType: String {
-    /// An authentication credential composed of email and password
+    /// An authentication credential composed of email and password.
     case email
-    /// An authentication credential formed by the account's API token
+
+    /// An authentication credential formed by the account's API token.
     case apiToken
 }
 
 /// Generates the value for the HTTP authorization header.
 ///
 /// - parameters:
-///   - username: The token to use as user name
-///   - password: The token to use as password
+///   - username: The token to use as user name.
+///   - password: The token to use as password.
 ///
 /// - returns: The string to use as the value of the HTTP `Authorization` header.
 private func computeAuthHeaderValue(username: String, password: String) -> String {
@@ -35,7 +43,7 @@ private func computeAuthHeaderValue(username: String, password: String) -> Strin
 }
 
 /// Extracts the user name and password from which an HTTP authorization header has been generated.
-/// It is effectively the reverse of `computeAuthHeaderValue(username: password:)`
+/// It is the reverse of `computeAuthHeaderValue(username: password:)`.
 ///
 /// - parameters:
 ///   - authHeaderValue: the value of the HTTP `Authorization`.
