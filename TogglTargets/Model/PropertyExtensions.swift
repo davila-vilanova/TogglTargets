@@ -11,7 +11,8 @@ import Result
 import ReactiveSwift
 
 extension MutablePropertyProtocol where Value: OptionalProtocol {
-    /// Returns a binding target that accepts only non optional values.
+
+    /// Returns a binding target that only accepts non optional values.
     public var deoptionalizedBindingTarget: BindingTarget<Value.Wrapped> {
         return BindingTarget(lifetime: lifetime) { [unowned self] (neverNil: Value.Wrapped) in
             self.value = Value(reconstructing: neverNil)

@@ -10,12 +10,25 @@ import Foundation
 
 /// Represents the user's profile as retrieved from the Toggl API.
 struct Profile: Decodable {
+    /// The ID of the user in the Toggl platform.
     let id: Int64 // swiftlint:disable:this identifier_name
+
+    /// The user's full name.
     let name: String?
+
+    /// The user's email address.
     let email: String
+
+    /// URL of an image associated with the user's profile.
     let imageUrl: URL?
+
+    /// The timezone for this user as set in the Toggl platform.
     let timezone: String?
+
+    /// The workspaces associated with the user account. Hopefully one or more.
     let workspaces: [Workspace]
+
+    /// The API access token associated with the user account.
     let apiToken: String?
     // TODO: some properties don't need to be optional
 
@@ -46,7 +59,10 @@ typealias WorkspaceID = Int64
 
 /// Represents a workspace in the Toggl API.
 struct Workspace: Decodable {
+    /// The ID of the workspace in the Toggl platform.
     let id: WorkspaceID // swiftlint:disable:this identifier_name
+
+    /// The name of the workspace in the Toggl platform.
     let name: String?
 }
 

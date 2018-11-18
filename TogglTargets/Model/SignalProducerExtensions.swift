@@ -13,6 +13,7 @@ import Result
 private let defaultPlaceholderForNil = "--"
 
 extension SignalProducer where Value == TimeInterval? {
+
     /// Transforms a producer of optional `TimeInterval` values into a producer of string values using the provided
     /// `DateComponentsFormatter`.
     ///
@@ -35,6 +36,7 @@ extension SignalProducer where Value == TimeInterval? {
 }
 
 extension SignalProducer where Value == TimeInterval {
+
     /// Transforms a producer of `TimeInterval` values into a producer of string values using the provided
     /// `DateComponentsFormatter`.
     ///
@@ -53,6 +55,7 @@ extension SignalProducer where Value == TimeInterval {
 }
 
 extension SignalProducer where Value == NSNumber? {
+
     /// Transforms a producer of optional `NSNumber` values into a producer of string values using the provided
     /// `NumberFormatter`.
     ///
