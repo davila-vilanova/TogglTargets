@@ -71,7 +71,8 @@ class ProjectsCollectionView: NSCollectionView {
             newSelectionOrNil = IndexPath(item: currentSelection.item - 1, section: currentSelection.section)
         } else if currentSelection.section > 0 {
             let newSection = currentSelection.section - 1
-            newSelectionOrNil = IndexPath(item: numberOfItems(inSection: newSection) - 1, section: newSection)
+            newSelectionOrNil = numberOfItems(inSection: newSection) > 0 ?
+                IndexPath(item: numberOfItems(inSection: newSection) - 1, section: newSection) : nil
         } else {
             newSelectionOrNil = nil
         }
