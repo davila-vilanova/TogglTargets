@@ -298,7 +298,7 @@
 		639E94A71F812223009B27CB /* TimeIntervalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeIntervalExtensions.swift; sourceTree = "<group>"; };
 		639F38F1208FA4D500AE96CF /* InterfaceBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterfaceBinding.swift; sourceTree = "<group>"; };
 		639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocalizedErrors.swift; path = ViewControllers/LocalizedErrors.swift; sourceTree = "<group>"; };
-		639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TargetFeasibility.swift; path = Model/TargetFeasibility.swift; sourceTree = "<group>"; };
+		639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetFeasibility.swift; sourceTree = "<group>"; };
 		639F8B6920E55DE600FDC8C1 /* TogglAPIDataPersistenceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TogglAPIDataPersistenceProvider.swift; sourceTree = "<group>"; };
 		639F8B6E20E6343000FDC8C1 /* SQLiteTogglAPIDataPersistenceProviderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteTogglAPIDataPersistenceProviderTest.swift; sourceTree = "<group>"; };
 		639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportDirectoryProvider.swift; sourceTree = "<group>"; };
@@ -515,7 +515,6 @@
 				63FF9EEA208FA3BC0087DD1C /* Preferences */,
 				639F38EF208FA4D500AE96CF /* Util */,
 				639F8B5F20DE660F00FDC8C1 /* LocalizedErrors.swift */,
-				639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */,
 				6344EF7A213DA1C900D0B00D /* TimeTargetCreatingDeleting.swift */,
 				639D5076216B897900B1DEA2 /* NSViewControllerExtensions.swift */,
 			);
@@ -580,6 +579,7 @@
 				63D91E6C2195EBF900D7FCF7 /* TimeTargetsStore */,
 				635DCE191FD68F7D006FED93 /* ProjectIDsByTimeTargets.swift */,
 				63D4BB9C1F7D80FC00B87298 /* ProgressToTimeTarget.swift */,
+				639F8B6420DE7CE800FDC8C1 /* TargetFeasibility.swift */,
 				63D4BB9B1F7D80FC00B87298 /* DateTimeExtensions.swift */,
 				63D4BBA21F7D80FC00B87298 /* PropertyExtensions.swift */,
 				63D4BBA31F7D80FC00B87298 /* SignalProducerExtensions.swift */,
