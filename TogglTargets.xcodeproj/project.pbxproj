@@ -478,8 +478,8 @@
 			isa = PBXGroup;
 			children = (
 				635A25822052917A00EFCE90 /* ProjectsListViewController.swift */,
-				635A257C2052917A00EFCE90 /* VerticalListLayout.swift */,
 				6360175B2154E15A003B56F7 /* ProjectsCollectionView.swift */,
+				635A257C2052917A00EFCE90 /* VerticalListLayout.swift */,
 				635A257D2052917A00EFCE90 /* ProjectCollectionViewItems */,
 			);
 			name = ProjectsViewController;
