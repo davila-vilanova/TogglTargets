@@ -8,6 +8,9 @@
 
 import Cocoa
 
+/// An NSCollectionView that is modified to, when using a vertically scrolling flow layout:
+/// * Not obscure items under its pinned headers when scrollToItems(at indexPaths: scrollPosition:) is invoked
+/// * Select the correct items when moving up and down using keyboard navigation.
 class ProjectsCollectionView: NSCollectionView {
 
     /// Modified to use a corrected scroll position if a header will be obscuring the item we are scrolling to
@@ -56,7 +59,9 @@ class ProjectsCollectionView: NSCollectionView {
     /// Modified to select the last item of the previous section
     /// when the selection before pressing the up arrow key is the first item of a section
     override func moveUp(_ sender: Any?) {
-        guard selectionIndexPaths.count == 1,
+        guard let flowLayout = collectionViewLayout as? NSCollectionViewFlowLayout,
+            flowLayout.scrollDirection == .vertical,
+            selectionIndexPaths.count == 1,
             let currentSelection = selectionIndexPaths.first else {
                 super.moveUp(sender)
                 return
@@ -82,7 +87,9 @@ class ProjectsCollectionView: NSCollectionView {
 
     /// Modified to select the first item when no item is selected previous to pressing the down arrow key
     override func moveDown(_ sender: Any?) {
-        guard selectionIndexPaths.isEmpty,
+        guard let flowLayout = collectionViewLayout as? NSCollectionViewFlowLayout,
+            flowLayout.scrollDirection == .vertical,
+            selectionIndexPaths.isEmpty,
             numberOfItems(inSection: 0) > 0 else {
                 super.moveDown(sender)
                 return
