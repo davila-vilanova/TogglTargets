@@ -8,6 +8,7 @@
 
 import Cocoa
 
+/// The identifiers for each of the defined onboarding steps.
 enum OnboardingStepIdentifier: String {
     case login
     case closeLogin
@@ -21,8 +22,10 @@ enum OnboardingStepIdentifier: String {
     case seeDayProgress
 }
 
+/// Name of the strings table in which the localized step descriptions are defined.
 private let stringsTableName = "OnboardingSteps"
 
+/// All the onboarding steps defined in order.
 private let onboardingSteps: [OnboardingStep] = [
     OnboardingStep(identifier: .login,
                    text: NSLocalizedString("onboarding.step.login",
@@ -72,6 +75,14 @@ private let onboardingSteps: [OnboardingStep] = [
                    allowContinue: true)
 ]
 
+/// Returns the onboarding steps in order, starting from the beginning or from the step whose identifier is provided.
+///
+/// - parameters:
+///   - initialStepIdentifier: The identifier corresponding to the step from which to start the onboarding, or `nil` to
+///                            start from the first defined step. The default value is `nil`.
+///
+/// - returns: An array of steps in the defined order, starting from the first step or from the step whose identifier
+///            was provided as `initialStepIdentifier`.
 func onboardingSteps(startingFrom initialStepIdentifier: OnboardingStepIdentifier? = nil) -> [OnboardingStep] {
     guard let initialStepIdentifier = initialStepIdentifier else {
         return onboardingSteps

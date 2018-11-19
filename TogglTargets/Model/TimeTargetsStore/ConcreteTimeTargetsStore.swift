@@ -158,11 +158,26 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
 
 // MARK: -
 
-/// Generates updates 
+/// Generates single time target updates to a `ProjectIDsByTimeTargets` collection based on the received write and
+/// delete time target operations.
+/// This can process and keep track of single updates only. Whenever a full update is received the current instance
+/// of `SingleTimeTargetUpdateComputer` should be discarded and a new one initialized.
 private class SingleTimeTargetUpdateComputer {
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
 
+    /// Initializes a new instance with the state of an indexed collection of time targets and of a
+    /// `ProjectIDsByTimeTargets` collection.
+    ///
+    /// - parameters:
+    ///   - initialStateIndexedTimeTargets: The initial state of the tracked time targets.
+    ///   - initialStateProjectIDsByTimeTargets: The initial state of the tracked project IDs by time targets.
+    ///   - inputWriteTimeTarget: A producer of `write time target` events whose value is the modified or created time
+    ///     target.
+    ///   - inputDeleteTimeTarget: A producer of `delete time target` events whose value is the project ID to which the
+    ///     deleted time target was associaed.
+    ///   - outputProjectIDsByTimeTargetsUpdate: A binding target that will receive the single time target updates that
+    ///     this instance will generate to the initial state of the project IDs by time targets.
     init(initialStateIndexedTimeTargets: ProjectIdIndexedTimeTargets,
          initialStateProjectIDsByTimeTargets: ProjectIDsByTimeTargets,
          inputWriteTimeTarget: SignalProducer<TimeTarget, NoError>,
@@ -185,12 +200,12 @@ private class SingleTimeTargetUpdateComputer {
 
     // MARK: - Input
 
-    private lazy var writeTimeTarget = BindingTarget<TimeTarget>(on: scheduler, lifetime: lifetime) { [weak self] in
-        self?.computeAndUpdate(timeTarget: $0, projectID: $0.projectId)
+    private lazy var writeTimeTarget = BindingTarget<TimeTarget>(on: scheduler, lifetime: lifetime) { [unowned self] in
+        self.computeAndUpdate(timeTarget: $0, projectID: $0.projectId)
     }
 
-    private lazy var deleteTimeTarget = BindingTarget<ProjectID>(on: scheduler, lifetime: lifetime) { [weak self] in
-        self?.computeAndUpdate(timeTarget: nil, projectID: $0)
+    private lazy var deleteTimeTarget = BindingTarget<ProjectID>(on: scheduler, lifetime: lifetime) { [unowned self] in
+        self.computeAndUpdate(timeTarget: nil, projectID: $0)
     }
 
     private func computeAndUpdate(timeTarget: TimeTarget?, projectID: ProjectID) {
