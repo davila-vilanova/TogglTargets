@@ -106,12 +106,28 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
     }
 }
 
+/// The state displayed by the condensed activity view, summarizing the underlying states that compose it.
 private enum State {
+    /// Some of the underlying states are syncing states.
+    /// - count: The amount of syncing states.
     case syncing(count: Int)
+
+    /// Some of the underlying states are errror states.
+    /// - count: The amount of states with errors.
+    /// - first: The error triggering the first of the error states.
     case errors(count: Int, first: APIAccessError)
+
+    /// All the underlying states finished successfully.
+    /// - count: The number of underlying states.
     case success(count: Int)
+
+    /// There are no underlying states.
     case idle
 
+    /// The count of states underlying the current state.
+    /// The total number of underlying states might not match the returned count. For instance, if the state is .errors,
+    /// only the underlying states with errors will be returned. Conversely the .success state implies that all
+    /// underlying states are successful so the count will match the total amount of them.
     var count: Int {
         return State.getCount(from: self)
     }
@@ -169,6 +185,13 @@ private enum State {
     }
 }
 
+/// Generates condensed states corresponding to the values received from a producer of collections of discrete states.
+///
+/// - parameters:
+///   - statusesProducer: A producer of collections of individual states that will underlie the produced condensed
+///                       states.
+///
+/// - returns: A prodeucer of condensed states.
 private func makeStateProducer(from statusesProducer: SignalProducer<[ActivityStatus], NoError>)
     -> SignalProducer<State, NoError> {
         let countsProducer = statusesProducer.map { statuses -> (Int, Int, Int, APIAccessError?) in
@@ -194,7 +217,7 @@ private func makeStateProducer(from statusesProducer: SignalProducer<[ActivitySt
 }
 
 fileprivate extension APIAccessError {
-    var localizeDescription: String {
+    var localizedDescription: String {
         return APIAccessError.localizedDescription(from: self)
     }
 

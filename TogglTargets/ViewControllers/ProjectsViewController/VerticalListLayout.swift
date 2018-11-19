@@ -8,16 +8,19 @@
 
 import Cocoa
 
+/// A vertically scrolling flow layout with a single column
 class VerticalListLayout: NSCollectionViewFlowLayout {
-    static let safeMinimumInteritemSpacing = CGFloat(1000) // big
+    // Large iteritem spacing to prevent laying out more than one item on the same row.
+    static let safeMinimumInteritemSpacing = CGFloat(1000)
 
+    /// Sets the height for all items.
     var itemHeight: CGFloat {
         get {
             return itemSize.height
         }
         set {
-            itemSize = NSSize(width: 50, // this value is ultimately ignored, item width will match the available width
-                              height: newValue)
+            // Only the height matters, width is ignored as the item width will match the available width.
+            itemSize = NSSize(width: 50, height: newValue)
         }
     }
 
@@ -53,8 +56,7 @@ class VerticalListLayout: NSCollectionViewFlowLayout {
 
     override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath)
         -> NSCollectionViewLayoutAttributes? {
-            return tweak(
-                super.finalLayoutAttributesForDisappearingItem(at: itemIndexPath))
+            return tweak(super.finalLayoutAttributesForDisappearingItem(at: itemIndexPath))
     }
 
     override func finalLayoutAttributesForDisappearingSupplementaryElement(

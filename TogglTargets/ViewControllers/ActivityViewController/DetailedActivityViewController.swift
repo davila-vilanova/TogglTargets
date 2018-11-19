@@ -17,10 +17,10 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
 
-    private weak var profileContainer: NSView!
-    private weak var projectsContainer: NSView!
-    private weak var reportsContainer: NSView!
-    private weak var runningEntryContainer: NSView!
+    private weak var profileActivityContainer: NSView!
+    private weak var projectsActivityContainer: NSView!
+    private weak var reportsActivityContainer: NSView!
+    private weak var runningEntryActivityContainer: NSView!
 
     private var profileActivityController: NSViewController?
     private var projectsActivityController: NSViewController?
@@ -29,10 +29,10 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
 
     private func activityViewContainer(for activity: ActivityStatus.Activity) -> NSView {
         switch activity {
-        case .syncProfile: return profileContainer
-        case .syncProjects: return projectsContainer
-        case .syncReports: return reportsContainer
-        case .syncRunningEntry: return runningEntryContainer
+        case .syncProfile: return profileActivityContainer
+        case .syncProjects: return projectsActivityContainer
+        case .syncReports: return reportsActivityContainer
+        case .syncRunningEntry: return runningEntryActivityContainer
         }
     }
 
@@ -73,10 +73,10 @@ class DetailedActivityViewController: NSViewController, BindingTargetProvider {
         let reportsContainer = makeContainerView(identifier: "ReportsContainerView")
         let runningEntryContainer = makeContainerView(identifier: "RunningEntryContainer")
 
-        self.profileContainer = profileContainer
-        self.projectsContainer = projectsContainer
-        self.reportsContainer = reportsContainer
-        self.runningEntryContainer = runningEntryContainer
+        self.profileActivityContainer = profileContainer
+        self.projectsActivityContainer = projectsContainer
+        self.reportsActivityContainer = reportsContainer
+        self.runningEntryActivityContainer = runningEntryContainer
 
         rootStackView.addArrangedSubview(profileContainer)
         rootStackView.addArrangedSubview(projectsContainer)
