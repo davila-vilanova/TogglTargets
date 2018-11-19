@@ -26,24 +26,6 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Interface
 
-    ///   - projectIDsByTimeTargets: a producer of `ProjectIDsByTimeTargets.Update` values
-    ///     that when started emits a `full(ProjectIDsByTimeTargets)` value which can
-    ///     be followed by full or incremental updates.
-    ///     Full values cause a full refresh. Incremental updates cause a reorder of projects in the
-    ///     displayed collection.
-    ///   - selectedProjectId:  Emits `Project` values whenever a project is selected
-    ///     or `nil` when no project is selected. Only one project can be selected at a time.
-    ///   - runningEntry: A signal producer that emits `RunningEntry` or `nil` values depending on whether
-    ///     a time entry is currently active. This is used to add the currently running time to the reported
-    ///     worked time for the corresponding project.
-    ///   - currentDate: A signal producer that emits `Date` values corresponding to the current date as time passes.
-    ///     This is useful to calculate the elapsed running time of the active time entry provided by `runningEntry`.
-    ///   - readProject: A function this controller will use to read projects corresponding
-    ///     to its input project IDs.
-    ///   - readTimeTarget: A function this controller will use to read time targets corresponding
-    ///     to its input project IDs.
-    ///   - readReport: A function this controller will use to read `TwoPartTimeReport`s corresponding
-    ///     to its input project IDs.
     internal typealias Interface = (
         projectIDsByTimeTargets: ProjectIDsByTimeTargetsProducer,
         selectionUpstream: BindingTarget<ProjectID?>,
