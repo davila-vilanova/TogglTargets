@@ -387,4 +387,4 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
             .take(until: projectWithoutTimeTargetSelected)
         return [.selectProject: projectsListView]
     }
-} // swiftlint:disable:this file_length
+}
