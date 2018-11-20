@@ -46,6 +46,7 @@ extension NSViewController {
     private var isViewLoadedProducer: SignalProducer<Bool, NoError> {
         return SignalProducer<Bool, NoError> { [weak self] observer, lifetime in
             guard let viewController = self else {
+                observer.sendCompleted()
                 return
             }
             if viewController.isViewLoaded {
