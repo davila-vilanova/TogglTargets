@@ -11,9 +11,13 @@ import Result
 import ReactiveSwift
 
 extension NSViewController {
-    /// "Registers" in the onboarding guide.
-    /// Sets the onboarding guide in all child view controllers as they
-    /// become available.
+
+    /// Registers this view controller and all its children view controllers with the provided onboarding guide so that
+    /// they can provide any target views involved in the onboarding process.
+    /// Any future child view controllers will be registered as they become available.
+    ///
+    /// - parameters:
+    ///   - guide: The onboarding guide into which to register.
     func setOnboardingGuide(_ guide: OnboardingGuide) {
         guide.register(self)
 
@@ -32,11 +36,14 @@ extension NSViewController {
 }
 
 extension NSViewController {
-    var viewDidLoadTrigger: Signal<Void, NoError> {
-        return reactive.trigger(for: #selector(NSViewController.viewDidLoad)).take(first: 1)
+
+    /// Sends a single empty value when this controller's viewDidLoad method is invoked or if it has already been
+    /// invoked and then completes.
+    var viewDidLoadProducer: SignalProducer<Void, NoError> {
+        return isViewLoadedProducer.filter { $0 }.map { _ in () }
     }
 
-    var isViewLoadedProducer: SignalProducer<Bool, NoError> {
+    private var isViewLoadedProducer: SignalProducer<Bool, NoError> {
         return SignalProducer<Bool, NoError> { [weak self] observer, lifetime in
             guard let viewController = self else {
                 return
@@ -51,11 +58,8 @@ extension NSViewController {
             }.start(on: UIScheduler())
     }
 
-    var viewDidLoadProducer: SignalProducer<Void, NoError> {
-        return isViewLoadedProducer.filter { $0 }.map { _ in () }
+    /// Sends a single empty value when this controller's viewDidLoad method is invoked and then completes.
+    private var viewDidLoadTrigger: Signal<Void, NoError> {
+        return reactive.trigger(for: #selector(NSViewController.viewDidLoad)).take(first: 1)
     }
-
-    //    var heldViewDidLoadProducer: SignalProducer<Void, NoError> {
-    //        return viewDidLoadProducer.concat(SignalProducer.never)
-    //    }
 }

@@ -11,6 +11,10 @@ import Result
 import ReactiveSwift
 
 extension NSView {
+
+    /// Sets this view's unique subview.
+    /// Adjusts the layout of the subview to match this view's size.
+    /// If this view already contains a subview, removes it first.
     var uniqueSubview: BindingTarget<NSView> {
         return  reactive.makeBindingTarget { (parent: NSView, child: NSView) in
             if let previous = parent.subviews.first {
