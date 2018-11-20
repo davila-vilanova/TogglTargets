@@ -84,10 +84,10 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     /// Returns `nil` if the database file cannot be opened and cannot be created.
     ///
     /// - parameters:
-    ///   - baseDirectory: The `URL` of the directory from which to read and to which to write
-    ///                    the database used by this instance.
-    ///   - timeTargetWriteScheduler: The scheduler in which to schedule any time target writing operations
-    ///                               issued by this instance.
+    ///   - baseDirectory: The `URL` of the directory from which to read and to which to write the database used by this
+    ///                    instance.
+    ///   - timeTargetWriteScheduler: The scheduler in which to schedule any time target writing operations issued by
+    ///                               this instance.
     init?(baseDirectory: URL?, writeTimeTargetsOn timeTargetWriteScheduler: Scheduler) {
         do {
             let databaseURL = URL(fileURLWithPath: "timetargetsdb.sqlite3", relativeTo: baseDirectory)

@@ -11,8 +11,7 @@ import Foundation
 /// Represents the status of execution of an operation against the Toggl API.
 enum ActivityStatus {
 
-    /// Represents the kinds of operations against the Toggl API that
-    /// `TogglAPIDataRetriever` supports.
+    /// Represents the kinds of operations against the Toggl API that `TogglAPIDataRetriever` supports.
     enum Activity {
         /// Retrieve the user profile from Toggl.
         case syncProfile
@@ -27,16 +26,16 @@ enum ActivityStatus {
         case syncRunningEntry
     }
 
-    /// The underlying `Activity` is executing. The result of this execution can
-    /// be either the `succeeded` or the `error` case.
+    /// The underlying `Activity` is executing. The result of this execution can be either the `succeeded` or the
+    ///  `error` case.
     case executing(Activity)
 
     /// The underlying `Activity` completed its execution successfully.
     case succeeded(Activity)
 
     /// The underlying `Activity` completed its execution with a failure.
-    /// This case encloses in addition to the `Activity` the nature of the
-    /// failure (`APIAccessError`) and the recovery action (`RetryAction`).
+    /// This case encloses in addition to the `Activity` the nature of the failure (`APIAccessError`) and the recovery
+    /// action (`RetryAction`).
     case error(Activity, APIAccessError, RetryAction)
 
     /// Returns this case's underlying `Activity`.
@@ -72,8 +71,8 @@ enum ActivityStatus {
         }
     }
 
-    /// If this is the `.error` case, returns the  the `Action` that can be invoked to retry 
-    /// the operation. Otherwise, it returns `nil`.
+    /// If this is the `.error` case, returns the  the `Action` that can be invoked to retry the operation. Otherwise,
+    /// it returns `nil`.
     var retryAction: RetryAction? {
         switch self {
         case .error(_, _, let retryAction): return retryAction
@@ -81,8 +80,7 @@ enum ActivityStatus {
         }
     }
 
-    /// If this is the `.error` case, returns the `APIAccessError` that
-    /// triggered it. Returns `nil` otherwise.
+    /// If this is the `.error` case, returns the `APIAccessError` that triggered it. Returns `nil` otherwise.
     var error: APIAccessError? {
         switch self {
         case .error(_, let err, _): return err

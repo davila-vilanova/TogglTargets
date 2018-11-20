@@ -9,18 +9,17 @@
 import Foundation
 import ReactiveSwift
 
-/// Action that takes an array of `WorkspaceID` values and a two-part period,
-/// retrieves from the Toggl API the corresponding time reports and merges them
-/// in an `IndexedTwoPartTimeReports` dictionary.
+/// Action that takes an array of `WorkspaceID` values and a two-part period, retrieves from the Toggl API the
+/// corresponding time reports and merges them in an `IndexedTwoPartTimeReports` dictionary.
 typealias RetrieveReportsNetworkAction =
     Action<([WorkspaceID], TwoPartTimeReportPeriod), IndexedTwoPartTimeReports, APIAccessError>
 
-/// A function or closure that takes a `Property` that holds and tracks changes
-/// to a `URLSession` optional value and generates a `RetrieveReportsNetworkAction`
-/// that is enabled whenever the the provided `Property` holds a non-`nil` value.
+/// A function or closure that takes a `Property` that holds and tracks changes to a `URLSession` optional value and
+/// generates a `RetrieveReportsNetworkAction` that is enabled whenever the the provided `Property` holds a non-`nil`
+/// value.
 ///
-/// This can be used to inject a `RetrieveReportsNetworkAction` into an entity
-/// that needs to make the `Action` depend on the state of its `URLSession`.
+/// This can be used to inject a `RetrieveReportsNetworkAction` into an entity that needs to make the `Action` depend
+/// on the state of its `URLSession`.
 typealias RetrieveReportsNetworkActionMaker = (Property<URLSession?>) -> RetrieveReportsNetworkAction
 
 /// A concrete, non-mock implementation of `RetrieveReportsNetworkActionMaker`.
@@ -31,20 +30,18 @@ func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>) -> Re
     return makeRetrieveReportsNetworkAction(urlSession, networkRetriever)
 }
 
-/// Takes a property holding an optional `URLSession` and a `TogglAPINetworkRetriever`
-/// that retrieves one array of `ReportEntry` values for one endpoint, and returns
-/// a `RetrieveProjectsNetworkAction` that applies request splitting and reports
-/// combining and indexing logic on top of them.
+/// Takes a property holding an optional `URLSession` and a `TogglAPINetworkRetriever` that retrieves one array of
+/// `ReportEntry` values for one endpoint, and returns a `RetrieveProjectsNetworkAction` that applies request splitting
+/// and reports combining and indexing logic on top of them.
 ///
 /// - parameters:
-///   - urlSession: A `Property` that holds and tracks changes to a `URLSession`
-///                 optional value and is used as the state of the returned `Action`.
-///   - networkRetriever: A `TogglAPINetworkRetriever` that retrieves an array of
-///                       `ReportEntry` values from an input Toggl API endpoint.
+///   - urlSession: A `Property` that holds and tracks changes to a `URLSession` optional value and is used as the
+///                 state of the returned `Action`.
+///   - networkRetriever: A `TogglAPINetworkRetriever` that retrieves an array of `ReportEntry` values from an input
+///                       Toggl API endpoint.
 ///
-/// - returns: A `RetrieveReportsNetworkAction` that applies request splitting,
-///            projects combining and indexing logic on top of the provided
-///            `URLSession` and `TogglAPINetworkRetriever`.
+/// - returns: A `RetrieveReportsNetworkAction` that applies request splitting, projects combining and indexing logic
+///            on top of the provided `URLSession` and `TogglAPINetworkRetriever`.
 func makeRetrieveReportsNetworkAction(_ urlSession: Property<URLSession?>,
                                       _ networkRetriever:
     @escaping TogglAPINetworkRetriever<[ReportEntry]>) -> RetrieveReportsNetworkAction {
@@ -117,8 +114,8 @@ private func workedTimesProducer(workspaceIDs: [WorkspaceID],
             })
 }
 
-/// Returns a producer that, on success, emits a single IndexedWorkedTimes value
-/// corresponding to the aggregate of all the provided workspace IDs, then completes.
+/// Returns a producer that, on success, emits a single IndexedWorkedTimes value corresponding to the aggregate of
+/// all the provided workspace IDs, then completes.
 private func generateIndexedReportsFromWorkedTimes(untilYesterday: IndexedWorkedTimes,
                                                    today: IndexedWorkedTimes,
                                                    fullPeriod: Period)

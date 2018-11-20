@@ -11,8 +11,7 @@ import Result
 import ReactiveSwift
 
 /// Combines data from the Toggl API, the user's time targets and the system's time and date.
-/// Determines the dates of the reports to retrieve based on the user's period
-/// preference and the current date.
+/// Determines the dates of the reports to retrieve based on the user's period reference and the current date.
 /// Keeps the running entry up to date and triggers updates to the current date generator.
 internal class ModelCoordinator: NSObject {
 
@@ -24,23 +23,20 @@ internal class ModelCoordinator: NSObject {
     /// The store for the user's time targets.
     private let timeTargetsStore: ProjectIDsProducingTimeTargetsStore
 
-    /// The current date generator used to access and trigger updates to the
-    /// current date.
+    /// The current date generator used to access and trigger updates to the current date.
     private let currentDateGenerator: CurrentDateGeneratorProtocol
 
-    /// The `ReportPeriodsProducer` used to determine the dates to scope the
-    /// requests for reports.
+    /// The `ReportPeriodsProducer` used to determine the dates to scope the requests for reports.
     private let reportPeriodsProducer: ReportPeriodsProducer
 
     // MARK: - Dependency inputs
 
-    /// The API credential used to access the Toggl API. Some resources, such as
-    /// the reports endpoint, require a token-based credential (`TogglAPITokenCredential`).
+    /// The API credential used to access the Toggl API. Some resources, such as the reports endpoint, require a
+    /// token-based credential (`TogglAPITokenCredential`).
     var apiCredential: BindingTarget<TogglAPICredential?> { return togglDataRetriever.apiCredential }
 
-    /// Binding target for `PeriodPreference` representing the user preference
-    /// corresponding to how to determine the current period for scoping the
-    /// requested time reports.
+    /// Binding target for `PeriodPreference` representing the user preference corresponding to how to determine the
+    /// current period for scoping the requested time reports.
     internal var periodPreference: BindingTarget<PeriodPreference> { return reportPeriodsProducer.periodPreference }
 
     // MARK: - Profile
@@ -55,18 +51,16 @@ internal class ModelCoordinator: NSObject {
         return self.timeTargetsStore.projectIDsByTimeTargetsProducer
     }
 
-    /// Function which takes a project ID as input and returns a producer that
-    /// emits values over time corresponding to the project associated with that
-    /// project ID.
+    /// Function which takes a project ID as input and returns a producer that emits values over time corresponding to
+    /// the project associated with that project ID.
     internal lazy var readProject: ReadProject = { projectID in
         self.togglDataRetriever.projects.producer.map { $0?[projectID] }.skipRepeats { $0 == $1 }
     }
 
     // MARK: - Reports
 
-    /// Function which takes a project ID as input and returns a producer that
-    /// emits values over time corresponding to the report associated with that
-    /// project ID.
+    /// Function which takes a project ID as input and returns a producer that emits values over time corresponding to
+    /// the report associated with that project ID.
     internal lazy var readReport: ReadReport = { projectID in
         let reports = self.togglDataRetriever.reports.producer
 

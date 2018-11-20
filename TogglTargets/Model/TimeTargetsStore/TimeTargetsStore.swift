@@ -13,20 +13,17 @@ import ReactiveSwift
 
 typealias ProjectIdIndexedTimeTargets = [ProjectID: TimeTarget]
 
-/// Producer of `ProjectIDsByTimeTargets.Update` values that when started emits a
-// `full(ProjectIDsByTimeTargets)` value which can be followed by full or
-/// incremental updates.
+/// Producer of `ProjectIDsByTimeTargets.Update` values that when started emits a `full(ProjectIDsByTimeTargets)` value
+/// which can be followed by full or incremental updates.
 typealias ProjectIDsByTimeTargetsProducer = SignalProducer<ProjectIDsByTimeTargets.Update, NoError>
 
 /// An entity that keeps track of `TimeTarget` values.
 protocol TimeTargetsStore {
 
-    /// Function which takes a project ID as input and returns a producer that
-    /// emits values over time corresponding to the time target associated with that
-    /// project ID.
+    /// Function which takes a project ID as input and returns a producer that emits values over time corresponding to
+    /// the time target associated with that project ID.
     ///
-    /// - note: `nil` target values represent a time target that does not exist yet or
-    ///         that has been deleted.
+    /// - note: `nil` target values represent a time target that does not exist yet or that has been deleted.
     var readTimeTarget: ReadTimeTarget { get }
 
     /// Target which accepts new (or edited) timeTarget values.

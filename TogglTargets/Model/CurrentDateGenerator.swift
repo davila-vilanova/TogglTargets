@@ -11,9 +11,8 @@ import ReactiveSwift
 import Result
 
 /// Publishes `Date` values representing the current date, updated on demand.
-/// It makes sense for it to have to be a class so that multiple parts of an
-/// application can share references to it and a current date update triggered
-/// by one party will be received by the rest.
+/// It makes sense for it to have to be a class so that multiple parts of an application can share references to it and
+/// a current date update triggered by one party will be received by the rest.
 protocol CurrentDateGeneratorProtocol: class {
 
     /// The last generated current date.
@@ -48,8 +47,7 @@ class CurrentDateGenerator: CurrentDateGeneratorProtocol {
         return currentDate.producer
     }
 
-    /// Binding target that will trigger an update to the current date whenever
-    /// an empty value is received.
+    /// Binding target that will trigger an update to the current date whenever an empty value is received.
     var updateTrigger: BindingTarget<Void> {
         return BindingTarget<Void>(on: scheduler, lifetime: lifetime) { [weak self] in
             self?.triggerUpdate()
@@ -59,8 +57,7 @@ class CurrentDateGenerator: CurrentDateGeneratorProtocol {
     /// The lifetime (and lifetime token) associated to this instance's binding target.
     private let (lifetime, token) = Lifetime.make()
 
-    /// Scheduler used to determine the current date and associated to this
-    /// instance's binding target
+    /// Scheduler used to determine the current date and associated to this instance's binding target.
     private let scheduler = QueueScheduler.init(name: "CurrentTimeProducer-scheduler")
 
     /// Don't create instances of it, access the `shared` one instead.

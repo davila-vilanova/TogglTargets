@@ -10,27 +10,24 @@ import Foundation
 import Result
 import ReactiveSwift
 
-/// Represents a time period for which a two part time report is scoped, itself divided in
-/// two parts:
-/// 1. the `Period` from the start of the overall period until the day before the
-///    corresponding time report report is requested,
+/// Represents a time period for which a two part time report is scoped, itself divided in two parts:
+/// 1. the `Period` from the start of the overall period until the day before the corresponding time report report is
+///    requested,
 /// 2. the `Period` corresponding to the day on which the time reports are requested.
 struct TwoPartTimeReportPeriod {
 
     /// The full `Period` for which two part time report is scoped.
     let scope: Period
 
-    /// The `Period` corresponding to the beginning of `full` until the day before the
-    /// day on which the report is requested.
-    /// It shold be `nil` if the report is requested on the first day of `full` and non-`nil` in
-    /// any other case.
+    /// The `Period` corresponding to the beginning of `full` until the day before the day on which the report is
+    /// requested.
+    ///
+    /// It should be `nil` if the report is requested on the first day of `full` and non-`nil` in any other case.
     let previousToDayOfRequest: Period?
 
     /// The `DayComponents` corresponding to the day in which the time period will be requested.
-    /// The day of request is expected to be inside the range defined by `full.start` start and
-    /// `full.end`.
-    /// It is used to generate the second part (`forDayOfRequest`) of the period represented by
-    /// this instance.
+    /// The day of request is expected to be inside the range defined by `full.start` start and `full.end`.
+    /// It is used to generate the second part (`forDayOfRequest`) of the period represented by this instance.
     private let dayOfRequest: DayComponents
 
     /// The `Period` corresponding to the day in which the time report is requested.
@@ -54,19 +51,17 @@ extension TwoPartTimeReportPeriod: Equatable {
     }
 }
 
-/// Produces `TwoPartTimeReportPeriod` values based on the incoming `PeriodPreference`, `currentDate`
-/// and `calendar` values.
+/// Produces `TwoPartTimeReportPeriod` values based on the incoming `PeriodPreference`, `currentDate` and `calendar`
+/// values.
 class ReportPeriodsProducer {
 
     // MARK: - Exposed inputs
 
-    /// Binding target for `PeriodPreference` representing the user preference
-    /// corresponding to how to determine the current period for scoping the
-    /// requested time reports. E.g., monthly, or weekly starting on Monday.
+    /// Binding target for `PeriodPreference` representing the user preference corresponding to how to determine the
+    /// current period for scoping the requested time reports. E.g., monthly, or weekly starting on Monday.
     var periodPreference: BindingTarget<PeriodPreference> { return _periodPreference.deoptionalizedBindingTarget }
 
-    /// Binding target for the current `Calendar` used to perform calendrical
-    /// computations.
+    /// Binding target for the current `Calendar` used to perform calendrical computations.
     var calendar: BindingTarget<Calendar> { return _calendar.deoptionalizedBindingTarget }
 
     /// Binding target for the application-wide `currentDate` values.
@@ -94,9 +89,8 @@ class ReportPeriodsProducer {
                 return calendar.dayComponents(from: currentDate)
     }
 
-    /// Produces `DayComponents` values representing the day previous to the day corresponding to
-    /// `currentDate`, as long as that day is not earlier than the start of the current full period value,
-    /// and produces `nil` otherwise.
+    /// Produces `DayComponents` values representing the day previous to the day corresponding to `currentDate`, as long
+    /// as that day is not earlier than the start of the current full period value, and produces `nil` otherwise.
     private lazy var periodUntilYesterday: SignalProducer<Period?, NoError>
         = SignalProducer.combineLatest(_calendar.producer.skipNil(),
                                        _currentDate.producer.skipNil(),

@@ -14,7 +14,7 @@ struct RunningEntry: Decodable {
     let id: Int64 // swiftlint:disable:this identifier_name
 
     /// The ID of the project associated with this time entry.
-    let projectId: Int64
+    let projectId: ProjectID
 
     /// The point in time at which this time entry started.
     let start: Date

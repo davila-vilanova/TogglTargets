@@ -10,8 +10,7 @@ import Foundation
 
 typealias WorkedTime = TimeInterval
 
-/// Represents a report of time worked in a single `Project` during a defined `Period`,
-/// divided in two parts:
+/// Represents a report of time worked in a single `Project` during a defined `Period`, divided in two parts:
 /// 1: The time worked from the start of the `Period` until the day before the report is requested,
 /// 2: The time worked on the day the report is requested.
 struct TwoPartTimeReport {
@@ -27,8 +26,8 @@ struct TwoPartTimeReport {
         return workedTimeUntilDayBeforeRequest + workedTimeOnDayOfRequest
     }
 
-    /// The time worked from the start of the `Period` until the day before requesting the report,
-    /// that is, until 'yesterday'.
+    /// The time worked from the start of the `Period` until the day before requesting the report, that is, until
+    /// 'yesterday'.
     // TODO: rename to 'reference date'
     let workedTimeUntilDayBeforeRequest: WorkedTime
 

@@ -15,7 +15,7 @@ typealias HoursTargetType = Int
 struct TimeTarget {
 
     /// The ID of the project associated with this target.
-    let projectId: Int64
+    let projectId: ProjectID
 
     /// The amount of hours which this target represents.
     var hoursTarget: HoursTargetType
@@ -23,7 +23,7 @@ struct TimeTarget {
     /// The days of the week in which the user intends to work in the project associated with this target.
     var workWeekdays: WeekdaySelection
 
-    init(for projectId: Int64, hoursTarget: HoursTargetType, workWeekdays: WeekdaySelection) {
+    init(for projectId: ProjectID, hoursTarget: HoursTargetType, workWeekdays: WeekdaySelection) {
         self.projectId = projectId
         self.hoursTarget = hoursTarget
         self.workWeekdays = workWeekdays

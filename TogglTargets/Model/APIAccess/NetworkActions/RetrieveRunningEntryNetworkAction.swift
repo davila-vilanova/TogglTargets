@@ -13,12 +13,12 @@ import ReactiveSwift
 /// Produces a nil value if no time entry is currently running.
 typealias RetrieveRunningEntryNetworkAction = Action<Void, RunningEntry?, APIAccessError>
 
-/// A function or closure that takes a `Property` that holds and tracks changes
-/// to a `URLSession` optional value and generates a `RetrieveRunningEntryNetworkAction`
-/// that is enabled whenever the the provided `Property` holds a non-`nil` value.
+/// A function or closure that takes a `Property` that holds and tracks changes  to a `URLSession` optional value and
+/// generates a `RetrieveRunningEntryNetworkAction` that is enabled whenever the the provided `Property` holds a
+/// non-`nil` value.
 ///
-/// This can be used to inject a `RetrieveRunningEntryNetworkAction` into an entity
-/// that needs to make the `Action` depend on the state of its `URLSession`.
+/// This can be used to inject a `RetrieveRunningEntryNetworkAction` into an entity that needs to make the `Action`
+/// depend on the state of its `URLSession`.
 typealias RetrieveRunningEntryNetworkActionMaker = (Property<URLSession?>) -> RetrieveRunningEntryNetworkAction
 
 /// A concrete, non-mock implementation of `RetrieveRunningEntryNetworkActionMaker`.

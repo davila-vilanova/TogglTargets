@@ -8,8 +8,8 @@
 
 import Foundation
 
-/// Encloses a sorted array of project IDs, ordered primarily by descending time target size
-/// and a count of projects that have time targets associated with them.
+/// Encloses a sorted array of project IDs, ordered primarily by descending time target size and a count of projects
+/// that have time targets associated with them.
 struct ProjectIDsByTimeTargets {
     /// The sorted collection of project IDs
     let sortedProjectIDs: [ProjectID]
@@ -30,8 +30,8 @@ struct ProjectIDsByTimeTargets {
         case singleTimeTarget(SingleTimeTargetUpdate)
     }
 
-    /// Represents an update that consists of a reorder operation for a single project ID
-    /// and possibly an increment or decrement of the count of projects associated with time targets.
+    /// Represents an update that consists of a reorder operation for a single project ID and possibly an increment or
+    /// decrement of the count of projects associated with time targets.
     enum SingleTimeTargetUpdate {
 
         /// Represents the update resulting from the creation of one time target.
@@ -82,15 +82,14 @@ struct ProjectIDsByTimeTargets {
                                            countOfProjectsWithTimeTargets: computeNewCount(from: idsByTimeTargets))
         }
 
-        /// Generates the update corresponding to creating, deleting or updating the time target associated
-        /// with a project ID
+        /// Generates the update corresponding to creating, deleting or updating the time target associated with a
+        /// project ID
         ///
         /// - parameters:
-        ///   - newTimeTarget: The value of the affected time target after the update. Pass `nil` for a target
-        ///                    deletion.
+        ///   - newTimeTarget: The value of the affected time target after the update. Pass `nil` for a target deletion.
         ///   - projectId: The project ID whose time target will be created, deleted or updated.
-        ///                This ID must be included in the project IDs associated with the `idsByTimeTargets`
-        ///                argument. If it is not, this call will return nil.
+        ///                This ID must be included in the project IDs associated with the `idsByTimeTargets` argument.
+        ///                If it is not, this call will return nil.
         ///   - timeTargetsPreChange: The `ProjectIdIndexedTimeTargets` value previous to updating the time target.
         ///   - idsByTimeTargets: The `ProjectIDsByTimeTargets` value that will be affected by this update.
         ///
@@ -214,13 +213,13 @@ extension ProjectIDsByTimeTargets {
 
     /// Returns the project ID addressed by an `IndexPath` based on the sections represented by `Section`
     ///
-    /// - parameters: indexPath: An `IndexPath` value whose `section` property matches the raw value of one of
-    ///               the sections defined as cases of `Section` and whose `item` value addresses the index of
-    ///               the project within that section.
+    /// - parameters: indexPath: An `IndexPath` value whose `section` property matches the raw value of one of the
+    ///               sections defined as cases of `Section` and whose `item` value addresses the index of the project
+    ///               project within that section.
     ///
-    /// - returns: The addressed project ID or `nil` if the value of `indexPath.section` does not match any of
-    ///            the cases defined in `Section` or if the value of `indexPath.item` exceeds the boundaries
-    ///            of the ordinal indexes of the project IDs in that section.
+    /// - returns: The addressed project ID or `nil` if the value of `indexPath.section` does not match any of the cases
+    ///            defined in `Section` or if the value of `indexPath.item` exceeds the boundaries of the ordinal
+    ///            indexes of the project IDs in that section.
     func projectId(for indexPath: IndexPath) -> ProjectID? {
         guard let section = Section(rawValue: indexPath.section) else {
             return nil
@@ -292,12 +291,11 @@ extension ProjectIDsByTimeTargets {
     }
 }
 
-/// Makes a function that can be used as input to `Array<ProjectID>.sort(by:)` and will determine the
-/// order of the project IDs by whether they have a time target or not and the size of the target (the
-/// length of time associated with it). IDs will be ordered with those that have a timeTarget first ordered by
-/// descending timeTarget size. To guarantee stable order as long as the IDs are unique, if two targets are
-/// considered of equivalent size (including the case in which they are both missing) the order will be
-/// determined by project ID descending.
+/// Makes a function that can be used as input to `Array<ProjectID>.sort(by:)` and will determine the order of the
+/// project IDs by whether they have a time target or not and the size of the target (the length of time associated with
+/// it). IDs will be ordered with those that have a timeTarget first ordered by descending timeTarget size. To guarantee
+/// stable order as long as the IDs are unique, if two targets are considered of equivalent size (including the case in
+/// which they are both missing) the order will be determined by project ID descending.
 ///
 /// - parameters:
 ///   - timeTargets: The `ProjectIndexedTimeTargets` that the returned function will use as context.

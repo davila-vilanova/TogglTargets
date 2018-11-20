@@ -61,7 +61,7 @@ extension Weekday {
     }
 }
 
-/// Represents the selected state of all weekdays.
+/// Represents the selected state of each weekday.
 struct WeekdaySelection {
     private var selectionDict = [Weekday: Bool]()
 

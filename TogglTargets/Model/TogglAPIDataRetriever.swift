@@ -12,30 +12,29 @@ import ReactiveSwift
 
 typealias RefreshAction = Action<Void, Void, NoError>
 
-/// Retrieves user data from the Toggl API keeping data that has dependencies up to date with the state
-/// of its parent data:
-/// * Attempts to retrieve the user profile from the Toggl API corresponding to the latest input value
-///   received through the `apiCredential` binding target. (All the other API operations also depend on the
-///   availability of a valid API credential and fetching the reports needs the credential to be a token
-///   credential, `TogglAPITokenCredential`)
-/// * Retrieves the projects corresponding to the workspace IDs referenced by the latest fetched profile,
-///   using the latest available API credential. Combines the projects from all workspaces.
-/// * Retrieves two-part time reports corresponding to the workspace IDs referenced by the latest fetched
-///   profile and delimited by the periods of time represented by the `TwoPartTimeReportPeriod` values
-///   received through the `twoPartReportPeriod` binding target. The reports are fetched whenever new
-///   workspace IDs or new time period values become available.
+/// Retrieves user data from the Toggl API keeping data that has dependencies up to date with the state of its parent
+/// data:
+/// * Attempts to retrieve the user profile from the Toggl API corresponding to the latest input value received through
+///   the `apiCredential` binding target. (All the other API operations also depend on the availability of a valid API
+///   credential and fetching the reports needs the credential to be a token credential, `TogglAPITokenCredential`.)
+/// * Retrieves the projects corresponding to the workspace IDs referenced by the latest fetched profile, using the
+///   latest available API credential. Combines the projects from all workspaces.
+/// * Retrieves two-part time reports corresponding to the workspace IDs referenced by the latest fetched profile and
+///   delimited by the periods of time represented by the `TwoPartTimeReportPeriod` values received through the
+///   `twoPartReportPeriod` binding target. The reports are fetched whenever new workspace IDs or new time period values
+///   become available.
 /// * Retrieves the running time entry on demand.
 protocol TogglAPIDataRetriever: class {
 
     // MARK: - Exposed binding targets
 
-    /// Binding target for the API credential values that will be used to authenticate as a specific
-    /// user against the Toggl API.
+    /// Binding target for the API credential values that will be used to authenticate as a specific user against the
+    /// Toggl API.
     /// - note: retrieving the reports needs the input value to be of type `TogglAPITokenCredential`
     var apiCredential: BindingTarget<TogglAPICredential?> { get }
 
-    /// Binding target for the two-part time periods that will delimit the time periods for which the
-    /// reports will be fetched from the Toggl API.
+    /// Binding target for the two-part time periods that will delimit the time periods for which the reports will be
+    /// fetched from the Toggl API.
     var twoPartReportPeriod: BindingTarget<TwoPartTimeReportPeriod> { get }
 
     // MARK: - Retrieved data
@@ -43,21 +42,19 @@ protocol TogglAPIDataRetriever: class {
     /// Holds and publishes `Profile` values as they become available.
     var profile: Property<Profile?> { get }
 
-    /// Holds and publishes `IndexedProjects` values, or projects indexed by project ID, as they
-    /// become available.
+    /// Holds and publishes `IndexedProjects` values, or projects indexed by project ID, as they become available.
     var projects: Property<IndexedProjects?> { get }
 
-    /// Holds and publishes `IndexedTwoPartTimeReports` values, or two-part time reports indexed by
-    /// project ID, as they become available.
+    /// Holds and publishes `IndexedTwoPartTimeReports` values, or two-part time reports indexed by project ID, as they
+    /// become available.
     var reports: Property<IndexedTwoPartTimeReports?> { get }
 
-    /// Holds and publishes the last retrieved current time entry or `nil` for no time entry..
+    /// Holds and publishes the last retrieved current time entry or `nil` for no time entry.
     var runningEntry: Property<RunningEntry?> { get }
 
     // MARK: - Refresh actions
 
-    /// Triggers an attempt to retrieve the user profile, projects, reports and
-    /// currently running entry.
+    /// Triggers an attempt to retrieve the user profile, projects, reports and currently running entry.
     var refreshAllData: RefreshAction { get }
 
     /// Triggers an attempt to retrieve the currently running time entry.
@@ -76,10 +73,9 @@ typealias RetryAction = Action<Void, Void, NoError>
 
 // MARK: -
 
-/// `CachedTogglAPIDataRetriever` is a `TogglAPIDataRetriever` that relies on locally stored data to
-/// return cached results when running on a device that happens to be offline, or to return preliminary
-/// results more quickly when the device is online. The locally stored data is updated whenever a fresh
-/// value is retrieved from the Toggl API.
+/// `CachedTogglAPIDataRetriever` is a `TogglAPIDataRetriever` that relies on locally stored data to return cached
+/// results when running on a device that happens to be offline, or to return preliminary results more quickly when the
+/// device is online. The locally stored data is updated whenever a fresh value is retrieved from the Toggl API.
 class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     /// The lifetime associated with this instance.
@@ -93,8 +89,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     // MARK: - API credential and URL session
 
-    /// Binding target for the API credential values that will be used to authenticate as a specific
-    /// user against the Toggl API.
+    /// Binding target for the API credential values that will be used to authenticate as a specific user against the
+    /// Toggl API.
     /// - note: retrieving the reports needs the input value to be of type `TogglAPITokenCredential`
     internal var apiCredential: BindingTarget<TogglAPICredential?> { return _apiCredential.bindingTarget }
 
@@ -119,8 +115,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// The `BindingTarget` used to store profiles into the local cache.
     private let storeProfileInCache: BindingTarget<Profile?>
 
-    /// Holds and publishes `Profile` values as they become available, that is, as they are retrieved
-    /// from the Toggl API or from the local cache.
+    /// Holds and publishes `Profile` values as they become available, that is, as they are retrieved from the Toggl API
+    /// or from the local cache.
     internal lazy var profile =
         Property<Profile?>(initial: nil, then: Signal.merge(retrieveProfileNetworkAction.values,
                                                             retrieveProfileFromCache.values.skipNil()))
@@ -140,8 +136,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// The `BindingTarget` used to store projects into the local cache.
     private let storeProjectsInCache: BindingTarget<IndexedProjects?>
 
-    /// Holds and publishes `IndexedProjects` values, or projects indexed by project ID, as they
-    /// become available.
+    /// Holds and publishes `IndexedProjects` values, or projects indexed by project ID, as they become available.
     internal lazy var projects: Property<IndexedProjects?> = {
         let retrievedFromNetwork = retrieveProjectsNetworkAction.values
         let retrievedFromCache = retrieveProjectsFromCache.values.skipNil()
@@ -152,8 +147,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     // MARK: - Reports
 
-    /// Binding target for the two-part time periods that will delimit the time periods for which the
-    /// reports will be retrieved.
+    /// Binding target for the two-part time periods that will delimit the time periods for which the reports will be
+    /// retrieved.
     internal var twoPartReportPeriod: BindingTarget<TwoPartTimeReportPeriod> {
         return _twoPartReportPeriod.deoptionalizedBindingTarget
     }
@@ -164,8 +159,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// The `Action` used to retrieve reports from the Toggl API.
     private var retrieveReportsNetworkAction: RetrieveReportsNetworkAction!
 
-    /// Holds and publishes `IndexedTwoPartTimeReports` values, or two-part time reports indexed by
-    /// project ID, as they become available.
+    /// Holds and publishes `IndexedTwoPartTimeReports` values, or two-part time reports indexed by project ID, as they
+    /// become available.
     internal lazy var reports: Property<IndexedTwoPartTimeReports?> = {
         let retrievedFromNetwork = retrieveReportsNetworkAction.values
         let emptyOnNoCredentials = noCredentialsEvents.map { IndexedTwoPartTimeReports() }
@@ -183,8 +178,8 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     // MARK: - Refresh actions
 
-    /// Applying this `Action` will start an attempt to fetch the currently running entry from the Toggl API
-    /// by executing the underlying retrieveRunningEntryNetworkAction.
+    /// Applying this `Action` will start an attempt to fetch the currently running entry from the Toggl API by
+    /// executing the underlying retrieveRunningEntryNetworkAction.
     /// This `Action` is enabled if an API credential is available and if the underlying action is enabled.
     lazy var updateRunningEntry: RefreshAction = {
         let action = RefreshAction(enabledIf: urlSession
@@ -199,8 +194,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
         return action
     }()
 
-    /// Triggers an attempt to retrieve the user profile, projects, reports and
-    /// currently running entry.
+    /// Triggers an attempt to retrieve the user profile, projects, reports and currently running entry.
     lazy var refreshAllData =
         RefreshAction(state: urlSession.combineLatest(with: retrieveProfileNetworkAction.isEnabled),
                       enabledIf: { $0.0 != nil && $0.1 },
@@ -279,27 +273,20 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
                                     extractStatus(from: retrieveRunningEntryNetworkAction, for: .syncRunningEntry))
     }()
 
-    /// Initializes a `CachedTogglAPIDataRetriever` that will use the provided actions to fetch data from
-    /// the Toggl API and from the local cache, and to store data into the local cache.
+    /// Initializes a `CachedTogglAPIDataRetriever` that will use the provided actions to fetch data from the Toggl API
+    /// and from the local cache, and to store data into the local cache.
     /// - parameters:
-    ///   - retrieveProfileNetworkActionMaker: A `RetrieveProfileNetworkActionMaker`
-    ///                                        to generate the `Action` used to
-    ///                                        retrieve the user profile from the
-    ///                                        Toggl API.
-    ///   - retrieveProfileCacheAction: The `Action` used to retrieve profiles
-    ///                                 from the local cache.
-    ///   - storeProfileCacheAction: The `Action` used to store profiles into the
-    ///                              local cache.
-    ///   - retrieveProjectsNetworkActionMaker: A `RetrieveProjectsNetworkActionMaker`
-    ///                                         to generate the `Action` used to
+    ///   - retrieveProfileNetworkActionMaker: A `RetrieveProfileNetworkActionMaker` to generate the `Action` used to
+    ///                                        retrieve the user profile from the Toggl API.
+    ///   - retrieveProfileCacheAction: The `Action` used to retrieve profiles from the local cache.
+    ///   - storeProfileCacheAction: The `Action` used to store profiles into the local cache.
+    ///   - retrieveProjectsNetworkActionMaker: A `RetrieveProjectsNetworkActionMaker` to generate the `Action` used to
     ///                                         retrieve projects from the Toggl API.
-    ///   - retrieveReportsNetworkActionMaker: A `RetrieveProjectsNetworkActionMaker`
-    ///                                        to generate the `Action` used to
+    ///   - retrieveReportsNetworkActionMaker: A `RetrieveProjectsNetworkActionMaker` to generate the `Action` used to
     ///                                        retrieve reports from the Toggl API.
-    ///   - retrieveRunningEntryNetworkActionMaker: A `RetrieveRunningEntryNetworkActionMaker`
-    ///                                             to generate the `Action` used
-    ///                                             to retrieve the currently running
-    ///                                             time entry from the Toggl API.
+    ///   - retrieveRunningEntryNetworkActionMaker: A `RetrieveRunningEntryNetworkActionMaker` to generate the `Action`
+    ///                                             used to retrieve the currently running time entry from the Toggl
+    ///                                             API.
     init(retrieveProfileNetworkActionMaker: RetrieveProfileNetworkActionMaker,
          retrieveProfileFromCache: RetrieveProfileCacheAction,
          storeProfileInCache: BindingTarget<Profile?>,
