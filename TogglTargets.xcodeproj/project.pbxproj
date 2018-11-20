@@ -419,8 +419,8 @@
 				632957491DBA99F000E11A10 /* Assets.xcassets */,
 				632957451DBA99F000E11A10 /* AppDelegate.swift */,
 				639F8B7020E6372B00FDC8C1 /* SupportDirectoryProvider.swift */,
-				637A32331EE16E7600667FC3 /* View Controllers */,
 				63D4BB981F7D80FC00B87298 /* Model */,
+				637A32331EE16E7600667FC3 /* View Controllers */,
 				63F6D17A2164E3AE004EE7B9 /* Onboarding */,
 				63EBF39E218F800400BD2C3C /* About */,
 			);
