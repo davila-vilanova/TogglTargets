@@ -10,6 +10,31 @@ import Cocoa
 import Result
 import ReactiveSwift
 
+///  TogglTargets’ view controllers try to stay simple and focused by having complex controllers be composed from
+///  simpler ones. The model is for the most part housekept outside of the view controllers, and each of them defines an
+///  interface that their containing controllers, all the way up to the application delegate, can bind to. Most
+///  interface types are composed of inputs and outputs and the connection to the interface is itself a value, so even
+///  though view controllers expect a single interface connection during their lifetime they are prepared to ensure that
+///  only the latest one is effective for both their inputs and outputs.
+///
+///  One quirk with the way this composition approach is implemented is that outer view controllers need to have
+///  knowledge of the inner view controllers’ inputs and outputs and declare those inputs and outputs as part of their
+///  own interface, even if they don’t make any use of those inputs and outputs themselves. A consequence of this is
+///  that adding an input or output to an inner view controller will in many cases force you to add it to every
+///  controller up the chain all the way through the entity that can produce or consume the relevant value, which could
+///  feel like writing unnecessary boilerplate.
+///
+///  The reason to leave it like this for now is that, arguably, knowledge about the inputs and outputs of the contained
+///  view controllers is knowledge about their responsibilities and, as such, part of the container controller’s domain
+///  of interest.
+///
+///  If this became too cumbersome, a different approach could be to have a single entity keep knowledge of all view
+///  controllers and have it be in charge of connecting each controller’s interface as needed. One version of this
+///  would  be a controller factory combined with controller injection which would preclude the use of storyboards
+///  (which could be a feature, not a bug!) Another possibility would be to have this know-it-all coordinator traverse
+///  the controller tree each time there’s a change in it. Yet another would be to use view models for each view
+///  controller and assign the right view model to each controller by traversing the controller tree. Pick your poison!
+
 class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvider, TimeTargetCreatingDeleting {
 
     // MARK: - Interface
