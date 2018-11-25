@@ -34,7 +34,25 @@ If this became too cumbersome, a different approach could be to have a single en
 
 ## Building and running
 
-Use Carthage
+### Retrieving and building dependencies
+
+TogglTargets depends on the [ReactiveSwift](https://github.com/ReactiveCocoa/ReactiveSwift), [ReactiveCocoa](https://github.com/ReactiveCocoa/ReactiveCocoa), [Result](https://github.com/antitypical/Result) and [SQLite.swift](https://github.com/stephencelis/SQLite.swift) third party frameworks. The project is set up to use [Carthage](https://github.com/Carthage/Carthage) to manage these dependencies. Its [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile) declares the two "first-order" dependencies, ReactiveCocoa and SQLite.swift, and the other two are retrieved as sub-dependencies of ReactiveCocoa and ReactiveSwift.
+
+To retrieve and build the dependencies make sure you have [Carthage installed](https://github.com/Carthage/Carthage#installing-carthage), change to the TogglTargets root folder from your shell of choice and run
+
+```sh
+carthage update --platform macOS
+```
+### Running from Xcode
+
+1. Use your Xcode to open `TogglTargets.xcodeproj`
+1. Manage the signing configuration:
+    1. From within Xcode's project navigator select the `TogglTargets` project (the root element of the project tree)
+    1. Select the `TogglTargets` target
+    1. Make sure the `Signing` configuration in the `General` tab looks sound. One possibility is to leave `Automatically manage signing` checked and to select your developer team from the `Team` pop up menu.
+
+    ![Signing configuration](./Screenshots/SigningConfiguration.png)
+1. Hit Play and play!
 
 ## Contributing
 
