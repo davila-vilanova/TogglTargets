@@ -1,0 +1,9 @@
+{
+    "title": "TogglTargets",
+    "icon": "TogglTargets.icns",
+    "background": "dmg-background.png",
+    "contents": [
+      { "x": 50, "y": 340, "type": "file", "path": "TogglTargets.app" },
+      { "x": 325, "y": 340, "type": "link", "path": "/Applications" }
+    ]
+  }
