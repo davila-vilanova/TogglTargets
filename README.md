@@ -70,7 +70,7 @@ carthage update --platform macOS
     1. Select the `TogglTargets` target
     1. Make sure the `Signing` configuration in the `General` tab looks sound. One possibility is to leave `Automatically manage signing` checked and to select your developer team from the `Team` pop up menu.
 
-    ![Signing configuration](./Screenshots/SigningConfiguration.png)
+    ![Signing configuration](./Screenshots/signing.png)
 1. You're ready to go.
 
 ## Contributing
