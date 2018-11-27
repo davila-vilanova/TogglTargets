@@ -35,18 +35,18 @@ Get it from [here](https://davi.la/targets/release/TogglTargets.dmg).
 This is a first release, so it would [not be a good idea](https://github.com/Homebrew/homebrew-cask/pull/28103) to submit a formula to the [Cask](https://github.com/Homebrew/homebrew-cask) repository. However, if you have [homebrew](https://brew.sh) installed in your system and you can install the latest release very quickly by `brew cask`ing the installation script directly like this:
 
 ```sh
-brew cask install https://davi.la/targets.rb
+brew cask install https://raw.githubusercontent.com/davila-vilanova/TogglTargets/master/Release/toggltargets.rb
 ```
 
 This will also let you `update` and (should you be so inclined) `uninstall` and `zap` the app in a breeze:
 
 ```sh
-brew cask uninstall https://davi.la/targets.rb
+brew cask uninstall https://raw.githubusercontent.com/davila-vilanova/TogglTargets/master/Release/toggltargets.rb
 ```
 or (this will move your preferences and time targets database to the trash and leave no traces of the app elsewhere in your system):
 
 ```sh
-brew cask zap https://davi.la/targets.rb
+brew cask zap https://raw.githubusercontent.com/davila-vilanova/TogglTargets/master/Release/toggltargets.rb
 ```
 
 If you want to build and run TogglTargets from source, read on.
