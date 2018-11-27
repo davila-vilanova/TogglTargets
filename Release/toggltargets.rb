@@ -7,7 +7,6 @@ cask 'toggltargets' do
     app 'TogglTargets.app'
     uninstall quit: 'la.davi.TogglTargets'
     uninstall login_item: 'TogglTargets'
-    uninstall trash: '/Applications/TogglTargets.app'
     zap trash: [
         '~/Library/Application Support/la.davi.TogglTargets/'
     ]
