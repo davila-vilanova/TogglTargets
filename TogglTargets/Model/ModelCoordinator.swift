@@ -19,7 +19,6 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
 /// Combines data from the Toggl API, the user's time targets and the system's time and date.
@@ -76,7 +75,7 @@ internal class ModelCoordinator: NSObject {
     internal lazy var readReport: ReadReport = { projectID in
         let reports = self.togglDataRetriever.reports.producer
 
-        let noReportData = SignalProducer<TwoPartTimeReport?, NoError>(value: nil)
+        let noReportData = SignalProducer<TwoPartTimeReport?, Never>(value: nil)
             .sample(on: reports.filter { $0 == nil }.map { _ in () })
         let retrievedReports = reports.skipNil().map { $0[projectID] }
         let retrievedPresentReports = retrievedReports.skipNil()
@@ -129,7 +128,7 @@ internal class ModelCoordinator: NSObject {
 
     // MARK: - Activity and Errors
 
-    var retrievalStatus: SignalProducer<ActivityStatus, NoError> { return togglDataRetriever.status }
+    var retrievalStatus: SignalProducer<ActivityStatus, Never> { return togglDataRetriever.status }
 
     // MARK: -
 
@@ -147,7 +146,7 @@ internal class ModelCoordinator: NSObject {
     internal init(togglDataRetriever: TogglAPIDataRetriever,
                   timeTargetsStore: ProjectIDsProducingTimeTargetsStore,
                   currentDateGenerator: CurrentDateGeneratorProtocol,
-                  calendar: SignalProducer<Calendar, NoError>,
+                  calendar: SignalProducer<Calendar, Never>,
                   reportPeriodsProducer: ReportPeriodsProducer) {
         self.togglDataRetriever = togglDataRetriever
         self.timeTargetsStore = timeTargetsStore
@@ -191,10 +190,10 @@ private let oneMinuteDispatch = DispatchTimeInterval.seconds(Int(oneMinute))
 /// running, its start date and the current date.
 private class RunningEntryUpdateTimer {
     /// Emits trigger values to update the currently running entry.
-    var trigger: Signal<(), NoError> { return triggerPipe.output }
+    var trigger: Signal<(), Never> { return triggerPipe.output }
 
     /// The pipe used to convey values to `trigger`.
-    private let triggerPipe = Signal<(), NoError>.pipe()
+    private let triggerPipe = Signal<(), Never>.pipe()
 
     /// The `QueueScheduler` used to schedule actions in the future.
     private let scheduler = QueueScheduler(name: "RunningEntryUpdateTimer-scheduler")
@@ -212,9 +211,9 @@ private class RunningEntryUpdateTimer {
     ///   - lastEntryStart: A producer of start dates for the current time entry or `nil` values for no current entry.
     ///   - calendar: A producer of typically one, but updates accepted, calendars to perform the calendrical
     ///     computations on which this update timer relies.
-    init(now: SignalProducer<Date, NoError>,
-         lastEntryStart: SignalProducer<Date?, NoError>,
-         calendar: SignalProducer<Calendar, NoError>) {
+    init(now: SignalProducer<Date, Never>,
+         lastEntryStart: SignalProducer<Date?, Never>,
+         calendar: SignalProducer<Calendar, Never>) {
         let dates = SignalProducer.combineLatest(calendar,
                                                  lastEntryStart.skipRepeats().withLatest(from: now))
             .map { (calendar, dates) -> Date in
@@ -242,10 +241,10 @@ private class RunningEntryUpdateTimer {
 /// whenever the currently running time entry changes.
 private class CurrentDateUpdateTimer {
     /// Emits empty values that act as triggers to update the current date.
-    var trigger: Signal<(), NoError> { return triggerPipe.output }
+    var trigger: Signal<(), Never> { return triggerPipe.output }
 
     /// The pipe used to convey values to `trigger`.
-    private let triggerPipe = Signal<(), NoError>.pipe()
+    private let triggerPipe = Signal<(), Never>.pipe()
 
     /// The `QueueScheduler` used to schedule actions in the future.
     private let scheduler = QueueScheduler(name: "CurrentDateUpdateTimer-scheduler")
@@ -263,9 +262,9 @@ private class CurrentDateUpdateTimer {
     ///   - runningEntry: A producer of running entry values or `nil` values for no current entry.
     ///   - calendar: A producer of typically one, but updates accepted, calendars to perform the calendrical
     ///     computations on which this update timer relies.
-    init(now: SignalProducer<Date, NoError>,
-         runningEntry: SignalProducer<RunningEntry?, NoError>,
-         calendar: SignalProducer<Calendar, NoError>) {
+    init(now: SignalProducer<Date, Never>,
+         runningEntry: SignalProducer<RunningEntry?, Never>,
+         calendar: SignalProducer<Calendar, Never>) {
         let trigger = { [unowned self] in self.triggerPipe.input.send(value: ()) }
 
         // Trigger updates each minute on the clock

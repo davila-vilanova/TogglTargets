@@ -19,12 +19,11 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 
 class DetailedActivityViewController: NSViewController, BindingTargetProvider {
 
-    internal typealias Interface = SignalProducer<[ActivityStatus], NoError>
+    internal typealias Interface = SignalProducer<[ActivityStatus], Never>
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }

@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 import ReactiveCocoa
 
@@ -28,13 +27,13 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
     // MARK: Interface
 
     internal typealias Interface = (
-        targetTime: SignalProducer<TimeInterval, NoError>,
-        totalWorkDays: SignalProducer<Int, NoError>,
-        remainingWorkDays: SignalProducer<Int, NoError>,
-        reportAvailable: SignalProducer<Bool, NoError>,
-        workedTime: SignalProducer<TimeInterval, NoError>,
-        remainingTimeToTarget: SignalProducer<TimeInterval, NoError>,
-        strategyStartsToday: SignalProducer<Bool, NoError>)
+        targetTime: SignalProducer<TimeInterval, Never>,
+        totalWorkDays: SignalProducer<Int, Never>,
+        remainingWorkDays: SignalProducer<Int, Never>,
+        reportAvailable: SignalProducer<Bool, Never>,
+        workedTime: SignalProducer<TimeInterval, Never>,
+        remainingTimeToTarget: SignalProducer<TimeInterval, Never>,
+        strategyStartsToday: SignalProducer<Bool, Never>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -189,7 +188,7 @@ class TimeProgressViewController: NSViewController, BindingTargetProvider, Onboa
 
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, Never>] {
         let timeProgressView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)

@@ -21,18 +21,17 @@
 import Cocoa
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
     internal typealias Interface = (
-        project: SignalProducer<Project, NoError>,
-        currentDate: SignalProducer<Date, NoError>,
-        calendar: SignalProducer<Calendar, NoError>,
-        periodPreference: SignalProducer<PeriodPreference, NoError>,
-        runningEntry: SignalProducer<RunningEntry?, NoError>,
+        project: SignalProducer<Project, Never>,
+        currentDate: SignalProducer<Date, Never>,
+        calendar: SignalProducer<Calendar, Never>,
+        periodPreference: SignalProducer<PeriodPreference, Never>,
+        runningEntry: SignalProducer<RunningEntry?, Never>,
         readTimeTarget: ReadTimeTarget,
         writeTimeTarget: BindingTarget<TimeTarget>,
         readReport: ReadReport)
@@ -50,17 +49,17 @@ class ProjectDetailsViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Derived input
 
-    private lazy var projectId: SignalProducer<Int64, NoError> = project.producer.skipNil().map { $0.id }
+    private lazy var projectId: SignalProducer<Int64, Never> = project.producer.skipNil().map { $0.id }
 
     /// TimeTarget corresponding to the selected project.
-    private lazy var timeTargetForCurrentProject: SignalProducer<TimeTarget?, NoError> = projectId
+    private lazy var timeTargetForCurrentProject: SignalProducer<TimeTarget?, Never> = projectId
         .throttle(while: readTimeTarget.map { $0 == nil }, on: UIScheduler())
         .combineLatest(with: readTimeTarget.producer.skipNil())
         .map { projectId, readTimeTarget in readTimeTarget(projectId) }
         .flatten(.latest)
 
     /// Report corresponding to the selected project.
-    private lazy var reportForCurrentProject: SignalProducer<TwoPartTimeReport?, NoError> = projectId
+    private lazy var reportForCurrentProject: SignalProducer<TwoPartTimeReport?, Never> = projectId
         .throttle(while: readReport.map { $0 == nil }, on: UIScheduler())
         .combineLatest(with: readReport.producer.skipNil())
         .map { projectId, readTimeTarget in readTimeTarget(projectId) }

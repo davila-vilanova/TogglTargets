@@ -21,15 +21,14 @@
 import Cocoa
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 class LoggedInViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Interface
 
     internal typealias Interface = (
-        profile: SignalProducer<Profile, NoError>,
-        apiAccessError: SignalProducer<APIAccessError, NoError>,
+        profile: SignalProducer<Profile, Never>,
+        apiAccessError: SignalProducer<APIAccessError, Never>,
         logOut: BindingTarget<Void>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -48,7 +47,7 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
 
     // MARK: -
 
-    private lazy var retrieveProfilePictureImageData = Action<URL, (Data, URLResponse), AnyError> { imageURL in
+    private lazy var retrieveProfilePictureImageData = Action<URL, (Data, URLResponse), Error> { imageURL in
         URLSession.shared.reactive.data(with: URLRequest(url: imageURL))
     }
 
@@ -78,7 +77,7 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
                                       then: reactive.producer(forKeyPath: "view.window").map { $0 == nil }),
                       on: UIScheduler())
 
-        let requestLogOutButtonPress = Action<Void, Void, NoError> { SignalProducer(value: ()) }
+        let requestLogOutButtonPress = Action<Void, Void, Never> { SignalProducer(value: ()) }
         logOutButton.reactive.pressed = CocoaAction(requestLogOutButtonPress)
 
         let requestLogOut = Signal.merge(requestLogOutButtonPress.values,
@@ -100,12 +99,12 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
         }
     }
 
-    private lazy var showCredentialsErrorAlert = Action<Void, CredentialsErrorResolution, NoError> { [unowned self] in
+    private lazy var showCredentialsErrorAlert = Action<Void, CredentialsErrorResolution, Never> { [unowned self] in
         guard let window = self.view.window else {
             return SignalProducer.empty
         }
 
-        return SignalProducer { (observer: Signal<CredentialsErrorResolution, NoError>.Observer, _: Lifetime) in
+        return SignalProducer { (observer: Signal<CredentialsErrorResolution, Never>.Observer, _: Lifetime) in
             let alert = NSAlert()
             alert.alertStyle = .warning
             alert.messageText = NSLocalizedString("logged-in.invalid-credentials.title",

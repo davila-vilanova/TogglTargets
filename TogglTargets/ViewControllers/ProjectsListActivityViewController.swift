@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 
 class ProjectsListActivityViewController: NSViewController, BindingTargetProvider {
@@ -29,11 +28,11 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
     internal typealias Interface = (
         projectIDsByTimeTargets: ProjectIDsByTimeTargetsProducer,
         selectedProjectId: BindingTarget<ProjectID?>,
-        selectProjectId: SignalProducer<ProjectID?, NoError>,
-        runningEntry: SignalProducer<RunningEntry?, NoError>,
-        currentDate: SignalProducer<Date, NoError>,
-        periodPreference: SignalProducer<PeriodPreference, NoError>,
-        modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
+        selectProjectId: SignalProducer<ProjectID?, Never>,
+        runningEntry: SignalProducer<RunningEntry?, Never>,
+        currentDate: SignalProducer<Date, Never>,
+        periodPreference: SignalProducer<PeriodPreference, Never>,
+        modelRetrievalStatus: SignalProducer<ActivityStatus, Never>,
         readProject: ReadProject,
         readTimeTarget: ReadTimeTarget,
         readReport: ReadReport)
@@ -81,7 +80,7 @@ class ProjectsListActivityViewController: NSViewController, BindingTargetProvide
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        activityViewController <~ SignalProducer<ActivityViewController.Interface, NoError>(
+        activityViewController <~ SignalProducer<ActivityViewController.Interface, Never>(
             value: (modelRetrievalStatus: lastBinding.latestOutput { $0.modelRetrievalStatus },
                     requestDisplay: displayActivity.bindingTarget)
         )

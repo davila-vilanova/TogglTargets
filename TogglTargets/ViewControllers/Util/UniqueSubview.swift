@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 
 extension NSView {

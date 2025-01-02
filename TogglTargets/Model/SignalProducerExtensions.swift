@@ -20,7 +20,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 private let defaultPlaceholderForNil = "--"
 

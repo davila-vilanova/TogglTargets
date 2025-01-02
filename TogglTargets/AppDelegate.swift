@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 
 private let defaults = UserDefaults.standard
@@ -262,7 +261,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             }
         }
 
-        preferencesController <~ SignalProducer<PreferencesViewControllerWrapper.Interface, NoError>(
+        preferencesController <~ SignalProducer<PreferencesViewControllerWrapper.Interface, Never>(
             value: (displaySection: SignalProducer(value: prefsSection),
                     existingCredential: credentialStore.output.producer,
                     profile: modelCoordinator.profile.producer.skipNil(),

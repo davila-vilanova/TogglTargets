@@ -19,7 +19,6 @@
 //
 
 import XCTest
-import Result
 import ReactiveSwift
 
 private let outputTimeout = TimeInterval(7)
@@ -28,7 +27,7 @@ class ActivitiesStateTest: XCTestCase {
     let scheduler = QueueScheduler()
 
     var testee: ActivitiesState!
-    var signalHolder: Signal<[ActivityStatus], NoError>?
+    var signalHolder: Signal<[ActivityStatus], Never>?
 
     override func setUp() {
         testee = ActivitiesState()

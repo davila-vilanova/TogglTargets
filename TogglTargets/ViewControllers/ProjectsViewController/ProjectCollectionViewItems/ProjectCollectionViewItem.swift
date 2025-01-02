@@ -21,19 +21,18 @@
 import Cocoa
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
 
     // MARK: - Interface
 
     typealias Interface = (
-        runningEntry: SignalProducer<RunningEntry?, NoError>,
-        currentDate: SignalProducer<Date, NoError>,
-        project: SignalProducer<Project?, NoError>,
-        timeTarget: SignalProducer<TimeTarget?, NoError>,
-        periodPreference: SignalProducer<PeriodPreference, NoError>,
-        report: SignalProducer<TwoPartTimeReport?, NoError>)
+        runningEntry: SignalProducer<RunningEntry?, Never>,
+        currentDate: SignalProducer<Date, Never>,
+        project: SignalProducer<Project?, Never>,
+        timeTarget: SignalProducer<TimeTarget?, Never>,
+        periodPreference: SignalProducer<PeriodPreference, Never>,
+        report: SignalProducer<TwoPartTimeReport?, Never>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -133,7 +132,7 @@ class ProjectCollectionViewItem: NSCollectionViewItem, BindingTargetProvider {
                 return runningEntry.runningTime(at: currentDate)
         }
         let totalWorkedTime = SignalProducer.combineLatest(workedTimeFromReport, workedTimeFromRunningEntry)
-            .map { (time0, time1) in return time0 + time1 }
+            .map({ (time0: WorkedTime, time1: WorkedTime) in return time0 + time1 })
 
         let formattedTime = totalWorkedTime.mapToString(timeFormatter: timeFormatter)
         reportField.reactive.text <~ SignalProducer.merge(

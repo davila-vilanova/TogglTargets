@@ -19,7 +19,6 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
 internal var overrideRootAPIURLString: String? // e.g. "http://localhost:8080/toggl"
@@ -102,14 +101,14 @@ extension URLSession {
     }
 }
 
-/// Transforms a producer of `(Data, URLResponse)` that can fail with `AnyError` (that is, the producer returned by
+/// Transforms a producer of `(Data, URLResponse)` that can fail with `Error` (that is, the producer returned by
 /// `URLSession.reactive.data(with:)`) into a producer that can fail only with an `APIAccessError`.
 ///
 /// - parameters:
 ///   - producer: The producer to transform
 ///
 /// - returns: A producer that can fail only with an `APIAccessError`.
-private func mapErrors(from producer: SignalProducer<(Data, URLResponse), AnyError>)
+private func mapErrors(from producer: SignalProducer<(Data, URLResponse), Error>)
     -> SignalProducer<(Data, URLResponse), APIAccessError> {
         return producer.mapError(wrapAnyErrorInLoadingSubsystemError)
             .attemptMap(catchHTTPErrors)
@@ -121,7 +120,7 @@ private func mapErrors(from producer: SignalProducer<(Data, URLResponse), AnyErr
 ///   - err: The error to wrap.
 ///
 /// - returns: The wrapped error.
-private func wrapAnyErrorInLoadingSubsystemError(_ err: AnyError) -> APIAccessError {
+private func wrapAnyErrorInLoadingSubsystemError(_ err: Error) -> APIAccessError {
     return APIAccessError.loadingSubsystemError(underlyingError: err)
 }
 

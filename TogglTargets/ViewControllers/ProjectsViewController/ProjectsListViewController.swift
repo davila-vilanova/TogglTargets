@@ -20,7 +20,6 @@
 
 import Cocoa
 import ReactiveSwift
-import Result
 
 private let projectItemIdentifier = NSUserInterfaceItemIdentifier("ProjectItemIdentifier")
 private let sectionHeaderIdentifier = NSUserInterfaceItemIdentifier("SectionHeaderIdentifier")
@@ -41,10 +40,10 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
     internal typealias Interface = (
         projectIDsByTimeTargets: ProjectIDsByTimeTargetsProducer,
         selectionUpstream: BindingTarget<ProjectID?>,
-        selectionDownstream: SignalProducer<ProjectID?, NoError>,
-        runningEntry: SignalProducer<RunningEntry?, NoError>,
-        currentDate: SignalProducer<Date, NoError>,
-        periodPreference: SignalProducer<PeriodPreference, NoError>,
+        selectionDownstream: SignalProducer<ProjectID?, Never>,
+        runningEntry: SignalProducer<RunningEntry?, Never>,
+        currentDate: SignalProducer<Date, Never>,
+        periodPreference: SignalProducer<PeriodPreference, Never>,
         readProject: ReadProject,
         readTimeTarget: ReadTimeTarget,
         readReport: ReadReport)
@@ -338,7 +337,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         let projectId: ProjectID = currentProjectIDs.value.projectId(for: indexPath)!
 
-        projectItem <~ SignalProducer<ProjectCollectionViewItem.Interface, NoError>(
+        projectItem <~ SignalProducer<ProjectCollectionViewItem.Interface, Never>(
             value: (runningEntry.producer,
                     currentDate.producer.skipNil(),
                     readProject.value!(projectId),
@@ -385,7 +384,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, Never>] {
         let projectWithoutTimeTargetSelected = SignalProducer.combineLatest(
             currentProjectIDs.producer,
             selectedProjectID.producer.skip(first: 1).skipNil())

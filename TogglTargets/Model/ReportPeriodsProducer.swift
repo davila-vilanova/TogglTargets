@@ -19,7 +19,6 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
 /// Represents a time period for which a two part time report is scoped, itself divided in two parts:
@@ -88,14 +87,14 @@ class ReportPeriodsProducer {
     // MARK: - Intermediate signals
 
     /// Produces `Period` values representing the full scope of the current period.
-    private lazy var fullPeriod: SignalProducer<Period, NoError> =
+    private lazy var fullPeriod: SignalProducer<Period, Never> =
         SignalProducer.combineLatest(_periodPreference.producer.skipNil(),
                                      _calendar.producer.skipNil(),
                                      _currentDate.producer.skipNil())
             .map { $0.period(in: $1, for: $2) }
 
     /// Produces `DayComponents` values representing the day corresponding to `currentDate`
-    private lazy var today: SignalProducer<DayComponents, NoError>
+    private lazy var today: SignalProducer<DayComponents, Never>
         = SignalProducer.combineLatest(_calendar.producer.skipNil(), _currentDate.producer.skipNil())
             .map { (calendar, currentDate) in
                 return calendar.dayComponents(from: currentDate)
@@ -103,7 +102,7 @@ class ReportPeriodsProducer {
 
     /// Produces `DayComponents` values representing the day previous to the day corresponding to `currentDate`, as long
     /// as that day is not earlier than the start of the current full period value, and produces `nil` otherwise.
-    private lazy var periodUntilYesterday: SignalProducer<Period?, NoError>
+    private lazy var periodUntilYesterday: SignalProducer<Period?, Never>
         = SignalProducer.combineLatest(_calendar.producer.skipNil(),
                                        _currentDate.producer.skipNil(),
                                        fullPeriod)
@@ -118,7 +117,7 @@ class ReportPeriodsProducer {
     // MARK: - Exposed output
 
     /// Emits the produced `TwoPartTimeReportPeriod` values.
-    lazy var twoPartPeriod: SignalProducer<TwoPartTimeReportPeriod, NoError> =
+    lazy var twoPartPeriod: SignalProducer<TwoPartTimeReportPeriod, Never> =
         SignalProducer.combineLatest(fullPeriod, periodUntilYesterday, today)
             .map { TwoPartTimeReportPeriod(scope: $0, previousToDayOfRequest: $1, dayOfRequest: $2)
     }

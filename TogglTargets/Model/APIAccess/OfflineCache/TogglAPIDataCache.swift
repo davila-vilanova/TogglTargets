@@ -19,16 +19,15 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
 /// An `Action` that upon application produces the latest cached user profile or a nil value if no cached profile is
 /// available.
-typealias RetrieveProfileCacheAction = Action<(), Profile?, NoError>
+typealias RetrieveProfileCacheAction = Action<(), Profile?, Never>
 
 /// An `Action` that when applied produces the latest cached collection of user projects or a nil value if no cached
 /// projects are available.
-typealias RetrieveProjectsCacheAction = Action<(), IndexedProjects?, NoError>
+typealias RetrieveProjectsCacheAction = Action<(), IndexedProjects?, Never>
 
 /// Manages a `TogglAPIDataPersistenceProvider` and provides binding targets and retrieval actions to locally store
 /// and retrieve the user's Toggl profile and projects.
@@ -49,7 +48,7 @@ internal class TogglAPIDataCache {
         self.scheduler = scheduler
 
         retrieveProfile = RetrieveProfileCacheAction {
-            return SignalProducer<Profile?, NoError> { [unowned scheduler] observer, lifetime in
+            return SignalProducer<Profile?, Never> { [unowned scheduler] observer, lifetime in
                 lifetime += scheduler.schedule {
                     observer.send(value: persistenceProvider.retrieveProfile())
                     observer.sendCompleted()
@@ -58,7 +57,7 @@ internal class TogglAPIDataCache {
         }
 
         retrieveProjects = RetrieveProjectsCacheAction {
-            return SignalProducer<[Project]?, NoError> { [unowned scheduler] observer, lifetime in
+            return SignalProducer<[Project]?, Never> { [unowned scheduler] observer, lifetime in
                 lifetime += scheduler.schedule {
                     observer.send(value: persistenceProvider.retrieveProjects())
                     observer.sendCompleted()

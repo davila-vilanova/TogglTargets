@@ -19,7 +19,6 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
 extension MutablePropertyProtocol where Value: OptionalProtocol {

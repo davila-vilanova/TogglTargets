@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 import ReactiveCocoa
 
@@ -33,11 +32,11 @@ class OnboardingStepViewController: NSViewController {
         return currentStep.deoptionalizedBindingTarget
     }
 
-    var requestAbortOnboarding: SignalProducer<Void, NoError> {
+    var requestAbortOnboarding: SignalProducer<Void, Never> {
         return stopPressed.values.producer
     }
 
-    var moveOnToNextStep: SignalProducer<OnboardingStepIdentifier, NoError> {
+    var moveOnToNextStep: SignalProducer<OnboardingStepIdentifier, Never> {
         return currentStep.producer.sample(on: moveOnPressed.values).filterMap { $0?.identifier }
     }
 
@@ -46,8 +45,8 @@ class OnboardingStepViewController: NSViewController {
     }
 
     private let currentStep = MutableProperty<OnboardingStep?>(nil)
-    private let moveOnPressed = Action<Void, Void, NoError> { SignalProducer(value: ()) }
-    private let stopPressed = Action<Void, Void, NoError> { SignalProducer(value: ()) }
+    private let moveOnPressed = Action<Void, Void, Never> { SignalProducer(value: ()) }
+    private let stopPressed = Action<Void, Void, Never> { SignalProducer(value: ()) }
     private let lastStepTrigger = MutableProperty<Void?>(nil)
 
     override func viewDidLoad() {

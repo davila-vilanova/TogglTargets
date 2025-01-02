@@ -21,7 +21,6 @@
 import Cocoa
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 private enum CredentialValidationResult {
     case valid(TogglAPITokenCredential, Profile)
@@ -77,7 +76,7 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
 
     // MARK: - Credential validation
 
-    private lazy var validateCredential: Action<Void, CredentialValidationResult, NoError> = {
+    private lazy var validateCredential: Action<Void, CredentialValidationResult, Never> = {
         typealias ValidateCredentialActionState = (TogglAPICredential, RetrieveProfileNetworkAction)
         let validateCredentialActionState = Property<ValidateCredentialActionState?>(
             initial: nil,
@@ -86,9 +85,9 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
                 .map { them -> ValidateCredentialActionState? in
                     (them.0 == nil || them.1 == nil) ? nil : (them.0!, them.1!) })
 
-        let validateAction = Action<Void, CredentialValidationResult, NoError>(
+        let validateAction = Action<Void, CredentialValidationResult, Never>(
             unwrapping: validateCredentialActionState,
-            execute: { (state: ValidateCredentialActionState) -> SignalProducer<CredentialValidationResult, NoError> in
+            execute: { (state: ValidateCredentialActionState) -> SignalProducer<CredentialValidationResult, Never> in
                 let (credential, testURLSessionAction) = state
                 let session = URLSession(togglAPICredential: credential)
 
@@ -100,8 +99,8 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
                 let profileOrErrorProducer = profileProducer.materialize()
                     .map { event -> Result<Profile, ActionError<APIAccessError>>? in
                         switch event {
-                        case let .value(val): return Result(value: val)
-                        case let .failed(err): return Result(error: err)
+                        case let .value(val): return .success(val)
+                        case let .failed(err): return .failure(err)
                         default: return nil
                         }
                     }.skipNil()
@@ -142,7 +141,7 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
         // Take validated / resolved token credential from action's output
         // and connect it to credential output
 
-        let resolvedCredential: Signal<TogglAPITokenCredential?, NoError> =
+        let resolvedCredential: Signal<TogglAPITokenCredential?, Never> =
             validateCredential.values.map { validationResult -> TogglAPITokenCredential? in
                 switch validationResult {
                 case let .valid(credential, _): return credential
@@ -187,10 +186,10 @@ class LoginViewController: NSViewController, BindingTargetProvider, OnboardingTa
 
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, Never>] {
         let credentialSuccessfullyValidated = validateCredential.values.filter { $0.isValid }.map { _ in () }
         let loginView = viewDidLoadProducer
-            .map { [unowned self] in self.view }
+            .map(value: self.view)
             .concat(SignalProducer.never)
             .take(until: credentialSuccessfullyValidated)
         return [.login: loginView]

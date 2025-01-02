@@ -19,14 +19,13 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 import ReactiveCocoa
 
 class ActivityViewController: NSViewController, BindingTargetProvider {
 
     internal typealias Interface =
-        (modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
+        (modelRetrievalStatus: SignalProducer<ActivityStatus, Never>,
         requestDisplay: BindingTarget<Bool>)
 
     private let lastBinding = MutableProperty<Interface?>(nil)
@@ -42,7 +41,7 @@ class ActivityViewController: NSViewController, BindingTargetProvider {
         let condensed = self.storyboard!.instantiateController(withIdentifier: "CondensedActivityViewController")
             as! CondensedActivityViewController // swiftlint:disable:this force_cast
         condensed <~
-            SignalProducer<CondensedActivityViewController.Interface, NoError>(
+            SignalProducer<CondensedActivityViewController.Interface, Never>(
                 value: (activitiesState.output.producer, wantsExtendedDisplay.bindingTarget))
         return condensed
     }()

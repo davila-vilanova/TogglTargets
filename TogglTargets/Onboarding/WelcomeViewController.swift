@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 import ReactiveCocoa
 
@@ -27,11 +26,11 @@ class WelcomeViewController: NSViewController {
 
     @IBOutlet weak var continueButton: NSButton!
 
-    private let continueAction = Action<Void, Void, NoError> {
+    private let continueAction = Action<Void, Void, Never> {
         SignalProducer(value: ())
     }
 
-    var continuePressed: Signal<Void, NoError> {
+    var continuePressed: Signal<Void, Never> {
         return continueAction.values
     }
 

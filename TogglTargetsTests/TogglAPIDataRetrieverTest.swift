@@ -19,7 +19,6 @@
 //
 
 import XCTest
-import Result
 import ReactiveSwift
 
 private let dummyAPIToken = "8a7f2049ed"
@@ -177,7 +176,7 @@ class TogglAPIDataRetrieverTest: XCTestCase { // swiftlint:disable:this type_bod
     }
 
     private func feedAPICredentialIntoDataRetriever() {
-        dataRetriever.apiCredential <~ SignalProducer<TogglAPICredential, NoError>(value: testCredential)
+        dataRetriever.apiCredential <~ SignalProducer<TogglAPICredential, Never>(value: testCredential)
     }
 
     private func feedTwoPartPeriodIntoDataRetriever() {
@@ -517,7 +516,7 @@ class TogglAPIDataRetrieverTest: XCTestCase { // swiftlint:disable:this type_bod
 
         retrieveProfileCacheAction = RetrieveProfileCacheAction { _ in
             let scheduler = QueueScheduler()
-            let pipe = Signal<Profile, NoError>.pipe()
+            let pipe = Signal<Profile, Never>.pipe()
             scheduler.schedule(after: Date().addingTimeInterval(0.250)) {
                 pipe.input.send(value: testProfile)
             }

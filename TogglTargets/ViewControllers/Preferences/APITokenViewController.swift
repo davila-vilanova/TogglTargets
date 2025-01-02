@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 import ReactiveCocoa
 
@@ -63,7 +62,8 @@ class APITokenViewController: NSViewController, BindingTargetProvider {
         attemptLogin.signal.bindOnlyToLatest(validBindings.map { $0.attemptLogin })
 
         // Send upstream a credential based on the value displayed in the token field
-        credentialUpstream <~ apiTokenField.reactive.continuousStringValues.map(TogglAPITokenCredential.init)
+        let apiTokenValues: Signal<(any TogglAPICredential)?, Never> = apiTokenField.reactive.continuousStringValues.map(TogglAPITokenCredential.init)
+        credentialUpstream <~ apiTokenValues
     }
 
     override func viewDidAppear() {

@@ -21,7 +21,6 @@
 import Cocoa
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 class EmailPasswordViewController: NSViewController, BindingTargetProvider {
 

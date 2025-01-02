@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 import ReactiveCocoa
 
@@ -27,9 +26,9 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
 
     // MARK: Interface
 
-    internal typealias Interface = (timeWorkedToday: SignalProducer<TimeInterval, NoError>,
-        remainingTimeToDayBaseline: SignalProducer<TimeInterval?, NoError>,
-        feasibility: SignalProducer<TargetFeasibility, NoError>)
+    internal typealias Interface = (timeWorkedToday: SignalProducer<TimeInterval, Never>,
+        remainingTimeToDayBaseline: SignalProducer<TimeInterval?, Never>,
+        feasibility: SignalProducer<TargetFeasibility, Never>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -93,7 +92,7 @@ class DayProgressViewController: NSViewController, BindingTargetProvider, Onboar
 
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, Never>] {
         let dayProgressView = viewDidLoadProducer
             .map { [unowned self] _ in self.view }
             .concat(SignalProducer.never)

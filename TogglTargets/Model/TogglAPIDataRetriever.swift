@@ -19,10 +19,9 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
-typealias RefreshAction = Action<Void, Void, NoError>
+typealias RefreshAction = Action<Void, Void, Never>
 
 /// Retrieves user data from the Toggl API keeping data that has dependencies up to date with the state of its parent
 /// data:
@@ -78,10 +77,10 @@ protocol TogglAPIDataRetriever: class {
     // MARK: - Activity and Errors
 
     // Publishes updates to the status of this data retriever.
-    var status: SignalProducer<ActivityStatus, NoError> { get }
+    var status: SignalProducer<ActivityStatus, Never> { get }
 }
 
-typealias RetryAction = Action<Void, Void, NoError>
+typealias RetryAction = Action<Void, Void, Never>
 
 // MARK: -
 
@@ -113,7 +112,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     private lazy var urlSession = Property<URLSession?>(
         initial: nil, then: _apiCredential.signal.map(URLSession.init))
 
-    private lazy var noCredentialsEvents: Signal<(), NoError> =
+    private lazy var noCredentialsEvents: Signal<(), Never> =
         retrieveProfileNetworkAction.errors.filter(isNoCredentialsError).map { _ in () }
 
     // MARK: - Profile
@@ -134,7 +133,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
                                                             retrieveProfileFromCache.values.skipNil()))
 
     /// Publishes an array of `WorkspaceID` values derived from the latest `Profile`.
-    private lazy var workspaceIDs: SignalProducer<[WorkspaceID], NoError> = profile.producer.skipNil()
+    private lazy var workspaceIDs: SignalProducer<[WorkspaceID], Never> = profile.producer.skipNil()
         .map { $0.workspaces.map { $0.id } }
 
     // MARK: - Projects
@@ -152,7 +151,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     internal lazy var projects: Property<IndexedProjects?> = {
         let retrievedFromNetwork = retrieveProjectsNetworkAction.values
         let retrievedFromCache = retrieveProjectsFromCache.values.skipNil()
-        let emptyOnNoCredentials = noCredentialsEvents.map { IndexedProjects() }
+        let emptyOnNoCredentials = noCredentialsEvents.map(value: IndexedProjects())
         return Property(initial: nil,
                         then: Signal.merge(retrievedFromNetwork, retrievedFromCache, emptyOnNoCredentials))
     }()
@@ -175,7 +174,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
     /// become available.
     internal lazy var reports: Property<IndexedTwoPartTimeReports?> = {
         let retrievedFromNetwork = retrieveReportsNetworkAction.values
-        let emptyOnNoCredentials = noCredentialsEvents.map { IndexedTwoPartTimeReports() }
+        let emptyOnNoCredentials = noCredentialsEvents.map(value: IndexedTwoPartTimeReports())
         return Property(initial: nil, then: Signal.merge(retrievedFromNetwork, emptyOnNoCredentials))
     }()
 
@@ -249,12 +248,12 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
     // MARK: - Activity and Errors
 
-    lazy var status: SignalProducer<ActivityStatus, NoError> = {
+    lazy var status: SignalProducer<ActivityStatus, Never> = {
         func extractStatus<ActionInput, ActionOutput>
             (from action: Action<ActionInput, ActionOutput, APIAccessError>,
              for activity: ActivityStatus.Activity,
-             retryErrorsWith inputForRetries: SignalProducer<ActionInput, NoError>)
-            -> SignalProducer<ActivityStatus, NoError> {
+             retryErrorsWith inputForRetries: SignalProducer<ActionInput, Never>)
+            -> SignalProducer<ActivityStatus, Never> {
 
                 let executing = action.isExecuting.producer.filter { $0 }
                     .map { _ in ActivityStatus.executing(activity) }
@@ -271,7 +270,7 @@ class CachedTogglAPIDataRetriever: TogglAPIDataRetriever {
 
         func extractStatus<ActionOutput>(from action: Action<Void, ActionOutput, APIAccessError>,
                                          for activity: ActivityStatus.Activity)
-            -> SignalProducer<ActivityStatus, NoError> {
+            -> SignalProducer<ActivityStatus, Never> {
                 return extractStatus(from: action, for: activity, retryErrorsWith: SignalProducer(value: ()))
         }
 

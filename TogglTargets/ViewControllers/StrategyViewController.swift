@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 import ReactiveCocoa
 
@@ -28,11 +27,11 @@ class StrategyViewController: NSViewController, BindingTargetProvider {
     // MARK: Interface
 
     internal typealias Interface = (
-        targetTime: SignalProducer<TimeInterval, NoError>,
-        dayBaseline: SignalProducer<TimeInterval, NoError>,
-        dayBaselineAdjustedToProgress: SignalProducer<TimeInterval, NoError>,
-        dayBaselineDifferential: SignalProducer<Double, NoError>,
-        feasibility: SignalProducer<TargetFeasibility, NoError>)
+        targetTime: SignalProducer<TimeInterval, Never>,
+        dayBaseline: SignalProducer<TimeInterval, Never>,
+        dayBaselineAdjustedToProgress: SignalProducer<TimeInterval, Never>,
+        dayBaselineDifferential: SignalProducer<Double, Never>,
+        feasibility: SignalProducer<TargetFeasibility, Never>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -154,7 +153,7 @@ class TargetReachedViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
-    internal typealias Interface = SignalProducer<TimeInterval, NoError>
+    internal typealias Interface = SignalProducer<TimeInterval, Never>
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }

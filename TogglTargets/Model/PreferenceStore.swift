@@ -20,7 +20,6 @@
 
 import Cocoa
 import ReactiveSwift
-import Result
 
 /// Represents a data type that can store itself in the user defaults.
 protocol StorableInUserDefaults {

@@ -20,7 +20,6 @@
 
 import XCTest
 import ReactiveSwift
-import Result
 
 private var currentDate = Date(timeIntervalSince1970: 1507731805) // 11. Oct 2017, 16:23 in Berlin
 private let projectIdA: Int64 = 310

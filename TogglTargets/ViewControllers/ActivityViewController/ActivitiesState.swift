@@ -19,7 +19,6 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
 /// The output of a state transformation.
@@ -47,14 +46,14 @@ class ActivitiesState {
     // MARK: - Output
 
     /// The output reflects the internal state but it is throttle to prevent too frequent changes in the UI.
-    lazy var output: Signal<([ActivityStatus]), NoError> =
+    lazy var output: Signal<([ActivityStatus]), Never> =
         state.signal.throttle(throttleDelay, on: scheduler)
 
     // MARK: - Infrastucture
 
     private let (lifetime, token) = Lifetime.make()
     private let scheduler = QueueScheduler()
-    private let inputReceivedPipe = Signal<Void, NoError>.pipe()
+    private let inputReceivedPipe = Signal<Void, Never>.pipe()
 
     // MARK: - Transforming state
 

@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 
 class CondensedActivityViewController: NSViewController, BindingTargetProvider {
@@ -27,7 +26,7 @@ class CondensedActivityViewController: NSViewController, BindingTargetProvider {
     // MARK: - Interface
 
     internal typealias Interface = (
-        activityStatuses: SignalProducer<[ActivityStatus], NoError>,
+        activityStatuses: SignalProducer<[ActivityStatus], Never>,
         expandDetails: BindingTarget<Bool>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -204,8 +203,8 @@ private enum State {
 ///                       states.
 ///
 /// - returns: A prodeucer of condensed states.
-private func makeStateProducer(from statusesProducer: SignalProducer<[ActivityStatus], NoError>)
-    -> SignalProducer<State, NoError> {
+private func makeStateProducer(from statusesProducer: SignalProducer<[ActivityStatus], Never>)
+    -> SignalProducer<State, Never> {
         let countsProducer = statusesProducer.map { statuses -> (Int, Int, Int, APIAccessError?) in
             let syncingCount = statuses.filter { $0.isExecuting }.count
             let successCount = statuses.filter { $0.isSuccessful }.count

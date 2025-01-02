@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 
 ///  TogglTargets’ view controllers try to stay simple and focused by having complex controllers be composed from
@@ -52,12 +51,12 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     // MARK: - Interface
 
     internal typealias Interface = (
-        calendar: SignalProducer<Calendar, NoError>,
-        periodPreference: SignalProducer<PeriodPreference, NoError>,
+        calendar: SignalProducer<Calendar, Never>,
+        periodPreference: SignalProducer<PeriodPreference, Never>,
         projectIDsByTimeTargets: ProjectIDsByTimeTargetsProducer,
-        runningEntry: SignalProducer<RunningEntry?, NoError>,
-        currentDate: SignalProducer<Date, NoError>,
-        modelRetrievalStatus: SignalProducer<ActivityStatus, NoError>,
+        runningEntry: SignalProducer<RunningEntry?, Never>,
+        currentDate: SignalProducer<Date, Never>,
+        modelRetrievalStatus: SignalProducer<ActivityStatus, Never>,
         readProject: ReadProject,
         readTimeTarget: ReadTimeTarget,
         writeTimeTarget: BindingTarget<TimeTarget>,
@@ -89,7 +88,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
                                          lastBinding.producer.filter(isNil)).map(toVoid)
         let projects = projectIdPlusReadProject.map { $0.1($0.0) }.flatten(.latest)
         let missingProjects = projects.filter(isNil).map(toVoid)
-        let nilValues = SignalProducer.merge(missingProjectIdOrReadProject, missingProjects).map { nil as Project? }
+        let nilValues = SignalProducer.merge(missingProjectIdOrReadProject, missingProjects).map(value: nil as Project?)
         let projectValues = SignalProducer.merge(projects.skipNil().map { $0 as Project? }, nilValues)
         return Property(initial: nil, then: projectValues)
     }()
@@ -117,11 +116,11 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
     private lazy var isProjectWithTimeTargetCurrentlySelected =
         Property(initial: false, then: SignalProducer.combineLatest(selectedProjectId.producer, readTimeTarget.producer)
-            .map { projectId, readTimeTarget -> SignalProducer<TimeTarget?, NoError> in
+            .map { projectId, readTimeTarget -> SignalProducer<TimeTarget?, Never> in
                 guard let projectId = projectId,
                     let readTimeTarget = readTimeTarget
                     else {
-                        return SignalProducer<TimeTarget?, NoError>(value: nil)
+                        return SignalProducer<TimeTarget?, Never>(value: nil)
                 }
                 return readTimeTarget(projectId)
             }
@@ -271,7 +270,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     }
 
     private lazy var showConfirmDeleteSheet =
-        Action<Void, ConfirmDeleteResolution, NoError>(
+        Action<Void, ConfirmDeleteResolution, Never>(
             state:
             selectedProject.combineLatest(with: isProjectWithTimeTargetCurrentlySelected),
             enabledIf: { $0.0 != nil && $0.1 },
@@ -282,7 +281,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
 
                 let project = state.0!
 
-                return SignalProducer { (observer: Signal<ConfirmDeleteResolution, NoError>.Observer, _: Lifetime) in
+                return SignalProducer { (observer: Signal<ConfirmDeleteResolution, Never>.Observer, _: Lifetime) in
                     let alert = NSAlert()
                     alert.alertStyle = .warning
                     alert.messageText = String.localizedStringWithFormat(

@@ -19,7 +19,6 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
 class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
@@ -63,7 +62,7 @@ class ConcreteTimeTargetsStore: ProjectIDsProducingTimeTargetsStore {
 
     /// Produces a new `ProjectIDsByTimeTargets` value each time a value is sent to the `projectIDs` target that
     /// contains a different set of unique IDs than the last seen one.
-    private lazy var projectIDsByTimeTargetsFullRefresh: SignalProducer<ProjectIDsByTimeTargets, NoError> =
+    private lazy var projectIDsByTimeTargetsFullRefresh: SignalProducer<ProjectIDsByTimeTargets, Never> =
         _projectIDs.producer.skipNil().withLatest(from: persistenceProvider.allTimeTargets)
             .skipRepeats { (old, new) -> Bool in // let through only changes in project IDs, order insensitive
                 let oldIds = Set(old.0)
@@ -188,8 +187,8 @@ private class SingleTimeTargetUpdateComputer {
     ///     this instance will generate to the initial state of the project IDs by time targets.
     init(initialStateIndexedTimeTargets: ProjectIdIndexedTimeTargets,
          initialStateProjectIDsByTimeTargets: ProjectIDsByTimeTargets,
-         inputWriteTimeTarget: SignalProducer<TimeTarget, NoError>,
-         inputDeleteTimeTarget: SignalProducer<ProjectID, NoError>,
+         inputWriteTimeTarget: SignalProducer<TimeTarget, Never>,
+         inputDeleteTimeTarget: SignalProducer<ProjectID, Never>,
          outputProjectIDsByTimeTargetsUpdate: BindingTarget<ProjectIDsByTimeTargets.SingleTimeTargetUpdate>) {
 
         indexedTimeTargets = initialStateIndexedTimeTargets
@@ -239,5 +238,5 @@ private class SingleTimeTargetUpdateComputer {
     // MARK: - Output
 
     private let projectIDsByTimeTargetsUpdatePipe =
-        Signal<ProjectIDsByTimeTargets.SingleTimeTargetUpdate, NoError>.pipe()
+        Signal<ProjectIDsByTimeTargets.SingleTimeTargetUpdate, Never>.pipe()
 }

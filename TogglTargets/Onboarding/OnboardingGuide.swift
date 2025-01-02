@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 
 /// Key for the value stored in the user defaults to keep track of whether onboarding is pending.
@@ -63,7 +62,7 @@ class OnboardingGuide {
 
     /// Sends an empty value whenever the onboarding process has ended, either by completing all the steps or by
     /// the user deliberately aborting the process.
-    var onboardingEnded: SignalProducer<Void, NoError> {
+    var onboardingEnded: SignalProducer<Void, Never> {
         return _onboardingEnded.producer.skipNil()
     }
 
@@ -79,11 +78,11 @@ class OnboardingGuide {
     /// The view is stored as a materialized signal. Termination events indicate that the action associated with this
     /// view's step is completed and the onboarding process can move on.
     private lazy var
-    targetViewEventHolders: [OnboardingStepIdentifier: MutableProperty<Signal<NSView, NoError>.Event?>] = {
+    targetViewEventHolders: [OnboardingStepIdentifier: MutableProperty<Signal<NSView, Never>.Event?>] = {
         var holders =
-            [OnboardingStepIdentifier: MutableProperty<Signal<NSView, NoError>.Event?>](minimumCapacity: steps.count)
+            [OnboardingStepIdentifier: MutableProperty<Signal<NSView, Never>.Event?>](minimumCapacity: steps.count)
         for step in steps {
-            holders[step.identifier] = MutableProperty<Signal<NSView, NoError>.Event?>(nil)
+            holders[step.identifier] = MutableProperty<Signal<NSView, Never>.Event?>(nil)
         }
         return holders
     }()
@@ -94,8 +93,8 @@ class OnboardingGuide {
     /// registered by another part of the app.
     /// The view is stored as a materialized signal. Termination events indicate that the action associated with this
     /// view's step is completed and the onboarding process can move on.
-    private lazy var sortedTargetViewEventHolders: [MutableProperty<Signal<NSView, NoError>.Event?>] = {
-       var sorted = [MutableProperty<Signal<NSView, NoError>.Event?>]()
+    private lazy var sortedTargetViewEventHolders: [MutableProperty<Signal<NSView, Never>.Event?>] = {
+       var sorted = [MutableProperty<Signal<NSView, Never>.Event?>]()
         for step in steps {
             guard let holder = targetViewEventHolders[step.identifier] else {
                 assert(false)
@@ -113,11 +112,11 @@ class OnboardingGuide {
     ///                `OnboardingTargetViewsProvider` protocol and, if it does, the views it provides will be
     ///                associated with the corresponding onboarding steps. If it does not, this call will be ignored.
     func register(_ registree: Any) {
-        func connect(_ viewProducer: SignalProducer<NSView, NoError>,
+        func connect(_ viewProducer: SignalProducer<NSView, Never>,
                      toViewHolderFor stepIdentifier: OnboardingStepIdentifier) {
-            func take(from viewProducer: SignalProducer<NSView, NoError>, stepIdentifier: OnboardingStepIdentifier)
-                -> SignalProducer<Signal<NSView, NoError>.Event, NoError> {
-                    func moveOnButtonPressed(for stepId: OnboardingStepIdentifier) -> SignalProducer<Void, NoError> {
+            func take(from viewProducer: SignalProducer<NSView, Never>, stepIdentifier: OnboardingStepIdentifier)
+                -> SignalProducer<Signal<NSView, Never>.Event, Never> {
+                    func moveOnButtonPressed(for stepId: OnboardingStepIdentifier) -> SignalProducer<Void, Never> {
                         return stepViewController.moveOnToNextStep.filter { $0 == stepId }
                             .map { _ in () }.take(first: 1)
                     }
@@ -152,8 +151,8 @@ class OnboardingGuide {
 
         (lifetime, token) = Lifetime.make()
 
-        func extractViewProducer(_ prop: MutableProperty<Signal<NSView, NoError>.Event?>)
-            -> SignalProducer<NSView, NoError> {
+        func extractViewProducer(_ prop: MutableProperty<Signal<NSView, Never>.Event?>)
+            -> SignalProducer<NSView, Never> {
                 return prop.producer.skipNil().dematerialize()
         }
 
@@ -274,7 +273,7 @@ protocol OnboardingTargetViewsProvider {
     /// associated with the corresponding step when it (the view) becomes available, and terminate whenever the user
     /// action associated with the step is performed and the onboarding sequence can continue on to the next
     /// step.
-    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] { get }
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, Never>] { get }
 }
 
 /// Can be set as the delegate of an `NSPopover` to forward its didShow and didClose events.
@@ -283,12 +282,12 @@ private class PopoverDelegate: NSObject, NSPopoverDelegate {
     private let _popoverDidCloseTrigger = MutableProperty<Void?>(nil)
 
     /// Sends an empty value every time the popover is shown.
-    var popoverDidShowTrigger: Signal<Void, NoError> {
+    var popoverDidShowTrigger: Signal<Void, Never> {
         return _popoverDidShowTrigger.signal.skipNil()
     }
 
     /// Sends an empty value every time the popover is closed.
-    var popoverDidCloseTrigger: Signal<Void, NoError> {
+    var popoverDidCloseTrigger: Signal<Void, Never> {
         return _popoverDidCloseTrigger.signal.skipNil()
     }
 

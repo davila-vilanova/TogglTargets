@@ -21,20 +21,19 @@
 import Cocoa
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 class TimeReportViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: Interface
 
     internal typealias Interface = (
-        projectId: SignalProducer<Int64, NoError>,
-        timeTarget: SignalProducer<TimeTarget, NoError>,
-        report: SignalProducer<TwoPartTimeReport?, NoError>,
-        runningEntry: SignalProducer<RunningEntry?, NoError>,
-        calendar: SignalProducer<Calendar, NoError>,
-        currentDate: SignalProducer<Date, NoError>,
-        periodPreference: SignalProducer<PeriodPreference, NoError>)
+        projectId: SignalProducer<Int64, Never>,
+        timeTarget: SignalProducer<TimeTarget, Never>,
+        report: SignalProducer<TwoPartTimeReport?, Never>,
+        runningEntry: SignalProducer<RunningEntry?, Never>,
+        calendar: SignalProducer<Calendar, Never>,
+        currentDate: SignalProducer<Date, Never>,
+        periodPreference: SignalProducer<PeriodPreference, Never>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
     internal var bindingTarget: BindingTarget<Interface?> { return lastBinding.bindingTarget }
@@ -52,7 +51,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
 
     private let progress = ProgressToTimeTarget()
 
-    private lazy var timePeriod: SignalProducer<Period, NoError> =
+    private lazy var timePeriod: SignalProducer<Period, Never> =
         SignalProducer.combineLatest(periodPreference.producer.skipNil(),
                                      calendar.producer.skipNil(), currentDate.producer.skipNil())
             .map { $0.period(in: $1, for: $2) }
@@ -248,7 +247,7 @@ class TimeReportViewController: NSViewController, BindingTargetProvider, Onboard
 
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, Never>] {
         let computeStrategyFromButton = viewDidLoadProducer
             .map { [unowned self] _ in self.computeStrategyFromButton }
             .skipNil()

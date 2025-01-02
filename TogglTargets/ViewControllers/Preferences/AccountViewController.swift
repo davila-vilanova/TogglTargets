@@ -21,16 +21,15 @@
 import Cocoa
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 class AccountViewController: NSViewController, BindingTargetProvider {
 
     // MARK: Interface
 
     internal typealias Interface = (
-        existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
-        profile: SignalProducer<Profile, NoError>,
-        apiAccessError: SignalProducer<APIAccessError, NoError>,
+        existingCredential: SignalProducer<TogglAPITokenCredential?, Never>,
+        profile: SignalProducer<Profile, Never>,
+        apiAccessError: SignalProducer<APIAccessError, Never>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
         testURLSessionAction: RetrieveProfileNetworkAction)
 

@@ -20,7 +20,6 @@
 
 import Cocoa
 import ReactiveSwift
-import Result
 
 class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     internal enum Section {
@@ -30,15 +29,15 @@ class PreferencesViewController: NSTabViewController, BindingTargetProvider {
     // MARK: - Interface
 
     internal typealias Interface = (
-        displaySection: SignalProducer<Section?, NoError>,
-        existingCredential: SignalProducer<TogglAPITokenCredential?, NoError>,
-        profile: SignalProducer<Profile, NoError>,
-        apiAccessError: SignalProducer<APIAccessError, NoError>,
+        displaySection: SignalProducer<Section?, Never>,
+        existingCredential: SignalProducer<TogglAPITokenCredential?, Never>,
+        profile: SignalProducer<Profile, Never>,
+        apiAccessError: SignalProducer<APIAccessError, Never>,
         resolvedCredential: BindingTarget<TogglAPITokenCredential?>,
         testURLSessionAction: RetrieveProfileNetworkAction,
-        existingTimeTargetPeriodPreference: SignalProducer<PeriodPreference, NoError>,
-        calendar: SignalProducer<Calendar, NoError>,
-        currentDate: SignalProducer<Date, NoError>,
+        existingTimeTargetPeriodPreference: SignalProducer<PeriodPreference, Never>,
+        calendar: SignalProducer<Calendar, Never>,
+        currentDate: SignalProducer<Date, Never>,
         updatedTimeTargetPeriodPreference: BindingTarget<PeriodPreference>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)

@@ -19,7 +19,6 @@
 //
 
 import Cocoa
-import Result
 import ReactiveSwift
 
 extension NSViewController {
@@ -51,12 +50,12 @@ extension NSViewController {
 
     /// Sends a single empty value when this controller's viewDidLoad method is invoked or if it has already been
     /// invoked and then completes.
-    var viewDidLoadProducer: SignalProducer<Void, NoError> {
-        return isViewLoadedProducer.filter { $0 }.map { _ in () }
+    var viewDidLoadProducer: SignalProducer<Void, Never> {
+        return isViewLoadedProducer.filter { $0 }.map(value: ())
     }
 
-    private var isViewLoadedProducer: SignalProducer<Bool, NoError> {
-        return SignalProducer<Bool, NoError> { [weak self] observer, lifetime in
+    private var isViewLoadedProducer: SignalProducer<Bool, Never> {
+        return SignalProducer<Bool, Never> { [weak self] observer, lifetime in
             guard let viewController = self else {
                 observer.sendCompleted()
                 return
@@ -72,7 +71,7 @@ extension NSViewController {
     }
 
     /// Sends a single empty value when this controller's viewDidLoad method is invoked and then completes.
-    private var viewDidLoadTrigger: Signal<Void, NoError> {
+    private var viewDidLoadTrigger: Signal<Void, Never> {
         return reactive.trigger(for: #selector(NSViewController.viewDidLoad)).take(first: 1)
     }
 }

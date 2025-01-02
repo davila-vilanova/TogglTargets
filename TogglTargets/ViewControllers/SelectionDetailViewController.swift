@@ -20,7 +20,6 @@
 
 import Cocoa
 import ReactiveSwift
-import Result
 
 private let projectDetailsVCContainment = "ProjectDetailsVCContainment"
 private let emtpySelectionVCContainment = "EmtpySelectionVCContainment"
@@ -30,11 +29,11 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
     // MARK: - Interface
 
     internal typealias Interface =
-        (projectId: SignalProducer<ProjectID?, NoError>,
-        currentDate: SignalProducer<Date, NoError>,
-        calendar: SignalProducer<Calendar, NoError>,
-        periodPreference: SignalProducer<PeriodPreference, NoError>,
-        runningEntry: SignalProducer<RunningEntry?, NoError>,
+        (projectId: SignalProducer<ProjectID?, Never>,
+        currentDate: SignalProducer<Date, Never>,
+        calendar: SignalProducer<Calendar, Never>,
+        periodPreference: SignalProducer<PeriodPreference, Never>,
+        runningEntry: SignalProducer<RunningEntry?, Never>,
         readProject: ReadProject,
         readTimeTarget: ReadTimeTarget,
         writeTimeTarget: BindingTarget<TimeTarget>,
@@ -45,12 +44,12 @@ class SelectionDetailViewController: NSViewController, BindingTargetProvider {
 
     // MARK: - Local use of project
 
-    private let readProject = MutableProperty<((ProjectID) -> SignalProducer<Project?, NoError>)?>(nil)
+    private let readProject = MutableProperty<((ProjectID) -> SignalProducer<Project?, Never>)?>(nil)
     private let selectedProjectID = MutableProperty<ProjectID?>(nil)
-    private lazy var selectedProject: SignalProducer<Project?, NoError> = selectedProjectID.producer
+    private lazy var selectedProject: SignalProducer<Project?, Never> = selectedProjectID.producer
         .throttle(while: readProject.map { $0 == nil }, on: UIScheduler())
         .combineLatest(with: readProject.producer.skipNil())
-        .map { projectID, readProject -> SignalProducer<Project?, NoError> in
+        .map { projectID, readProject -> SignalProducer<Project?, Never> in
             if let projectID = projectID {
                 return readProject(projectID)
             } else {

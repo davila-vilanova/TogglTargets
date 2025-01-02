@@ -20,7 +20,6 @@
 
 import Foundation
 import ReactiveSwift
-import Result
 
 /// Publishes `Date` values representing the current date, updated on demand.
 /// It makes sense for it to have to be a class so that multiple parts of an application can share references to it and
@@ -34,7 +33,7 @@ protocol CurrentDateGeneratorProtocol: class {
     func triggerUpdate()
 
     /// Producer of values corresponding to the current date.
-    var producer: SignalProducer<Date, NoError> { get }
+    var producer: SignalProducer<Date, Never> { get }
 
     /// Binding target that will trigger an update to the current date whenever
     /// an empty value is received.
@@ -52,10 +51,10 @@ class CurrentDateGenerator: CurrentDateGeneratorProtocol {
     internal lazy var currentDate = Property(initial: scheduler.currentDate, then: currentDatePipe.output)
 
     /// The pipe that conveys generated current date values.
-    private lazy var currentDatePipe = Signal<Date, NoError>.pipe()
+    private lazy var currentDatePipe = Signal<Date, Never>.pipe()
 
     /// Producer of values corresponding to the current date.
-    var producer: SignalProducer<Date, NoError> {
+    var producer: SignalProducer<Date, Never> {
         return currentDate.producer
     }
 

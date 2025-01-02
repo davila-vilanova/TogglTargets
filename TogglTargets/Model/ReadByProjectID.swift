@@ -19,19 +19,18 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
 /// Any function which takes a project ID as input and returns a producer that emits values over time corresponding to
 /// the project associated with that project ID.
-typealias ReadProject = (ProjectID) -> SignalProducer<Project?, NoError>
+typealias ReadProject = (ProjectID) -> SignalProducer<Project?, Never>
 
 /// Any function which takes a project ID as input and returns a producer that emits values over time corresponding to
 /// the report associated with that project ID.
-typealias ReadReport = (ProjectID) -> SignalProducer<TwoPartTimeReport?, NoError>
+typealias ReadReport = (ProjectID) -> SignalProducer<TwoPartTimeReport?, Never>
 
 /// Any function which takes a project ID as input and returns a producer that emits values over time corresponding to
 /// the time target associated with that project ID.
 ///
 /// - note: `nil` timeTarget values represent a target that does not exist yet or that has been deleted.
-typealias ReadTimeTarget = (ProjectID) -> SignalProducer<TimeTarget?, NoError>
+typealias ReadTimeTarget = (ProjectID) -> SignalProducer<TimeTarget?, Never>

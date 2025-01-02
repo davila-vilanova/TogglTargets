@@ -20,14 +20,13 @@
 
 import Foundation
 import SQLite
-import Result
 import ReactiveSwift
 
 typealias ProjectIdIndexedTimeTargets = [ProjectID: TimeTarget]
 
 /// Producer of `ProjectIDsByTimeTargets.Update` values that when started emits a `full(ProjectIDsByTimeTargets)` value
 /// which can be followed by full or incremental updates.
-typealias ProjectIDsByTimeTargetsProducer = SignalProducer<ProjectIDsByTimeTargets.Update, NoError>
+typealias ProjectIDsByTimeTargetsProducer = SignalProducer<ProjectIDsByTimeTargets.Update, Never>
 
 /// An entity that keeps track of `TimeTarget` values.
 protocol TimeTargetsStore {

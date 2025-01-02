@@ -19,10 +19,9 @@
 //
 
 import Foundation
-import Result
 import ReactiveSwift
 
-extension SignalProducerConvertible where Value: OptionalProtocol, Error == NoError {
+extension SignalProducerConvertible where Value: OptionalProtocol, Error == Never {
 
     /// Selects and flattens the chosen producer from the connection interface.
     /// Use on a property that holds the value of the latest connection to extract the values of a singled out producer
@@ -32,13 +31,13 @@ extension SignalProducerConvertible where Value: OptionalProtocol, Error == NoEr
     ///   - selector: A function that receives a non `nil` connection value and extracts the desired producer.
     ///
     /// - returns: A producer of values emited by the selected producer.
-    func latestOutput<T>(_ selector: @escaping (Value.Wrapped) -> SignalProducer<T, NoError>)
-        -> SignalProducer<T, NoError> {
+    func latestOutput<T>(_ selector: @escaping (Value.Wrapped) -> SignalProducer<T, Never>)
+        -> SignalProducer<T, Never> {
             return producer.skipNil().map(selector).flatten(.latest)
     }
 }
 
-extension SignalProducerConvertible where Error == NoError {
+extension SignalProducerConvertible where Error == Never {
 
     /// Binds self to the latest binding target emited by the provided producer.
     ///
@@ -49,7 +48,7 @@ extension SignalProducerConvertible where Error == NoError {
     ///
     /// - returns: A disposable that can be used to break the active bound.
     @discardableResult
-    func bindOnlyToLatest(_ bindingTargetProducer: SignalProducer<BindingTarget<Value>, NoError>) -> Disposable {
+    func bindOnlyToLatest(_ bindingTargetProducer: SignalProducer<BindingTarget<Value>, Never>) -> Disposable {
         let disposable = SerialDisposable()
         bindingTargetProducer.startWithValues { target in
             disposable.inner = target <~ self.producer

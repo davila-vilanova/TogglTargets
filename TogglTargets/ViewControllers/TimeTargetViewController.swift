@@ -21,16 +21,15 @@
 import Cocoa
 import ReactiveSwift
 import ReactiveCocoa
-import Result
 
 class TimeTargetViewController: NSViewController, BindingTargetProvider, OnboardingTargetViewsProvider {
 
     // MARK: - Interface
 
     internal typealias Interface = (
-        calendar: SignalProducer<Calendar, NoError>,
-        timeTarget: SignalProducer<TimeTarget?, NoError>,
-        periodPreference: SignalProducer<PeriodPreference, NoError>,
+        calendar: SignalProducer<Calendar, Never>,
+        timeTarget: SignalProducer<TimeTarget?, Never>,
+        periodPreference: SignalProducer<PeriodPreference, Never>,
         userUpdates: BindingTarget<TimeTarget>)
 
     private var lastBinding = MutableProperty<Interface?>(nil)
@@ -107,7 +106,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
             .makeBindingTarget(on: UIScheduler()) { $0.setSelected($1.0, forSegment: $1.1) }
             <~ Property(value: Weekday.allCases).producer
                 .sample(on: nonNilTimeTarget.map { _ in () })
-                .map(SignalProducer<Weekday, NoError>.init)
+                .map(SignalProducer<Weekday, Never>.init)
                 .flatten(.latest)
                 .withLatest(from: nonNilTimeTarget.map { $0.workWeekdays })
                 .map { ($1.isSelected($0), $0.indexInGregorianCalendarSymbolsArray) }
@@ -177,7 +176,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
     }
 
     private func setupTimeTargetDeletionAction() {
-        let deleteButtonPressed = Action<Void, Void, NoError> { SignalProducer(value: ()) }
+        let deleteButtonPressed = Action<Void, Void, Never> { SignalProducer(value: ()) }
         deleteTimeTargetButton.reactive.pressed = CocoaAction(deleteButtonPressed)
         let deleteTimeTarget = reactive.makeBindingTarget { (timeTargetVC, _: Void) in
             timeTargetVC.tryToPerform(#selector(TimeTargetCreatingDeleting.deleteTimeTarget(_:)), with: timeTargetVC)
@@ -187,7 +186,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
 
     // MARK: - Onboarding
 
-    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, Never>] {
         let hoursTargetField = viewDidLoadProducer
             .map { [unowned self] _ in self.hoursTargetField }
             .skipNil()
@@ -220,8 +219,8 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
 class NoTimeTargetViewController: NSViewController, OnboardingTargetViewsProvider {
     @IBOutlet weak var createTimeTargetButton: NSButton!
 
-    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, NoError>] {
-        let createTimeTargetButtonPressed = Action<Void, Void, NoError> {
+    var onboardingTargetViews: [OnboardingStepIdentifier: SignalProducer<NSView, Never>] {
+        let createTimeTargetButtonPressed = Action<Void, Void, Never> {
             SignalProducer(value: ())
         }
 
@@ -231,7 +230,7 @@ class NoTimeTargetViewController: NSViewController, OnboardingTargetViewsProvide
             .on(value: { [unowned self] in
                 self.createTimeTargetButton.reactive.pressed = CocoaAction(createTimeTargetButtonPressed)
             })
-            .map { [unowned self] in self.createTimeTargetButton as NSView }
+        .map (value: self.createTimeTargetButton as NSView)
 
         let timeTargetCreationView = timeTargetCreationViewProducer.concat(SignalProducer.never)
             .take(until: createTimeTargetButtonPressed.values)
