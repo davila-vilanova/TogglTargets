@@ -41,7 +41,7 @@ class AccountViewController: NSViewController, BindingTargetProvider {
     private lazy var loginViewController: LoginViewController = {
         let loginController = self.storyboard!.instantiateController(withIdentifier: "LoginViewController")
             as! LoginViewController // swiftlint:disable:this force_cast
-        loginController <~ lastBinding.producer.skipNil().map { (credentialUpstream: $0.resolvedCredential,
+        loginController <~ lastBinding.producer.skipNil().map { (resolvedCredential: $0.resolvedCredential,
                                                                  testURLSessionAction: $0.testURLSessionAction) }
         addChild(loginController)
         return loginController
