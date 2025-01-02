@@ -58,8 +58,10 @@ extension Project: Equatable {
 }
 
 extension Project: Hashable {
-    var hashValue: Int {
-        return id.hashValue ^ (name?.hashValue ?? 0) ^ (active?.hashValue ?? 0)
-            ^ (workspaceId?.hashValue ?? 0) &* 16779163
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(name)
+        hasher.combine(active)
+        hasher.combine(workspaceId)
     }
 }

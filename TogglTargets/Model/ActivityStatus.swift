@@ -114,11 +114,7 @@ extension ActivityStatus: Hashable {
         }
     }
 
-    var hashValue: Int {
-        switch self {
-        case .executing(let activity): return activity.hashValue &* 829601
-        case .succeeded(let activity): return activity.hashValue &* 829613
-        case .error(let activity, _, _): return activity.hashValue &* 829627
-        }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(activity)
     }
 }

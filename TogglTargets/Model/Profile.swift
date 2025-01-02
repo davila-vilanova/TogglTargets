@@ -85,7 +85,8 @@ extension Workspace: Equatable {
 }
 
 extension Workspace: Hashable {
-    var hashValue: Int {
-        return id.hashValue ^ (name?.hashValue ?? 0) &* 16779163
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(name)
     }
 }
