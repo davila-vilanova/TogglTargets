@@ -1,8 +1,7 @@
 *.swp
-/Carthage
+.DS_Store
 /build
 *xcuserdata*
 *xcshareddata*
 *.xctimeline
-/.idea
 .vscode
