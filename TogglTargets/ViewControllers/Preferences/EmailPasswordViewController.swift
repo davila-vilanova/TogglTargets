@@ -78,7 +78,7 @@ class EmailPasswordViewController: NSViewController, BindingTargetProvider {
     override func viewDidAppear() {
         super.viewDidAppear()
         reactive.makeBindingTarget { $1.makeFirstResponder($0.emailField) } <~
-            reactive.producer(forKeyPath: "view.window").skipNil().filterMap { $0 as? NSWindow }
+        reactive.producer(forKeyPath: "view.window").skipNil().compactMap { $0 as? NSWindow }
                 .delay(0, on: QueueScheduler())
                 .take(first: 1)
     }

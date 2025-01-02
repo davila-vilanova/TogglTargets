@@ -254,7 +254,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSUserInte
             _ = updatedPeriodPreference
         }
 
-        let authErrors = modelCoordinator.retrievalStatus.filter { $0.isError }.filterMap { $0.error }.filter {
+        let authErrors = modelCoordinator.retrievalStatus.filter { $0.isError }.compactMap { $0.error }.filter {
             switch $0 {
             case .noCredentials, .authenticationError: return true
             default: return false

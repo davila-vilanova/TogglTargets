@@ -120,7 +120,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
         let indexPathFromPersistedProjectId = SignalProducer.combineLatest(currentProjectIDs, restoredSelectedProjectId)
             .take(until: projectManuallySelected)
-            .filterMap { (currentProjectIds, restoredProjectId) -> IndexPath? in
+            .compactMap { (currentProjectIds, restoredProjectId) -> IndexPath? in
                 guard let projectId = restoredProjectId else {
                     return nil
                 }
@@ -216,7 +216,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
 
     func wireFullUpdatesToCollectionView() {
         // set the current value of `currentProjectIDs` and trigger a full refresh of the collection view
-        let fullUpdates = lastProjectIDsByTimeTargetsUpdate.producer.skipNil().filterMap { $0.fullyUpdated }
+        let fullUpdates = lastProjectIDsByTimeTargetsUpdate.producer.skipNil().compactMap { $0.fullyUpdated }
 
         currentProjectIDs <~ fullUpdates
 
@@ -230,7 +230,7 @@ class ProjectsListViewController: NSViewController, NSCollectionViewDataSource, 
         // reflect the provided update in the value of `currentProjectIDs`, reorder the affected item in the
         // collection view and update the "last item in section" visual state
         let singlePidsUpdates =
-            lastProjectIDsByTimeTargetsUpdate.signal.skipNil().filterMap { $0.timeTargetUpdate }
+        lastProjectIDsByTimeTargetsUpdate.signal.skipNil().compactMap { $0.timeTargetUpdate }
                 .withLatest(from: currentProjectIDs.producer)
                 .map { ($0.0, $0.1, $0.0.apply(to: $0.1)) }
         let indexPathUpdates = singlePidsUpdates.map { update, pidsBefore, pidsAfter -> (IndexPath, IndexPath) in

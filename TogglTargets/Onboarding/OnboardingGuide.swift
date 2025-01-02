@@ -168,7 +168,7 @@ class OnboardingGuide {
         let windowAttachedViews = views.zip(with:
             views.map {
                 $0.reactive.producer(forKeyPath: "window")
-                    .skipNil().filterMap { $0 as? NSWindow }
+                .skipNil().compactMap { $0 as? NSWindow }
                     .take(first: 1)
                 }
                 .flatten(.concat))

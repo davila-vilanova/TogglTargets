@@ -61,10 +61,10 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
             } <~ retrieveProfilePictureImageData.isExecuting
 
         let profile = lastBinding.latestOutput { $0.profile }
-        fullNameField.reactive.stringValue <~ profile.filterMap { $0.name }
+        fullNameField.reactive.stringValue <~ profile.compactMap { $0.name }
         profileImageView.reactive.image <~ retrieveProfilePictureImageData.values.map { $0.0 }.map { NSImage(data: $0) }
-        retrieveProfilePictureImageData <~ profile.filterMap { $0.imageUrl }
-        timezoneField.reactive.stringValue <~ profile.filterMap { $0.timezone }
+        retrieveProfilePictureImageData <~ profile.compactMap { $0.imageUrl }
+        timezoneField.reactive.stringValue <~ profile.compactMap { $0.timezone }
         workspaceCountField.reactive.stringValue <~ profile.map {
             String.localizedStringWithFormat(
                 NSLocalizedString("preferences.logged-in.workspace-count",
@@ -139,7 +139,7 @@ class LoggedInViewController: NSViewController, BindingTargetProvider {
     override func viewDidAppear() {
         super.viewDidAppear()
         reactive.makeBindingTarget { $1.makeFirstResponder($0) } <~
-            reactive.producer(forKeyPath: "view.window").skipNil().filterMap { $0 as? NSWindow }
+        reactive.producer(forKeyPath: "view.window").skipNil().compactMap { $0 as? NSWindow }
                 .delay(0, on: QueueScheduler())
                 .take(first: 1)
     }

@@ -132,7 +132,7 @@ class TimeTargetViewController: NSViewController, BindingTargetProvider, Onboard
 
     private func bindControlsToOutputTimeTargets() {
         let textFieldValues = hoursTargetField.reactive.stringValues
-            .filterMap { [weak formatter = hoursTargetFormatter] (text) -> HoursTargetType? in
+            .compactMap { [weak formatter = hoursTargetFormatter] (text) -> HoursTargetType? in
                 formatter?.number(from: text)?.intValue
         }
         let stepperValues = hoursTargetStepper.reactive.integerValues

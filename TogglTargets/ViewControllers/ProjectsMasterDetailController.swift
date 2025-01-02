@@ -195,7 +195,7 @@ class ProjectsMasterDetailController: NSSplitViewController, BindingTargetProvid
     }
 
     private func wireConfirmDeleteSheetOutputs() {
-        deleteTimeTarget <~ showConfirmDeleteSheet.values.filterMap { $0.projectIdToDelete }
+        deleteTimeTarget <~ showConfirmDeleteSheet.values.compactMap { $0.projectIdToDelete }
 
         reactive.lifetime += showConfirmDeleteSheet.disabledErrors.observeValues {
             print("Cannot show 'confirm delete' sheet - action is disabled")

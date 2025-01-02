@@ -33,7 +33,7 @@ extension NSViewController {
         guide.register(self)
 
         guide.lifetime += reactive.producer(forKeyPath: "childViewControllers")
-            .skipNil().filterMap { $0 as? [NSViewController] }
+            .skipNil().compactMap { $0 as? [NSViewController] }
             .map { SignalProducer($0) }
             .flatten(.concat)
             .uniqueValues()

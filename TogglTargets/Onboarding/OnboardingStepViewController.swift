@@ -37,7 +37,7 @@ class OnboardingStepViewController: NSViewController {
     }
 
     var moveOnToNextStep: SignalProducer<OnboardingStepIdentifier, Never> {
-        return currentStep.producer.sample(on: moveOnPressed.values).filterMap { $0?.identifier }
+        return currentStep.producer.sample(on: moveOnPressed.values).compactMap { $0?.identifier }
     }
 
     var configureForLastStep: BindingTarget<Void> {
