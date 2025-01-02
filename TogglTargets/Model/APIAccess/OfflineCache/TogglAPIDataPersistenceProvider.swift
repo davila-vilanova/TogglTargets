@@ -47,15 +47,15 @@ class SQLiteTogglAPIDataPersistenceProvider: TogglAPIDataPersistenceProvider {
     private let databaseConnection: Connection
 
     private let profileTable = Table("profile")
-    private let profileIdExpression = Expression<Int64>("id")
-    private let userNameExpression = Expression<String?>("name")
-    private let emailExpression = Expression<String>("email")
-    private let timezoneExpression = Expression<String?>("timezone")
+    private let profileIdExpression = SQLite.Expression<Int64>("id")
+    private let userNameExpression = SQLite.Expression<String?>("name")
+    private let emailExpression = SQLite.Expression<String>("email")
+    private let timezoneExpression = SQLite.Expression<String?>("timezone")
 
     private let projectTable = Table("project")
-    private let projectIdExpression = Expression<Int64>("id")
-    private let projectNameExpression = Expression<String?>("name")
-    private let workspaceIdExpression = Expression<WorkspaceID?>("workspace_id")
+    private let projectIdExpression = SQLite.Expression<Int64>("id")
+    private let projectNameExpression = SQLite.Expression<String?>("name")
+    private let workspaceIdExpression = SQLite.Expression<WorkspaceID?>("workspace_id")
 
     init?(baseDirectory: URL?) {
         do {

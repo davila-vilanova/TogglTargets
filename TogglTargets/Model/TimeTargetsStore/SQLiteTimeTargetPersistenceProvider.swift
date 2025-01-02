@@ -32,10 +32,10 @@ class SQLiteTimeTargetPersistenceProvider: TimeTargetPersistenceProvider {
     // MARK: - Table and expression entities
 
     private let timeTargetsTable = Table("time_target")
-    private let idExpression = Expression<Int64>("id")
-    private let projectIdExpression = Expression<ProjectID>("project_id")
-    private let hoursTargetExpression = Expression<Int>("hours")
-    private let workWeekdaysExpression = Expression<WeekdaySelection>("work_weekdays")
+    private let idExpression = SQLite.Expression<Int64>("id")
+    private let projectIdExpression = SQLite.Expression<ProjectID>("project_id")
+    private let hoursTargetExpression = SQLite.Expression<Int>("hours")
+    private let workWeekdaysExpression = SQLite.Expression<WeekdaySelection>("work_weekdays")
 
     // MARK: -
 
