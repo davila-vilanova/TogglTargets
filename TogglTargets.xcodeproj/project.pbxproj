@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -155,6 +155,8 @@
 		63F15019209869EC0044288F /* APITokenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F15018209869EC0044288F /* APITokenViewController.swift */; };
 		63F1501B20986A150044288F /* EmailPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1501A20986A150044288F /* EmailPasswordViewController.swift */; };
 		63F1501D20986A3A0044288F /* LoggedInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F1501C20986A3A0044288F /* LoggedInViewController.swift */; };
+		63F3639828615D26008E6719 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 63F3639728615D26008E6719 /* SQLite */; };
+		63F3639B28615DF0008E6719 /* ReactiveCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 63F3639A28615DF0008E6719 /* ReactiveCocoa */; };
 		63F6D17C2164E3D5004EE7B9 /* OnboardingGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F6D17B2164E3D5004EE7B9 /* OnboardingGuide.swift */; };
 		63F76B9E20F6212D0024939B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63F76B9C20F6212D0024939B /* InfoPlist.strings */; };
 		63F76BA120F6212D0024939B /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 63F76B9F20F6212D0024939B /* Localizable.strings */; };
@@ -341,6 +343,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63F3639828615D26008E6719 /* SQLite in Frameworks */,
+				63F3639B28615DF0008E6719 /* ReactiveCocoa in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -624,18 +628,22 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 632957671DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglTargets" */;
 			buildPhases = (
+				63EBF3A9218F91DA00BD2C3C /* ShellScript */,
 				6329573E1DBA99F000E11A10 /* Sources */,
 				6329573F1DBA99F000E11A10 /* Frameworks */,
 				632957401DBA99F000E11A10 /* Resources */,
 				632EEBF01E4278CD00608D01 /* CopyFiles */,
 				6368FDB320F217920059AE2F /* Embed Frameworks */,
-				63EBF3A9218F91DA00BD2C3C /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = TogglTargets;
+			packageProductDependencies = (
+				63F3639728615D26008E6719 /* SQLite */,
+				63F3639A28615DF0008E6719 /* ReactiveCocoa */,
+			);
 			productName = TogglGoals;
 			productReference = 632957421DBA99F000E11A10 /* TogglTargets.app */;
 			productType = "com.apple.product-type.application";
@@ -694,6 +702,10 @@
 				es,
 			);
 			mainGroup = 632957391DBA99F000E11A10;
+			packageReferences = (
+				63F3639628615D26008E6719 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
+				63F3639928615DF0008E6719 /* XCRemoteSwiftPackageReference "ReactiveCocoa" */,
+			);
 			productRefGroup = 632957431DBA99F000E11A10 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -744,6 +756,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		63EBF3A9218F91DA00BD2C3C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1100,7 +1113,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -1155,10 +1168,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
@@ -1176,7 +1190,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = TogglTargets/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1197,7 +1215,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = TogglTargets/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1217,7 +1239,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = TogglTargetsTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargetsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1237,7 +1263,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = TogglTargetsTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = la.davi.TogglTargetsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1276,6 +1306,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		63F3639628615D26008E6719 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stephencelis/SQLite.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.15.3;
+			};
+		};
+		63F3639928615DF0008E6719 /* XCRemoteSwiftPackageReference "ReactiveCocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveCocoa/ReactiveCocoa.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		63F3639728615D26008E6719 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63F3639628615D26008E6719 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+		63F3639A28615DF0008E6719 /* ReactiveCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63F3639928615DF0008E6719 /* XCRemoteSwiftPackageReference "ReactiveCocoa" */;
+			productName = ReactiveCocoa;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6329573A1DBA99F000E11A10 /* Project object */;
 }
