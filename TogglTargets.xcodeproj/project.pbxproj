@@ -694,10 +694,9 @@
 			};
 			buildConfigurationList = 6329573D1DBA99F000E11A10 /* Build configuration list for PBXProject "TogglTargets" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 				es,
