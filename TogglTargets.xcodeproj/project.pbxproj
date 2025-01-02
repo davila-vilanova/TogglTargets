@@ -628,7 +628,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 632957671DBA99F000E11A10 /* Build configuration list for PBXNativeTarget "TogglTargets" */;
 			buildPhases = (
-				63EBF3A9218F91DA00BD2C3C /* ShellScript */,
 				6329573E1DBA99F000E11A10 /* Sources */,
 				6329573F1DBA99F000E11A10 /* Frameworks */,
 				632957401DBA99F000E11A10 /* Resources */,
@@ -752,27 +751,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		63EBF3A9218F91DA00BD2C3C /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: swiftlint not installed\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6329573E1DBA99F000E11A10 /* Sources */ = {
