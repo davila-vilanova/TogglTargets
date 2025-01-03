@@ -38,7 +38,7 @@ func makeRetrieveProfileNetworkAction() -> RetrieveProfileNetworkAction {
 /// Represents the data returned in the body of the response obtained by calling Toggl's profile endpoint with a valid
 /// credential.
 private struct MeService: Decodable {
-    static let endpoint = "/api/v8/me"
+    static let endpoint = "/api/v9/me?with_related_data=true"
     let profile: Profile
 
     private enum CodingKeys: String, CodingKey {
@@ -46,6 +46,6 @@ private struct MeService: Decodable {
     }
 
     static func decodeProfile(data: Data, response: URLResponse) throws -> Profile {
-        return try JSONDecoder().decode(MeService.self, from: data).profile
+        return try JSONDecoder().decode(Profile.self, from: data)
     }
 }

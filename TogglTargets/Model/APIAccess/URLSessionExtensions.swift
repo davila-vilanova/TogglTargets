@@ -59,7 +59,7 @@ extension URLSession {
         }
 
         func resourceURL(for endpoint: String) -> URL {
-            let rootAPIURLString = overrideRootAPIURLString ?? "https://toggl.com"
+            let rootAPIURLString = overrideRootAPIURLString ?? "https://api.track.toggl.com"
             let resourceURLString = rootAPIURLString + endpoint
             return URL(string: resourceURLString)!
         }
