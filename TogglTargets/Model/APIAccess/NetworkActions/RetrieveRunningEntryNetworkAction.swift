@@ -53,6 +53,9 @@ private struct RunningEntryService: Decodable {
     }
 
     static func decodeRunningEntry(data: Data, response: URLResponse) throws -> RunningEntry? {
+        guard String(data: data, encoding: .utf8) != "null" else {
+            return nil
+        }
         let decoder = JSONDecoder()
         return try decoder.decode(RunningEntry.self, from: data)
     }
