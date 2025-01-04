@@ -30,25 +30,6 @@ Speaking about having wanted to scratch three itches of my own, I hope that if y
 
 You can get a [dmg](https://github.com/davila-vilanova/TogglTargets/releases/download/v1.1/TogglTargets.dmg) file directly from the [release page](https://github.com/davila-vilanova/TogglTargets/releases/tag/v1.1).
 
-### Using Homebrew Cask against a private script
-
-This is a first release, so it would [not be a good idea](https://github.com/Homebrew/homebrew-cask/pull/28103) to submit a formula to the [Cask](https://github.com/Homebrew/homebrew-cask) repository. However, if you have [homebrew](https://brew.sh) installed in your system and you can install the latest release very quickly by `brew cask`ing the installation script directly like this:
-
-```sh
-brew cask install https://davi.la/toggltargets.rb
-```
-
-This will also let you `update` and (should you be so inclined) `uninstall` and `zap` the app in a breeze:
-
-```sh
-brew cask uninstall https://davi.la/toggltargets.rb
-```
-or (this will move your preferences and time targets database to the trash and leave no traces of the app elsewhere in your system):
-
-```sh
-brew cask zap https://davi.la/toggltargets.rb
-```
-
 If you want to build and run TogglTargets from source, read on.
 
 ### Building and running from code
