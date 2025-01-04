@@ -22,7 +22,7 @@ I put it together to scratch three itches of my own: I’ve wanted to write a Ma
 
 ## Reactive
 
-Speaking about having wanted to scratch three itches of my own, I hope that if you share some variation of my third itch you will find value in making use of TogglTargets. Now, if you share my second itch (ambitions related to the quasi functional reactive goodness) you might deem TogglTargets’ source code worth peeking through. The framework you’ll see in use if you do is Reactive Swift / Reactive Cocoa. When I started I wished there were more examples around of how to do some mundane things and I could not find enough variety in what already was available. So if you’re in a similar place to where I was back then, I hope having this as one more reference among the pool of resources will be useful. 
+Speaking about having wanted to scratch three itches of my own, I hope that if you share some variation of my third itch you will find value in making use of TogglTargets. Now, if you share my second itch (ambitions related to the quasi functional reactive goodness) you might deem TogglTargets’ source code worth peeking through. The framework you’ll see in use if you do is Reactive Swift / Reactive Cocoa. When I started I wished there were more examples around of how to do some mundane things and I could not find enough variety in what already was available. So if you’re in a similar place to where I was back then, I hope having this as one more reference among the pool of resources will be useful.
 
 ## Getting TogglTargets
 
@@ -53,25 +53,18 @@ If you want to build and run TogglTargets from source, read on.
 
 ### Building and running from code
 
-#### Retrieving and building dependencies
+#### Dependencies
 
-TogglTargets depends on the [ReactiveSwift](https://github.com/ReactiveCocoa/ReactiveSwift), [ReactiveCocoa](https://github.com/ReactiveCocoa/ReactiveCocoa), [Result](https://github.com/antitypical/Result) and [SQLite.swift](https://github.com/stephencelis/SQLite.swift) third party frameworks. The project is set up to use [Carthage](https://github.com/Carthage/Carthage) to manage these dependencies. Its [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile) declares the two "first-order" dependencies, ReactiveCocoa and SQLite.swift, and the other two are retrieved as sub-dependencies of ReactiveCocoa and ReactiveSwift.
+TogglTargets depends on the [ReactiveCocoa](https://github.com/ReactiveCocoa/ReactiveCocoa) and [SQLite.swift](https://github.com/stephencelis/SQLite.swift) packages. The project is set up to use the Swift Package Manager to manage these dependencies. Xcode should be able to fetch them for you when you open the project.
 
-To retrieve and build the dependencies make sure you have [Carthage installed](https://github.com/Carthage/Carthage#installing-carthage), change to the TogglTargets root folder from your shell of choice and run
-
-```sh
-carthage update --platform macOS
-```
 #### Running from Xcode
 
 1. Use your Xcode to open `TogglTargets.xcodeproj`
-1. Manage the signing configuration:
+2. Manage the signing configuration:
     1. From within Xcode's project navigator select the `TogglTargets` project (the root element of the project tree)
-    1. Select the `TogglTargets` target
-    1. Make sure the `Signing` configuration in the `General` tab looks sound. One possibility is to leave `Automatically manage signing` checked and to select your developer team from the `Team` pop up menu.
-
-    ![Signing configuration](./Screenshots/signing.png)
-1. You're ready to go.
+    2. Select the `TogglTargets` target
+    3. Make sure your `Signing` configuration looks sound.
+3. You're ready to go.
 
 ## Contributing
 
@@ -97,10 +90,10 @@ In no particular order and certainly non-exclusively:
 
 ## General improvements I'm the most aware of:
 
-There’s a case to be made that the visual design is all but bland. If you’re about to make that case, be aware that I might mistake you for somebody with design skills and insist you help me out. 
+There’s a case to be made that the visual design is all but bland. If you’re about to make that case, be aware that I might mistake you for somebody with design skills and insist you help me out.
 
-My Spanish translation is rather poor, it main purpose being as a placeholder to prove that localization will work. It’s somewhat ironic and strange since Spanish is my first language. We could have a long conversation about this because it’s complicated (just please not in Spanish.) 
+My Spanish translation is rather poor, it main purpose being as a placeholder to prove that localization will work. It’s somewhat ironic and strange since Spanish is my first language. We could have a long conversation about this because it’s complicated (just please not in Spanish.)
 
-## Reaching in
+## Say hello
 
 david@davi.la
