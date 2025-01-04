@@ -44,7 +44,7 @@ func makeRetrieveRunningEntryNetworkAction(_ urlSession: Property<URLSession?>) 
 /// Represents the data returned in the body of the response obtained by calling Toggl's current time entry endpoint
 /// with a valid credential.
 private struct RunningEntryService: Decodable {
-    static let endpoint = "/api/v8/time_entries/current"
+    static let endpoint = "/api/v9/me/time_entries/current"
 
     let runningEntry: RunningEntry?
 
@@ -54,7 +54,6 @@ private struct RunningEntryService: Decodable {
 
     static func decodeRunningEntry(data: Data, response: URLResponse) throws -> RunningEntry? {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        return try decoder.decode(RunningEntryService.self, from: data).runningEntry
+        return try decoder.decode(RunningEntry.self, from: data)
     }
 }
