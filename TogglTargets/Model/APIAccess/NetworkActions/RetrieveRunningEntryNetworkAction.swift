@@ -57,6 +57,22 @@ private struct RunningEntryService: Decodable {
             return nil
         }
         let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let dateString = try container.decode(String.self)
+            // Toggl's API returns dates in ISO 8601 format, but sometimes with fractional seconds
+            // and sometimes without. Need to handle both cases.
+            for fs in [false, true] {
+                if let date = try? Date.ISO8601FormatStyle(includingFractionalSeconds: fs)
+                    .parse(dateString)
+                {
+                    return date
+                }
+            }
+            throw DecodingError.dataCorruptedError(
+                in: container, debugDescription: "Unsupported date format"
+            )
+        }
         return try decoder.decode(RunningEntry.self, from: data)
     }
 }
