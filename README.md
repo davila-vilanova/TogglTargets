@@ -28,7 +28,7 @@ Speaking about having wanted to scratch three itches of my own, I hope that if y
 
 ### Downloading a disk image for the current release
 
-Get it from [here](https://davi.la/targets/release/TogglTargets.dmg).
+You can get a [dmg](https://github.com/davila-vilanova/TogglTargets/releases/download/v1.1/TogglTargets.dmg) file directly from the [release page](https://github.com/davila-vilanova/TogglTargets/releases/tag/v1.1).
 
 ### Using Homebrew Cask against a private script
 
