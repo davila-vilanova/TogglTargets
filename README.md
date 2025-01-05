@@ -1,3 +1,5 @@
+> **Note:** I set to build this app back in 2018 as a personal study in application state management. I was looking for a way of managing state that involved a single source of truth, closeness to full referencial transparency, and a way of piping data and inserting computations between pipes which would be clean and easy to reason about. This was before Apple introduced SwiftUI and the Combine library for streams of values over time, and also before I heard of the Composable Architecture, which is now my go-to solution for this kind of problem. I am leaving this project here as a reference for myself and for anyone who might be interested in how to use ReactiveCocoa to manage state in a Mac app.
+
 ## What is TogglTargets?
 
 TogglTargets is a Mac app that lets you set time targets, that is, amounts of time you would like to work per week or per month, for any of the projects whose time you are tracking on [Toggl](https://toggl.com), as well as selecting which days of the week you plan to wok on each of them, and can help you keep track of how you are doing at any point.
