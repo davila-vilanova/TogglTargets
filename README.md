@@ -1,4 +1,4 @@
-> **Note:** I set to build this app back in 2018 as a personal study in application state management. I was looking for a way of managing state that involved a single source of truth, closeness to full referencial transparency, and a way of piping data and inserting computations between pipes which would be clean and easy to reason about. This was before Apple introduced SwiftUI and the Combine library for streams of values over time, and also before I heard of the Composable Architecture, which is now my go-to solution for this kind of problem. I am leaving this project here as a reference for myself and for anyone who might be interested in how to use ReactiveCocoa to manage state in a Mac app.
+> **Note:** I set to build this app back in 2018 as a personal study in application state management. I was looking for a way of managing state that involved a single source of truth, closeness to full referencial transparency, and a way of piping data and inserting computations between pipes which would be clean and easy to reason about. This was before Apple introduced SwiftUI and the Combine library for streams of values over time, and also in the before times of [the Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture), which is now my go-to solution for this kind of problem. I am leaving this project here as a reference for myself and for anyone who might be interested in how to use ReactiveCocoa to manage state in a Mac app.
 
 ## What is TogglTargets?
 
@@ -70,7 +70,8 @@ In no particular order and certainly non-exclusively:
     * when the target time for a period is reached for a given project,
     * when today's baseline is reached for a given project,
     * when today's baseline is reached for all projects for which today is a working day.
-
+* **Note from the future: rewrite the whole thing in SwiftUI and the Composable Architecture!
+**
 ## General improvements I'm the most aware of:
 
 There’s a case to be made that the visual design is all but bland. If you’re about to make that case, be aware that I might mistake you for somebody with design skills and insist you help me out.
